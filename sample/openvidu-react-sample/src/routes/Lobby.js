@@ -140,15 +140,9 @@ const Lobby = () => {
                 />
             </div>
             <div id="video-container" className="col-md-6">
-                {publisher !== undefined ? (
-                    <div className="stream-container col-md-6 col-xs-6" onClick={() => console.log(publisher)}>
-                        <UserVideoComponent streamManager={publisher} />
-                    </div>
-                ) : null}
-
                 {subscribers.map((sub, i) => (
                     <div
-                        key={sub.id}
+                        key={i}
                         className="stream-container col-md-6 col-xs-6"
                         onClick={() => console.log(sub)}
                     >
