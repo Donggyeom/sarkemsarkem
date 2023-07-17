@@ -3,7 +3,8 @@ import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
 import UserVideoComponent from '../components/UserVideoComponent';
 import { useLocation } from 'react-router-dom';
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'https://demos.openvidu.io/';
+
+// const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'localhost:5000';
 
 const Lobby = () => {
     // 게임 설정 화면으로부터 파라미터 전달 받음
@@ -169,7 +170,7 @@ const Lobby = () => {
     // 백엔드로부터 호출하여 sessionId 등록
     const createSession = async (sessionId) => {
         const response = await axios.post(
-            APPLICATION_SERVER_URL + 'api/sessions',
+            '/api/sessions',
             { customSessionId: sessionId },
             { headers: { 'Content-Type': 'application/json' } }
         );
@@ -179,7 +180,7 @@ const Lobby = () => {
     // 백엔드로부터 호출하여 해당 세션에 맞는 토큰 생성
     const createToken = async (sessionId) => {
         const response = await axios.post(
-            APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+            '/api/sessions/' + sessionId + '/connections',
             {},
             { headers: { 'Content-Type': 'application/json' } }
         );
