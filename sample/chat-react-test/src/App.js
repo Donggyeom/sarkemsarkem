@@ -49,7 +49,7 @@ function App() {
       console.log(res);
     })
     onConnected();
-    // stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomId:roomId, sender:sender}));
+    stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomId:roomId, sender:sender}));
   }
 
   const sendMessage = async (e) => {

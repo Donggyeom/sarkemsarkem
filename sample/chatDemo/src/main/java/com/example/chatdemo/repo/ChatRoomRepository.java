@@ -49,6 +49,7 @@ public class ChatRoomRepository {
     public ChatRoom createChatRoom(String name) {
         ChatRoom chatRoom = ChatRoom.create(name);
         opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
+        System.out.println(chatRoom + " asdasdas");
         return chatRoom;
     }
 
@@ -59,6 +60,7 @@ public class ChatRoomRepository {
         ChannelTopic topic = topics.get(roomId);
         if (topic == null)
             topic = new ChannelTopic(roomId);
+        System.out.println(roomId + "sdadasdzxczxc");
         redisMessageListener.addMessageListener(redisSubscriber, topic);
         topics.put(roomId, topic);
     }
