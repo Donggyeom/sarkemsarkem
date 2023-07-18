@@ -34,18 +34,19 @@ function App() {
     // stompClient.current.subscribe('/room/' + chatObj.id + '/queue/messages', onMessageReceived);
   }
   const enterCharRoom = async () => {
-    console.log("Test 채팅방으로 입장");
-    await axios.post('/chat/room?name="test"')
+    console.log("채팅방 생성");
+    await axios.post('/chat/room?name=1')
     .then(res => {
       console.log(res);
     })
-    await axios.get("/chat/room/test")
+    
+    await axios.get("/chat/room/1")
     .then(res => {
       console.log(res);
     })
   }
   const sendMessage = async () => {
-    await stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomId:0, sender:"hyuntall"}))
+    await stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomId:1, sender:"hyuntall"}))
   }
 
   return (
