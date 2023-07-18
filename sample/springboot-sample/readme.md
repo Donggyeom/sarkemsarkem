@@ -4,3 +4,6 @@
 # 실행방법
 1. gradle.bat 실행
 2. run
+
+# 내용
+1. 레디스 PUB/SUB 테스트
