@@ -1470,4 +1470,112 @@
       )
     }
     ```
+    
+- localStorage
+    - 사이트마다 5MB 정도의 문자 데이터를 저장할 수 있습니다.
+    - object 자료랑 비슷하게 key/value 형태로 저장합니다.
+    
+    ```jsx
+    localStorage.setItem('데이터이름', '데이터');
+    localStorage.getItem('데이터이름');
+    localStorage.removeItem('데이터이름')
+    ```
+    
+    - 문자만 저장할 수 있어서 array/object 저장하면 깨짐
+    - 그래서  json으로 변환해서 저장하면 됨
+    
+    ```jsx
+    json으로 변환
+    localStorage.setItem('obj', JSON.stringify({name:'kim'}) );
+    
+    꺼내서 다시 arr/obj로 변환
+    var a = localStorage.getItem('obj');
+    var b = JSON.parse(a)
+    ```
+    
+    0번 1번 상품을 보았다면 [0,1] 이런 데이터가 localStorage에 저장되게
+    
+    ```jsx
+    (Detail.js)
+    
+    useEffect(()=>{
+      let 꺼낸거 = localStorage.getItem('watched')
+      꺼낸거 = JSON.parse(꺼낸거)
+      꺼낸거.push(찾은상품.id)
+      localStorage.setItem('watched', JSON.stringify(꺼낸거))
+    }, [])
+    ```
+    
+    중복제거 버전 - set쓰기
+    
+    ```jsx
+    (Detail.js)
+    
+    useEffect(()=>{
+      let 꺼낸거 = localStorage.getItem('watched')
+      꺼낸거 = JSON.parse(꺼낸거)
+      꺼낸거.push(찾은상품.id)
+    
+      //Set으로 바꿨다가 다시 array로 만들기
+      꺼낸거 = new Set(꺼낸거)
+      꺼낸거 = Array.from(꺼낸거)
+      localStorage.setItem('watched', JSON.stringify(꺼낸거))
+    }, [])
+    ```
+    
+- 실시간 데이터가 중요하면 react-query
+    
+    항상 유용하진 않음
+    
+    ```jsx
+    npm install @tanstack/react-query
+    import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+    useQuery(['작명'],
+    ```
+    
+    ```jsx
+    index.js
+    import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' //1번
+    const queryClient = new QueryClient()   //2번
+    
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+      <QueryClientProvider client={queryClient}>  //3번
+        <Provider store={store}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </Provider>
+      </QueryClientProvider>
+    );
+    ```
+    
+    - ajax 요청하기
+    
+    ```jsx
+    function App(){
+      let result = useQuery('작명', ()=>
+        axios.get('https://codingapple1.github.io/userdata.json')
+        .then((a)=>{ return a.data })
+      )
+    
+      return (
+        <div>
+          { result.isLoading && '로딩중' }
+          { result.error && '에러남' }
+          { result.data && result.data.name }
+        </div>
+      )
+    }
+    
+    result라는 변수에 ajax 현재 상태가 알아서 저장됩니다.
+    - ajax요청이 로딩중일 땐 result.isLoading 이 true가 됩니다. 
+    - ajax요청이 실패시엔 result.error 가 true가 됩니다. 
+    - ajax요청이 성공시엔 result.data 안에 데이터가 들어옵니다.
+    state 만들 필요가 업슴
+    ```
+    
+    - ajax 재요청 지알아서 다해줌
+    - 실패 시 재시도 알아서 해줌
+    - ajax로 가져온 결과는 state 공유 필요없음
  
