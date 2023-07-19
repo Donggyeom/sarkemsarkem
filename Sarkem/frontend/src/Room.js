@@ -5,13 +5,14 @@ import UserVideoComponent from "./components/UserVideoComponent";
 import { useEffect, useState } from "react";
 
 function Room () {
-    const [mySessionId, setMySessionId] = useState('tmpSession38');
+    const [mySessionId, setMySessionId] = useState('tmpSession42');
     const [myUserName, setMyUserName] = useState('이름모를유저' + Math.floor(Math.random() * 100));
     const [session, setSession] = useState(undefined);
     const [mainStreamManager, setMainStreamManager] = useState(undefined);
     const [publisher, setPublisher] = useState(undefined);
     const [subscribers, setSubscribers] = useState([]);
-
+    // openvidu 객체 생성
+    const OV = new OpenVidu();
     useEffect(() => {
         window.addEventListener('beforeunload', onbeforeunload);
         
@@ -56,23 +57,54 @@ function Room () {
     }
 
     const createSession = async (sessionId) => {
-        const response = await axios.post('/api/sessions', { customSessionId: sessionId }, {
+        const response = await axios.post('https://demos.openvidu.io/api/sessions', { customSessionId: sessionId }, {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The sessionId
     }
 
     const createToken = async (sessionId) => {
-        const response = await axios.post('/api/sessions/' + sessionId + '/connections', {}, {
+        const response = await axios.post('https://demos.openvidu.io/api/sessions/' + sessionId + '/connections', {}, {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The token
     }
 
+    useEffect(() => {
+        if(session) {
+            getToken().then(async (response) => {
+                try {
+                    await session.connect(response, {cliendtData: myUserName})
+    
+                    let publisher = await OV.initPublisherAsync(undefined, {
+                        audioSource: undefined,
+                        videoSource: undefined,
+                        publishAudio: true,
+                        publishVideo: true,
+                        resolution: '640x480',
+                        frameRate: 30,
+                        insertMode: 'APPEND',
+                        mirror: true,
+                    });
+                    session.publish(publisher);
+                    const devices = await OV.getDevices();
+                    const videoDevices = devices.filter((device) => device.kind === 'videoinput');
+                    
+                    // 기본 설정된 캠 정보 추출
+                    const currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].id;
+                    // const currentVideoDevice = videoDevices.find((device) => device.deviceId === currentVideoDeviceId);
+                    setPublisher(publisher);
+                    setMainStreamManager(publisher);
+                    console.log(subscribers);
+                } catch (error) {
+                    console.log(error);
+                }
+            });
+        }
+    }, [session])
     const joinSession = async () => {
         
-        // openvidu 객체 생성
-        const OV = new OpenVidu();
+        
 
         // 세션 시작
         const newSession = OV.initSession();
@@ -82,71 +114,20 @@ function Room () {
         // 세션에서 발생하는 구체적인 이벤트 정의
         // stream 생성 이벤트 발생 시
         newSession.on('streamCreated', (event) => {
-            console.log("before:" , subscribers);
+            console.log("새로운 유저 입장")
             const subscriber = newSession.subscribe(event.stream, undefined);
-            // let newSubscribers = subscribers;
-            // newSubscribers.push(subscriber);
-            // setSubscribers(newSubscribers);
             setSubscribers([...subscribers, subscriber]);
-            console.log(subscribers);
         })
 
         // stream 종료 이벤트 발생 시
         newSession.on('streamDestroyed', (event) => {
+            console.log("유저 종료")
             deleteSubscriber(event.stream.streamManager);
         })
 
         // stream 예외 이벤트 발생 시
         newSession.on('exception', (exception) => console.warn(exception));
 
-        const token = await getToken();
-
-        // 토큰을 통해 세션 연결
-        newSession.connect(token, { clientData: myUserName })
-        .then(async () => {
-            // 참여자 정보 생성
-            const publisher = await OV.initPublisherAsync(undefined, {
-                audioSource: undefined,
-                videoSource: undefined,
-                publishAudio: true,
-                publishVideo: true,
-                resolution: '640x480',
-                frameRate: 30,
-                insertMode: 'APPEND',
-                mirror: true,
-            });
-            // 세션에 참여자 정보 게시
-            newSession.publish(publisher);
-            console.log(newSession);
-            // video 디바이스 추출
-            const devices = await OV.getDevices();
-            //console.log(devices);
-            const videoDevices = devices.filter((device) => device.kind === 'videoinput');
-            
-            // 기본 설정된 캠 정보 추출
-            // const currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].deviceId;
-            const currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].id;
-            //console.log(publisher.stream.getMediaStream().getVideoTracks()[0].id);
-            //console.log(videoDevices);
-            const currentVideoDevice = videoDevices.find((device) => device.deviceId === currentVideoDeviceId);
-            
-            // 게시자 업데이트
-            setPublisher(publisher);
-            setMainStreamManager(publisher);
-
-            
-            let newSubscribers = subscribers;
-            newSubscribers.push(publisher);
-            setSubscribers(newSubscribers);
-            console.log(subscribers);
-            setSubscribers(prevSubscribers => {
-                console.log("3️⃣ [tracking] 전체 서브스크라이브 업데이트 중.")
-                const newSubscribers = [...prevSubscribers]
-                console.log("3️⃣ [tracking] 전체 서브스크라이브 업데이트 중..")
-                return newSubscribers
-              })
-            
-        });
         setSession(newSession);
     }
 
@@ -163,6 +144,12 @@ function Room () {
                     value="Leave session"
                 />
             </div>
+            {mainStreamManager !== undefined ? (
+                            <div id="main-video" className="col-md-6">
+                                <UserVideoComponent streamManager={mainStreamManager} />
+
+                            </div>
+                        ) : null}
             <div id="video-container" className="col-md-6">
 
                 {publisher !== undefined ? (
@@ -171,6 +158,7 @@ function Room () {
                     </div>
                 ) : null}
                 {subscribers.map((sub, i) => (
+                    
                     <div
                         key={i}
                         className="stream-container col-md-6 col-xs-6"
