@@ -9,3 +9,7 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+logging:
+  level:
+    com.a702.sarkem: debug

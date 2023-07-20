@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 import com.a702.sarkem.model.chat.ChatMessage;
 
 import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
 @Service
 public class ChatPublisher {
-	private final RedisTemplate<String, Object> redisTemplate;
-
+	
+    private final RedisTemplate<String, Object> redisTemplate;
+    
     public void publish(ChannelTopic topic, ChatMessage message) {
-        redisTemplate.convertAndSend(topic.getTopic(), message);
+    	redisTemplate.convertAndSend(topic.getTopic(), message);
     }
+
 }
