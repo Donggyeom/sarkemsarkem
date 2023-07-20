@@ -1,8 +1,9 @@
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
-import React, { Component } from "react";
-import UserVideoComponent from "./components/UserVideoComponent";
+import React from "react";
+import UserVideoComponent from "../components/UserVideoComponent";
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Room () {
     const [mySessionId, setMySessionId] = useState('tmpSession42');
@@ -11,9 +12,21 @@ function Room () {
     const [mainStreamManager, setMainStreamManager] = useState(undefined);
     const [publisher, setPublisher] = useState(undefined);
     const [subscribers, setSubscribers] = useState([]);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
     // openvidu 객체 생성
     const OV = new OpenVidu();
     useEffect(() => {
+        console.log(location.state);
+        if (location.state === null || location.state.sessionId === null) {
+            console.log("세션 정보가 없습니다.")
+            navigate("/join");
+        }
+        setMySessionId(location.state.sessionId);
+        setMyUserName(location.state.userName);
+        console.log(mySessionId);
         window.addEventListener('beforeunload', onbeforeunload);
         
         joinSession();
@@ -30,6 +43,7 @@ function Room () {
 
     const onbeforeunload = () => {
         leaveSession();
+        navigate("/join");
     }
 
     const leaveSession = () => {
@@ -43,6 +57,7 @@ function Room () {
         setMyUserName(myUserName + Math.floor(Math.random() * 100));
         setMainStreamManager(undefined);
         setPublisher(undefined);
+        navigate("/")
     }
 
     // 세션에 구독중이던 특정 유저 삭제
@@ -57,14 +72,14 @@ function Room () {
     }
 
     const createSession = async (sessionId) => {
-        const response = await axios.post('https://demos.openvidu.io/api/sessions', { customSessionId: sessionId }, {
+        const response = await axios.post('/api/sessions', { customSessionId: sessionId }, {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The sessionId
     }
 
     const createToken = async (sessionId) => {
-        const response = await axios.post('https://demos.openvidu.io/api/sessions/' + sessionId + '/connections', {}, {
+        const response = await axios.post('/api/sessions/' + sessionId + '/connections', {}, {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The token
@@ -131,25 +146,36 @@ function Room () {
         setSession(newSession);
     }
 
+    const copyGameLink = async () => {
+        await navigator.clipboard.writeText("localhost:3000/"+mySessionId).then(alert("링크를 복사함"));
+        console.log()
+    }
 
     return (
         <div id="session">
             <div id="session-header">
-                <h1 id="session-title">{mySessionId}</h1>
+                <h1 id="session-title">roomId: {mySessionId}</h1>
                 <input
                     className="btn btn-large btn-danger"
                     type="button"
                     id="buttonLeaveSession"
                     onClick={leaveSession}
-                    value="Leave session"
+                    value="게임 떠나기"
+                />
+                <input
+                    className="btn btn-large btn-danger"
+                    type="button"
+                    id="buttonLeaveSession"
+                    onClick={copyGameLink}
+                    value="게임 초대하기"
                 />
             </div>
-            {mainStreamManager !== undefined ? (
-                            <div id="main-video" className="col-md-6">
-                                <UserVideoComponent streamManager={mainStreamManager} />
+            {/* {mainStreamManager !== undefined ? (
+                <div id="main-video" className="col-md-6">
+                    <UserVideoComponent streamManager={mainStreamManager} />
 
-                            </div>
-                        ) : null}
+                </div>
+            ) : null} */}
             <div id="video-container" className="col-md-6">
 
                 {publisher !== undefined ? (

@@ -1,10 +1,13 @@
-import logo from './logo.svg';
 import './App.css';
-import Room from './Room';
+import AppRouters from './components/AppRouters';
+
 
 function App() {
   return (
-    <Room/>
+    <div className="container">
+            <AppRouters/>
+
+        </div>
   );
 }
 
