@@ -30,7 +30,8 @@ function Room () {
         setMyUserName(location.state.userName);
         setVideoEnabled(location.state.videoEnabled);
         setAudioEnabled(location.state.audioEnabled);
-        console.log(mySessionId);
+        console.log(location.state);
+        console.log(location.state.videoEnabled)
         window.addEventListener('beforeunload', onbeforeunload);
         
         joinSession();
@@ -47,7 +48,7 @@ function Room () {
 
     const onbeforeunload = () => {
         leaveSession();
-        navigate("/")
+        
     }
 
     const leaveSession = () => {
@@ -61,7 +62,21 @@ function Room () {
         setMyUserName(myUserName + Math.floor(Math.random() * 100));
         setMainStreamManager(undefined);
         setPublisher(undefined);
+        navigate("/")
     }
+
+    const toggleVideo = () => {
+        const enabled = !videoEnabled;
+        setVideoEnabled(enabled);
+        publisher.publishVideo(enabled);
+    }
+    
+    const toggleAudio = () => {
+        const enabled = !audioEnabled;
+        setAudioEnabled(enabled);
+        publisher.publishAudio(enabled);
+    }
+    
 
     // 세션에 구독중이던 특정 유저 삭제
     const deleteSubscriber = (streamManager) => {
@@ -121,9 +136,7 @@ function Room () {
         }
     }, [session])
     const joinSession = async () => {
-        
-        
-
+    
         // 세션 시작
         const newSession = OV.initSession();
         
@@ -174,6 +187,21 @@ function Room () {
                     id="buttonLeaveSession"
                     onClick={copyGameLink}
                     value="게임 초대하기"
+                />
+                <input
+                    className="btn btn-large btn-danger"
+                    type="button"
+                    id="buttonLeaveSession"
+                    onClick={toggleVideo}
+                    value="캠 On/Off"
+                />
+
+<input
+                    className="btn btn-large btn-danger"
+                    type="button"
+                    id="buttonLeaveSession"
+                    onClick={toggleAudio}
+                    value="마이크 On/Off"
                 />
             </div>
             {/* {mainStreamManager !== undefined ? (
