@@ -1,0 +1,22 @@
+video {
+    height: auto;
+    float: left;
+    cursor: pointer;
+    margin: 0 auto;
+    width: 100%;
+}
+.streamcomponent {
+    /* position: absolute; */
+    background: #f8f8f8;
+    color: #777777;
+    font-weight: bold;
+    border-radius: 10px;
+    border: 3px solid black;
+    overflow: hidden;
+}
+p{
+    margin: 0;
+    width: 100%;
+    text-align: center;
+}
+

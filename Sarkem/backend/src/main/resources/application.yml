@@ -1,0 +1,17 @@
+server.port: 8080
+server.ssl.enabled: false
+
+# openvidu ??
+OPENVIDU_URL: "http://localhost:4443/"
+OPENVIDU_SECRET: "MY_SECRET"
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ssafy
+    username: ssafy
+    password: ssafy
+  data:
+    redis:
+      host: localhost
+      port: 6379
