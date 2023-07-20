@@ -61,9 +61,7 @@ function Join() {
         const changeUser = (event) => {
             setUserName(event.target.value);
         }
-        const changeSessionId = (event) => {
-            setSessionId(event.target.value);
-        }
+
     useEffect(()=>{
         getUserCamera();
         getUserAudio();

@@ -22,7 +22,7 @@ function Room () {
         console.log(location.state);
         if (location.state === null || location.state.sessionId === null) {
             console.log("세션 정보가 없습니다.")
-            navigate("/join");
+            navigate("/");
         }
         setMySessionId(location.state.sessionId);
         setMyUserName(location.state.userName);
@@ -37,13 +37,13 @@ function Room () {
     }, []);
 
 
-    useEffect(() => {
-        setSubscribers((preSubscribers) => [...preSubscribers])
-    }, [publisher, session]);
+    // useEffect(() => {
+    //     setSubscribers((preSubscribers) => [...preSubscribers])
+    // }, [publisher, session]);
 
     const onbeforeunload = () => {
         leaveSession();
-        navigate("/join");
+        navigate("/")
     }
 
     const leaveSession = () => {
@@ -57,7 +57,6 @@ function Room () {
         setMyUserName(myUserName + Math.floor(Math.random() * 100));
         setMainStreamManager(undefined);
         setPublisher(undefined);
-        navigate("/")
     }
 
     // 세션에 구독중이던 특정 유저 삭제
@@ -131,7 +130,10 @@ function Room () {
         newSession.on('streamCreated', (event) => {
             console.log("새로운 유저 입장")
             const subscriber = newSession.subscribe(event.stream, undefined);
-            setSubscribers([...subscribers, subscriber]);
+            
+            setSubscribers((subscribers) => [...subscribers, subscriber]);
+
+            console.log(subscribers);
         })
 
         // stream 종료 이벤트 발생 시
