@@ -222,7 +222,11 @@ function Room () {
                     <div
                         key={i}
                         className="stream-container col-md-6 col-xs-6"
-                        onClick={() => console.log(sub)}
+                        onClick={() => {
+                            console.log(sub);
+                            sub.subscribeToVideo(!sub.properties.subscribeToAudio);
+                            setSubscribers((prevSubscribers) => [...prevSubscribers])
+                        }}
                     >
                         <span>{sub.id}</span>
                         <UserVideoComponent streamManager={sub} />
