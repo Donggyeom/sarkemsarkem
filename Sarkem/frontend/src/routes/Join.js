@@ -54,7 +54,7 @@ function Join() {
     
     const joinRoom = async() => {
             console.log(sessionId);
-            navigate("/lobby", {state: {sessionId: sessionId, userName: userName}});
+            navigate("/lobby", {state: {sessionId: sessionId, userName: userName, videoEnabled: videoEnabled, audioEnabled, audioEnabled}});
             
         }
         

@@ -12,6 +12,8 @@ function Room () {
     const [mainStreamManager, setMainStreamManager] = useState(undefined);
     const [publisher, setPublisher] = useState(undefined);
     const [subscribers, setSubscribers] = useState([]);
+    const [videoEnabled, setVideoEnabled] = useState(true);
+    const [audioEnabled, setAudioEnabled] = useState(true);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,6 +28,8 @@ function Room () {
         }
         setMySessionId(location.state.sessionId);
         setMyUserName(location.state.userName);
+        setVideoEnabled(location.state.videoEnabled);
+        setAudioEnabled(location.state.audioEnabled);
         console.log(mySessionId);
         window.addEventListener('beforeunload', onbeforeunload);
         
@@ -93,8 +97,8 @@ function Room () {
                     let publisher = await OV.initPublisherAsync(undefined, {
                         audioSource: undefined,
                         videoSource: undefined,
-                        publishAudio: true,
-                        publishVideo: true,
+                        publishAudio: videoEnabled,
+                        publishVideo: audioEnabled,
                         resolution: '640x480',
                         frameRate: 30,
                         insertMode: 'APPEND',
