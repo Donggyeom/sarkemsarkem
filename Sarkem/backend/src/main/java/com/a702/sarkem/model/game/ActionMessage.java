@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class ActionMessage {
 
-	private ActionCode code;	
 	// 액션 코드
 	public enum ActionCode {
 		OPTION_CHANGED,			// 게임 설정 변경 
