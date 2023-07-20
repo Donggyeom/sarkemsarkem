@@ -4,6 +4,7 @@ import React from "react";
 import UserVideoComponent from "../components/UserVideoComponent";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import "../css/Room.css"
 
 function Room () {
     const [mySessionId, setMySessionId] = useState('tmpSession42');
@@ -137,7 +138,6 @@ function Room () {
                     // 내 디바이스 on/off 상태 게시
                     publisher.publishVideo(videoEnabled);
                     publisher.publishAudio(audioEnabled);
-
                     // 내 디바이스에서 비디오 객체 추출
                     const devices = await OV.getDevices();
                     const videoDevices = devices.filter((device) => device.kind === 'videoinput');
@@ -236,17 +236,17 @@ function Room () {
 
                 </div>
             ) : null} */}
-            <div id="video-container" className="col-md-6">
+            <div id="video-container" className="">
 
                 {publisher !== undefined ? (
-                    <div className="stream-container col-md-6 col-xs-6" onClick={() => console.log(publisher)}>
+                    <div className="stream-container" onClick={() => console.log(publisher)}>
                         <UserVideoComponent streamManager={publisher} />
                     </div>
                 ) : null}
                 {subscribers.map((sub, i) => (
                     <div
                         key={i}
-                        className="stream-container col-md-6 col-xs-6"
+                        className="stream-container"
                         onClick={() => toggleSubbsVideoHandler(sub)}
                     >
                         <span>{sub.id}</span>
