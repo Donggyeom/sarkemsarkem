@@ -123,7 +123,8 @@ function Room () {
                     session.publish(publisher);
                     const devices = await OV.getDevices();
                     const videoDevices = devices.filter((device) => device.kind === 'videoinput');
-                    
+                   publisher.publishVideo(videoEnabled);
+                   publisher.publishAudio(audioEnabled);
                     // 기본 설정된 캠 정보 추출
                     const currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].id;
                     // const currentVideoDevice = videoDevices.find((device) => device.deviceId === currentVideoDeviceId);
@@ -168,7 +169,6 @@ function Room () {
 
     const copyGameLink = async () => {
         await navigator.clipboard.writeText("localhost:3000/"+mySessionId).then(alert("링크를 복사함"));
-        console.log()
     }
 
     const toggleSubbsVideoHandler = (sub) => {
@@ -202,7 +202,7 @@ function Room () {
                     value="캠 On/Off"
                 />
 
-<input
+                <input
                     className="btn btn-large btn-danger"
                     type="button"
                     id="buttonLeaveSession"

@@ -9,7 +9,7 @@ function Join() {
     const [audioEnabled, setAudioEnabled] = useState(true);
     const [userName, setUserName] = useState("유저 이름");
     const [sessionId, setSessionId] = useState(useLocation().pathname.slice(1));
-
+    const [isHost, setIsHost] = useState(false);
     const videoRef = useRef(null);
     const audioRef = useRef(null);
     
@@ -63,6 +63,10 @@ function Join() {
         }
 
     useEffect(()=>{
+        console.log(location);
+        if(location.state && location.state.host) {
+            setIsHost(true);
+        }
         getUserCamera();
         getUserAudio();
     }, [videoRef])
@@ -76,7 +80,7 @@ function Join() {
             <input onChange={changeUser} placeholder='이름'/>
             <button onClick={toggleVideo}>카메라 on/off</button>
             <button onClick={toggleAudio}>마이크 on/off</button>
-            <button onClick={joinRoom}>join</button>
+            <button id="joinButton" onClick={joinRoom} >{isHost ? "방 만들기" : "입장하기"}</button>
             
         </div>
         </>

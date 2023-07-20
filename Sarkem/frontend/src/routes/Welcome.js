@@ -6,7 +6,7 @@ function Welcome() {
     const location = useLocation();
     
     const goToCreateRoom = () => {
-        navigate(`/G${Math.floor(Math.random() * 100)}`);
+        navigate(`/G${Math.floor(Math.random() * 100)}`, {state: {host: true}});
     }
     return (
         <>
