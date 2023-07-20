@@ -1,4 +1,4 @@
-package com.a702.sarkem.game.config;
+package com.a702.sarkem.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

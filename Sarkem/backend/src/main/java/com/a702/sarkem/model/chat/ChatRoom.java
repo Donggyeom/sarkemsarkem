@@ -1,4 +1,4 @@
-package com.a702.sarkem.game.model;
+package com.a702.sarkem.model.chat;
 
 import lombok.Getter;
 import lombok.Setter;
