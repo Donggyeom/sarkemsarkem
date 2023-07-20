@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 function Room () {
     const [mySessionId, setMySessionId] = useState('tmpSession42');
-    const [myUserName, setMyUserName] = useState('이름모를유저' + Math.floor(Math.random() * 100));
+    const [myUserName, setMyUserName] = useState('');
     const [session, setSession] = useState(undefined);
     const [mainStreamManager, setMainStreamManager] = useState(undefined);
     const [publisher, setPublisher] = useState(undefined);
@@ -20,21 +20,25 @@ function Room () {
 
     // openvidu 객체 생성
     const OV = new OpenVidu();
+
+    // 화면 렌더링 시 최초 1회 실행
     useEffect(() => {
-        console.log(location.state);
         if (location.state === null || location.state.sessionId === null) {
             console.log("세션 정보가 없습니다.")
             navigate("/");
             return;
         }
+
+        // 이전 화면으로부터 받아온 데이터 세팅
         setMySessionId(location.state.sessionId);
         setMyUserName(location.state.userName);
         setVideoEnabled(location.state.videoEnabled);
         setAudioEnabled(location.state.audioEnabled);
-        console.log(location.state);
-        console.log(location.state.videoEnabled)
+        
+        // 윈도우 객체에 화면 종료 이벤트 추가
         window.addEventListener('beforeunload', onbeforeunload);
         
+        // 세션에 가입
         joinSession();
         return () => {
             window.removeEventListener('beforeunload', onbeforeunload);
@@ -42,21 +46,17 @@ function Room () {
         }
     }, []);
 
-
-    // useEffect(() => {
-    //     setSubscribers((preSubscribers) => [...preSubscribers])
-    // }, [publisher, session]);
-
+    // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
     const onbeforeunload = () => {
         leaveSession();
-        
     }
 
+    // 세션 해제
     const leaveSession = () => {
-        if (session) {
-            session.disconnect();
-        }
-
+        // 세션 연결 종료
+        if (session) session.disconnect();
+        
+        // 데이터 초기화
         setSession(undefined);
         setSubscribers([]);
         setMySessionId(mySessionId);
@@ -66,12 +66,14 @@ function Room () {
         navigate("/")
     }
 
+    // 내 웹캠 On/Off
     const toggleVideo = () => {
         const enabled = !videoEnabled;
         setVideoEnabled(enabled);
         publisher.publishVideo(enabled);
     }
     
+    // 내 마이크 On/Off
     const toggleAudio = () => {
         const enabled = !audioEnabled;
         setAudioEnabled(enabled);
@@ -79,17 +81,21 @@ function Room () {
     }
     
 
-    // 세션에 구독중이던 특정 유저 삭제
+    // 특정 유저가 룸을 떠날 시 subscribers 배열에서 삭제
     const deleteSubscriber = (streamManager) => {
         setSubscribers((preSubscribers) => preSubscribers.filter((subscriber) => subscriber !== streamManager))
     }
 
 
+    // 토큰 생성하는 함수
     const getToken = async () => {
+        // 내 세션ID에 해당하는 세션 생성
         const sessionId = await createSession(mySessionId);
+        // 세션에 해당하는 토큰 요청
         return await createToken(sessionId);
     }
 
+    // 서버에 요청하여 세션 생성하는 함수
     const createSession = async (sessionId) => {
         const response = await axios.post('/api/sessions', { customSessionId: sessionId }, {
             headers: { 'Content-Type': 'application/json', },
@@ -97,6 +103,7 @@ function Room () {
         return response.data; // The sessionId
     }
 
+    // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
         const response = await axios.post('/api/sessions/' + sessionId + '/connections', {}, {
             headers: { 'Content-Type': 'application/json', },
@@ -104,12 +111,16 @@ function Room () {
         return response.data; // The token
     }
 
+    // 세션 객체 생성 시 실행
     useEffect(() => {
         if(session) {
+            // 토큰 생성
             getToken().then(async (response) => {
                 try {
+                    // 생성된 토큰을 통해 세션에 연결 요청
                     await session.connect(response, {clientData: myUserName})
-    
+                    
+                    // 내 통신정보(퍼블리셔) 객체 생성
                     let publisher = await OV.initPublisherAsync(undefined, {
                         audioSource: undefined,
                         videoSource: undefined,
@@ -120,57 +131,66 @@ function Room () {
                         insertMode: 'APPEND',
                         mirror: true,
                     });
+                    // 세션에 내 정보 게시
                     session.publish(publisher);
+
+                    // 내 디바이스 on/off 상태 게시
+                    publisher.publishVideo(videoEnabled);
+                    publisher.publishAudio(audioEnabled);
+
+                    // 내 디바이스에서 비디오 객체 추출
                     const devices = await OV.getDevices();
                     const videoDevices = devices.filter((device) => device.kind === 'videoinput');
-                   publisher.publishVideo(videoEnabled);
-                   publisher.publishAudio(audioEnabled);
-                    // 기본 설정된 캠 정보 추출
+                   
+                    // 기본 설정된 캠 정보 추출 (아직 필요한지 모르겠음)
                     const currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].id;
                     // const currentVideoDevice = videoDevices.find((device) => device.deviceId === currentVideoDeviceId);
+                    
+                    // 화상 채팅 통신 상태 갱신
                     setPublisher(publisher);
                     setMainStreamManager(publisher);
-                    console.log(subscribers);
                 } catch (error) {
                     console.log(error);
+                    alert("세션 연결 오류");
+                    navigate("/");
                 }
             });
         }
     }, [session])
+
+    // 세션 생성 및 이벤트 정보 등록
     const joinSession = async () => {
     
         // 세션 시작
         const newSession = OV.initSession();
         
-        console.log("연결을 몇번을 하는건데");
     
         // 세션에서 발생하는 구체적인 이벤트 정의
         // stream 생성 이벤트 발생 시
         newSession.on('streamCreated', (event) => {
-            console.log("새로운 유저 입장")
             const subscriber = newSession.subscribe(event.stream, undefined);
-            
             setSubscribers((subscribers) => [...subscribers, subscriber]);
-
-            console.log(subscribers);
+            console.log(JSON.parse(event.stream.streamManager.stream.connection.data).clientData, "님이 접속했습니다.");
         })
 
         // stream 종료 이벤트 발생 시
         newSession.on('streamDestroyed', (event) => {
-            console.log("유저 종료")
             deleteSubscriber(event.stream.streamManager);
+            console.log(JSON.parse(event.stream.streamManager.stream.connection.data).clientData, "님이 접속을 종료했습니다.")
         })
 
         // stream 예외 이벤트 발생 시
         newSession.on('exception', (exception) => console.warn(exception));
 
+        // 세션 갱신
         setSession(newSession);
     }
 
     const copyGameLink = async () => {
-        await navigator.clipboard.writeText("localhost:3000/"+mySessionId).then(alert("링크를 복사함"));
+        await navigator.clipboard.writeText("localhost:3000/"+mySessionId).then(alert("게임 링크가 복사되었습니다."));
     }
 
+    // 다른 유저 카메라 on/off 하는 함수
     const toggleSubbsVideoHandler = (sub) => {
         console.log(sub);
         sub.subscribeToVideo(!sub.properties.subscribeToVideo);
@@ -179,7 +199,7 @@ function Room () {
     return (
         <div id="session">
             <div id="session-header">
-                <h1 id="session-title">roomId: {mySessionId}</h1>
+                <h1 id="session-title">Room ID: {mySessionId}</h1>
                 <input
                     className="btn btn-large btn-danger"
                     type="button"
@@ -199,7 +219,7 @@ function Room () {
                     type="button"
                     id="buttonLeaveSession"
                     onClick={toggleVideo}
-                    value="캠 On/Off"
+                    value={`캠 ${videoEnabled ? "OFF" : "ON"}`}
                 />
 
                 <input
@@ -207,7 +227,7 @@ function Room () {
                     type="button"
                     id="buttonLeaveSession"
                     onClick={toggleAudio}
-                    value="마이크 On/Off"
+                    value={`마이크 ${audioEnabled ? "OFF" : "N"}`}
                 />
             </div>
             {/* {mainStreamManager !== undefined ? (
@@ -224,16 +244,10 @@ function Room () {
                     </div>
                 ) : null}
                 {subscribers.map((sub, i) => (
-                    
                     <div
                         key={i}
                         className="stream-container col-md-6 col-xs-6"
-                        onClick={() =>
-                            //console.log(sub);
-                            toggleSubbsVideoHandler(sub)
-                            //sub.subscribeToVideo(!sub.properties.subscribeToAudio);
-                            //setSubscribers((prevSubscribers) => [...prevSubscribers])
-                        }
+                        onClick={() => toggleSubbsVideoHandler(sub)}
                     >
                         <span>{sub.id}</span>
                         <UserVideoComponent streamManager={sub} />
