@@ -25,6 +25,7 @@ function Room () {
         if (location.state === null || location.state.sessionId === null) {
             console.log("세션 정보가 없습니다.")
             navigate("/");
+            return;
         }
         setMySessionId(location.state.sessionId);
         setMyUserName(location.state.userName);
@@ -170,6 +171,11 @@ function Room () {
         console.log()
     }
 
+    const toggleSubbsVideoHandler = (sub) => {
+        console.log(sub);
+        sub.subscribeToVideo(!sub.properties.subscribeToVideo);
+        sub.properties.subscribeToVideo = !sub.properties.subscribeToVideo
+    }
     return (
         <div id="session">
             <div id="session-header">
@@ -222,11 +228,12 @@ function Room () {
                     <div
                         key={i}
                         className="stream-container col-md-6 col-xs-6"
-                        onClick={() => {
-                            console.log(sub);
-                            sub.subscribeToVideo(!sub.properties.subscribeToAudio);
-                            setSubscribers((prevSubscribers) => [...prevSubscribers])
-                        }}
+                        onClick={() =>
+                            //console.log(sub);
+                            toggleSubbsVideoHandler(sub)
+                            //sub.subscribeToVideo(!sub.properties.subscribeToAudio);
+                            //setSubscribers((prevSubscribers) => [...prevSubscribers])
+                        }
                     >
                         <span>{sub.id}</span>
                         <UserVideoComponent streamManager={sub} />
