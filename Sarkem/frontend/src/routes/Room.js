@@ -89,7 +89,7 @@ function Room () {
         if(session) {
             getToken().then(async (response) => {
                 try {
-                    await session.connect(response, {cliendtData: myUserName})
+                    await session.connect(response, {clientData: myUserName})
     
                     let publisher = await OV.initPublisherAsync(undefined, {
                         audioSource: undefined,
