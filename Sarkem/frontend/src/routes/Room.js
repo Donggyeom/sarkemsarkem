@@ -2,9 +2,13 @@ import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import React from "react";
 import UserVideoComponent from "../components/UserVideoComponent";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import SockJS from 'sockjs-client';
+import {Stomp} from "@stomp/stompjs";
+
 import "../css/Room.css"
+import Chat from "../components/Chat";
 
 function Room () {
     const [mySessionId, setMySessionId] = useState('tmpSession42');
@@ -15,6 +19,11 @@ function Room () {
     const [subscribers, setSubscribers] = useState([]);
     const [videoEnabled, setVideoEnabled] = useState(true);
     const [audioEnabled, setAudioEnabled] = useState(true);
+    const [message, setMessage] = useState("");
+    const [chatMessages, setChatMessages] = useState([]);
+    const [dead, setDead] = useState(false);
+
+    let stompCilent = useRef({});
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -41,6 +50,7 @@ function Room () {
         
         // 세션에 가입
         joinSession();
+        connect();
         return () => {
             window.removeEventListener('beforeunload', onbeforeunload);
             leaveSession();
@@ -196,6 +206,57 @@ function Room () {
         sub.subscribeToVideo(!sub.properties.subscribeToVideo);
         sub.properties.subscribeToVideo = !sub.properties.subscribeToVideo
     }
+
+    const connect = (event) => {
+        let socket = new SockJS("http://localhost:8080/ws-stomp");
+        stompCilent.current = Stomp.over(socket);
+        stompCilent.current.connect({}, () => {
+         setTimeout(function() {
+           onConnected();
+         }, 500);
+        })
+       }
+     
+       function onConnected() {
+         // user 개인 구독
+         stompCilent.current.subscribe(`/sub/chat/room/CHAT_${location.state.sessionId}`, function(message){
+           setChatMessages((messages) => [...messages, message.body]);
+  
+           console.log(message.body);
+         })
+         // stompClient.current.subscribe('/room/' + chatObj.id + '/queue/messages', onMessageReceived);
+       }
+
+       const sendMessage = async (e) => {
+        e.preventDefault();
+        await stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'TALK', roomId:"CHAT_"+mySessionId, sender:myUserName, message: message}))
+        setMessage("");
+      }
+       const ChangeMessages = (event) => {
+        setMessage(event.target.value);
+      }
+
+      const enterChatRoom =  () => {
+        console.log("채팅방 생성");
+        axios.post(`http://localhost:8080/chat/room?name=CHAT_${location.state.sessionId}`)
+        .then(res => {
+          console.log(res);
+        })
+        
+        axios.get(`http://localhost:8080/chat/room/CHAT_${location.state.sessionId}`)
+        .then(res => {
+          console.log(res);
+        })
+        // onConnected();
+        stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomId:"CHAT_"+mySessionId, sender:myUserName}));
+      }
+
+    const deathAndOpenChat = () => {
+        if (dead) return;
+        enterChatRoom();
+        setDead(!dead);
+        
+    }
     return (
         <div id="session">
             <div id="session-header">
@@ -221,7 +282,6 @@ function Room () {
                     onClick={toggleVideo}
                     value={`캠 ${videoEnabled ? "OFF" : "ON"}`}
                 />
-
                 <input
                     className="btn btn-large btn-danger"
                     type="button"
@@ -229,6 +289,13 @@ function Room () {
                     onClick={toggleAudio}
                     value={`마이크 ${audioEnabled ? "OFF" : "N"}`}
                 />
+                <input
+                    className="btn btn-large btn-danger"
+                    type="button"
+                    id="buttonLeaveSession"
+                    onClick={deathAndOpenChat}
+                    value={`죽기`}
+                /> 
             </div>
             {/* {mainStreamManager !== undefined ? (
                 <div id="main-video" className="col-md-6">
@@ -253,6 +320,15 @@ function Room () {
                         <UserVideoComponent streamManager={sub} />
                     </div>
                 ))}
+            </div>
+            
+            <div className="chat-container" style={{display: dead ? "block" : "none"}}>
+            <form onSubmit={sendMessage}>
+            <input onChange={ChangeMessages} placeholder='메시지 입력' value={message}></input>
+            </form>
+            {chatMessages.map((i) => 
+          <div>{i}</div>)}
+
             </div>
         </div>
     );
