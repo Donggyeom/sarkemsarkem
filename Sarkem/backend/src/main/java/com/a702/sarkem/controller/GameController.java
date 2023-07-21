@@ -4,11 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
+import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.chat.ChatMessage;
 import com.a702.sarkem.model.game.ActionMessage;
 import com.a702.sarkem.model.game.SystemMessage;
 import com.a702.sarkem.redis.GamePublisher;
 import com.a702.sarkem.service.GameManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Controller
 public class GameController {
+
+	private final ObjectMapper objectMapper;
 
 	private final GameManager gameManager;
 	
@@ -25,7 +31,24 @@ public class GameController {
 	@MessageMapping("/game/action")
 	public void message(ActionMessage message) {
 		log.debug(message.toString());
-        
+		
+		switch(message.getCode()) {
+		case GAME_START:
+			gameManager.gameStart("testroom");
+			break;
+		case EXPULSION_VOTE:
+			break;
+		case HIDDENMISSION_SUCCESS:
+			break;
+		case OPTION_CHANGED:
+			break;
+		case TARGET_SELECT:
+			break;
+		case TARGET_SELECTED:
+			break;
+		default:
+			break;
+		}
 	}
 	
 	/**
