@@ -97,7 +97,13 @@ function Room () {
     // 토큰 생성하는 함수
     const getToken = async () => {
         // 내 세션ID에 해당하는 세션 생성
-        const sessionId = await createSession(mySessionId);
+        let sessionId;
+        if (location.state.isHost){
+            console.log("방장이므로 세션을 생성합니다.")
+            sessionId = await createSession(mySessionId);
+        } else {
+            sessionId = mySessionId;
+        }
         // 세션에 해당하는 토큰 요청
         return await createToken(sessionId);
     }
@@ -160,6 +166,11 @@ function Room () {
                     alert("세션 연결 오류");
                     navigate("/");
                 }
+                /**
+                 * 세션 생성하고, 토큰 발급까지 끝나면 game 생성 api 전송하고, game 정보 요청 api 전송
+                 * 아마 router 설정에서 룸 (로비, 게임) 이렇게 나눈 다음에 네비게이션 처리를 해야할 것 같다.
+                 * 게임이 끝나고 로비로 돌아오면 또 화상채팅 세션을 만들게 되니까
+                 */
             });
         }
     }, [session])
