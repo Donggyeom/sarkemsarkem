@@ -48,8 +48,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": 48,
-											"top": 16,
+											"left": 80,
+											"top": 80,
 											"height": 13
 										},
 										{
@@ -59,8 +59,8 @@
 												"$ref": "AAAAAAGJcLLcei8HNFM="
 											},
 											"font": "Arial;13;1",
-											"left": 309,
-											"top": 302,
+											"left": 325,
+											"top": 334,
 											"width": 287,
 											"height": 13,
 											"text": "service"
@@ -73,8 +73,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": 48,
-											"top": 16,
+											"left": 80,
+											"top": 80,
 											"width": 73.67724609375,
 											"height": 13,
 											"text": "(from Model)"
@@ -87,15 +87,15 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": 48,
-											"top": 16,
+											"left": 80,
+											"top": 80,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 304,
-									"top": 295,
+									"left": 320,
+									"top": 327,
 									"width": 297,
 									"height": 25,
 									"stereotypeLabel": {
@@ -119,10 +119,10 @@
 							],
 							"font": "Arial;13;0",
 							"containerChangeable": true,
-							"left": 304,
-							"top": 280,
+							"left": 320,
+							"top": 312,
 							"width": 297,
-							"height": 265,
+							"height": 289,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJcLLcei8HNFM="
 							}
@@ -155,7 +155,7 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -1056,
+											"left": -1072,
 											"top": 768,
 											"height": 13
 										},
@@ -166,7 +166,7 @@
 												"$ref": "AAAAAAGJcLMA5S8h614="
 											},
 											"font": "Arial;13;1",
-											"left": 93,
+											"left": 85,
 											"top": 694,
 											"width": 199,
 											"height": 13,
@@ -180,7 +180,7 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -1056,
+											"left": -1072,
 											"top": 768,
 											"width": 73.67724609375,
 											"height": 13,
@@ -194,14 +194,14 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -1056,
+											"left": -1072,
 											"top": 768,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 88,
+									"left": 80,
 									"top": 687,
 									"width": 209,
 									"height": 25,
@@ -235,10 +235,10 @@
 							],
 							"font": "Arial;13;0",
 							"containerChangeable": true,
-							"left": 88,
+							"left": 80,
 							"top": 672,
 							"width": 209,
-							"height": 329,
+							"height": 489,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJcLMA5S8h614="
 							}
@@ -433,7 +433,7 @@
 											"font": "Arial;13;1",
 											"left": 77,
 											"top": 334,
-											"width": 191,
+											"width": 207,
 											"height": 13,
 											"text": "controller"
 										},
@@ -468,7 +468,7 @@
 									"font": "Arial;13;0",
 									"left": 72,
 									"top": 327,
-									"width": 201,
+									"width": 217,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGJcLIhWi7nTK4="
@@ -484,12 +484,17 @@
 									}
 								}
 							],
+							"containedViews": [
+								{
+									"$ref": "AAAAAAGJcLwcSy+j+18="
+								}
+							],
 							"font": "Arial;13;0",
 							"containerChangeable": true,
 							"left": 72,
 							"top": 312,
-							"width": 201,
-							"height": 193,
+							"width": 217,
+							"height": 345,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJcLIhWi7mNQk="
 							}
@@ -536,7 +541,7 @@
 											"visible": false,
 											"font": "Arial;13;0",
 											"left": 32,
-											"top": 48,
+											"top": 64,
 											"height": 13
 										},
 										{
@@ -547,7 +552,7 @@
 											},
 											"font": "Arial;13;1",
 											"left": 125,
-											"top": 367,
+											"top": 375,
 											"width": 92.8408203125,
 											"height": 13,
 											"text": "MainController"
@@ -561,7 +566,7 @@
 											"visible": false,
 											"font": "Arial;13;0",
 											"left": 32,
-											"top": 48,
+											"top": 64,
 											"width": 77.9365234375,
 											"height": 13,
 											"text": "(from Model)"
@@ -575,14 +580,14 @@
 											"visible": false,
 											"font": "Arial;13;0",
 											"left": 32,
-											"top": 48,
+											"top": 64,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 120,
-									"top": 360,
+									"top": 368,
 									"width": 102.8408203125,
 									"height": 25,
 									"stereotypeLabel": {
@@ -609,7 +614,7 @@
 									},
 									"font": "Arial;13;0",
 									"left": 120,
-									"top": 385,
+									"top": 393,
 									"width": 102.8408203125,
 									"height": 10
 								},
@@ -622,11 +627,64 @@
 									"model": {
 										"$ref": "AAAAAAGJboHpiRS4e3k="
 									},
+									"subViews": [
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcW952jACwT0=",
+											"_parent": {
+												"$ref": "AAAAAAGJboHpiRTBo1E="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcW951i//29g="
+											},
+											"font": "Arial;13;0",
+											"left": 125,
+											"top": 408,
+											"width": 92.8408203125,
+											"height": 13,
+											"text": "+게임방 생성()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcW+myzAJqYY=",
+											"_parent": {
+												"$ref": "AAAAAAGJboHpiRTBo1E="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcW+mxTAGQjg="
+											},
+											"font": "Arial;13;0",
+											"left": 125,
+											"top": 423,
+											"width": 92.8408203125,
+											"height": 13,
+											"text": "+게임방 접속()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcW/c1jAQWiM=",
+											"_parent": {
+												"$ref": "AAAAAAGJboHpiRTBo1E="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcW/c0jAN4E0="
+											},
+											"font": "Arial;13;0",
+											"left": 125,
+											"top": 438,
+											"width": 92.8408203125,
+											"height": 13,
+											"text": "+게임방 조회()",
+											"horizontalAlignment": 0
+										}
+									],
 									"font": "Arial;13;0",
 									"left": 120,
-									"top": 395,
+									"top": 403,
 									"width": 102.8408203125,
-									"height": 10
+									"height": 53
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -640,8 +698,8 @@
 									"visible": false,
 									"font": "Arial;13;0",
 									"left": 16,
-									"top": 24,
-									"width": 10,
+									"top": 32,
+									"width": 92.01806640625,
 									"height": 10
 								},
 								{
@@ -656,7 +714,7 @@
 									"visible": false,
 									"font": "Arial;13;0",
 									"left": 16,
-									"top": 24,
+									"top": 32,
 									"width": 10,
 									"height": 10
 								}
@@ -664,9 +722,9 @@
 							"font": "Arial;13;0",
 							"containerChangeable": true,
 							"left": 120,
-							"top": 360,
+							"top": 368,
 							"width": 102.8408203125,
-							"height": 45,
+							"height": 88,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJboHpiRS7xXE="
 							},
@@ -834,13 +892,30 @@
 											"height": 13,
 											"text": "+actionCode",
 											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGJcY7g+jCcKU0=",
+											"_parent": {
+												"$ref": "AAAAAAGJcKtewS5fumI="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcY7g8zCZ/nM="
+											},
+											"font": "Arial;13;0",
+											"left": 653,
+											"top": 827,
+											"width": 101.1689453125,
+											"height": 13,
+											"text": "+messgae",
+											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 648,
 									"top": 777,
 									"width": 111.1689453125,
-									"height": 53
+									"height": 68
 								},
 								{
 									"_type": "UMLOperationCompartmentView",
@@ -853,7 +928,7 @@
 									},
 									"font": "Arial;13;0",
 									"left": 648,
-									"top": 830,
+									"top": 845,
 									"width": 111.1689453125,
 									"height": 10
 								},
@@ -898,7 +973,7 @@
 							"left": 648,
 							"top": 752,
 							"width": 111.1689453125,
-							"height": 88,
+							"height": 103,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJcKtewS5axOE="
 							},
@@ -1292,7 +1367,7 @@
 											"font": "Arial;13;1",
 											"left": 661,
 											"top": 623,
-											"width": 101.1689453125,
+											"width": 105.13623046875,
 											"height": 13,
 											"text": "SystemMessage"
 										},
@@ -1327,7 +1402,7 @@
 									"font": "Arial;13;0",
 									"left": 656,
 									"top": 616,
-									"width": 111.1689453125,
+									"width": 115.13623046875,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGJbSqYmvLjMl8="
@@ -1364,7 +1439,7 @@
 											"font": "Arial;13;0",
 											"left": 661,
 											"top": 646,
-											"width": 101.1689453125,
+											"width": 105.13623046875,
 											"height": 13,
 											"text": "+code",
 											"horizontalAlignment": 0
@@ -1378,6 +1453,7 @@
 											"model": {
 												"$ref": "AAAAAAGJbSvzWvMVCLg="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 661,
 											"top": 661,
@@ -1395,9 +1471,10 @@
 											"model": {
 												"$ref": "AAAAAAGJbSwWL/McaHY="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 661,
-											"top": 676,
+											"top": 661,
 											"width": 101.1689453125,
 											"height": 13,
 											"text": "+subId",
@@ -1412,20 +1489,38 @@
 											"model": {
 												"$ref": "AAAAAAGJbSwoy/MjIDQ="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 661,
-											"top": 691,
+											"top": 661,
 											"width": 101.1689453125,
 											"height": 13,
 											"text": "+Object",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGJcY3fKTCVUWQ=",
+											"_parent": {
+												"$ref": "AAAAAAGJbSqYmvLnbaU="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcY3fIjCSrhc="
+											},
+											"font": "Arial;13;0",
+											"left": 661,
+											"top": 661,
+											"width": 105.13623046875,
+											"height": 13,
+											"text": "+message: Object",
 											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 656,
 									"top": 641,
-									"width": 111.1689453125,
-									"height": 68
+									"width": 115.13623046875,
+									"height": 38
 								},
 								{
 									"_type": "UMLOperationCompartmentView",
@@ -1438,8 +1533,8 @@
 									},
 									"font": "Arial;13;0",
 									"left": 656,
-									"top": 709,
-									"width": 111.1689453125,
+									"top": 679,
+									"width": 115.13623046875,
 									"height": 10
 								},
 								{
@@ -1482,7 +1577,7 @@
 							"containerChangeable": true,
 							"left": 656,
 							"top": 616,
-							"width": 111.1689453125,
+							"width": 115.13623046875,
 							"height": 103,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJbSqYmvLirGM="
@@ -1528,7 +1623,7 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -352,
+											"left": -368,
 											"top": 624,
 											"height": 13
 										},
@@ -1539,11 +1634,11 @@
 												"$ref": "AAAAAAGJbSc9WPKiJ+U="
 											},
 											"font": "Arial;13;1",
-											"left": 149,
+											"left": 141,
 											"top": 743,
 											"width": 105.4853515625,
 											"height": 13,
-											"text": "SystemPublisher"
+											"text": "GamePublisher"
 										},
 										{
 											"_type": "LabelView",
@@ -1553,7 +1648,7 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -352,
+											"left": -368,
 											"top": 624,
 											"width": 77.9365234375,
 											"height": 13,
@@ -1567,14 +1662,14 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -352,
+											"left": -368,
 											"top": 624,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 144,
+									"left": 136,
 									"top": 736,
 									"width": 115.4853515625,
 									"height": 25,
@@ -1601,7 +1696,7 @@
 										"$ref": "AAAAAAGJbSc9WPKfQ78="
 									},
 									"font": "Arial;13;0",
-									"left": 144,
+									"left": 136,
 									"top": 761,
 									"width": 115.4853515625,
 									"height": 10
@@ -1616,7 +1711,7 @@
 										"$ref": "AAAAAAGJbSc9WPKfQ78="
 									},
 									"font": "Arial;13;0",
-									"left": 144,
+									"left": 136,
 									"top": 771,
 									"width": 115.4853515625,
 									"height": 10
@@ -1632,7 +1727,7 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": -272,
+									"left": -280,
 									"top": 392,
 									"width": 10,
 									"height": 10
@@ -1648,7 +1743,7 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": -272,
+									"left": -280,
 									"top": 392,
 									"width": 10,
 									"height": 10
@@ -1659,7 +1754,7 @@
 							},
 							"font": "Arial;13;0",
 							"containerChangeable": true,
-							"left": 144,
+							"left": 136,
 							"top": 736,
 							"width": 115.4853515625,
 							"height": 45,
@@ -1707,7 +1802,7 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -256,
+											"left": -272,
 											"top": 704,
 											"height": 13
 										},
@@ -1718,7 +1813,7 @@
 												"$ref": "AAAAAAGJbSZiEvJMXZQ="
 											},
 											"font": "Arial;13;1",
-											"left": 141,
+											"left": 133,
 											"top": 807,
 											"width": 114.16259765625,
 											"height": 13,
@@ -1732,7 +1827,7 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -256,
+											"left": -272,
 											"top": 704,
 											"width": 77.9365234375,
 											"height": 13,
@@ -1746,14 +1841,14 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -256,
+											"left": -272,
 											"top": 704,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 136,
+									"left": 128,
 									"top": 800,
 									"width": 124.16259765625,
 									"height": 25,
@@ -1780,7 +1875,7 @@
 										"$ref": "AAAAAAGJbSZiEvJJkK4="
 									},
 									"font": "Arial;13;0",
-									"left": 136,
+									"left": 128,
 									"top": 825,
 									"width": 124.16259765625,
 									"height": 10
@@ -1795,7 +1890,7 @@
 										"$ref": "AAAAAAGJbSZiEvJJkK4="
 									},
 									"font": "Arial;13;0",
-									"left": 136,
+									"left": 128,
 									"top": 835,
 									"width": 124.16259765625,
 									"height": 10
@@ -1811,7 +1906,7 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": -224,
+									"left": -232,
 									"top": 432,
 									"width": 10,
 									"height": 10
@@ -1827,7 +1922,7 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": -224,
+									"left": -232,
 									"top": 432,
 									"width": 10,
 									"height": 10
@@ -1838,7 +1933,7 @@
 							},
 							"font": "Arial;13;0",
 							"containerChangeable": true,
-							"left": 136,
+							"left": 128,
 							"top": 800,
 							"width": 124.16259765625,
 							"height": 45,
@@ -1886,8 +1981,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -603,
-											"top": 752,
+											"left": -619,
+											"top": 912,
 											"height": 13
 										},
 										{
@@ -1897,8 +1992,8 @@
 												"$ref": "AAAAAAGJbnoVMxRSQgM="
 											},
 											"font": "Arial;13;1",
-											"left": 157,
-											"top": 871,
+											"left": 149,
+											"top": 951,
 											"width": 96.8017578125,
 											"height": 13,
 											"text": "ChatPublisher"
@@ -1911,8 +2006,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -603,
-											"top": 752,
+											"left": -619,
+											"top": 912,
 											"width": 77.9365234375,
 											"height": 13,
 											"text": "(from redis)"
@@ -1925,15 +2020,15 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -603,
-											"top": 752,
+											"left": -619,
+											"top": 912,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 152,
-									"top": 864,
+									"left": 144,
+									"top": 944,
 									"width": 106.8017578125,
 									"height": 25,
 									"stereotypeLabel": {
@@ -1959,8 +2054,8 @@
 										"$ref": "AAAAAAGJbSbzovJ1zj0="
 									},
 									"font": "Arial;13;0",
-									"left": 152,
-									"top": 889,
+									"left": 144,
+									"top": 969,
 									"width": 106.8017578125,
 									"height": 10
 								},
@@ -1974,8 +2069,8 @@
 										"$ref": "AAAAAAGJbSbzovJ1zj0="
 									},
 									"font": "Arial;13;0",
-									"left": 152,
-									"top": 899,
+									"left": 144,
+									"top": 979,
 									"width": 106.8017578125,
 									"height": 10
 								},
@@ -1990,8 +2085,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": -264,
-									"top": 376,
+									"left": -272,
+									"top": 456,
 									"width": 10,
 									"height": 10
 								},
@@ -2006,8 +2101,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": -264,
-									"top": 376,
+									"left": -272,
+									"top": 456,
 									"width": 10,
 									"height": 10
 								}
@@ -2017,8 +2112,8 @@
 							},
 							"font": "Arial;13;0",
 							"containerChangeable": true,
-							"left": 152,
-							"top": 864,
+							"left": 144,
+							"top": 944,
 							"width": 106.8017578125,
 							"height": 45,
 							"nameCompartment": {
@@ -2065,8 +2160,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -624,
-											"top": 784,
+											"left": -640,
+											"top": 944,
 											"height": 13
 										},
 										{
@@ -2076,8 +2171,8 @@
 												"$ref": "AAAAAAGJbnpVahSQLx8="
 											},
 											"font": "Arial;13;1",
-											"left": 157,
-											"top": 935,
+											"left": 149,
+											"top": 1015,
 											"width": 96.8017578125,
 											"height": 13,
 											"text": "ChatSubscriber"
@@ -2090,8 +2185,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -624,
-											"top": 784,
+											"left": -640,
+											"top": 944,
 											"width": 77.9365234375,
 											"height": 13,
 											"text": "(from redis)"
@@ -2104,15 +2199,15 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": -624,
-											"top": 784,
+											"left": -640,
+											"top": 944,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 152,
-									"top": 928,
+									"left": 144,
+									"top": 1008,
 									"width": 106.8017578125,
 									"height": 25,
 									"stereotypeLabel": {
@@ -2138,8 +2233,8 @@
 										"$ref": "AAAAAAGJbnpVahSNK8U="
 									},
 									"font": "Arial;13;0",
-									"left": 152,
-									"top": 953,
+									"left": 144,
+									"top": 1033,
 									"width": 106.8017578125,
 									"height": 10
 								},
@@ -2153,8 +2248,8 @@
 										"$ref": "AAAAAAGJbnpVahSNK8U="
 									},
 									"font": "Arial;13;0",
-									"left": 152,
-									"top": 963,
+									"left": 144,
+									"top": 1043,
 									"width": 106.8017578125,
 									"height": 10
 								},
@@ -2169,8 +2264,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": -408,
-									"top": 472,
+									"left": -416,
+									"top": 552,
 									"width": 10,
 									"height": 10
 								},
@@ -2185,8 +2280,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": -408,
-									"top": 472,
+									"left": -416,
+									"top": 552,
 									"width": 10,
 									"height": 10
 								}
@@ -2196,8 +2291,8 @@
 							},
 							"font": "Arial;13;0",
 							"containerChangeable": true,
-							"left": 152,
-							"top": 928,
+							"left": 144,
+							"top": 1008,
 							"width": 106.8017578125,
 							"height": 45,
 							"nameCompartment": {
@@ -4229,7 +4324,7 @@
 											"top": 318,
 											"width": 117.17138671875,
 											"height": 13,
-											"text": "+player[]",
+											"text": "+playerCondition[]",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4241,6 +4336,7 @@
 											"model": {
 												"$ref": "AAAAAAGJbSU6nvIvybg="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
 											"top": 333,
@@ -4260,7 +4356,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 348,
+											"top": 333,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+히든미션발생여부",
@@ -4277,7 +4373,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 363,
+											"top": 348,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+히든미션성공여부",
@@ -4294,7 +4390,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 378,
+											"top": 363,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+페이즈",
@@ -4311,7 +4407,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 393,
+											"top": 378,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+라운드수",
@@ -4328,7 +4424,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 408,
+											"top": 393,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+회의시간",
@@ -4345,7 +4441,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 423,
+											"top": 408,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+날짜",
@@ -4362,7 +4458,7 @@
 											},
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 438,
+											"top": 423,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+타이머",
@@ -4373,7 +4469,7 @@
 									"left": 776,
 									"top": 313,
 									"width": 127.17138671875,
-									"height": 143
+									"height": 128
 								},
 								{
 									"_type": "UMLOperationCompartmentView",
@@ -4394,6 +4490,7 @@
 											"model": {
 												"$ref": "AAAAAAGJbqT9IRVJm6Y="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
 											"top": 461,
@@ -4411,9 +4508,10 @@
 											"model": {
 												"$ref": "AAAAAAGJbRmJa/D3myA="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 476,
+											"top": 463,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+게임시작()",
@@ -4428,6 +4526,7 @@
 											"model": {
 												"$ref": "AAAAAAGJbRmeXfD+AwI="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
 											"top": 491,
@@ -4445,9 +4544,10 @@
 											"model": {
 												"$ref": "AAAAAAGJbRnTV/EFN+E="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 506,
+											"top": 463,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+다음페이즈 진행()",
@@ -4462,9 +4562,10 @@
 											"model": {
 												"$ref": "AAAAAAGJbRpY8vEM9kc="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 521,
+											"top": 463,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+낮 투표 진행()",
@@ -4479,9 +4580,10 @@
 											"model": {
 												"$ref": "AAAAAAGJbRqWAPEThhs="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 536,
+											"top": 463,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+저녁 투표 진행()",
@@ -4496,9 +4598,10 @@
 											"model": {
 												"$ref": "AAAAAAGJbRqwlvEaiJY="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 551,
+											"top": 463,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+밤 특수능력 실행()",
@@ -4531,9 +4634,10 @@
 											"model": {
 												"$ref": "AAAAAAGJbSGBKvHVy3A="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 566,
+											"top": 463,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+히든미션 생성()",
@@ -4548,37 +4652,21 @@
 											"model": {
 												"$ref": "AAAAAAGJbSJmJvHq/Fg="
 											},
+											"visible": false,
 											"font": "Arial;13;0",
 											"left": 781,
-											"top": 581,
+											"top": 463,
 											"width": 117.17138671875,
 											"height": 13,
 											"text": "+역할배정()",
-											"horizontalAlignment": 0
-										},
-										{
-											"_type": "UMLOperationView",
-											"_id": "AAAAAAGJbSJ6wvH0hL8=",
-											"_parent": {
-												"$ref": "AAAAAAGJbQ+TBO85qaM="
-											},
-											"model": {
-												"$ref": "AAAAAAGJbSJ6vvHxSXo="
-											},
-											"font": "Arial;13;0",
-											"left": 781,
-											"top": 596,
-											"width": 117.17138671875,
-											"height": 13,
-											"text": "+Operation2()",
 											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 776,
-									"top": 456,
+									"top": 441,
 									"width": 127.17138671875,
-									"height": 158
+									"height": 10
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -4621,7 +4709,7 @@
 							"left": 776,
 							"top": 288,
 							"width": 127.17138671875,
-							"height": 356,
+							"height": 169,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJbQ+TA+8zKkw="
 							},
@@ -4915,8 +5003,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": 88,
-											"top": -56,
+											"left": 120,
+											"top": 8,
 											"height": 13
 										},
 										{
@@ -4926,9 +5014,9 @@
 												"$ref": "AAAAAAGJboJfuhTo6b0="
 											},
 											"font": "Arial;13;1",
-											"left": 333,
-											"top": 343,
-											"width": 112.35986328125,
+											"left": 349,
+											"top": 375,
+											"width": 114.4736328125,
 											"height": 13,
 											"text": "GameManager"
 										},
@@ -4940,8 +5028,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": 88,
-											"top": -56,
+											"left": 120,
+											"top": 8,
 											"width": 79.447265625,
 											"height": 13,
 											"text": "(from service)"
@@ -4954,16 +5042,16 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"left": 88,
-											"top": -56,
+											"left": 120,
+											"top": 8,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 328,
-									"top": 336,
-									"width": 122.35986328125,
+									"left": 344,
+									"top": 368,
+									"width": 124.4736328125,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGJboJfuhTptyo="
@@ -4998,9 +5086,9 @@
 												"$ref": "AAAAAAGJbqjFahWh4S4="
 											},
 											"font": "Arial;13;0",
-											"left": 333,
-											"top": 366,
-											"width": 112.35986328125,
+											"left": 349,
+											"top": 398,
+											"width": 114.4736328125,
 											"height": 13,
 											"text": "+gameRoomMap",
 											"horizontalAlignment": 0
@@ -5015,19 +5103,36 @@
 												"$ref": "AAAAAAGJbqjuAxWoX8w="
 											},
 											"font": "Arial;13;0",
-											"left": 333,
-											"top": 381,
-											"width": 112.35986328125,
+											"left": 349,
+											"top": 413,
+											"width": 114.4736328125,
 											"height": 13,
 											"text": "+gameSessionMap",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGJcZ+ofDCqE7g=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTt/Ps="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcZ+odDCn+wU="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 428,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+topics",
 											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 328,
-									"top": 361,
-									"width": 122.35986328125,
-									"height": 38
+									"left": 344,
+									"top": 393,
+									"width": 124.4736328125,
+									"height": 53
 								},
 								{
 									"_type": "UMLOperationCompartmentView",
@@ -5049,19 +5154,223 @@
 												"$ref": "AAAAAAGJbpM2MRUklWo="
 											},
 											"font": "Arial;13;0",
-											"left": 333,
-											"top": 404,
-											"width": 112.35986328125,
+											"left": 349,
+											"top": 451,
+											"width": 114.4736328125,
 											"height": 13,
-											"text": "+게임방생성()",
+											"text": "+유저 액선 수행()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcXQFMjAptuA=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcXQFJjAmq0Q="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 466,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+게임실행()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcYKeoTA0Vr8=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcYKelzAxOys="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 481,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+게임시작()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcYMvVjA7GTI=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcYMvTzA40kE="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 496,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+게임종료()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcYNnATBJvrQ=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcYNm9DBGHz4="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 511,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+낮 페이즈 수행()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcYR65TBnmbI=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcYR62TBkn8g="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 526,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+저녁 페이즈 수행()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcYOZ9DBQDFU=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcYOZ7DBNeKU="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 541,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+밤 페이즈 수행()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcYPETDBXhxk=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcYPERjBUmzg="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 556,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+히든미션 생성()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcYU8XjBxnyg=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcYU8VDBuhHU="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 571,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+역할배정()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcY+oNjCjpnc=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcY+oLDCgPvI="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 586,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+채팅연결()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcb2YvzCxe/E=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcb2YtjCuo18="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 601,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+게임방 생성()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcb2yFTC4f/g=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcb2yCTC1Kd8="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 616,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+게임방 접속()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcb41MTC/hlw=",
+											"_parent": {
+												"$ref": "AAAAAAGJboJfuhTuHL8="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcb41KjC85/g="
+											},
+											"font": "Arial;13;0",
+											"left": 349,
+											"top": 631,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+게임방 조회()",
 											"horizontalAlignment": 0
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 328,
-									"top": 399,
-									"width": 122.35986328125,
-									"height": 23
+									"left": 344,
+									"top": 446,
+									"width": 124.4736328125,
+									"height": 203
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -5074,8 +5383,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": 24,
-									"top": -40,
+									"left": 40,
+									"top": -8,
 									"width": 10,
 									"height": 10
 								},
@@ -5090,8 +5399,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
-									"left": 24,
-									"top": -40,
+									"left": 40,
+									"top": -8,
 									"width": 10,
 									"height": 10
 								}
@@ -5101,10 +5410,10 @@
 							},
 							"font": "Arial;13;0",
 							"containerChangeable": true,
-							"left": 328,
-							"top": 336,
-							"width": 122.35986328125,
-							"height": 86,
+							"left": 344,
+							"top": 368,
+							"width": 124.4736328125,
+							"height": 281,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJboJfuhTo6b0="
 							},
@@ -5149,6 +5458,8 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
+											"left": -16,
+											"top": 320,
 											"height": 13
 										},
 										{
@@ -5158,9 +5469,9 @@
 												"$ref": "AAAAAAGJcLwcSy+kaa4="
 											},
 											"font": "Arial;13;1",
-											"left": 117,
-											"top": 439,
-											"width": 98.24267578125,
+											"left": 109,
+											"top": 543,
+											"width": 114.4736328125,
 											"height": 13,
 											"text": "GameController"
 										},
@@ -5172,9 +5483,11 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"width": 73.67724609375,
+											"left": -16,
+											"top": 320,
+											"width": 91.736328125,
 											"height": 13,
-											"text": "(from Model)"
+											"text": "(from controller)"
 										},
 										{
 											"_type": "LabelView",
@@ -5184,14 +5497,16 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
+											"left": -16,
+											"top": 320,
 											"height": 13,
 											"horizontalAlignment": 1
 										}
 									],
 									"font": "Arial;13;0",
-									"left": 112,
-									"top": 432,
-									"width": 108.24267578125,
+									"left": 104,
+									"top": 536,
+									"width": 124.4736328125,
 									"height": 25,
 									"stereotypeLabel": {
 										"$ref": "AAAAAAGJcLwcSy+leKw="
@@ -5216,9 +5531,9 @@
 										"$ref": "AAAAAAGJcLwcSy+htXg="
 									},
 									"font": "Arial;13;0",
-									"left": 112,
-									"top": 457,
-									"width": 108.24267578125,
+									"left": 104,
+									"top": 561,
+									"width": 124.4736328125,
 									"height": 10
 								},
 								{
@@ -5230,11 +5545,47 @@
 									"model": {
 										"$ref": "AAAAAAGJcLwcSy+htXg="
 									},
+									"subViews": [
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcXDdzTAYaks=",
+											"_parent": {
+												"$ref": "AAAAAAGJcLwcSy+qceQ="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcXDdwjAV4IM="
+											},
+											"font": "Arial;13;0",
+											"left": 109,
+											"top": 576,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+유저 액션 처리()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGJcXF2kDAfbs0=",
+											"_parent": {
+												"$ref": "AAAAAAGJcLwcSy+qceQ="
+											},
+											"model": {
+												"$ref": "AAAAAAGJcXF2fzAcIXU="
+											},
+											"font": "Arial;13;0",
+											"left": 109,
+											"top": 591,
+											"width": 114.4736328125,
+											"height": 13,
+											"text": "+채팅 메시지 처리()",
+											"horizontalAlignment": 0
+										}
+									],
 									"font": "Arial;13;0",
-									"left": 112,
-									"top": 467,
-									"width": 108.24267578125,
-									"height": 10
+									"left": 104,
+									"top": 571,
+									"width": 124.4736328125,
+									"height": 38
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -5247,6 +5598,8 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
+									"left": -8,
+									"top": 216,
 									"width": 10,
 									"height": 10
 								},
@@ -5261,16 +5614,21 @@
 									},
 									"visible": false,
 									"font": "Arial;13;0",
+									"left": -8,
+									"top": 216,
 									"width": 10,
 									"height": 10
 								}
 							],
+							"containerView": {
+								"$ref": "AAAAAAGJcLIhWi7l+xk="
+							},
 							"font": "Arial;13;0",
 							"containerChangeable": true,
-							"left": 112,
-							"top": 432,
-							"width": 108.24267578125,
-							"height": 45,
+							"left": 104,
+							"top": 536,
+							"width": 124.4736328125,
+							"height": 73,
 							"nameCompartment": {
 								"$ref": "AAAAAAGJcLwcSy+kaa4="
 							},
@@ -5285,6 +5643,172 @@
 							},
 							"templateParameterCompartment": {
 								"$ref": "AAAAAAGJcLwcSy+s/NU="
+							}
+						},
+						{
+							"_type": "UMLClassView",
+							"_id": "AAAAAAGJce4LEzDHGwA=",
+							"_parent": {
+								"$ref": "AAAAAAFF+qBtyKM79qY="
+							},
+							"model": {
+								"$ref": "AAAAAAGJce4LEzDF0nU="
+							},
+							"subViews": [
+								{
+									"_type": "UMLNameCompartmentView",
+									"_id": "AAAAAAGJce4LEzDIqWo=",
+									"_parent": {
+										"$ref": "AAAAAAGJce4LEzDHGwA="
+									},
+									"model": {
+										"$ref": "AAAAAAGJce4LEzDF0nU="
+									},
+									"subViews": [
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAGJce4LEzDJFpY=",
+											"_parent": {
+												"$ref": "AAAAAAGJce4LEzDIqWo="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"height": 13
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAGJce4LEzDKH3I=",
+											"_parent": {
+												"$ref": "AAAAAAGJce4LEzDIqWo="
+											},
+											"font": "Arial;13;1",
+											"left": 133,
+											"top": 871,
+											"width": 108.3544921875,
+											"height": 13,
+											"text": "ActionSubscriber"
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAGJce4LFDDLmKc=",
+											"_parent": {
+												"$ref": "AAAAAAGJce4LEzDIqWo="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"width": 73.67724609375,
+											"height": 13,
+											"text": "(from Model)"
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAGJce4LFDDMLJM=",
+											"_parent": {
+												"$ref": "AAAAAAGJce4LEzDIqWo="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"height": 13,
+											"horizontalAlignment": 1
+										}
+									],
+									"font": "Arial;13;0",
+									"left": 128,
+									"top": 864,
+									"width": 118.3544921875,
+									"height": 25,
+									"stereotypeLabel": {
+										"$ref": "AAAAAAGJce4LEzDJFpY="
+									},
+									"nameLabel": {
+										"$ref": "AAAAAAGJce4LEzDKH3I="
+									},
+									"namespaceLabel": {
+										"$ref": "AAAAAAGJce4LFDDLmKc="
+									},
+									"propertyLabel": {
+										"$ref": "AAAAAAGJce4LFDDMLJM="
+									}
+								},
+								{
+									"_type": "UMLAttributeCompartmentView",
+									"_id": "AAAAAAGJce4LFDDNx0Y=",
+									"_parent": {
+										"$ref": "AAAAAAGJce4LEzDHGwA="
+									},
+									"model": {
+										"$ref": "AAAAAAGJce4LEzDF0nU="
+									},
+									"font": "Arial;13;0",
+									"left": 128,
+									"top": 889,
+									"width": 118.3544921875,
+									"height": 10
+								},
+								{
+									"_type": "UMLOperationCompartmentView",
+									"_id": "AAAAAAGJce4LFDDOCpA=",
+									"_parent": {
+										"$ref": "AAAAAAGJce4LEzDHGwA="
+									},
+									"model": {
+										"$ref": "AAAAAAGJce4LEzDF0nU="
+									},
+									"font": "Arial;13;0",
+									"left": 128,
+									"top": 899,
+									"width": 118.3544921875,
+									"height": 10
+								},
+								{
+									"_type": "UMLReceptionCompartmentView",
+									"_id": "AAAAAAGJce4LFDDPceI=",
+									"_parent": {
+										"$ref": "AAAAAAGJce4LEzDHGwA="
+									},
+									"model": {
+										"$ref": "AAAAAAGJce4LEzDF0nU="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"width": 10,
+									"height": 10
+								},
+								{
+									"_type": "UMLTemplateParameterCompartmentView",
+									"_id": "AAAAAAGJce4LFDDQNno=",
+									"_parent": {
+										"$ref": "AAAAAAGJce4LEzDHGwA="
+									},
+									"model": {
+										"$ref": "AAAAAAGJce4LEzDF0nU="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"width": 10,
+									"height": 10
+								}
+							],
+							"font": "Arial;13;0",
+							"containerChangeable": true,
+							"left": 128,
+							"top": 864,
+							"width": 118.3544921875,
+							"height": 45,
+							"nameCompartment": {
+								"$ref": "AAAAAAGJce4LEzDIqWo="
+							},
+							"attributeCompartment": {
+								"$ref": "AAAAAAGJce4LFDDNx0Y="
+							},
+							"operationCompartment": {
+								"$ref": "AAAAAAGJce4LFDDOCpA="
+							},
+							"receptionCompartment": {
+								"$ref": "AAAAAAGJce4LFDDPceI="
+							},
+							"templateParameterCompartment": {
+								"$ref": "AAAAAAGJce4LFDDQNno="
 							}
 						}
 					]
@@ -5322,7 +5846,33 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "MainController"
+					"name": "MainController",
+					"operations": [
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGJcW951i//29g=",
+							"_parent": {
+								"$ref": "AAAAAAGJboHpiRS4e3k="
+							},
+							"name": "게임방 생성"
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGJcW+mxTAGQjg=",
+							"_parent": {
+								"$ref": "AAAAAAGJboHpiRS4e3k="
+							},
+							"name": "게임방 접속"
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGJcW/c0jAN4E0=",
+							"_parent": {
+								"$ref": "AAAAAAGJboHpiRS4e3k="
+							},
+							"name": "게임방 조회"
+						}
+					]
 				},
 				{
 					"_type": "UMLPackage",
@@ -5330,7 +5880,35 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "controller"
+					"name": "controller",
+					"ownedElements": [
+						{
+							"_type": "UMLClass",
+							"_id": "AAAAAAGJcLwcSy+htXg=",
+							"_parent": {
+								"$ref": "AAAAAAGJcLIhWS7jnSM="
+							},
+							"name": "GameController",
+							"operations": [
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcXDdwjAV4IM=",
+									"_parent": {
+										"$ref": "AAAAAAGJcLwcSy+htXg="
+									},
+									"name": "유저 액션 처리"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcXF2fzAcIXU=",
+									"_parent": {
+										"$ref": "AAAAAAGJcLwcSy+htXg="
+									},
+									"name": "채팅 메시지 처리"
+								}
+							]
+						}
+					]
 				},
 				{
 					"_type": "UMLPackage",
@@ -5365,6 +5943,14 @@
 									},
 									"name": "gameSessionMap",
 									"type": ""
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "AAAAAAGJcZ+odDCn+wU=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "topics"
 								}
 							],
 							"operations": [
@@ -5374,7 +5960,103 @@
 									"_parent": {
 										"$ref": "AAAAAAGJboJfuRTlFQQ="
 									},
-									"name": "게임방생성"
+									"name": "유저 액선 수행"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcXQFJjAmq0Q=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "게임실행"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcYKelzAxOys=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "게임시작"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcYMvTzA40kE=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "게임종료"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcYNm9DBGHz4=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "낮 페이즈 수행"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcYR62TBkn8g=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "저녁 페이즈 수행"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcYOZ7DBNeKU=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "밤 페이즈 수행"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcYPERjBUmzg=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "히든미션 생성"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcYU8VDBuhHU=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "역할배정"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcY+oLDCgPvI=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "채팅연결"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcb2YtjCuo18=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "게임방 생성"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcb2yCTC1Kd8=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "게임방 접속"
+								},
+								{
+									"_type": "UMLOperation",
+									"_id": "AAAAAAGJcb41KjC85/g=",
+									"_parent": {
+										"$ref": "AAAAAAGJboJfuRTlFQQ="
+									},
+									"name": "게임방 조회"
 								}
 							]
 						}
@@ -5394,7 +6076,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGJcLMA5S8eaGg="
 							},
-							"name": "SystemPublisher"
+							"name": "GamePublisher"
 						},
 						{
 							"_type": "UMLClass",
@@ -5461,6 +6143,14 @@
 										"$ref": "AAAAAAGJcKtewC5X06s="
 									},
 									"name": "actionCode"
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "AAAAAAGJcY7g8zCZ/nM=",
+									"_parent": {
+										"$ref": "AAAAAAGJcKtewC5X06s="
+									},
+									"name": "messgae"
 								}
 							]
 						},
@@ -5607,6 +6297,15 @@
 									},
 									"name": "Object",
 									"type": ""
+								},
+								{
+									"_type": "UMLAttribute",
+									"_id": "AAAAAAGJcY3fIjCSrhc=",
+									"_parent": {
+										"$ref": "AAAAAAGJbSqYmvLfnu4="
+									},
+									"name": "message",
+									"type": "Object"
 								}
 							]
 						},
@@ -5763,8 +6462,7 @@
 									"_parent": {
 										"$ref": "AAAAAAGJbQ+TAu8wPqw="
 									},
-									"name": "player[]",
-									"type": ""
+									"name": "playerCondition[]"
 								},
 								{
 									"_type": "UMLAttribute",
@@ -5919,14 +6617,6 @@
 										"$ref": "AAAAAAGJbQ+TAu8wPqw="
 									},
 									"name": "역할배정"
-								},
-								{
-									"_type": "UMLOperation",
-									"_id": "AAAAAAGJbSJ6vvHxSXo=",
-									"_parent": {
-										"$ref": "AAAAAAGJbQ+TAu8wPqw="
-									},
-									"name": "Operation2"
 								}
 							]
 						},
@@ -5980,11 +6670,11 @@
 				},
 				{
 					"_type": "UMLClass",
-					"_id": "AAAAAAGJcLwcSy+htXg=",
+					"_id": "AAAAAAGJce4LEzDF0nU=",
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "GameController"
+					"name": "ActionSubscriber"
 				}
 			]
 		}
