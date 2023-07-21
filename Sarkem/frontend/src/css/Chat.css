@@ -5,4 +5,8 @@
     position: absolute;
     right: 0;
     top: 50%;
+    border-radius: 10px;
+    background-color: pink;
+    opacity: 0.5;
+    overflow-y: scroll;
 }
