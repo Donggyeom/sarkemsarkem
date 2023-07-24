@@ -1,4 +1,4 @@
-package com.a702.sarkem;
+package com.example.sarkem;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,5 +9,5 @@ class SarkemApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-	
+
 }

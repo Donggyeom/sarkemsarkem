@@ -1,10 +1,14 @@
 package com.a702.sarkem.model.game;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
+@NoArgsConstructor
 public class ActionMessage {
 
 	// 액션 코드
@@ -20,7 +24,6 @@ public class ActionMessage {
 	private ActionCode code;
 	private String roomId;
 	private String gameId;
-	private String actionCode;
-	private Object message;
+	private Object param;
 	
 }

@@ -1,14 +1,22 @@
 package com.a702.sarkem.model.game;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
-public class SystemMessage {
+public class SystemMessage implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public enum SystemCode {
 		GAME_READY      , // 게임준비 
 		GAME_START      , // 게임시작 
@@ -32,11 +40,21 @@ public class SystemMessage {
 	}
 
 	private String roomId;
-	private SystemCode code;
-	private Object message;
-	public SystemMessage(SystemCode code, Object message) {
+	private String code;
+	private Object body;
+	public SystemMessage(String roomId, SystemCode code, Object param) {
 		super();
-		this.code = code;
-		this.message = message;
+		switch(code) {
+		case GAME_READY:
+			this.roomId = roomId;
+			this.code = "GAME_READY";
+			this.body = param;
+			break;
+		case GAME_START:
+			this.roomId = roomId;
+			this.code = "GAME_START";
+			this.body = param;
+			break;
+		}
 	}
 }
