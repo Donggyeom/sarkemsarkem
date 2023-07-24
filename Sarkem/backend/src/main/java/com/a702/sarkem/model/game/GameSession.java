@@ -43,7 +43,7 @@ public class GameSession {
 
 	private LocalDateTime timer;
 
-	private List<String> mafias;
+	private List<String> sarks;
 
 	@NonNull
 	private StateType state;
@@ -66,21 +66,5 @@ public class GameSession {
 	@NonNull
 	private String hostId;
 
-	//추방
-	public void banishPlayer(PlayerCondition playerCondition) {
-		alivePlayer--;
-		if (playerCondition.getRole() == GameRole.SARK) {
-			aliveSark--;
-		}
-	}
-
-	public void changePhase(PhaseType phase, int timer) {
-		this.phase = phase;
-		this.phaseCount++;
-		setTimer(TimeUtils.getFinTime(timer));
-	}
-
-	public void passADay() {
-		this.day++;
-	}
+	
 }

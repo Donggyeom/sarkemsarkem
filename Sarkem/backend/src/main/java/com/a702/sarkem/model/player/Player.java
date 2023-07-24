@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 public class Player {
 
-	private final String roomId; // 방번호
+	private final String playerId; // 아이디
 
 	private final String nickname; // 닉네임
 
