@@ -1,5 +1,6 @@
 package com.a702.sarkem.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.a702.sarkem.exception.GameOptionSettingException;
 import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
+import com.a702.sarkem.model.game.Player;
 import com.a702.sarkem.model.game.SystemMessage;
 import com.a702.sarkem.model.game.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
@@ -51,6 +53,19 @@ public class GameManager {
 		topics.put(strChatTopic, chatTopic);
 		redisMessageListener.addMessageListener(systemSubscriber, roomTopic);
 		redisMessageListener.addMessageListener(chatSubscriber, chatTopic);
+	}
+	
+	//게임방 입장
+	public void connectPlayer(String roomId, Player player) {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		List<Player> playerList = gameRoom.getPlayers();
+		playerList.add(player);
+		gameRoomMap.put(roomId, gameRoom);
+	}
+	
+	//GameRoom 가져오기
+	public GameRoom getGameRoom(String roomId) {
+		return gameRoomMap.get(roomId);
 	}
 	
 	/**
