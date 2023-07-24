@@ -72,9 +72,8 @@ export default function Chat({sessionId, userName}) {
 
   return (
     <div className="chat-container">
-        <button onClick={enterChatRoom}>채팅방 입장</button>
         <form onSubmit={sendMessage}>
-        <input id="messageInput"onChange={ChangeMessages} placeholder='메시지 입력' value={message} disabled></input>
+        <input id="messageInput"onChange={ChangeMessages} placeholder='메시지 입력' value={message}></input>
         </form>
         {chatMessages.map((i) => 
         <Message info={i}/>)}
