@@ -7,6 +7,8 @@ import CommonStart from './pages/CommonStart';
 import LoadingPage from './pages/LoadingPage';
 import LobbyPage from './pages/LobbyPage';
 import DayPage from './pages/DayPage';
+import SunsetPage from './pages/SunsetPage';
+import NightPage from './pages/NightPage';
 
 
 const App = () => {
@@ -18,6 +20,8 @@ const App = () => {
         <Route path="/loading" element={<LoadingPage />} />
         <Route path="/lobby" element={<LobbyPage />}/>
         <Route path="/day" element={<DayPage />}/>
+        <Route path="/sunset" element={<SunsetPage />}/>
+        <Route path="/night" element={<NightPage />}/>
       </Routes>
 
 
