@@ -1,8 +1,10 @@
 package com.a702.sarkem.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.a702.sarkem.exception.GameOptionSettingException;
 import com.a702.sarkem.exception.GameRoomNotFoundException;
 import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
+import com.a702.sarkem.model.game.Player;
 import com.a702.sarkem.model.game.SystemMessage;
 import com.a702.sarkem.model.game.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
@@ -24,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class GameManager {
-	
+
 	private final Map<String, GameRoom> gameRoomMap;	// Key: roomId
 	private final Map<String, GameSession> gameSessionMap;	// Key: roomId
 
@@ -36,15 +39,23 @@ public class GameManager {
 	private final ChatSubscriber chatSubscriber;
 	private final ChatPublisher chatPublisher;
 	// topic 관리
-	private final Map<String, ChannelTopic> topics = new HashMap<>();
-	
+	private Map<String, ChannelTopic> topics = new HashMap<>();
 	
 	/**
-	 * 게임코드 랜덤 생성
+	 * 게임코드 랜덤 생성(16진수 5자리)
 	 */
 	public String gameCodeGenerate() {
-		// TODO: 코드 임의 생성
-		return "game-test";
+		char[] tmp = new char[5];
+		for(int i=0; i<tmp.length; i++) {
+			int div = (int) Math.floor( Math.random() * 2 );
+			
+			if(div == 0) { // 0이면 숫자로
+				tmp[i] = (char) (Math.random() * 10 + '0') ;
+			}else { //1이면 알파벳
+				tmp[i] = (char) (Math.random() * 26 + 'A') ;
+			}
+		}
+		return new String(tmp);
 	}
 	
 	/**
@@ -57,7 +68,7 @@ public class GameManager {
 		gameRoomMap.put(roomId, newGameRoom);
 		String newGameId = gameCodeGenerate();		// 새 게임 코드 획득
 		newGameRoom.setGameId(newGameId);
-		GameSession newGame = new GameSession(newGameId);	// 새 게임 세션 생성 
+		GameSession newGame = new GameSession(roomId, newGameId);	// 새 게임 세션 생성 
 		gameSessionMap.put(roomId, newGame);
 		
 		// reids topic 생성
@@ -69,6 +80,15 @@ public class GameManager {
 		topics.put(strChatTopic, chatTopic);
 		redisMessageListener.addMessageListener(systemSubscriber, roomTopic);
 		redisMessageListener.addMessageListener(chatSubscriber, chatTopic);
+	}
+	
+	/**
+	 * 플레이어 게임방 연결 
+	 */
+	public void connectPlayer(String roomId, Player player) {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		List<Player> playerList = gameRoom.getPlayers();
+		playerList.add(player);
 	}
 	
 	/**

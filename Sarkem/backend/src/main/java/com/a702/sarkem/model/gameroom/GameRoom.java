@@ -1,5 +1,6 @@
 package com.a702.sarkem.model.gameroom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.a702.sarkem.model.game.Player;
@@ -14,7 +15,7 @@ import lombok.ToString;
 public class GameRoom {
 	private String roomId;
 	private String gameId;
-	private List<Player> players;
+	private List<Player> players = new ArrayList<>(10);
 	private String hostId;
 	
 	public GameRoom(String roomId) {

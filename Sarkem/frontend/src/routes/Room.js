@@ -2,9 +2,11 @@ import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import React from "react";
 import UserVideoComponent from "../components/UserVideoComponent";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
 import "../css/Room.css"
+import Chat from "../components/Chat";
 
 function Room () {
     const [mySessionId, setMySessionId] = useState('tmpSession42');
@@ -15,6 +17,10 @@ function Room () {
     const [subscribers, setSubscribers] = useState([]);
     const [videoEnabled, setVideoEnabled] = useState(true);
     const [audioEnabled, setAudioEnabled] = useState(true);
+    
+    const [dead, setDead] = useState(false);
+
+
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -91,14 +97,20 @@ function Room () {
     // 토큰 생성하는 함수
     const getToken = async () => {
         // 내 세션ID에 해당하는 세션 생성
-        const sessionId = await createSession(mySessionId);
+        let sessionId;
+        if (location.state.isHost){
+            console.log("방장이므로 세션을 생성합니다.")
+            sessionId = await createSession(mySessionId);
+        } else {
+            sessionId = mySessionId;
+        }
         // 세션에 해당하는 토큰 요청
         return await createToken(sessionId);
     }
 
     // 서버에 요청하여 세션 생성하는 함수
     const createSession = async (sessionId) => {
-        const response = await axios.post('/api/sessions', { customSessionId: sessionId }, {
+        const response = await axios.post('/api/game', { customSessionId: sessionId, nickName:myUserName }, {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The sessionId
@@ -106,9 +118,10 @@ function Room () {
 
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
-        const response = await axios.post('/api/sessions/' + sessionId + '/connections', {}, {
-            headers: { 'Content-Type': 'application/json', },
-        });
+        const response = await axios.put('/api/game/' + sessionId, 
+            {nickName: myUserName},
+        );
+        console.log(response);
         return response.data; // The token
     }
 
@@ -118,6 +131,7 @@ function Room () {
             // 토큰 생성
             getToken().then(async (response) => {
                 try {
+                    console.log(response)
                     // 생성된 토큰을 통해 세션에 연결 요청
                     await session.connect(response, {clientData: myUserName})
                     
@@ -154,6 +168,11 @@ function Room () {
                     alert("세션 연결 오류");
                     navigate("/");
                 }
+                /**
+                 * 세션 생성하고, 토큰 발급까지 끝나면 game 생성 api 전송하고, game 정보 요청 api 전송
+                 * 아마 router 설정에서 룸 (로비, 게임) 이렇게 나눈 다음에 네비게이션 처리를 해야할 것 같다.
+                 * 게임이 끝나고 로비로 돌아오면 또 화상채팅 세션을 만들게 되니까
+                 */
             });
         }
     }, [session])
@@ -196,6 +215,11 @@ function Room () {
         sub.subscribeToVideo(!sub.properties.subscribeToVideo);
         sub.properties.subscribeToVideo = !sub.properties.subscribeToVideo
     }
+
+    const deathAndOpenChat = () => {
+        setDead(!dead);
+        
+    }
     return (
         <div id="session">
             <div id="session-header">
@@ -221,7 +245,6 @@ function Room () {
                     onClick={toggleVideo}
                     value={`캠 ${videoEnabled ? "OFF" : "ON"}`}
                 />
-
                 <input
                     className="btn btn-large btn-danger"
                     type="button"
@@ -229,6 +252,13 @@ function Room () {
                     onClick={toggleAudio}
                     value={`마이크 ${audioEnabled ? "OFF" : "N"}`}
                 />
+                <input
+                    className="btn btn-large btn-danger"
+                    type="button"
+                    id="buttonLeaveSession"
+                    onClick={deathAndOpenChat}
+                    value={`죽기`}
+                /> 
             </div>
             {/* {mainStreamManager !== undefined ? (
                 <div id="main-video" className="col-md-6">
@@ -254,6 +284,8 @@ function Room () {
                     </div>
                 ))}
             </div>
+            {dead ? <Chat sessionId={mySessionId} userName={myUserName}/> : null}
+            
         </div>
     );
     

@@ -1,7 +1,6 @@
 package com.a702.sarkem.exception;
 
 public class GameOptionSettingException extends RuntimeException{
-
 	/**
 	 * 
 	 */
