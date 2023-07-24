@@ -8,7 +8,9 @@ const StartButtonImage = styled.img`
 `;
 
 const StartButton = ({ src, alt, onClick }) => {
+
   return <StartButtonImage src={startButtonImageSrc} alt={alt} onClick={onClick} />;
 };
 
 export default StartButton;
+

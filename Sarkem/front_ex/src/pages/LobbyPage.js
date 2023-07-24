@@ -8,7 +8,6 @@ const LobbyPage = () => {
   return (
 
     <div>
-
       <CommonLobby />
     </div>
   );
