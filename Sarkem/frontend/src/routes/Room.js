@@ -110,7 +110,7 @@ function Room () {
 
     // 서버에 요청하여 세션 생성하는 함수
     const createSession = async (sessionId) => {
-        const response = await axios.post('/api/sessions', { customSessionId: sessionId }, {
+        const response = await axios.post('/api/game', { customSessionId: sessionId }, {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The sessionId
@@ -118,7 +118,7 @@ function Room () {
 
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
-        const response = await axios.post('/api/sessions/' + sessionId + '/connections', {
+        const response = await axios.post('/api/game/' + sessionId + '/connections', {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The token
