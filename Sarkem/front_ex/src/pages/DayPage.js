@@ -6,6 +6,8 @@ import Background from '../components/backgrounds/BackgroundDay';
 /* Code generated with AutoHTML Plugin for Figma */
 import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
+import SunMoon from '../components/games/SunMoon';
+import ScMini from '../components/games/ScMini';
 
 const StyledDayPage = styled.div`
   display: flex;
@@ -37,14 +39,21 @@ const handleMicButtonClick = () => {
     console.log('Mic Button clicked!');
 };
 
+const handleScMiniClick = () => {
+    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
+    console.log('ScMini clicked!');
+};
+
 const DayPage = () => {
     
     return (
     <Background>
         <StyledDayPage>
+            <SunMoon alt="SunMoon"></SunMoon>
             <TimeSecond>60s</TimeSecond>
             <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
             <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
+            <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             
         </StyledDayPage>
     </Background>
