@@ -34,7 +34,7 @@ public class GameController {
 		
 		switch(message.getCode()) {
 		case GAME_START:
-			gameManager.gameStart("testroom");
+			gameManager.gameStart(message.getRoomId());
 			break;
 		case EXPULSION_VOTE:
 			break;

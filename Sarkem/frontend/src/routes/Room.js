@@ -4,11 +4,15 @@ import React from "react";
 import UserVideoComponent from "../components/UserVideoComponent";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import SockJS from 'sockjs-client';
+import {Stomp} from "@stomp/stompjs";
 
 import "../css/Room.css"
 import Chat from "../components/Chat";
 
 function Room () {
+    let stompCilent = useRef({});
+
     const [mySessionId, setMySessionId] = useState('tmpSession42');
     const [myUserName, setMyUserName] = useState('');
     const [session, setSession] = useState(undefined);
@@ -47,11 +51,47 @@ function Room () {
         
         // 세션에 가입
         joinSession();
+
+        // 게임 모듈 연결
+        connectGameWs();
+
         return () => {
             window.removeEventListener('beforeunload', onbeforeunload);
             leaveSession();
         }
+
+        
     }, []);
+
+    const connectGameWs = (event) => {
+        let socket = new SockJS("http://localhost:8080/ws-stomp");
+        stompCilent.current = Stomp.over(socket);
+        stompCilent.current.connect({}, () => {
+         setTimeout(function() {
+           onSocketConnected();
+           connectGame();
+         }, 500);
+        })
+    }
+
+    const onSocketConnected = () => {
+        console.log("game websocket 연결 완료");
+    }
+
+    const connectGame = () => {
+        // 게임방 redis 구독
+        //console.log('/sub/game/system/' + mySessionId + " redis 구독")
+        stompCilent.current.subscribe('/sub/game/system/' + mySessionId, function(message){
+            // 시스템 메시지 처리
+            let sysMessage = JSON.parse(message.body);
+
+            switch (sysMessage.code) {
+            case "GAME_START":   
+                alert('게임시작');
+                break;
+            }
+        })
+    }
 
     // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
     const onbeforeunload = () => {
@@ -209,6 +249,18 @@ function Room () {
         await navigator.clipboard.writeText("localhost:3000/"+mySessionId).then(alert("게임 링크가 복사되었습니다."));
     }
 
+    const gameStart = () => {
+        console.log("게임시작 클릭")
+        stompCilent.current.send("/pub/game/action", {}, 
+        JSON.stringify({
+            code:'GAME_START', 
+            roomId: mySessionId, 
+            actionCode: 'GAME_START',
+            playerId: "test"
+        })
+        );
+    }
+
     // 다른 유저 카메라 on/off 하는 함수
     const toggleSubbsVideoHandler = (sub) => {
         console.log(sub);
@@ -237,6 +289,13 @@ function Room () {
                     id="buttonLeaveSession"
                     onClick={copyGameLink}
                     value="게임 초대하기"
+                />
+                <input
+                    className="btn btn-large btn-danger"
+                    type="button"
+                    id="buttonGameStart"
+                    onClick={gameStart}
+                    value="게임 시작하기"
                 />
                 <input
                     className="btn btn-large btn-danger"
