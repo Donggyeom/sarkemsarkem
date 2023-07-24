@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import logoImage from '../../img/logo.png';
-import camcatImage from '../../img/camcat.png';
-import boxImage from '../../img/box.png';
-import Background from '../backgrounds/BackgroundSunset';
-import usernicknameImage from '../../img/usernickname.png';
-import usernicknameinputImage from '../../img/usernicknameinput.png';
-import offImage from '../../img/off.png';
-import onImage from '../../img/on.png';
-import micImage from '../../img/mic.png';
-import camImage from '../../img/cam.png';
+import logoImage from '../img/logo.png';
+import camcatImage from '../img/camcat.png';
+import boxImage from '../img/box.png';
+import Background from '../components/backgrounds/BackgroundSunset';
+import usernicknameImage from '../img/usernickname.png';
+import usernicknameinputImage from '../img/usernicknameinput.png';
+import offImage from '../img/off.png';
+import onImage from '../img/on.png'
+import micImage from '../img/mic.png';
+import camImage from '../img/cam.png';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const StyledStartPage = styled.div`
 `;
@@ -93,15 +94,64 @@ const Logo = styled.img`
 `;
 
 const CommonStart = ({image, onClick} ) => {
-  const [isMicOn, setIsMicOn] = useState(false);
-  const [isCamOn, setIsCamOn] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const roomId = location.pathname.slice(1);
+  const isHost = location.state.isHost;
+
+  const [userName, setUserName] = useState('이름모를유저' + Math.floor(Math.random() * 100))
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCamOn, setIsCamOn] = useState(true);
+  
+  const videoRef = useRef(null);
+  const audioRef = useRef(null);
+
+  useEffect(()=>{
+    getUserCamera();
+    getUserAudio();
+    console.log(isCamOn);
+  }, [videoRef])
+
+  const getUserCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+      setIsCamOn(true);
+    }
+    catch (error) {
+      console.error("Failed to start video: ", error);
+    }
+  }
+
+  const getUserAudio = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioRef.current.srcObject = stream;
+      setIsMicOn(true);
+    }
+    catch (error) {
+      console.error("Failed to start audio: ", error);
+    }
+  }
 
   const handleMicToggle = () => {
+    const micOn = !isMicOn;
+    setIsMicOn(micOn)
     setIsMicOn((prevIsMicOn) => !prevIsMicOn);
+    const tracks = audioRef.current.srcObject.getTracks();
+    tracks.forEach((track) => {
+      track.enabled = micOn;
+    });
   };
 
   const handleCamToggle = () => {
-    setIsCamOn((prevIsCamOn) => !prevIsCamOn);
+    const camOn = !isCamOn;
+    setIsCamOn(camOn);
+    const tracks = videoRef.current.srcObject.getTracks();
+    tracks.forEach((track) => {
+      track.enabled = camOn;
+    });
   };
 
   return (
@@ -112,11 +162,15 @@ const CommonStart = ({image, onClick} ) => {
         </StyledHeader>
 
         <StyledContent>
-          <LeftSection></LeftSection>
+          <LeftSection>
+          <video ref={videoRef} autoPlay/>
+          <audio ref={audioRef} autoPlay/>
+          </LeftSection>
           <RightSection>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${usernicknameImage})` }}></LeftPart>
-              <RightPart style={{ backgroundSize: '85%', backgroundImage: `url(${usernicknameinputImage})` }}></RightPart>
+              <RightPart style={{ backgroundSize: '85%', backgroundImage: `url(${usernicknameinputImage})` }}>
+              </RightPart>
             </DivWrapper>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${camImage})` }}></LeftPart>

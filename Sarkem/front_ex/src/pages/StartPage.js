@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 import Background from '../components/backgrounds/BackgroundSunset';
 import StartButton from '../components/buttons/StartButton';
 import Logo from '../components/buttons/Logo';
-
+import { useNavigate }  from 'react-router-dom';
+import createRandomId from '../utils';
 
 const StyledStartPage = styled.div`
   display: flex;
@@ -19,19 +19,19 @@ const StyledStartPage = styled.div`
 `;
 
 const StartPage = () => {
-  // ... (rest of your code)
+  // useNavigate 호출
+  const navigate = useNavigate();
 
-  // 여기에서 host 여부를 조건에 맞게 설정합니다. 예시로 host가 true인 경우를 기본값으로 설정합니다.
-  const isHost = true;
-
-  // isHost에 따라 다른 경로로 이동합니다.
-  const getHostLink = isHost ? '/start/host' : '/start/unhost';
+  // 랜덤한 16진수 5자리를 생성하여 URL로 넘겨줍니다.
+  const goToCreateRoom = () => {
+    navigate(`/${createRandomId()}`, {state: {isHost: true}})
+  }
 
   return (
     <Background>
       <StyledStartPage>
         <Logo />
-        <StartButton alt="Go to Login" onClick={() => (window.location.href = getHostLink)} />
+        <StartButton alt="Go to Login" onClick={goToCreateRoom} />
       </StyledStartPage>
     </Background>
   );
