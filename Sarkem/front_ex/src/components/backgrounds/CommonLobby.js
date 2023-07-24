@@ -10,9 +10,11 @@ import sc_citizen from '../../img/sc_시민.png'
 import sc_scoop from '../../img/sc_탐정.png'
 import sc_psychologist from '../../img/sc_심리학자.png'
 import sc_nyangachi from '../../img/sc_냥아치.png'
+import timesetting from '../../img/timesetting.png'
 import settingbuttonImage from '../../img/settingbutton.png'
 import startButtonImage from '../../img/startbutton.png'
 import inviteButtonImage from '../../img/invitebutton.png'
+import BackButton from '../buttons/backButton';
 
 const StyledStartPage = styled.div`
 `;
@@ -106,36 +108,35 @@ const CommonLobby = ()=>{
 
 return (
   <Background>
+    <BackButton/>
     <StyledStartPage>
       <StyledContent>
         <LeftSection></LeftSection>
         <RightSection>
-          <DivWrapper style={{  backgroundSize: 'cover', backgroundImage: `url(${settingbuttonImage})` }}>
+          <DivWrapper style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center',  backgroundSize: '95%', backgroundImage: `url(${settingbuttonImage})` }}>
           </DivWrapper>
           <DivWrapper>
             <LeftPart style={{ backgroundImage: `url(${sc_sark})` }}></LeftPart>
-            <RightPart style={{ backgroundImage: `url(${sc_sark})` }}></RightPart>
+            <RightPart style={{ backgroundImage: `url(${sc_citizen})` }}></RightPart>
           </DivWrapper>
           <DivWrapper>
-          <LeftPart style={{ backgroundImage: `url(${sc_sark})` }}></LeftPart>
-            <RightPart style={{ backgroundImage: `url(${sc_sark})` }}></RightPart>
+          <LeftPart style={{ backgroundImage: `url(${sc_vet})` }}></LeftPart>
+            <RightPart style={{ backgroundImage: `url(${sc_police})` }}></RightPart>
           </DivWrapper>
           <DivWrapper>
-          <LeftPart style={{ backgroundImage: `url(${sc_sark})` }}></LeftPart>
-            <RightPart style={{ backgroundImage: `url(${sc_sark})` }}></RightPart>
+          <LeftPart style={{ backgroundImage: `url(${sc_scoop})` }}></LeftPart>
+            <RightPart style={{ backgroundImage: `url(${sc_psychologist})` }}></RightPart>
           </DivWrapper>
           <DivWrapper>
-            <LeftPart style={{ backgroundImage: `url(${sc_sark})` }}></LeftPart>
-            <RightPart style={{ backgroundImage: `url(${sc_sark})` }}></RightPart>
+            <LeftPart style={{ backgroundImage: `url(${sc_nyangachi})` }}></LeftPart>
+            <RightPart style={{ backgroundImage: `url(${timesetting})` }}></RightPart>
           </DivWrapper>
           <DivWrapper>
-              {/* Corrected the condition for conditional rendering */}
               {isHost ? (
                 <>
-                  {/* Host content: Clickable areas for GamePage and Invite */}
                   <LeftPart
                     onClick={handleGamePageClick}
-                    style={{ backgroundImage: `url(${startButtonImage})` }}
+                    style={{ backgroundSize: '75% 75%', backgroundImage: `url(${startButtonImage})` }}
                   ></LeftPart>
                   <RightPart
                     onClick={handleInviteClick}
@@ -144,7 +145,6 @@ return (
                 </>
               ) : (
                 <>
-                  {/* Non-host content: Only Invite clickable area */}
                   <RightPart
                     onClick={handleInviteClick}
                     style={{ backgroundImage: `url(${inviteButtonImage})` }}
