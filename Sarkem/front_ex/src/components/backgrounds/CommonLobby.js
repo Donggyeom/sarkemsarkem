@@ -17,6 +17,7 @@ import inviteButtonImage from '../../img/invitebutton.png'
 import BackButton from '../buttons/backButton';
 import CamCat from '../camera/camcat';
 import StartButton from '../buttons/StartButton';
+import { useNavigate }  from 'react-router-dom';
 
 const StyledStartPage = styled.div`
 `;
@@ -95,8 +96,10 @@ const Logo = styled.img`
 
 const CommonLobby = ()=>{
 
+  const navigate = useNavigate();
+
   const [isHost, setIsHost] = useState(true);
-  const [userCount, setUserCount] = useState(7);
+  const [userCount, setUserCount] = useState(8);
 
   const handleGamePageClick = () => {
     // Logic to navigate to the GamePage when the user is a host
@@ -200,6 +203,7 @@ return (
               </div>
                 <CamCat />
                 <CamCat />
+                <CamCat />
               <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <CamCat />
                 <CamCat />
@@ -208,29 +212,41 @@ return (
             </div>
             )}
             {userCount === 8 && (
-              <>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <CamCat />
+                <CamCat />
+              </div>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <CamCat />
                 <CamCat />
                 <CamCat />
+              </div>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <CamCat />
                 <CamCat />
                 <CamCat />
-                <CamCat />
-                <CamCat />
-              </>
+              </div>
+            </div>
             )}
             {userCount === 9 && (
-              <>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <CamCat />
                 <CamCat />
                 <CamCat />
+              </div>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <CamCat />
                 <CamCat />
                 <CamCat />
+              </div>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <CamCat />
                 <CamCat />
                 <CamCat />
-              </>
+              </div>
+            </div>
             )}
             {userCount === 10 && (
               <>
@@ -270,7 +286,11 @@ return (
               {isHost ? (
                 <>
                   <LeftPart>
-                    <StartButton></StartButton>
+                  <StartButton
+        url="/day"
+        onClick={() => navigate('/day')} // Pass the navigate function as the onClick prop
+        alt="Start Game"
+      />
                   </LeftPart>
                   <RightPart
                     onClick={handleInviteClick}

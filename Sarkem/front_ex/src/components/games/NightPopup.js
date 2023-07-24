@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
 const styles = {
-  dayPopupContainer: {
+  NightPopupContainer: {
     opacity: 1,
     transition: 'opacity 1s ease-in-out',
   },
-  dayPopupFadeOut: {
+  NightPopupFadeOut: {
     opacity: 0,
     transition: 'opacity 1s ease-in-out',
   },
 };
 
-const DayPopup = ({ ...props }) => {
+const NightPopup = ({ ...props }) => {
   const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
@@ -24,12 +24,12 @@ const DayPopup = ({ ...props }) => {
 
   return (
     <div
-      style={showPopup ? styles.dayPopupContainer : styles.dayPopupFadeOut}
+      style={showPopup ? styles.NightPopupContainer : styles.NightPopupFadeOut}
     >
       {/* Your popup content */}
       <div
         style={{
-          background: '#f3b7bf',
+          background: '#8E9EC9',
           borderRadius: '30.94px',
           borderStyle: 'solid',
           borderColor: '#000000',
@@ -88,7 +88,7 @@ const DayPopup = ({ ...props }) => {
             WebkitTextStroke: '1px black',
           }}
         >
-          닉네임 님이 추방되었습니다.
+          잡아먹을 고양이를 지목하세요.
         </div>
       </div>
       {/* End of your popup content */}
@@ -96,4 +96,4 @@ const DayPopup = ({ ...props }) => {
   );
 };
 
-export default DayPopup;
+export default NightPopup;

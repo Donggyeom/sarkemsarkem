@@ -8,6 +8,7 @@ import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
+import NightPopup from '../components/games/NightPopup';
 
 const StyledNightPage = styled.div`
   display: flex;
@@ -54,6 +55,10 @@ const NightPage = () => {
             <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
             <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
+<<<<<<< HEAD
+=======
+            <NightPopup></NightPopup>
+>>>>>>> 4ce4f126533effb667345d999b6598fc791bbfe0
             
         </StyledNightPage>
     </Background>

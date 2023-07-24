@@ -8,6 +8,10 @@ import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
+<<<<<<< HEAD
+=======
+import DayPopup from '../components/games/DayPopup';
+>>>>>>> 4ce4f126533effb667345d999b6598fc791bbfe0
 
 const StyledDayPage = styled.div`
   display: flex;
@@ -54,7 +58,7 @@ const DayPage = () => {
             <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
             <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
-            
+            <DayPopup></DayPopup>
         </StyledDayPage>
     </Background>
   );
