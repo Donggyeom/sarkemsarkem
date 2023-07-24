@@ -10,6 +10,8 @@ import offImage from '../img/off.png';
 import onImage from '../img/on.png'
 import micImage from '../img/mic.png';
 import camImage from '../img/cam.png';
+import MakeroomButton from '../components/buttons/makeroomButton';
+import GoroomButton from '../components/buttons/goroomButton';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const StyledStartPage = styled.div`
@@ -60,6 +62,7 @@ const DivWrapper = styled.div`
   display: flex;
   width : 100%;
   height : 100%;
+  justify-content: center;
 `;
 
 const LeftPart = styled.div`
@@ -107,6 +110,7 @@ const CommonStart = ({image, onClick} ) => {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
 
+
   useEffect(()=>{
     getUserCamera();
     getUserAudio();
@@ -118,7 +122,10 @@ const CommonStart = ({image, onClick} ) => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
       setIsCamOn(true);
+
+      videoRef.current.style.transform = 'scaleX(-1)';
     }
+    
     catch (error) {
       console.error("Failed to start video: ", error);
     }
@@ -153,6 +160,8 @@ const CommonStart = ({image, onClick} ) => {
     });
   };
 
+
+
   return (
     <Background>
       <StyledStartPage>
@@ -180,15 +189,13 @@ const CommonStart = ({image, onClick} ) => {
               <RightPart onClick={handleMicToggle} style={{ backgroundImage: `url(${isMicOn ? onImage : offImage})` }}></RightPart>
             </DivWrapper>
             <DivWrapper>
-          {/* 이미지에 대한 버튼을 추가하려는 곳 */}
-          {/* 클릭 이벤트를 onClick prop으로 받은 함수로 설정 */}
-          <img
-            src={image}
-            alt="버튼 이미지"
-            style={{ width: '40%', height: '80%', margin: 'auto', cursor: 'pointer' }}
-            onClick={onClick}
-          />
-        </DivWrapper>
+              {/* 조건부 렌더링을 사용하여 버튼 선택 */}
+              {isHost ? (
+                <MakeroomButton alt="방 만들기" onClick={onClick}/>
+              ) : (
+                <GoroomButton alt="방 만들기" onClick={onClick}/>
+              )}
+            </DivWrapper>
           </RightSection>
         </StyledContent>
       </StyledStartPage>
