@@ -97,12 +97,7 @@ const CommonLobby = ()=>{
   const navigate = useNavigate();
 
   const [isHost, setIsHost] = useState(true);
-<<<<<<< HEAD:Sarkem/front_ex/src/components/backgrounds/CommonLobby.js
   const [userCount, setUserCount] = useState(8);
-=======
-  const [userCount, setUserCount] = useState(7);
-  
->>>>>>> origin/FE_webRTC:Sarkem/front_ex/src/pages/CommonLobby.js
 
   const handleGamePageClick = () => {
     // Logic to navigate to the GamePage when the user is a host
