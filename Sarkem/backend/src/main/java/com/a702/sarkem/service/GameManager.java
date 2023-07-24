@@ -1,5 +1,6 @@
 package com.a702.sarkem.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class GameManager {
 
-
 	private final Map<String, GameRoom> gameRoomMap;	// Key: roomId
-
 	private final Map<String, GameSession> gameSessionMap;	// Key: roomId
 
 	// 채팅방(topic)에 발행되는 메시지를 처리할 Listner
@@ -39,7 +38,7 @@ public class GameManager {
 	private final ChatSubscriber chatSubscriber;
 	private final ChatPublisher chatPublisher;
 	// topic 관리
-	private Map<String, ChannelTopic> topics;
+	private Map<String, ChannelTopic> topics = new HashMap<>();
 	
 	// 게임방 생성
 	public void createGameRoom(String roomId) {

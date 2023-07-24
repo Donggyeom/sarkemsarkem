@@ -1,5 +1,6 @@
 package com.a702.sarkem.model.gameroom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.a702.sarkem.model.game.Player;
@@ -21,6 +22,9 @@ public class GameRoom {
 	 * 플레이어 수 리턴
 	 * @return 플레이어 수
 	 */
+	public GameRoom() {
+		players = new ArrayList<>();
+	}
 	public int getPlayerCount() {
 		return players.size();
 	}
