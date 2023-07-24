@@ -16,7 +16,8 @@ import startButtonImage from '../img/startbutton.png'
 import inviteButtonImage from '../img/invitebutton.png'
 import BackButton from '../components/buttons/backButton';
 import CamCat from '../components/camera/camcat';
-
+import { useNavigate } from 'react-router-dom';
+import StartButton from '../components/buttons/StartButton'
 const StyledStartPage = styled.div`
 `;
 
