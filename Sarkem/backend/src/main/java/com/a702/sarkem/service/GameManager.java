@@ -8,6 +8,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import com.a702.sarkem.exception.GameOptionSettingException;
+import com.a702.sarkem.exception.GameRoomNotFoundException;
 import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.SystemMessage;
@@ -76,7 +77,10 @@ public class GameManager {
 	 * @param roomId 
 	 * @return GameRoom 객체
 	 */
-	public GameRoom retrieveGameRoom(String roomId) {
+	public GameRoom retrieveGameRoom(String roomId) throws GameRoomNotFoundException {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		if (gameRoom == null) throw new GameRoomNotFoundException(roomId + " 게임방을 찾을 수 없습니다.");
+		
 		return gameRoomMap.get(roomId);
 	}
 	
