@@ -1,21 +1,21 @@
-import Background from './BackgroundSunset';
+import Background from '../components/backgrounds/BackgroundSunset';
 import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
-import boxImage from '../../img/box.png'
-import camcatImage from '../../img/camcat.png'
-import sc_police from '../../img/sc_경찰.png'
-import sc_vet from '../../img/sc_수의사.png'
-import sc_sark from '../../img/sc_삵.png'
-import sc_citizen from '../../img/sc_시민.png'
-import sc_scoop from '../../img/sc_탐정.png'
-import sc_psychologist from '../../img/sc_심리학자.png'
-import sc_nyangachi from '../../img/sc_냥아치.png'
-import timesetting from '../../img/timesetting.png'
-import settingbuttonImage from '../../img/settingbutton.png'
-import startButtonImage from '../../img/startbutton.png'
-import inviteButtonImage from '../../img/invitebutton.png'
-import BackButton from '../buttons/backButton';
-import CamCat from '../camera/camcat';
+import boxImage from '../img/box.png'
+import camcatImage from '../img/camcat.png'
+import sc_police from '../img/sc_경찰.png'
+import sc_vet from '../img/sc_수의사.png'
+import sc_sark from '../img/sc_삵.png'
+import sc_citizen from '../img/sc_시민.png'
+import sc_scoop from '../img/sc_탐정.png'
+import sc_psychologist from '../img/sc_심리학자.png'
+import sc_nyangachi from '../img/sc_냥아치.png'
+import timesetting from '../img/timesetting.png'
+import settingbuttonImage from '../img/settingbutton.png'
+import startButtonImage from '../img/startbutton.png'
+import inviteButtonImage from '../img/invitebutton.png'
+import BackButton from '../components/buttons/backButton';
+import CamCat from '../components/camera/camcat';
 
 const StyledStartPage = styled.div`
 `;
@@ -96,6 +96,7 @@ const CommonLobby = ()=>{
 
   const [isHost, setIsHost] = useState(true);
   const [userCount, setUserCount] = useState(7);
+  
 
   const handleGamePageClick = () => {
     // Logic to navigate to the GamePage when the user is a host

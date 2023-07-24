@@ -103,7 +103,7 @@ const Logo = styled.img`
   max-height: 100%; /* 세로 크기 100% */
 `;
 
-const CommonStart = ({image, onClick} ) => {
+const CommonStart = ({onClick} ) => {
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -128,8 +128,7 @@ const CommonStart = ({image, onClick} ) => {
   useEffect(()=>{
     getUserCamera();
     getUserAudio();
-    console.log(isCamOn);
-  }, [videoRef])
+  }, [videoRef, audioRef])
 
   const getUserCamera = async () => {
     try {
@@ -210,11 +209,7 @@ const CommonStart = ({image, onClick} ) => {
             </DivWrapper>
             <DivWrapper>
               {/* 조건부 렌더링을 사용하여 버튼 선택 */}
-              {isHost ? (
-                <MakeroomButton alt="방 만들기" onClick={onClick}/>
-              ) : (
-                <GoroomButton alt="방 만들기" onClick={onClick}/>
-              )}
+              <GoroomButton isHost={isHost} roomId={roomId} onClick={onClick}/>
             </DivWrapper>
           </RightSection>
         </StyledContent>

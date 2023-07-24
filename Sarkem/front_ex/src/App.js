@@ -5,7 +5,8 @@ import StartPage from './pages/StartPage';
 // import StartUnhost from './pages/StartUnhost'; // Import StartUnhost component
 import CommonStart from './pages/CommonStart';
 import LoadingPage from './pages/LoadingPage';
-import LobbyPage from './pages/LobbyPage';
+// import LobbyPage from './pages/LobbyPage';
+import CommonLobby from './pages/CommonLobby';
 import DayPage from './pages/DayPage';
 import SunsetPage from './pages/SunsetPage';
 import NightPage from './pages/NightPage';
@@ -18,7 +19,7 @@ const App = () => {
         <Route path="/:roomId" element={<CommonStart />} /> 
         {/* <Route path="/start/unhost" element={<StartUnhost />} />  */}
         <Route path="/loading" element={<LoadingPage />} />
-        <Route path="/lobby" element={<LobbyPage />}/>
+        <Route path="/lobby" element={<CommonLobby />}/>
         <Route path="/day" element={<DayPage />}/>
         <Route path="/sunset" element={<SunsetPage />}/>
         <Route path="/night" element={<NightPage />}/>
