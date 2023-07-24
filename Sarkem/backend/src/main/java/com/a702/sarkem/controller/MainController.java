@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.a702.sarkem.model.game.Player;
 import com.a702.sarkem.model.gameroom.GameRoom;
+import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.service.GameManager;
 
 import io.openvidu.java.client.Connection;
@@ -19,9 +19,6 @@ import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,10 +72,8 @@ public class MainController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     	String token = getConnectionToken(session, paramMap);
-    	Player player = new Player();
-    	player.setNickname(nickName);
-    	player.setPlayerId(token);
-    	System.out.println(player);
+    	Player player = new Player(token, nickName);
+    	log.debug(player.toString());
     	gameManager.connectPlayer(roomId, player);
 		return new ResponseEntity<>(player.getPlayerId(), HttpStatus.OK);
     }

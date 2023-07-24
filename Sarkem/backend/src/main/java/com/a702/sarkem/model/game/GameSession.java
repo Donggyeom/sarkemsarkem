@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.a702.sarkem.model.player.PlayerCondition;
+import com.a702.sarkem.model.player.RolePlayer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +28,7 @@ public class GameSession {
 	private final String roomId;
 	@NonNull
 	private String gameId;
-	private List<PlayerCondition> playerConditions;
+	private List<RolePlayer> players;
 	private int meetingTime;
 	private int day;
 	private PhaseType phase;
@@ -40,7 +40,7 @@ public class GameSession {
 	public GameSession(String roomId, String gameId) {
 		this.roomId = roomId;
 		this.gameId = gameId;
-		this.playerConditions = new ArrayList<>(10); 
+		this.players = new ArrayList<>(10); 
 		this.phase = PhaseType.READY;
 		this.meetingTime = 60;
 		this.day = 0;

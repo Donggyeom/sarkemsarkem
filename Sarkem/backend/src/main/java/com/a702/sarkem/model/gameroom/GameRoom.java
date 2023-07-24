@@ -3,7 +3,7 @@ package com.a702.sarkem.model.gameroom;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.a702.sarkem.model.game.Player;
+import com.a702.sarkem.model.player.Player;
 
 import lombok.Getter;
 import lombok.Setter;

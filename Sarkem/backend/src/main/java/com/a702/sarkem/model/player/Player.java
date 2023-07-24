@@ -1,21 +1,19 @@
 package com.a702.sarkem.model.player;
 
-import org.springframework.data.redis.core.RedisHash;
-
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.ToString;
 
-@Slf4j
 @Getter
 @Setter
-@RedisHash("Player")
-@Builder
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Player {
 
-	private final String playerId; // 아이디
-
-	private final String nickname; // 닉네임
-
+	private String playerId; // 아이디
+	private String nickname; // 닉네임
+	
 }

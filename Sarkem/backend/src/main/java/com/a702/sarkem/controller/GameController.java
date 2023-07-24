@@ -6,8 +6,8 @@ import org.springframework.stereotype.Controller;
 
 import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.chat.ChatMessage;
-import com.a702.sarkem.model.game.ActionMessage;
-import com.a702.sarkem.model.game.SystemMessage;
+import com.a702.sarkem.model.game.message.ActionMessage;
+import com.a702.sarkem.model.game.message.SystemMessage;
 import com.a702.sarkem.redis.GamePublisher;
 import com.a702.sarkem.service.GameManager;
 import com.fasterxml.jackson.core.JsonProcessingException;

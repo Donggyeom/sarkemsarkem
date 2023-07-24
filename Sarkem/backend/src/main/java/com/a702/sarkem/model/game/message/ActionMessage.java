@@ -1,4 +1,4 @@
-package com.a702.sarkem.model.game;
+package com.a702.sarkem.model.game.message;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
