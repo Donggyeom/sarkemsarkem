@@ -1,6 +1,6 @@
 import Background from './BackgroundSunset';
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import boxImage from '../../img/box.png'
 import camcatImage from '../../img/camcat.png'
 import sc_police from '../../img/sc_경찰.png'
@@ -15,6 +15,7 @@ import settingbuttonImage from '../../img/settingbutton.png'
 import startButtonImage from '../../img/startbutton.png'
 import inviteButtonImage from '../../img/invitebutton.png'
 import BackButton from '../buttons/backButton';
+import CamCat from '../camera/camcat';
 
 const StyledStartPage = styled.div`
 `;
@@ -26,15 +27,10 @@ const StyledContent = styled.div`
 `;
 
 const LeftSection = styled.div`
-  /* 왼쪽 섹션 스타일 작성 */
-  flex: 4.5; /* 40% of the available width */
+  flex: 4;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-image: url(${camcatImage});
-  background-size: 85% 85%;
-  background-repeat: no-repeat;
-  background-position: center center;
+  flex-wrap: wrap;
 `;
 
 const RightSection = styled.div`
@@ -80,6 +76,13 @@ const RightPart = styled.div`
   padding : 50px 0px 50px 150px;
 `;
 
+const LeftContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Logo = styled.img`
   /* 로고 이미지 스타일 작성 */
   max-width: 60vw; /* 가로 크기 60% */
@@ -92,6 +95,7 @@ const Logo = styled.img`
 const CommonLobby = ()=>{
 
   const [isHost, setIsHost] = useState(true);
+  const [userCount, setUserCount] = useState(7);
 
   const handleGamePageClick = () => {
     // Logic to navigate to the GamePage when the user is a host
@@ -106,12 +110,142 @@ const CommonLobby = ()=>{
     console.log('Invite functionality for hosts');
   };
 
+  const renderCamCats = () => {
+    const camCats = [];
+    for (let i = 0; i < userCount; i++) {
+      
+      camCats.push(<CamCat key={i}/>);
+    }
+    return camCats;
+  };
+
+  useEffect(() => {
+    renderCamCats();
+  }, [userCount]);
+
 return (
   <Background>
     <BackButton/>
     <StyledStartPage>
       <StyledContent>
-        <LeftSection></LeftSection>
+        <LeftSection>
+            {userCount === 1 && (
+              <>
+                <div></div>
+                <CamCat />
+              </>
+            )}
+            {userCount === 2 && (
+              <div style={{ display: 'flex', justifyContent: 'center', height: '50%' }}>
+                <CamCat />
+                <CamCat />
+              </div>
+            )}
+            {userCount === 3 && (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <CamCat />
+                  <CamCat />
+                </div>
+                <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', height: '50%', alignItems: 'center' }}>
+                  <CamCat />
+                </div>
+              </div>
+            )}
+            {userCount === 4 && (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <CamCat />
+                  <CamCat />
+                </div>
+                <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <CamCat />
+                  <CamCat />
+                </div>
+              </div>
+            )}
+            {userCount === 5 && (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <CamCat />
+                <CamCat />
+                <CamCat />
+              </div>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', height: '35%', alignItems: 'center' }}>
+                <CamCat />
+                <CamCat />
+              </div>
+            </div>
+            )}
+            {userCount === 6 && (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <CamCat />
+                <CamCat />
+                <CamCat />
+              </div>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <CamCat />
+                <CamCat />
+                <CamCat />
+              </div>
+            </div>
+            )}
+            {userCount === 7 && (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <CamCat />
+                <CamCat />
+              </div>
+                <CamCat />
+                <CamCat />
+              <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <CamCat />
+                <CamCat />
+
+              </div>
+            </div>
+            )}
+            {userCount === 8 && (
+              <>
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+              </>
+            )}
+            {userCount === 9 && (
+              <>
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+              </>
+            )}
+            {userCount === 10 && (
+              <>
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+                <CamCat />
+              </>
+            )}                
+
+        </LeftSection>
         <RightSection>
           <DivWrapper style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center',  backgroundSize: '95%', backgroundImage: `url(${settingbuttonImage})` }}>
           </DivWrapper>

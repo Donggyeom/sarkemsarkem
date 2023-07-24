@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import logoImage from '../img/logo.png';
@@ -13,6 +14,8 @@ import camImage from '../img/cam.png';
 import MakeroomButton from '../components/buttons/makeroomButton';
 import GoroomButton from '../components/buttons/goroomButton';
 import { useNavigate, useLocation } from 'react-router-dom';
+import CamCat from '../components/camera/camcat';
+
 
 const StyledStartPage = styled.div`
 `;
@@ -33,15 +36,9 @@ const StyledContent = styled.div`
 `;
 
 const LeftSection = styled.div`
-  /* 왼쪽 섹션 스타일 작성 */
-  flex: 4; /* 40% of the available width */
+  flex: 4;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-image: url(${camcatImage});
-  background-size: 85% 85%;
-  background-repeat: no-repeat;
-  background-position: center center;
 `;
 
 const RightSection = styled.div`
@@ -86,7 +83,17 @@ const RightPart = styled.div`
   background-size: 15vw;
   background-position: center center;
   background-repeat: no-repeat;
-  padding : 50px 0px 50px 150px;
+  padding: 50px 0px 50px 150px;
+
+  /* Input styling */
+  input {
+    width: 100%;
+    padding: 5px;
+    font-size: 28px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+  }
 `;
 
 const Logo = styled.img`
@@ -103,7 +110,14 @@ const CommonStart = ({image, onClick} ) => {
   const roomId = location.pathname.slice(1);
   const isHost = location.state.isHost;
 
-  const [userName, setUserName] = useState('이름모를유저' + Math.floor(Math.random() * 100))
+  const [userName, setUserName] = useState('이름모를유저' + Math.floor(Math.random() * 100));
+
+  // username 받으려고 handlechange 추가한거임 //
+
+  const handleChange = (event) => {
+    setUserName(event.target.value);
+  };
+
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
   
@@ -172,14 +186,20 @@ const CommonStart = ({image, onClick} ) => {
 
         <StyledContent>
           <LeftSection>
-          <video ref={videoRef} autoPlay/>
-          <audio ref={audioRef} autoPlay/>
+          <CamCat />
           </LeftSection>
           <RightSection>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${usernicknameImage})` }}></LeftPart>
               <RightPart style={{ backgroundSize: '85%', backgroundImage: `url(${usernicknameinputImage})` }}>
-              </RightPart>
+            {/* Input field */}
+            <input
+              type="text"
+              value={userName}
+              onChange={handleChange}
+              placeholder="Enter your nickname"
+            />
+            </RightPart>
             </DivWrapper>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${camImage})` }}></LeftPart>
