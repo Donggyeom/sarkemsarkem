@@ -142,7 +142,6 @@ const CommonStart = ({image, onClick} ) => {
     tracks.forEach((track) => {
       track.enabled = micOn;
     });
-    console.log(isMicOn);
   };
 
   const handleCamToggle = () => {
