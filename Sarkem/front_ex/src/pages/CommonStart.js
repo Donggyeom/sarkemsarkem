@@ -138,11 +138,11 @@ const CommonStart = ({image, onClick} ) => {
   const handleMicToggle = () => {
     const micOn = !isMicOn;
     setIsMicOn(micOn)
-    setIsMicOn((prevIsMicOn) => !prevIsMicOn);
     const tracks = audioRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = micOn;
     });
+    console.log(isMicOn);
   };
 
   const handleCamToggle = () => {
