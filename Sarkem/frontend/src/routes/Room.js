@@ -118,7 +118,7 @@ function Room () {
 
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
-        const response = await axios.post('/api/sessions/' + sessionId + '/connections', {}, {
+        const response = await axios.post('/api/sessions/' + sessionId + '/connections', {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The token
@@ -130,6 +130,7 @@ function Room () {
             // 토큰 생성
             getToken().then(async (response) => {
                 try {
+                    console.log(response)
                     // 생성된 토큰을 통해 세션에 연결 요청
                     await session.connect(response, {clientData: myUserName})
                     

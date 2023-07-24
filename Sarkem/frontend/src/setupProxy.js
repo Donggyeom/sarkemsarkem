@@ -7,10 +7,4 @@ module.exports = function (app) {
       changeOrigin: true,
     })
   );
-  app.use(
-    createProxyMiddleware('/chat', {
-      target: 'http://localhost:8080',
-      changeOrigin: true,
-    })
-  );
 };

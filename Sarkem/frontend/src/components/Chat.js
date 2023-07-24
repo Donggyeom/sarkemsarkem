@@ -17,6 +17,10 @@ export default function Chat({sessionId, userName}) {
         connect();
     }, [])
 
+    useEffect(() => {
+      if(stompCilent.current.connected) enterChatRoom();
+    }, [stompCilent.current.connected])
+
     const connect = (event) => {
         let socket = new SockJS("http://localhost:8080/ws-stomp");
         stompCilent.current = Stomp.over(socket);
@@ -25,7 +29,9 @@ export default function Chat({sessionId, userName}) {
            onConnected();
          }, 500);
         })
-        console.log(stompCilent);
+        console.log(stompCilent.current.connected);
+        setIsConnected(true);
+        console.log(isConnected);
        }
      
        function onConnected() {
@@ -50,6 +56,7 @@ export default function Chat({sessionId, userName}) {
 
       const enterChatRoom =  () => {
         console.log("채팅방 생성");
+        console.log(isConnected);
         axios.post(`/api/chat/room?name=CHAT_${sessionId}`)
         .then(res => {
           console.log(res);
