@@ -1,6 +1,7 @@
 package com.a702.sarkem.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -60,51 +61,100 @@ public class MainController {
         //Game Session
         gameManager.createGameRoom(session.getSessionId());
         String token = getConnectionToken(session, paramMap);
-        System.out.println(token);
-        System.out.println("하하하하하");
-        return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
+        String roomId = session.getSessionId();
+        gameManager.setHostId(roomId, token.substring(42));
+//        System.out.println(token.substring(42));
+        return new ResponseEntity<>(roomId, HttpStatus.OK);
     }
     
-    
-	// 방 접속 connectRoom(@RequestParam String roomId, Player player)
-    @PutMapping("/api/game/{roomId}")
-    public ResponseEntity<String> connectRoom(@PathVariable("roomId") String roomId,
-                                                   @RequestBody String nickName)
-                                                		   throws OpenViduJavaClientException, OpenViduHttpException{
+    // 방 획득 retrieveGameRoom
+    @GetMapping("/api/game/{roomId}")
+    public ResponseEntity<GameRoom> retrieveGameRoom(@PathVariable("roomId") String roomId,
+    		@RequestBody(required = false) Map<String, Object> params)
+    				throws OpenViduJavaClientException, OpenViduHttpException {
     	Session session = openvidu.getActiveSession(roomId);
-        if (session == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    	if (session == null) {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	System.out.println(gameManager.getGameRoom(roomId));
+    	return new ResponseEntity<>(gameManager.getGameRoom(roomId), HttpStatus.OK);
+    }
+    
+    // 방 접속 connectRoom(@RequestParam String roomId, Player player)
+    @PostMapping("/api/game/{roomId}/player")
+    public ResponseEntity<String> connectRoom(@PathVariable("roomId") String roomId,
+    		@RequestBody String nickName)
+    				throws OpenViduJavaClientException, OpenViduHttpException{
+    	Session session = openvidu.getActiveSession(roomId);
+    	if (session == null) {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
     	String token = getConnectionToken(session, paramMap);
     	Player player = new Player();
     	player.setNickname(nickName);
-    	player.setPlayerId(token);
+    	String playerId = token.substring(42);
+    	player.setPlayerId(playerId);
     	System.out.println(player);
     	gameManager.connectPlayer(roomId, player);
-		return new ResponseEntity<>(player.getPlayerId(), HttpStatus.OK);
+    	return new ResponseEntity<>(token, HttpStatus.OK);
     }
+    
+    
+//    //게임방 접속
+//    @PostMapping("/api/game/{roomId}/player")
+//    public ResponseEntity<String> connectGameRoom(@PathVariable("roomId") String roomId,
+//                                                   @RequestBody(required = false) Map<String, Object> params)
+//            throws OpenViduJavaClientException, OpenViduHttpException {
+//        Session session = openvidu.getActiveSession(roomId);
+//        if (session == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
+//        Connection connection = session.createConnection(properties);
+//        return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
+//    }
+    
+    
+    //게임방 모든 유저 정보 조회
+    @GetMapping("/api/game/{roomId}/player")
+    public ResponseEntity<List<Player>> retrieveGamePlayers(@PathVariable("roomId") String roomId,
+    		@RequestBody(required = false) Map<String, Object> params)
+    				throws OpenViduJavaClientException, OpenViduHttpException {
+    	Session session = openvidu.getActiveSession(roomId);
+    	if (session == null) {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	return new ResponseEntity<>(gameManager.getGameRoom(roomId).getPlayers(), HttpStatus.OK);
+    }
+    
+    //게임방 자신 정보 조회
+    @GetMapping("/api/game/{roomId}/player/{playerId}")
+    public ResponseEntity<Player> retrieveGamePlayer(@PathVariable("roomId") String roomId,
+    		@PathVariable("playerid") String playerId)
+    				throws OpenViduJavaClientException, OpenViduHttpException {
+    	Session session = openvidu.getActiveSession(roomId);
+    	if (session == null) {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    	Player player = gameManager.getGameRoom(roomId).getPlayer(playerId);
+    	return new ResponseEntity<>(player, HttpStatus.OK);
+    }
+    
+    //게임방 나갔을때
+    @DeleteMapping("/api/game/{roomId}/player/{playerId}")
+    public void exitGame(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
+    	gameManager.getGameRoom(roomId).deletePlayer(playerId);
+    }
+    
     
     
 
-	// 방 획득 retrieveGameRoom
-    @GetMapping("/api/game/{roomId}")
-    public ResponseEntity<GameRoom> retrieveGameRoom(@PathVariable("roomId") String roomId,
-                                                   @RequestBody(required = false) Map<String, Object> params)
-            throws OpenViduJavaClientException, OpenViduHttpException {
-        Session session = openvidu.getActiveSession(roomId);
-        if (session == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        System.out.println(gameManager.getGameRoom(roomId));
-        return new ResponseEntity<>(gameManager.getGameRoom(roomId), HttpStatus.OK);
-    }
     
     
     //토큰 생성하기&가져오기
     public String getConnectionToken(Session session, Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException{
     	ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
         Connection connection = session.createConnection(properties);
-        
         return connection.getToken();
     }
     

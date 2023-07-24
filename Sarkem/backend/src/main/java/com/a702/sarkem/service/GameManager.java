@@ -57,6 +57,16 @@ public class GameManager {
 		redisMessageListener.addMessageListener(chatSubscriber, chatTopic);
 	}
 	
+	
+	
+	
+	//호스트 아이디 지정해주기
+	public void setHostId(String roomId, String token) {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		gameRoom.setHostId(token);
+		gameRoomMap.put(roomId, gameRoom);
+	}
+	
 	//게임방 입장
 	public void connectPlayer(String roomId, Player player) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);

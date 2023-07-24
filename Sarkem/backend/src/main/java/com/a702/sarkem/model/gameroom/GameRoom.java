@@ -28,4 +28,24 @@ public class GameRoom {
 	public int getPlayerCount() {
 		return players.size();
 	}
+	
+	public Player getPlayer(String playerId) {
+		for(Player p : this.players) {
+			if (p.getPlayerId().equals(playerId)) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	public List<Player> deletePlayer(String playerId) {
+		int a = this.getPlayerCount();
+		for(int i = 0; i<a; i++) {
+			if(this.players.get(i).getPlayerId().equals(playerId)) {
+				this.players.remove(i);
+				return this.players;
+			}
+		}
+		return null;
+	}
 }
