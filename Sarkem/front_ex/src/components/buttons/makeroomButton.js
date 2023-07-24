@@ -12,6 +12,7 @@ const MakeroomButton = ({ src, alt }) => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
+    // /lobby로 이동
     navigate('/lobby');
   };
 

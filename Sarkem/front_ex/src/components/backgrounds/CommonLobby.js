@@ -16,6 +16,7 @@ import startButtonImage from '../../img/startbutton.png'
 import inviteButtonImage from '../../img/invitebutton.png'
 import BackButton from '../buttons/backButton';
 import CamCat from '../camera/camcat';
+import StartButton from '../buttons/StartButton';
 
 const StyledStartPage = styled.div`
 `;
@@ -268,10 +269,9 @@ return (
           <DivWrapper>
               {isHost ? (
                 <>
-                  <LeftPart
-                    onClick={handleGamePageClick}
-                    style={{ backgroundSize: '75% 75%', backgroundImage: `url(${startButtonImage})` }}
-                  ></LeftPart>
+                  <LeftPart>
+                    <StartButton></StartButton>
+                  </LeftPart>
                   <RightPart
                     onClick={handleInviteClick}
                     style={{ backgroundImage: `url(${inviteButtonImage})` }}
