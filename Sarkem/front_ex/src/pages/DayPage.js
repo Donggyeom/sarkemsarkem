@@ -1,62 +1,127 @@
-/* eslint-disable */
-
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundDay';
-/* Code generated with AutoHTML Plugin for Figma */
 import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
+import CamCat from '../components/camera/camcat';
+
+const CenteredContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
 
 const StyledDayPage = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  position: relative; /* position을 relative로 설정합니다. */
-  width: 100%;
-  height: 100vh;
   overflow: hidden;
 `;
 
 const TimeSecond = styled.text`
-    color: #000000;
-    text-align: left;
-    font: 400 42px "ONE Mobile POP", sans-serif;
-    position: absolute; /* position을 absolute로 설정합니다. */
-    left: 22px; /* 원하는 위치 값을 지정합니다. */
-    top: 90px; /* 원하는 위치 값을 지정합니다. */
+  color: #000000;
+  text-align: left;
+  font: 400 42px "ONE Mobile POP", sans-serif;
+  position: absolute;
+  left: 22px;
+  top: 90px;
 `;
 
-const handleCamButtonClick = () => {
-    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-    console.log('Cam Button clicked!');
-};
+const CamCatContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 60%;
+`;
 
-const handleMicButtonClick = () => {
-    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-    console.log('Mic Button clicked!');
-};
+const CamCatItem = styled.div`
+  width: 30%;
+  margin-bottom: 20px;
+`;
 
 const handleScMiniClick = () => {
-    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-    console.log('ScMini clicked!');
+  console.log('ScMini clicked!');
 };
 
 const DayPage = () => {
-    
-    return (
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCamOn, setIsCamOn] = useState(true);
+
+  const videoRef = useRef(null);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    getUserCamera();
+    getUserAudio();
+  }, []);
+
+  const getUserCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+      setIsCamOn(true);
+
+      videoRef.current.style.transform = 'scaleX(-1)';
+    } catch (error) {
+      console.error("Failed to start video: ", error);
+    }
+  };
+
+  const getUserAudio = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioRef.current.srcObject = stream;
+      setIsMicOn(true);
+    } catch (error) {
+      console.error("Failed to start audio: ", error);
+    }
+  };
+
+  const handleMicButtonClick = () => {
+    console.log('Mic Button clicked!');
+    // const micOn = !isMicOn;
+    // setIsMicOn(micOn)
+    // const tracks = audioRef.current.srcObject.getTracks();
+    // tracks.forEach((track) => {
+    // 	track.enabled = micOn;
+    // });
+  };
+
+  const handleCamButtonClick = () => {
+    console.log('Cam Button clicked!');
+    const camOn = !isCamOn;
+    setIsCamOn(camOn);
+    const tracks = videoRef.current.srcObject.getTracks();
+    tracks.forEach((track) => {
+      track.enabled = camOn;
+    });
+  };
+
+  return (
     <Background>
+      <CenteredContainer>
         <StyledDayPage>
-            <SunMoon alt="SunMoon"></SunMoon>
-            <TimeSecond>60s</TimeSecond>
-            <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
-            <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
-            <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
-            <DayPopup></DayPopup>
+          {/* <DayPopup style={{ zIndex: 1 }} /> */}
+          <SunMoon alt="SunMoon" />
+          <TimeSecond>60s</TimeSecond>
+          <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
+          <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
+          <ScMini alt="ScMini Button" onClick={handleScMiniClick} />
+
+          <CamCatContainer>
+            <CamCatItem><CamCat /></CamCatItem>
+            <CamCatItem><CamCat /></CamCatItem>
+            <CamCatItem><CamCat /></CamCatItem>
+            <CamCatItem><CamCat /></CamCatItem>
+            <CamCatItem><CamCat /></CamCatItem>
+            <CamCatItem><CamCat /></CamCatItem>
+          </CamCatContainer>
         </StyledDayPage>
+      </CenteredContainer>
     </Background>
   );
 };
