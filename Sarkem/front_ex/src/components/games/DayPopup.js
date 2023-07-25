@@ -12,9 +12,13 @@ const styles = {
 };
 
 const DayPopup = ({ ...props }) => {
-  const [showPopup, setShowPopup] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
+    setTimeout(() => {
+      setShowPopup(true);
+    }, 0);
+
     const fadeOutTimeout = setTimeout(() => {
       setShowPopup(false);
     }, 4000);
@@ -23,9 +27,7 @@ const DayPopup = ({ ...props }) => {
   }, []);
 
   return (
-    <div
-      style={showPopup ? styles.dayPopupContainer : styles.dayPopupFadeOut}
-    >
+    <div style={showPopup ? styles.dayPopupContainer : styles.dayPopupFadeOut}>
       {/* Your popup content */}
       <div
         style={{

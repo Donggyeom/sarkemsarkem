@@ -721,7 +721,7 @@ const leftSectionRef = useRef(null);
             {isHost ? (
               <>
                 <LeftPart>
-                  <StartButton url="/day" onClick={() => navigate('/day')} alt="Start Game" />
+                  <StartButton url="/day" onClick={() => navigate('/day', {state: {isHost: isHost, roomId: roomId, nickName: nickName}})} alt="Start Game" />
                 </LeftPart>
                 <RightPart onClick={handleInviteClick} style={{ backgroundImage: `url(${inviteButtonImage})` }} />
               </>
