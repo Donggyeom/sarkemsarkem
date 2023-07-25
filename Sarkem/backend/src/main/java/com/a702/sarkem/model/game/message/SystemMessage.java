@@ -2,6 +2,7 @@ package com.a702.sarkem.model.game.message;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class SystemMessage implements Serializable {
 	
 	/**
@@ -18,6 +20,7 @@ public class SystemMessage implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public enum SystemCode {
+		// 시스템 코드
 		GAME_READY      , // 게임준비 
 		GAME_START      , // 게임시작 
 		PHASE_DAY       , // 낮 페이즈 
@@ -38,24 +41,13 @@ public class SystemMessage implements Serializable {
 		                  // 메세지 출력
 		                  // 역할배정
 		                  // 게임방 설정 변경
+		
+		// 에러 코드
+		ONLY_HOST_ACTION, // 방장이 아닌 사용자 액션
 	}
 
+	private SystemCode code;
 	private String roomId;
-	private String code;
+	private String playerId;
 	private Object body;
-	public SystemMessage(String roomId, SystemCode code, Object param) {
-		super();
-		switch(code) {
-		case GAME_READY:
-			this.roomId = roomId;
-			this.code = "GAME_READY";
-			this.body = param;
-			break;
-		case GAME_START:
-			this.roomId = roomId;
-			this.code = "GAME_START";
-			this.body = param;
-			break;
-		}
-	}
 }

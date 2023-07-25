@@ -5,7 +5,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import com.a702.sarkem.model.game.message.ActionMessage;
-import com.a702.sarkem.model.game.message.ErrorMessage;
 import com.a702.sarkem.model.game.message.SystemMessage;
 
 import lombok.RequiredArgsConstructor;

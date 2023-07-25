@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ChatSubscriber implements MessageListener{
 	private final ObjectMapper objectMapper;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<?, ?> redisTemplate;
     private final SimpMessageSendingOperations messagingTemplate;
 
     /**
