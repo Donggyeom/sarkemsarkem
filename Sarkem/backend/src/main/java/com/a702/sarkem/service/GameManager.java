@@ -40,6 +40,14 @@ public class GameManager {
 	// topic 관리
 	private Map<String, ChannelTopic> topics = new HashMap<>();
 	
+	private ChannelTopic getGameTopic(String roomId) {
+		return topics.get("GAME_"+roomId);
+	}
+	
+	private ChannelTopic getChatTopic(String roomId) {
+		return topics.get("CHAT_"+roomId);
+	}
+	
 	/**
 	 * 게임코드 랜덤 생성(16진수 5자리)
 	 */
@@ -82,12 +90,33 @@ public class GameManager {
 	}
 	
 	/**
+	 * 게임룸 정보 조회
+	 */
+	public GameRoom getGameRoom(String roomId) {
+		return gameRoomMap.get(roomId);
+	}
+	
+	/**
+	 * 게임방 방장 여부 확인
+	 */
+	public boolean isHost(String roomId, String playerId) {
+		if (playerId == null) return false;
+		
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		String hostId = gameRoom.getHostId();
+		if ( !playerId.equals(hostId) ) return false;
+		
+		return true;
+	}
+	
+	/**
 	 * 플레이어 게임방 연결 
 	 */
 	public void connectPlayer(String roomId, Player player) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
 		List<Player> playerList = gameRoom.getPlayers();
 		playerList.add(player);
+		if (gameRoom.getHostId() == null) gameRoom.setHostId(player.getPlayerId());
 	}
 	
 	/**
@@ -134,35 +163,54 @@ public class GameManager {
 		GameSession gameSession = gameSessionMap.get(roomId);
 		ChannelTopic gameTopic = topics.get("GAME_"+roomId);
 		ChannelTopic chatTopic = topics.get("CHAT_"+roomId);
-		GameThread gameThread = new GameThread(gameRoom, gameSession, gameTopic, chatTopic);
+		GameThread gameThread = new GameThread(this, gameRoom, gameSession, gameTopic, chatTopic);
 		gameThread.run();
 	}
 	
-	/**
-	 * 추방 처리 
-	 * @param roomId
-	 * @param playerId
-	 */
-	private void proceedExclusion(String roomId, String playerId) {
-		
-		GameSession session = gameSessionMap.get(roomId);
-		
-		// TODO: 게인세션에서 추방 처리
-		
-		// 시스템 코드 "BE_EXCLUDED" 전송
-		SystemMessage message = new SystemMessage(roomId, SystemCode.BE_EXCLUDED, null);
-		ChannelTopic gameTopic = topics.get("GAMEROOM_" + roomId);
-		gamePublisher.publish(gameTopic, message);
+//	/**
+//	 * 추방 처리 
+//	 * @param roomId
+//	 * @param playerId
+//	 */
+//	private void proceedExclusion(String roomId, String playerId) {
+//		
+//		GameSession session = gameSessionMap.get(roomId);
+//		
+//		// TODO: 게인세션에서 추방 처리
+//		
+//		// 시스템 코드 "BE_EXCLUDED" 전송
+//		SystemMessage message = new SystemMessage(roomId, SystemCode.BE_EXCLUDED, null);
+//		ChannelTopic gameTopic = topics.get("GAMEROOM_" + roomId);
+//		gamePublisher.publish(gameTopic, message);
+//	}
+	
+	public void sendSystemMessage(String roomId, String[] targets, SystemCode code) {
+		ChannelTopic gameTopic = getGameTopic(roomId);
+		for (String target : targets) {
+			SystemMessage systemMessage = new SystemMessage(code, roomId, target, null);
+			gamePublisher.publish(gameTopic, systemMessage);
+		}
+	}
+	
+	public void sendSystemMessageToAll(String roomId, SystemCode code) {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		List<Player> players = gameRoom.getPlayers();
+		ChannelTopic gameTopic = getGameTopic(roomId);
+		for (Player target : players) {
+			SystemMessage systemMessage = new SystemMessage(code, roomId, target.getPlayerId(), null);
+			gamePublisher.publish(gameTopic, systemMessage);
+		}
 	}
 
 	class GameThread extends Thread {
-		
+		private static GameManager gameManager;
 		private GameRoom gameRoom;
 		private GameSession gameSession;
 		private ChannelTopic gameTopic;
 		private ChannelTopic chatTopic;
 		
-		public GameThread(GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic, ChannelTopic chatTopic) {
+		public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic, ChannelTopic chatTopic) {
+			this.gameManager = gameManager;
 			this.gameRoom = gameRoom;
 			this.gameSession = gameSession;
 			this.gameTopic = gameTopic;
@@ -174,8 +222,21 @@ public class GameManager {
 			// TODO: 게임 로직 구현
 			// "GAME_START" 시스템 메시지 전송
 			GameOptionDTO dto = new GameOptionDTO();
-			SystemMessage message = new SystemMessage(gameRoom.getRoomId(), SystemCode.GAME_START, dto);
-			gamePublisher.publish(gameTopic, message);
+			gameManager.sendSystemMessageToAll(gameRoom.getRoomId(), SystemCode.GAME_START);
+
+			
+			
+			// LOOP:
+			// 낮 페이즈
+			// 밤 특수능력 결과 발표
+				// 사망처리
+				// 토스트 메시지 출력
+			
+			// 밤 페이즈
+			// 밤 특수능력 대상 설정
+			// 대상 선택 실행
+			// 대상 종합
+			// 특수능력 실행
 			
 		}
 		

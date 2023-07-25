@@ -21,7 +21,7 @@ function Room () {
     const [subscribers, setSubscribers] = useState([]);
     const [videoEnabled, setVideoEnabled] = useState(true);
     const [audioEnabled, setAudioEnabled] = useState(true);
-    
+    const [token, setToken] = useState(null);
     const [dead, setDead] = useState(false);
 
 
@@ -53,7 +53,7 @@ function Room () {
         joinSession();
 
         // 게임 모듈 연결
-        connectGameWs();
+        connectGameWS();
 
         return () => {
             window.removeEventListener('beforeunload', onbeforeunload);
@@ -63,13 +63,20 @@ function Room () {
         
     }, []);
 
-    const connectGameWs = (event) => {
+    useEffect(() => {
+        console.log("이건가?");
+        if (token === null) return;
+        if(stompCilent.current.connected && token !== null) {
+            connectGame();
+        }
+    }, [stompCilent.current, token])
+
+    const connectGameWS = (event) => {
         let socket = new SockJS("http://localhost:8080/ws-stomp");
         stompCilent.current = Stomp.over(socket);
         stompCilent.current.connect({}, () => {
          setTimeout(function() {
            onSocketConnected();
-           connectGame();
          }, 500);
         })
     }
@@ -80,14 +87,19 @@ function Room () {
 
     const connectGame = () => {
         // 게임방 redis 구독
-        //console.log('/sub/game/system/' + mySessionId + " redis 구독")
+        console.log('/sub/game/system/' + mySessionId + " redis 구독")
         stompCilent.current.subscribe('/sub/game/system/' + mySessionId, function(message){
             // 시스템 메시지 처리
             let sysMessage = JSON.parse(message.body);
+            
+            if (token != sysMessage.playerId) return;
 
             switch (sysMessage.code) {
             case "GAME_START":   
                 alert('게임시작');
+                break;
+            case "ONLY_HOST_ACTION":
+                alert('방장만 실행 가능합니다.' + ' ' + myUserName);
                 break;
             }
         })
@@ -172,6 +184,8 @@ function Room () {
             getToken().then(async (response) => {
                 try {
                     console.log(response)
+                    setToken(response);
+                    
                     // 생성된 토큰을 통해 세션에 연결 요청
                     await session.connect(response, {clientData: myUserName})
                     
@@ -213,10 +227,12 @@ function Room () {
                  * 아마 router 설정에서 룸 (로비, 게임) 이렇게 나눈 다음에 네비게이션 처리를 해야할 것 같다.
                  * 게임이 끝나고 로비로 돌아오면 또 화상채팅 세션을 만들게 되니까
                  */
+                
+                connectGame();
             });
         }
     }, [session])
-
+    
     // 세션 생성 및 이벤트 정보 등록
     const joinSession = async () => {
     
@@ -251,12 +267,13 @@ function Room () {
 
     const gameStart = () => {
         console.log("게임시작 클릭")
+        console.log(token);
         stompCilent.current.send("/pub/game/action", {}, 
         JSON.stringify({
             code:'GAME_START', 
             roomId: mySessionId, 
             actionCode: 'GAME_START',
-            playerId: "test"
+            playerId: token
         })
         );
     }

@@ -1,5 +1,7 @@
 package com.a702.sarkem.model.game.message;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-public class ActionMessage {
+public class ActionMessage implements Serializable {
 
 	// 액션 코드
 	public enum ActionCode {
@@ -24,6 +26,7 @@ public class ActionMessage {
 	private ActionCode code;
 	private String roomId;
 	private String gameId;
+	private String playerId;
 	private Object param;
 	
 }

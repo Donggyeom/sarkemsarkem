@@ -4,15 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
-import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.chat.ChatMessage;
 import com.a702.sarkem.model.game.message.ActionMessage;
-import com.a702.sarkem.model.game.message.SystemMessage;
-import com.a702.sarkem.redis.GamePublisher;
+import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.service.GameManager;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,20 +16,25 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class GameController {
 
-	private final ObjectMapper objectMapper;
-
 	private final GameManager gameManager;
 	
 	/**
      * websocket "game/action"으로 들어오는 유저 액션 메시지를 처리한다.
      */
 	@MessageMapping("/game/action")
-	public void message(ActionMessage message) {
-		log.debug(message.toString());
-		
-		switch(message.getCode()) {
+	public void message(ActionMessage actionMessage) {
+		log.debug(actionMessage.toString());
+		String roomId = actionMessage.getRoomId();
+		String gameId = actionMessage.getGameId();
+		String playerId = actionMessage.getPlayerId();
+		switch(actionMessage.getCode()) {
 		case GAME_START:
-			gameManager.gameStart(message.getRoomId());
+			if ( !gameManager.isHost(roomId, playerId) ) {
+				String[] targets = new String[1];
+				targets[0] = playerId;
+				gameManager.sendSystemMessage(roomId, targets, SystemCode.ONLY_HOST_ACTION);
+			}
+			else gameManager.gameStart(roomId);
 			break;
 		case EXPULSION_VOTE:
 			break;
