@@ -15,6 +15,7 @@ public class RolePlayer extends Player {
 	
 	private GameRole role = GameRole.OBSERVER; 	// 배정받은 역할
 	private boolean alive = true; 				// 살았는지 여부
+	private String target = null;
 	
 	public RolePlayer(String playerId, String nickname) {
 		super(playerId, nickname);
