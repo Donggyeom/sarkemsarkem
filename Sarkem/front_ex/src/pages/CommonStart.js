@@ -108,19 +108,13 @@ const CommonStart = ({onClick} ) => {
   const navigate = useNavigate();
   const location = useLocation();
   const roomId = location.pathname.slice(1);
-  const isHost = location.state.isHost;
+  const isHost = location.state?.isHost;
 
-  const [userName, setUserName] = useState('이름모를유저' + Math.floor(Math.random() * 100));
-
-  // username 받으려고 handlechange 추가한거임 //
-
-  const handleChange = (event) => {
-    setUserName(event.target.value);
-  };
+  const [nickName, setNickName] = useState('이름모를유저' + Math.floor(Math.random() * 100));
 
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
-  
+
   const videoRef = useRef(null);
   const audioRef = useRef(null);
 
@@ -173,7 +167,10 @@ const CommonStart = ({onClick} ) => {
     });
   };
 
-
+  const handleNickNameChange = (event) => {
+    setNickName(event.target.value);
+    console.log(nickName);
+  }
 
   return (
     <Background>
@@ -184,7 +181,32 @@ const CommonStart = ({onClick} ) => {
 
         <StyledContent>
           <LeftSection>
-          <CamCat />
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundImage: `url(${camcatImage})`,
+              backgroundSize: '100% 100%', // Increase the background image size to 120% to make it larger
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center center',
+            }}
+          >
+            <video
+              ref={videoRef}
+              autoPlay
+              style={{
+                marginTop: "20vh",
+                width: '95%',
+                height: '73%',
+                objectFit: 'cover',
+                borderRadius: '10%',
+
+              }}
+            />
+            <audio ref={audioRef} autoPlay />
+          </div>
           </LeftSection>
           <RightSection>
             <DivWrapper>
@@ -193,8 +215,8 @@ const CommonStart = ({onClick} ) => {
             {/* Input field */}
             <input
               type="text"
-              value={userName}
-              onChange={handleChange}
+              value={nickName}
+              onChange={handleNickNameChange}
               placeholder="Enter your nickname"
             />
             </RightPart>
@@ -209,7 +231,7 @@ const CommonStart = ({onClick} ) => {
             </DivWrapper>
             <DivWrapper>
               {/* 조건부 렌더링을 사용하여 버튼 선택 */}
-              <GoroomButton isHost={isHost} roomId={roomId} onClick={onClick}/>
+              <GoroomButton isHost={isHost} roomId={roomId} nickName={nickName} onClick={onClick}/>
             </DivWrapper>
           </RightSection>
         </StyledContent>

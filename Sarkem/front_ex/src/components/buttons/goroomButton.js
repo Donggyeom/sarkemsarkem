@@ -9,10 +9,10 @@ const GoroomButtonImage = styled.img`
   cursor: pointer;
 `;
 
-const GoroomButton = ({ isHost, roomId }) => {
+const GoroomButton = ({ isHost, roomId, nickName }) => {
   const navigate = useNavigate();
   const handleButtonClick = () => {
-    navigate('/lobby', {state: {isHost: isHost, roomId: roomId}});
+    navigate('/lobby', {state: {isHost: isHost, roomId: roomId, nickName: nickName}});
   };
   return <GoroomButtonImage src={isHost ? makeRoomButtonSrc : goroomButtonSrc} alt={isHost ? "방 만들기" : "입장하기"} onClick={handleButtonClick} />;
 };
