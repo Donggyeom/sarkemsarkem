@@ -242,13 +242,8 @@ function Room () {
                  * 아마 router 설정에서 룸 (로비, 게임) 이렇게 나눈 다음에 네비게이션 처리를 해야할 것 같다.
                  * 게임이 끝나고 로비로 돌아오면 또 화상채팅 세션을 만들게 되니까
                  */
-<<<<<<< HEAD
                 
                 connectGame();
-=======
-                //여기
-                getPlayers(mySessionId);
->>>>>>> refs/remotes/origin/BE_CreateGameRoom
             });
         }
     }, [session])
