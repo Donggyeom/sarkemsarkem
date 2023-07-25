@@ -30,10 +30,12 @@ public class GameController {
 		switch(actionMessage.getCode()) {
 		case GAME_START:
 			if ( !gameManager.isHost(roomId, playerId) ) {
+				// 방장이 아닌 사용자에게 에러 메세지 전송
 				String[] targets = new String[1];
 				targets[0] = playerId;
 				gameManager.sendSystemMessage(roomId, targets, SystemCode.ONLY_HOST_ACTION);
 			}
+			// 게임 실행
 			else gameManager.gameStart(roomId);
 			break;
 		case EXPULSION_VOTE:

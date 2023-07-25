@@ -236,13 +236,14 @@ public class GameManager {
 		public void run() {
 			// TODO: 게임 로직 구현
 			// "GAME_START" 시스템 메시지 전송
-			GameOptionDTO dto = new GameOptionDTO();
+//			GameOptionDTO dto = new GameOptionDTO();
 			gameManager.sendSystemMessageToAll(gameRoom.getRoomId(), SystemCode.GAME_START);
 
 			
 			
 			// LOOP:
 			// 낮 페이즈
+			// TODO: dsddaf
 			// 밤 특수능력 결과 발표
 				// 사망처리
 				// 토스트 메시지 출력
@@ -254,6 +255,7 @@ public class GameManager {
 			// 특수능력 실행
 			
 		}
+		
 		
 	}
 }
