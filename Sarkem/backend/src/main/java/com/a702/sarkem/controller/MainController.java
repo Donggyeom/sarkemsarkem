@@ -63,7 +63,8 @@ public class MainController {
         String token = getConnectionToken(session, paramMap);
         String roomId = session.getSessionId();
         gameManager.setHostId(roomId, token.substring(42));
-//        System.out.println(token.substring(42));
+        System.out.println(token.substring(42));
+        System.out.println("방생성");
         return new ResponseEntity<>(roomId, HttpStatus.OK);
     }
     
@@ -77,6 +78,7 @@ public class MainController {
     		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
     	System.out.println(gameManager.getGameRoom(roomId));
+    	System.out.println("방획득");
     	return new ResponseEntity<>(gameManager.getGameRoom(roomId), HttpStatus.OK);
     }
     
@@ -94,25 +96,12 @@ public class MainController {
     	player.setNickname(nickName);
     	String playerId = token.substring(42);
     	player.setPlayerId(playerId);
-    	System.out.println(player);
+    	System.out.println("플레이어"+player);
+    	System.out.println("토큰"+token);
     	gameManager.connectPlayer(roomId, player);
+    	System.out.println("방접속");
     	return new ResponseEntity<>(token, HttpStatus.OK);
     }
-    
-    
-//    //게임방 접속
-//    @PostMapping("/api/game/{roomId}/player")
-//    public ResponseEntity<String> connectGameRoom(@PathVariable("roomId") String roomId,
-//                                                   @RequestBody(required = false) Map<String, Object> params)
-//            throws OpenViduJavaClientException, OpenViduHttpException {
-//        Session session = openvidu.getActiveSession(roomId);
-//        if (session == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
-//        Connection connection = session.createConnection(properties);
-//        return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
-//    }
     
     
     //게임방 모든 유저 정보 조회
@@ -124,6 +113,8 @@ public class MainController {
     	if (session == null) {
     		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
+    	System.out.println(gameManager.getGameRoom(roomId).getPlayers());
+    	System.out.println("전체유저");
     	return new ResponseEntity<>(gameManager.getGameRoom(roomId).getPlayers(), HttpStatus.OK);
     }
     
@@ -143,20 +134,15 @@ public class MainController {
     //게임방 나갔을때
     @DeleteMapping("/api/game/{roomId}/player/{playerId}")
     public void exitGame(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
-    	gameManager.getGameRoom(roomId).deletePlayer(playerId);
+    	gameManager.deletePlayer(roomId, playerId);
+    	System.out.println("게임방 나감");
     }
     
-    
-    
-
-    
-    
+        
     //토큰 생성하기&가져오기
     public String getConnectionToken(Session session, Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException{
     	ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
         Connection connection = session.createConnection(properties);
         return connection.getToken();
     }
-    
-    
 }

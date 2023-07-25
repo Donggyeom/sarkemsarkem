@@ -57,7 +57,12 @@ public class GameManager {
 		redisMessageListener.addMessageListener(chatSubscriber, chatTopic);
 	}
 	
-	
+	//플레이어 나가기
+	public void deletePlayer(String roomId, String token) {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		gameRoom.deletePlayer(token);
+		gameRoomMap.put(token, gameRoom);
+	}
 	
 	
 	//호스트 아이디 지정해주기

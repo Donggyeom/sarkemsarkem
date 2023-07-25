@@ -38,14 +38,12 @@ public class GameRoom {
 		return null;
 	}
 	
-	public List<Player> deletePlayer(String playerId) {
+	public void deletePlayer(String playerId) {
 		int a = this.getPlayerCount();
 		for(int i = 0; i<a; i++) {
 			if(this.players.get(i).getPlayerId().equals(playerId)) {
 				this.players.remove(i);
-				return this.players;
 			}
 		}
-		return null;
 	}
 }
