@@ -25,11 +25,12 @@ public class SystemMessage implements Serializable {
 						  // 밤 페이즈 
 		                  // 게임종료
 		BE_EXCLUDED     , // 추방당함
-		                  // 사냥당함
+		BE_HUNTED		, // 사냥당함
 		                  // 채팅방 접속
-		                  // 투표 현황
+		DAY_VOTE		, // 투표 현황
+		NIGHT_VOTE		, // 밤 투표 현황
 		                  // 심리분석 시작
-		                  // 협박상태 시작
+		BE_THREATED		, // 협박상태 시작
 		                  // 히든미션 시작
 		                  // 히든미션 성공
 		                  // 대상 선택

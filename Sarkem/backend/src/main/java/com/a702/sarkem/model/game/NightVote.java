@@ -1,4 +1,4 @@
-package com.a702.sarkem.model.game.message;
+package com.a702.sarkem.model.game;
 
 import java.util.Map;
 
@@ -13,7 +13,10 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NightVoteMessage {
-	private String roomId;
+public class NightVote {
 	private Map<GameRole, String> roleVoteResult;
+	private String sarkVoted;
+	private String policeVoted;
+	private String achiVoted;
+	private String doctorVoted;
 }
