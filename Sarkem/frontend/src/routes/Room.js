@@ -160,6 +160,21 @@ function Room () {
         return await createToken(sessionId);
     }
 
+    //플레이어 나갔을때 확인
+    const deletePlayer = async (sessionId, playerId) => {
+        const respose = await axios.delete(`/api/game/`+sessionId+`/player/`+playerId);
+        console.log(respose);
+        return respose.data;
+    }
+
+
+    //서버에 있는 유저 전부 가져오기
+    const getPlayers = async (sessionId) => {
+        const response = await axios.get(`/api/game/`+sessionId+`/player`);
+        console.log(response);
+        return response.data;
+    }
+    
     // 서버에 요청하여 세션 생성하는 함수
     const createSession = async (sessionId) => {
         const response = await axios.post('/api/game', { customSessionId: sessionId, nickName:myUserName }, {
@@ -170,8 +185,8 @@ function Room () {
 
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
-        const response = await axios.put('/api/game/' + sessionId, 
-            {nickName: myUserName},
+        const response = await axios.post('/api/game/' + sessionId + `/player`, 
+            {myUserName},
         );
         console.log(response);
         return response.data; // The token
@@ -187,7 +202,7 @@ function Room () {
                     setToken(response);
                     
                     // 생성된 토큰을 통해 세션에 연결 요청
-                    await session.connect(response, {clientData: myUserName})
+                    await session.connect(response, {clientData: myUserName, playerId: response})
                     
                     // 내 통신정보(퍼블리셔) 객체 생성
                     let publisher = await OV.initPublisherAsync(undefined, {
@@ -227,8 +242,13 @@ function Room () {
                  * 아마 router 설정에서 룸 (로비, 게임) 이렇게 나눈 다음에 네비게이션 처리를 해야할 것 같다.
                  * 게임이 끝나고 로비로 돌아오면 또 화상채팅 세션을 만들게 되니까
                  */
+<<<<<<< HEAD
                 
                 connectGame();
+=======
+                //여기
+                getPlayers(mySessionId);
+>>>>>>> refs/remotes/origin/BE_CreateGameRoom
             });
         }
     }, [session])
@@ -252,6 +272,9 @@ function Room () {
         newSession.on('streamDestroyed', (event) => {
             deleteSubscriber(event.stream.streamManager);
             console.log(JSON.parse(event.stream.streamManager.stream.connection.data).clientData, "님이 접속을 종료했습니다.")
+            console.log(mySessionId);
+            deletePlayer(JSON.parse(event.stream.streamManager.stream.connection.data).playerId.slice(30, 35), JSON.parse(event.stream.streamManager.stream.connection.data).playerId.slice(42));
+            getPlayers(JSON.parse(event.stream.streamManager.stream.connection.data).playerId.slice(30, 35));
         })
 
         // stream 예외 이벤트 발생 시
