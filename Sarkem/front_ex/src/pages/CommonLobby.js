@@ -315,9 +315,10 @@
 
 // export default CommonLobby;
 
+
 import Background from '../components/backgrounds/BackgroundSunset';
 import styled from 'styled-components';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import boxImage from '../img/box.png';
 import camcatImage from '../img/camcat.png';
 import sc_police from '../img/sc_경찰.png';
@@ -349,13 +350,36 @@ const StyledContent = styled.div`
   width: 100%;
 `;
 
-const LeftSection = styled.div`
-  flex: 4.5;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  justify-content: space-between;
-  flex-wrap: wrap;
+
+
+// const LeftSection = styled.div`
+//   flex: 4.5;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+// `;
+
+
+
+// const CamCatGrid = styled.div`
+//   display: flex;
+//   flex-wrap: wrap;
+//   justify-content: center;
+//   gap: 10px;
+//   width: 100%;
+//   max-height: 80vh; /* Set a maximum height to adjust to the available space */
+//   overflow: auto; /* Add overflow property to handle overflow if needed */
+// `;
+
+const CamCatGrid = styled.div`
+  display: grid;
+  grid-template-rows: ${({ camCount }) => `repeat(${camCount / 2}, 1fr)`};
+  gap: 10px;
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  max-height: 80vh;
+  overflow: auto;
 `;
 
 const RightSection = styled.div`
@@ -415,6 +439,16 @@ const Logo = styled.img`
   max-width: 60vw; /* 가로 크기 60% */
   height: auto; /* 세로 크기 자동으로 조정 */
   max-height: 100%; /* 세로 크기 100% */
+`;
+
+const LeftSection = styled.div`
+  flex: 4.5;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 80vh; /* Set a maximum height to adjust to the available space */
+  overflow: hidden; /* Hide any overflow content if needed */
 `;
 
 
@@ -605,20 +639,64 @@ const leaveSession = () => {
     return response.data; // The token
   }
 
+  const CamCatGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  max-height: 80vh; /* Set a maximum height to adjust to the available space */
+  overflow: auto; /* Add overflow property to handle overflow if needed */
+`;
+
+// const LeftSection = styled.div`
+// flex: 4.5;
+// display: flex;
+// flex-direction: column;
+// align-items: center;
+// max-height: 80vh; /* Set a maximum height to adjust to the available space */
+// overflow: hidden; /* Hide any overflow content if needed */
+// `;
+
+const calculateCamCatHeight = () => {
+  const leftSectionHeight = leftSectionRef.current.offsetHeight;
+  const maxCamCatCount = 10; 
+  const camCatCount = Math.min(camArray.length, maxCamCatCount);
+  return `${leftSectionHeight / camCatCount}px`;
+};
+
+const leftSectionRef = useRef(null);
 
   return (
     <Background>
       <BackButton />
       <StyledContent>
-        <LeftSection>
+        {/* <LeftSection>
           {camArray.length <= 10 && (
             <div style={{ display: 'grid', gridTemplateColumns: `repeat(${camArray.length}, 1fr)`, gap: '10px' }}>
-              {Array.from({ length: camArray.length }).map((user, index) => (
+              {camArray.map((user) => (
                 <CamCat props={user} />
               ))}
             </div>
           )}
+        </LeftSection> */}
+                {/* <LeftSection ref={leftSectionRef}>
+          <CamCatGrid>
+            {camArray.map((user, index) => (
+              <CamCat key={index} props={user} style={{ height: calculateCamCatHeight() }} />
+            ))}
+          </CamCatGrid>
+        </LeftSection> */}
+        <LeftSection ref={leftSectionRef}>
+          {/* Use the dynamic CamCatGrid */}
+          <CamCatGrid camCount={camArray.length}>
+            {camArray.map((user, index) => (
+              <CamCat key={index} props={user} style={{ height: calculateCamCatHeight() }} />
+            ))}
+          </CamCatGrid>
         </LeftSection>
+
         <RightSection>
           <DivWrapper
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: '95%', backgroundImage: `url(${settingbuttonImage})` }}

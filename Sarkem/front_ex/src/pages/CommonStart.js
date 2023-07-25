@@ -169,7 +169,7 @@ const CommonStart = ({onClick} ) => {
 
   const handleNickNameChange = (event) => {
     setNickName(event.target.value);
-    console.log(nickName);
+    console.log(nickName)
   }
 
   return (
