@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Chatting from '../../pages/Chatting';
 import chatbuttonImage from '../../img/chatbutton.png';
+import chatoffbuttonImage from '../../img/chatoffbutton.png';
 
 const ChatButton = styled.button`
-  background-image: url(${chatbuttonImage});
-  background-size: cover;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 10px;
+  width: 60px;
+  height: 60px;
   cursor: pointer;
+  position: absolute;
+  right: 30px;
+  background-color: transparent;
+  bottom: 20px;
+  background-image: url(${props => props.showPopup ? chatoffbuttonImage : chatbuttonImage});
+  background-size: cover;
+  background-repeat: no-repeat;
 `;
 
 const ChatPopup = styled.div`
-  /* Chat popup style */
   position: fixed;
   bottom: 20px;
   right: 70px;
@@ -24,10 +25,12 @@ const ChatPopup = styled.div`
   height: 450px;
   border-radius: 5px;
   opacity: 0.8;
+  // z-index: 1; // Set higher z-index when the popup is open
 `;
 
 const ChatButtonAndPopup = () => {
   const [showPopup, setShowPopup] = useState(false);
+  const [messages, setMessages] = useState([]);
 
   const handleChatButtonClick = () => {
     setShowPopup((prevShowPopup) => !prevShowPopup); // Toggle the popup visibility
@@ -37,14 +40,27 @@ const ChatButtonAndPopup = () => {
     setShowPopup(false); // Close the popup when the close button is clicked
   };
 
+  const handleSendMessage = (message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
+
+
   return (
     <>
       {showPopup && (
         <ChatPopup style={{ bottom: '100px', right: '200px' }}>
-          <Chatting handleCloseButtonClick={handleCloseButtonClick} />
+                   <Chatting
+            handleCloseButtonClick={handleCloseButtonClick}
+            messages={messages}
+            onSendMessage={handleSendMessage}
+          />
         </ChatPopup>
       )}
-      <ChatButton style={{ bottom: '20px', right: '20px' }} onClick={handleChatButtonClick}></ChatButton>
+      <ChatButton
+        style = {{ border : 'none' }}
+        showPopup={showPopup}
+        onClick={handleChatButtonClick}
+      ></ChatButton>
     </>
   );
 };
