@@ -178,7 +178,7 @@ public class GameManager {
 	}
 
 	/**
-	 * 게임 시작
+	 * 게임 시작 ======= 게임 쓰레드 시작
 	 */
 	public void gameStart(String roomId) {
 		// 게임 러너 생성 및 시작
@@ -208,6 +208,18 @@ public class GameManager {
 //	}
 
 	public void sendSystemMessage(String roomId, String[] targets, SystemCode code) {
+
+		/**
+		 * 시스템 메시지를 대상에게 전송
+		 * 
+		 * @param roomId
+		 * @param targets
+		 * @param code
+		 * @param param
+		 */
+	}
+
+	public void sendSystemMessage(String roomId, String[] targets, SystemCode code, Map param) {
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		for (String target : targets) {
 			SystemMessage systemMessage = new SystemMessage(code, roomId, target, null);
@@ -216,6 +228,17 @@ public class GameManager {
 	}
 
 	public void sendSystemMessageToAll(String roomId, SystemCode code) {
+
+		/**
+		 * 시스템 메시지를 모두에게 전송
+		 * 
+		 * @param roomId
+		 * @param code
+		 * @param param
+		 */
+	}
+
+	public void sendSystemMessageToAll(String roomId, SystemCode code, Map param) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
 		List<Player> players = gameRoom.getPlayers();
 		ChannelTopic gameTopic = getGameTopic(roomId);
@@ -241,42 +264,99 @@ public class GameManager {
 			this.chatTopic = chatTopic;
 		}
 
-		@Override
-		public void run() {
-			// TODO: 게임 로직 구현
-			// "GAME_START" 시스템 메시지 전송
-			GameOptionDTO dto = new GameOptionDTO();
-			gameManager.sendSystemMessageToAll(gameRoom.getRoomId(), SystemCode.GAME_START);
-
-			// LOOP:
-			// 낮 페이즈
-			// 밤 특수능력 결과 발표
-			// 사망처리
-			// 토스트 메시지 출력
-
-			// 밤 페이즈
-			// 밤 특수능력 대상 설정
-			// 대상 선택 실행
-			// 대상 종합
-			// 특수능력 실행
+		// 0. 공통기능
+		/**
+		 * "안내메시지" 메시지를 대상에게 전송
+		 * 
+		 * @param playerId
+		 * @param message
+		 */
+		private void sendNoticeMessageToPlayer(String roomId, String playerId, String message) {
 
 		}
 
-		// 밤 투표 받아온거 정리
-		public void nightVote(NightVote nightVote) {
+		// LOOP:
+		// 낮 페이즈
+		// 밤 특수능력 결과 발표
+		// 사망처리
+		// 토스트 메시지 출력
 
-			String deadPlayerId = nightVote.getSarkVoted(); // 삵이 투표해서 죽은 플래이어 아이디
-			String protectedPlayerId = nightVote.getDoctorVoted(); // 의사가 투표해서 지켜진 플래이어 아이디
-			String suspectPlayerId = nightVote.getPoliceVoted(); // 경찰이 투표해서 조사받을 플래이어 아이디
-			String slientPlayerId = nightVote.getAchiVoted(); // 냥아치가 투표해서 조용해야 할 플래이어 아이디
+		// 밤 페이즈
+		// 밤 특수능력 대상 설정
+		// 대상 선택 실행
+		// 대상 종합
+		// 특수능력 실행
 
-			// 의사가 살렸을 경우 부활
-			if (deadPlayerId != null && deadPlayerId.equals(protectedPlayerId)) {
-				deadPlayerId = null;
-			}
+	}
+
+	// 밤 투표 받아온거 정리
+	public void nightVote(NightVote nightVote) {
+
+		String deadPlayerId = nightVote.getSarkVoted(); // 삵이 투표해서 죽은 플래이어 아이디
+		String protectedPlayerId = nightVote.getDoctorVoted(); // 의사가 투표해서 지켜진 플래이어 아이디
+		String suspectPlayerId = nightVote.getPoliceVoted(); // 경찰이 투표해서 조사받을 플래이어 아이디
+		String slientPlayerId = nightVote.getAchiVoted(); // 냥아치가 투표해서 조용해야 할 플래이어 아이디
+
+		// 의사가 살렸을 경우 부활
+		if (deadPlayerId != null && deadPlayerId.equals(protectedPlayerId)) {
+			deadPlayerId = null;
+		}
 
 //			SystemMessage message = new SystemMessage(gameRoom.getRoomId(), SystemCode.BE_HUNTED, deadPlayerId);
 //			gamePublisher.publish(gameTopic, message);
-		}
 	}
+
+	/**
+	 * "안내메시지" 메시지를 대상들에게 전송
+	 * 
+	 * @param playersId
+	 * @param message
+	 */
+	private void sendNoticeMessageToPlayers(String roomId, String[] playersId, String message) {
+
+	}
+
+	/**
+	 * "안내메시지" 메시지를 모두에게 전송
+	 * 
+	 * @param message
+	 */
+	private void sendNoticeMessageToAll(String roomId, String message) {
+		HashMap<String, String> param = new HashMap<>();
+		param.put("message", message);
+		sendSystemMessageToAll(roomId, SystemCode.NOTICE_MESSAGE, param);
+	}
+	// 0. 공통기능 끝
+
+	// 1. 게임 로비
+	// "게임방 설정 변경" 메시지 전송
+	private void sendGameOptionChangedMessage() {
+
+	}
+	// "게임시작" 메시지 전송
+	// 1. 게임 로비 끝
+
+	// 2. 게임 진행
+	// "대상선택" 메시지 전송
+	// "대상선택 종료" 메시지 전송
+	// "역할배정" 메시지 전송
+	// "낮 페이즈" 메시지 전송
+	// "저녁 페이즈" 메시지 전송
+	// "밤 페이즈" 메시지 전송
+	// "낮 투표 종료" 메시지 전송
+	// "저녁 투표 종료" 메시지 전송
+	// "추방당함" 메시지 전송
+	// "사냥당함" 메시지 전송
+	// "투표현황" 메시지 전송
+	// "심리분석 시작" 메시지 전송
+	// "협박당함" 메시지 전송
+	// "히든미션 시작" 메시지 전송
+	// "히든미션 성공" 메시지 전송
+	// 2. 게임 진행 끝
+
+	// 3. 게임 종료
+	// "게임종료" 메시지 전송
+	// "게임준비" 메시지 전송
+	// 3. 게임 종료 끝
+
 }

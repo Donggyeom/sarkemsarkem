@@ -24,12 +24,24 @@ public class GameSession {
 		READY, DAY, TWILIGHT, NIGHT
 	}
 
+	// 게임방 현황
 	@NonNull
 	private final String roomId;
 	@NonNull
 	private String gameId;
 	private List<RolePlayer> players;
+	
+	// 게임 옵션
+	private int citizenCount;
+	private int sarkCount;
+	private int policeCount;
+	private int doctorCount;
+	private int bullyCount;
+	private int psychologistCount;
+	private int detectiveCount;
 	private int meetingTime;
+	
+	// 게임 현황
 	private int day;
 	private PhaseType phase;
 	private LocalDateTime startTime;

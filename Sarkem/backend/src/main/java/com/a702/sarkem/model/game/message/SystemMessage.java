@@ -38,7 +38,7 @@ public class SystemMessage implements Serializable {
 		                  // 히든미션 성공
 		                  // 대상 선택
 		                  // 추방 투표 종료
-		                  // 메세지 출력
+		NOTICE_MESSAGE	, // 메세지 출력
 		                  // 역할배정
 		                  // 게임방 설정 변경
 		

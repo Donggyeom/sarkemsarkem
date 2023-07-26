@@ -198,8 +198,9 @@ function Room () {
             // 토큰 생성
             getToken().then(async (response) => {
                 try {
-                    console.log(response)
-                    setToken(response);
+                    // 토큰의 고유 번호만 파싱하여 useState에 저장
+                    setToken(response.split("token=", 2)[1]);
+                    console.log(response.split("token=", 2)[1])
                     
                     // 생성된 토큰을 통해 세션에 연결 요청
                     await session.connect(response, {clientData: myUserName, playerId: response})
