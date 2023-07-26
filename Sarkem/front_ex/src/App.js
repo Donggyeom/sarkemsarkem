@@ -11,19 +11,23 @@ import CommonLobby from './pages/CommonLobby';
 import DayPage from './pages/DayPage';
 import SunsetPage from './pages/SunsetPage';
 import NightPage from './pages/NightPage';
+import NotFound from './pages/NotFound';
+import Result from './pages/Result';
 
 
 const App = () => {
   return (
       <Routes>
         <Route path="/" element={<StartPage />} />
+        <Route path="/loading" element={<LoadingPage />} />
         <Route path="/:roomId" element={<CommonStart />} /> 
         {/* <Route path="/start/unhost" element={<StartUnhost />} />  */}
-        <Route path="/loading" element={<LoadingPage />} />
-        <Route path="/lobby" element={<CommonLobby />}/>
-        <Route path="/day" element={<DayPage />}/>
-        <Route path="/sunset" element={<SunsetPage />}/>
-        <Route path="/night" element={<NightPage />}/>
+        <Route path="/:roomId/lobby" element={<CommonLobby />}/>
+        <Route path="/:roomId/day" element={<DayPage />}/>
+        <Route path="/:roomId/sunset" element={<SunsetPage />}/>
+        <Route path="/:roomId/night" element={<NightPage />}/>
+        <Route path="/:roomId/result" element={<NightPage />}/>
+        <Route path="*" element={<NotFound />}/>
       </Routes>
 
 
