@@ -346,11 +346,13 @@ const leftSectionRef = useRef(null);
         <LeftSection ref={leftSectionRef}>
           {/* Use the dynamic CamCatGrid */}
           {/* <CamCatGrid camCount={camArray.length}>
+<<<<<<< HEAD
+=======
             {camArray.map((user, index) => (
               <CamCat key={index} props={user} style={{ height: calculateCamCatHeight() }} />
             ))}
           </CamCatGrid> */}
-                     <CamCatGrid camCount={camArray.length}> {/* camCount를 camArray.length로 설정하여 동적으로 레이아웃을 조정합니다. */}
+            <CamCatGrid camCount={camArray.length}> {/* camCount를 camArray.length로 설정하여 동적으로 레이아웃을 조정합니다. */}
             {/* Render the first cam in the upper row */}
             {camArray.slice(0, 1).map((user, index) => (
               <CamCat key={index} props={user} />
@@ -361,7 +363,7 @@ const leftSectionRef = useRef(null);
                 <CamCat key={index} props={user} />
               ))}
             </CamCatGrid>
-            </CamCatGrid>
+          </CamCatGrid>
         </LeftSection>
 
         <RightSection>
@@ -388,7 +390,7 @@ const leftSectionRef = useRef(null);
             {isHost ? (
               <>
                 <LeftPart>
-                  <StartButton url="/day" onClick={() => navigate('/day', {state: {isHost: isHost, roomId: roomId, nickName: nickName}})} alt="Start Game" />
+                <StartButton url="/${roomId}/day" onClick={() => navigate(`/${roomId}/day`, {state: {isHost: isHost, roomId: roomId, nickName: nickName}})} alt="Start Game" />
                 </LeftPart>
                 <RightPart onClick={handleInviteClick} style={{ backgroundImage: `url(${inviteButtonImage})` }} />
               </>
