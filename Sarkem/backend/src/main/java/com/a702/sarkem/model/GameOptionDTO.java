@@ -27,6 +27,10 @@ public class GameOptionDTO implements Serializable {
 	public int getTotalRoleCount() {
 		return citizenCount + sarkCount + policeCount + doctorCount + bullyCount + psychologistCount + detectiveCount;
 	}
+
+	public int [] getRoles() {
+		return new int[]{citizenCount, sarkCount, policeCount, doctorCount, bullyCount, psychologistCount, detectiveCount};
+	}
 }
 
 

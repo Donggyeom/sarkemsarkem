@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.a702.sarkem.model.player.RolePlayer;
+import org.redisson.misc.Hash;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
@@ -294,6 +296,17 @@ public class GameManager {
 	// "대상선택" 메시지 전송
 	// "대상선택 종료" 메시지 전송
 	// "역할배정" 메시지 전송
+	public void sendRoleAsignMessage(String roomId, Map<String, RolePlayer> roleMap) {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		List<String> playersId = gameRoom.getPlayersId();
+		System.out.println(roleMap);
+		ChannelTopic gameTopic = getGameTopic(roomId);
+		for (String target : playersId) {
+			SystemMessage systemMessage = new SystemMessage(SystemCode.ROLE_ASIGNED, roomId, target, roleMap.get(target));
+			gamePublisher.publish(gameTopic, systemMessage);
+		}
+	}
+
 	// "낮 페이즈" 메시지 전송
 	// "저녁 페이즈" 메시지 전송
 	// "밤 페이즈" 메시지 전송

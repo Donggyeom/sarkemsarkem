@@ -17,7 +17,8 @@ public class RolePlayer extends Player {
 	private boolean alive = true; 				// 살았는지 여부
 	private String target = null;
 	
-	public RolePlayer(String playerId, String nickname) {
+	public RolePlayer(String playerId, String nickname, GameRole role) {
 		super(playerId, nickname);
+		this.role = role;
 	}
 }

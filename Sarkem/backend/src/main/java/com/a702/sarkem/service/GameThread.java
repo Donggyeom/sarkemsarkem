@@ -1,7 +1,10 @@
 package com.a702.sarkem.service;
 
-import java.util.HashMap;
+import java.util.*;
 
+import com.a702.sarkem.model.player.GameRole;
+import com.a702.sarkem.model.player.Player;
+import com.a702.sarkem.model.player.RolePlayer;
 import org.springframework.data.redis.listener.ChannelTopic;
 
 import com.a702.sarkem.exception.GameOptionSettingException;
@@ -17,25 +20,32 @@ public class GameThread extends Thread {
 	private GameSession gameSession;
 	private ChannelTopic gameTopic;
 	private ChannelTopic chatTopic;
-	
+
+	private static HashMap<String, RolePlayer> roleMap;
+
 	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession
 			, ChannelTopic gameTopic, ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
+		roleMap = new HashMap<String, RolePlayer>();
 		this.gameRoom = gameRoom;
 		this.gameSession = gameSession;
 		this.gameTopic = gameTopic;
 		this.chatTopic = chatTopic;
 	}
 
+	//CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
+	int CITIZEN = 0;
+	int SARK = 1;
 	@Override
 	public void run() {
 		// TODO: 게임 로직 구현
 		// "게임시작" 메시지 전송
 		gameManager.sendGameStartMessage(gameRoom.getRoomId());
-
 		// 역할배정
+		assignRole();
 		// 역할배정 메시지 전송
-		
+		gameManager.sendRoleAsignMessage(gameRoom.getRoomId(), roleMap);
+
 		// 게임 진행
 		while (true) {
 			// 게임종료 검사
@@ -84,7 +94,22 @@ public class GameThread extends Thread {
 	// 
 	// 역할배정
 	private void assignRole() {
-		
+		int playerCnt = gameRoom.getPlayerCount();
+
+		// 현재 직업 정보를 불러온다. 일단 임시로 시민2 마피아1
+		GameRole[] roles = {GameRole.CITIZEN,GameRole.CITIZEN, GameRole.SARK};
+		List<GameRole> roleList = Arrays.asList(roles);
+		Collections.shuffle(roleList);
+
+
+		List<Player> players = gameRoom.getPlayers();
+		for (int i = 0; i < playerCnt; i++) {
+			String playerId = players.get(i).getPlayerId();
+			String nickName = players.get(i).getNickname();
+			GameRole role = roles[i];
+			roleMap.put(players.get(i).getPlayerId(), new RolePlayer(playerId, nickName, role));
+		}
+		// 각 플레이어 별 역할을 랜덤으로 해쉬맵에 넣는다.
 	}
 	// 낮 페이즈
 	private void convertPhaseToDay() {
@@ -124,3 +149,4 @@ public class GameThread extends Thread {
 //		gamePublisher.publish(gameTopic, message);
 	}
 }
+

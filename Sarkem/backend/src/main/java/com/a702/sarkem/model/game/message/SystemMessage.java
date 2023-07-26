@@ -39,7 +39,7 @@ public class SystemMessage implements Serializable {
 		                  // 대상 선택
 		                  // 추방 투표 종료
 		NOTICE_MESSAGE	, // 메세지 출력
-		                  // 역할배정
+		ROLE_ASIGNED    , // 역할배정
 		                  // 게임방 설정 변경
 		
 		// 에러 코드

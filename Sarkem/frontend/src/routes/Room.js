@@ -140,6 +140,10 @@ function Room () {
             case "ONLY_HOST_ACTION":
                 alert('방장만 실행 가능합니다.' + ' ' + myUserName);
                 break;
+            case "ROLE_ASIGNED":
+                alert(`당신은 ${sysMessage.body.role} 입니다.`);
+                console.log(`당신은 ${sysMessage.body.role} 입니다.`)
+                break;
             }
         })
     }
@@ -226,8 +230,7 @@ function Room () {
 
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
-        const response = await axios.post('/api/game/' + sessionId + `/player`, 
-            {myUserName},
+        const response = await axios.post('/api/game/' + sessionId + `/player`, myUserName,
         );
         console.log(response);
         return response.data; // The token
