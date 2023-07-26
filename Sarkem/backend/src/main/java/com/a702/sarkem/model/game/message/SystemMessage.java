@@ -40,7 +40,7 @@ public class SystemMessage implements Serializable {
 		                  // 추방 투표 종료
 		NOTICE_MESSAGE	, // 메세지 출력
 		                  // 역할배정
-		                  // 게임방 설정 변경
+		OPTION_CHANGED,    // 게임방 설정 변경
 		
 		// 에러 코드
 		ONLY_HOST_ACTION, // 방장이 아닌 사용자 액션
@@ -49,5 +49,5 @@ public class SystemMessage implements Serializable {
 	private SystemCode code;
 	private String roomId;
 	private String playerId;
-	private Object body;
+	private Object param;
 }
