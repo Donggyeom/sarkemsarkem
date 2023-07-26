@@ -113,10 +113,11 @@ function Room () {
     // 세션 해제
     const leaveSession = () => {
         // 세션 연결 종료
-        if (session) {
-            session.disconnect();
-            deletePlayer(mySessionId,token);
-        }
+        if (session) session.disconnect();
+        
+        // game 세션에 유저 정보 삭제 요청
+        if (token) deletePlayer(mySessionId,token);
+        
         // 데이터 초기화
         setSession(undefined);
         setSubscribers([]);

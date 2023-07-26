@@ -60,7 +60,7 @@ public class MainController {
         //Game Session
         gameManager.createGameRoom(session.getSessionId());
         String roomId = session.getSessionId();
-        System.out.println("방생성");
+		log.info(roomId + "방이 생성되었습니다.");
         return new ResponseEntity<>(roomId, HttpStatus.OK);
     }
     
@@ -74,7 +74,7 @@ public class MainController {
     		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
     	System.out.println(gameManager.getGameRoom(roomId));
-    	System.out.println("방획득");
+    	log.info("방 획득이 요청되었습니다.");
     	return new ResponseEntity<>(gameManager.getGameRoom(roomId), HttpStatus.OK);
     }
     
@@ -100,7 +100,7 @@ public class MainController {
 
 		// 해당 게임 세션에 host가 없을 시 현재 player를 host로 지정
 		if(gameManager.getHostId(roomId) == null) gameManager.setHostId(roomId,playerId);
-    	System.out.println("방접속");
+    	log.info(nickName + "님이 " + roomId + "에 접속합니다.");
     	return new ResponseEntity<>(token, HttpStatus.OK);
     }
     
@@ -115,7 +115,7 @@ public class MainController {
     		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
     	System.out.println(gameManager.getGameRoom(roomId).getPlayers());
-    	System.out.println("전체유저");
+		log.info("전체유저 정보가 조회되었습니다.");
     	return new ResponseEntity<>(gameManager.getGameRoom(roomId).getPlayers(), HttpStatus.OK);
     }
     
@@ -137,7 +137,7 @@ public class MainController {
     public void exitGame(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
     	gameManager.deletePlayer(roomId, playerId);
 
-		System.out.println("게임방 나감");
+		log.info(playerId + "님이" + playerId + "룸에서 퇴장합니다.");
     }
     
         

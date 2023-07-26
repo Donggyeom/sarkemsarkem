@@ -92,9 +92,9 @@ public class GameManager {
 	}
 
 	// 플레이어 나가기
-	public void deletePlayer(String roomId, String token) {
+	public void deletePlayer(String roomId, String playerId) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		gameRoom.deletePlayer(token);
+		gameRoom.deletePlayer(playerId);
 
 		// 더 이상 게임 세션에 남은 인원이 없을 때
 		if (gameRoom.getPlayerCount() == 0) {
@@ -103,17 +103,17 @@ public class GameManager {
 			gameSessionMap.remove(roomId);
 			topics.remove(getGameTopic(roomId));
 			topics.remove(getChatTopic(roomId));
-		}else if (getHostId(roomId).equals(token)) {
+		}else if (getHostId(roomId).equals(playerId)) {
 			// 방장 변경하기
 			setHostId(roomId, gameRoom.getPlayersId().get(0));
-			System.out.println("방장이 변경되었습니다." + token + " " + getHostId(roomId));
+			System.out.println("방장이 변경되었습니다." + playerId + " " + getHostId(roomId));
 		}
 	}
 
 	// 호스트 아이디 지정해주기
-	public void setHostId(String roomId, String token) {
+	public void setHostId(String roomId, String playerId) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		gameRoom.setHostId(token);
+		gameRoom.setHostId(playerId);
 		gameRoomMap.put(roomId, gameRoom);
 	}
 
