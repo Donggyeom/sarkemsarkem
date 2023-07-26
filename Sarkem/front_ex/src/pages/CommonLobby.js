@@ -42,18 +42,6 @@ const StyledContent = styled.div`
 // `;
 
 
-
-// const CamCatGrid = styled.div`
-//   display: flex;
-//   flex-wrap: wrap;
-//   justify-content: center;
-//   gap: 10px;
-//   width: 100%;
-//   max-height: 80vh; /* Set a maximum height to adjust to the available space */
-//   overflow: auto; /* Add overflow property to handle overflow if needed */
-// `;
-
-
 const RightSection = styled.div`
   /* 오른쪽 섹션 스타일 작성 */
   flex: 5.5;
@@ -313,22 +301,34 @@ const leaveSession = () => {
 
   const CamCatGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: auto;
+  grid-template-rows: ${({ camCount }) => {
+    if (camCount === 1) {
+      return 'repeat(1, minmax(300px, 1fr))';
+    } else if (camCount === 2 || camCount === 3) {
+      return 'repeat(1, minmax(100px, 1fr))';
+    } else {
+      return 'repeat(auto-fill, minmax(200px, 1fr))'; // Default row height for other camCount values
+    }
+  }};
+  grid-template-columns: ${({ camCount }) => {
+    if (camCount === 1) {
+      return 'repeat(1, minmax(300px, 1fr))';
+    } else if (camCount === 2) {
+      return 'repeat(2, minmax(100px, 1fr))';
+    } else if (camCount === 3) {
+      return 'repeat(1, minmax(100px, 1fr))'; // Change this line to have 1 column for the upper row
+    } else {
+      const numColumns = Math.min(camCount, 3);
+      return `repeat(${numColumns}, minmax(300px, 1fr))`;
+    }
+  }};
   gap: 10px;
   justify-items: center;
   align-items: center;
   width: 100%;
-  overflow: hidden; /* Add overflow property to handle overflow if needed */
+  overflow: hidden; /* 내용물이 넘어갈 경우를 처리하기 위해 overflow 속성을 추가합니다. */
 `;
-
-// const LeftSection = styled.div`
-// flex: 4.5;
-// display: flex;
-// flex-direction: column;
-// align-items: center;
-// max-height: 80vh; /* Set a maximum height to adjust to the available space */
-// overflow: hidden; /* Hide any overflow content if needed */
-// `;
 
 const calculateCamCatHeight = () => {
   const leftSectionHeight = leftSectionRef.current.offsetHeight;
@@ -343,29 +343,25 @@ const leftSectionRef = useRef(null);
     <Background>
       <BackButton />
       <StyledContent>
-        {/* <LeftSection>
-          {camArray.length <= 10 && (
-            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${camArray.length}, 1fr)`, gap: '10px' }}>
-              {camArray.map((user) => (
-                <CamCat props={user} />
-              ))}
-            </div>
-          )}
-        </LeftSection> */}
-                {/* <LeftSection ref={leftSectionRef}>
-          <CamCatGrid>
-            {camArray.map((user, index) => (
-              <CamCat key={index} props={user} style={{ height: calculateCamCatHeight() }} />
-            ))}
-          </CamCatGrid>
-        </LeftSection> */}
         <LeftSection ref={leftSectionRef}>
           {/* Use the dynamic CamCatGrid */}
-          <CamCatGrid camCount={camArray.length}>
+          {/* <CamCatGrid camCount={camArray.length}>
             {camArray.map((user, index) => (
               <CamCat key={index} props={user} style={{ height: calculateCamCatHeight() }} />
             ))}
-          </CamCatGrid>
+          </CamCatGrid> */}
+                     <CamCatGrid camCount={camArray.length}> {/* camCount를 camArray.length로 설정하여 동적으로 레이아웃을 조정합니다. */}
+            {/* Render the first cam in the upper row */}
+            {camArray.slice(0, 1).map((user, index) => (
+              <CamCat key={index} props={user} />
+            ))}
+            {/* Render the rest of the cams in the lower row */}
+            <CamCatGrid camCount={camArray.length - 1}>
+              {camArray.slice(1).map((user, index) => (
+                <CamCat key={index} props={user} />
+              ))}
+            </CamCatGrid>
+            </CamCatGrid>
         </LeftSection>
 
         <RightSection>
