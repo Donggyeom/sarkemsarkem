@@ -37,7 +37,8 @@ public class SystemMessage implements Serializable {
 		BE_THREATED		, // 협박상태 시작
 		HMISSION_START	, // 히든미션 시작
 		HMISSION_SUCCESS, // 히든미션 성공
-		                  // 대상 선택
+		TARGET_SELECT	, // 대상 선택
+		TARGET_SELECTD	, // 대상 선택 종료
 		                  // 추방 투표 종료
 		NOTICE_MESSAGE	, // 메세지 출력
 		ROLE_ASIGNED    , // 역할배정

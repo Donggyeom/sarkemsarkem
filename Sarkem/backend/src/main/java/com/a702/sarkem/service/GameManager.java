@@ -325,7 +325,13 @@ public class GameManager {
 
 	// 2. 게임 진행
 	// "대상선택" 메시지 전송
+	public void sendTargetSelectMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECT, null);
+	}
 	// "대상선택 종료" 메시지 전송
+	public void sendTargetSelectdMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTD, null);
+	}
 	// "역할배정" 메시지 전송
 	public void sendRoleAsignMessage(String roomId, Map<String, RolePlayer> roleMap) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
