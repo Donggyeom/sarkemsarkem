@@ -30,15 +30,15 @@ public class SystemMessage implements Serializable {
 		BE_EXCLUDED     , // 추방당함
 		BE_HUNTED		, // 사냥당함
 		                  // 채팅방 접속
-		END_DAY_VOTE	, // 낮 투표 종료
-		END_NIGHT_VOTE	, // 밤 투표 종료
-		CURRENT_VOTE	, // 투표 현황
-		PSYCHO_START	, // 심리분석 시작
+		DAY_VOTE_END	, // 낮 투표 종료
+		TWILIGHT_VOTE_END, // 저녁 투표 종료
+		VOTE_SITUATION	, // 투표 현황
+		PSYCHOANALYSIS_START, // 심리분석 시작
 		BE_THREATED		, // 협박상태 시작
-		HMISSION_START	, // 히든미션 시작
-		HMISSION_SUCCESS, // 히든미션 성공
-		TARGET_SELECT	, // 대상 선택
-		TARGET_SELECTD	, // 대상 선택 종료
+		MISSION_START	, // 히든미션 시작
+		MISSION_SUCCESS, // 히든미션 성공
+		TARGET_SELECTION	, // 대상 선택
+		TARGET_SELECTION_END	, // 대상 선택 종료
 		                  // 추방 투표 종료
 		NOTICE_MESSAGE	, // 메세지 출력
 		ROLE_ASIGNED    , // 역할배정
