@@ -35,7 +35,9 @@ public class GameController {
 		String roomId = actionMessage.getRoomId();
 		String gameId = actionMessage.getGameId();
 		String playerId = actionMessage.getPlayerId();
+		Object param = actionMessage.getParam();
 		ObjectMapper mapper = new ObjectMapper();
+		
 		switch(actionMessage.getCode()) {
 		// 게임시작
 		case GAME_START:
@@ -54,21 +56,18 @@ public class GameController {
 			break;
 		// 게임 설정 변경
 		case OPTION_CHANGE:
-			Object option = actionMessage.getParam();
-			GameOptionDTO gameOption = mapper.convertValue(option,GameOptionDTO.class);
+			GameOptionDTO gameOption = mapper.convertValue(param,GameOptionDTO.class);
 			gameManager.gameOptionChange(roomId, actionMessage.getPlayerId(), gameOption);
 			break;
 		// 대상 선택
 		case TARGET_SELECT:
-//			Object targets = actionMessage.getParam();
-//			Map<String, String> param = mapper.convertValue(targets, Map.class);
-//			gameManager.selectTarget(roomId, param);
+			Map<String, String> selectTarget = mapper.convertValue(param, Map.class);
+			gameManager.selectTarget(roomId, playerId, selectTarget);
 			break;
 		// 대상 선택 종료
 		case TARGET_SELECTED:
-			Object targets = actionMessage.getParam();
-			Map<String, String> param = mapper.convertValue(targets, Map.class);
-			gameManager.selectTarget(roomId, param);
+			Map<String, String> selectedTargets = mapper.convertValue(param, Map.class);
+			gameManager.selectedTarget(roomId, playerId, selectedTargets);
 			break;
 		default:
 			break;

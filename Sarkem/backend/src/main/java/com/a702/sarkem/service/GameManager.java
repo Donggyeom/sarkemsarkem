@@ -231,7 +231,19 @@ public class GameManager {
 	/**
 	 * 대상 선택
 	 */
-	public void selectTarget(String roomId, Map<String, String> targets) {
+	public void selectTarget(String roomId, String playerId, Map<String, String> target) {
+		GameRoom room = gameRoomMap.get(roomId);
+		String targetId = target.get(playerId);
+		RolePlayer player = (RolePlayer) room.getPlayer(playerId);
+		player.setTarget(targetId);
+		player.setVotedCnt(player.getVotedCnt()+1);
+		
+	}
+	
+	/**
+	 * 대상 선택 완료
+	 */
+	public void selectedTarget(String roomId, String playerId, Map<String, String> targets) {
 		GameRoom room = gameRoomMap.get(roomId);
 		
 	}
@@ -336,7 +348,7 @@ public class GameManager {
 	// 2. 게임 진행
 	// "대상선택" 메시지 전송
 	public void sendTargetSelectMessage(String roomId, Map<String, String> targets) {
-		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION, targets);
+		sendSystemMessageToAll(roomId, SystemCode.VOTE_SITUATION, targets);
 	}
 	// "대상선택 종료" 메시지 전송
 	public void sendTargetSelectdMessage(String roomId, Map<String, String> targets) {
