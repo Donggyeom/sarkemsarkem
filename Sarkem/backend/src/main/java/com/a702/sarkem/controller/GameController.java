@@ -28,6 +28,7 @@ public class GameController {
 		String gameId = actionMessage.getGameId();
 		String playerId = actionMessage.getPlayerId();
 		switch(actionMessage.getCode()) {
+		// 게임시작
 		case GAME_START:
 			if ( !gameManager.isHost(roomId, playerId) ) {
 				String[] targets = new String[1];
@@ -36,15 +37,21 @@ public class GameController {
 			}
 			else gameManager.gameStart(roomId);
 			break;
+		// 추방투표
 		case EXPULSION_VOTE:
 			break;
+		// 히든미션 성공
 		case HIDDENMISSION_SUCCESS:
 			break;
+		// 게임 설정 변경
 		case OPTION_CHANGED:
 			break;
+		// 대상 선택
 		case TARGET_SELECT:
 			break;
+		// 대상 선택 종료
 		case TARGET_SELECTED:
+			
 			break;
 		default:
 			break;
