@@ -24,13 +24,13 @@ function Room () {
     const [token, setToken] = useState(null);
     const [dead, setDead] = useState(false);
     const [meetingTime, setMeetingTime] = useState(30);
-    const [citizenCount, setCitizenCount] = useState(1);
-    const [sarkCount, setSarkCount] = useState(1);
-    const [policeCount, setPoliceCount] = useState(1);
-    const [doctorCount, setDoctorCount] = useState(1);
-    const [ditectiveCount, setDetectiveCount] = useState(1);
-    const [bullyCount, setBullyCount] = useState(1);
-    const [psychologistCount, setPsychologistCount] = useState(1);
+    const [citizenCount, setCitizenCount] = useState("1");
+    const [sarkCount, setSarkCount] = useState("1");
+    const [policeCount, setPoliceCount] = useState("1");
+    const [doctorCount, setDoctorCount] = useState("1");
+    const [ditectiveCount, setDitectiveCount] = useState("1");
+    const [bullyCount, setBullyCount] = useState("1");
+    const [psychologistCount, setPsychologistCount] = useState("1");
     
 
 
@@ -82,24 +82,25 @@ function Room () {
     // 게임 옵션 변경 시 실행
     useEffect(() => {
         console.log("게임옵션 변경됨")
-        stompCilent.current.send("/pub/game/action", {}, 
-            JSON.stringify({
-                code:'OPTION_CHANGE', 
-                roomId: mySessionId, 
-                actionCode: 'OPTION_CHANGE',
-                playerId: token,
-                gameOption: {
-                    meetingTime,
-                    citizenCount,
-                    sarkCount,
-                    doctorCount,
-                    policeCount,
-                    ditectiveCount,
-                    psychologistCount,
-                    bullyCount
-                }
-            })
-        );
+        if(stompCilent.current.connected && token !== null) {
+            stompCilent.current.send("/pub/game/action", {}, 
+                JSON.stringify({
+                    code:'OPTION_CHANGE', 
+                    roomId: mySessionId, 
+                    actionCode: 'OPTION_CHANGE',
+                    playerId: token,
+                    gameOption: {
+                        meetingTime,
+                        citizenCount,
+                        sarkCount,
+                        doctorCount,
+                        policeCount,
+                        ditectiveCount,
+                        psychologistCount,
+                        bullyCount
+                    }
+                }))
+        }
     }, [meetingTime,
         citizenCount,
         sarkCount,
@@ -348,6 +349,36 @@ function Room () {
         setDead(!dead);
         
     }
+
+    const changeOption = (event) => {
+        switch(event.target.id) {
+            case "meetingTime":
+                setMeetingTime(event.target.value);
+            break;
+            case "citizenCount":
+                setCitizenCount(event.target.value);
+            break;
+            case "sarkCount":
+                setSarkCount(event.target.value);
+            break;
+            case "doctorCount":
+                setDoctorCount(event.target.value);
+            break;
+            case "policeCount":
+                setPoliceCount(event.target.value);
+            break;
+            case "ditectiveCount":
+                setDitectiveCount(event.target.value);
+            break;
+            case "psychologistCount":
+                setPsychologistCount(event.target.value);
+            break;
+            case "bullyCount":
+                setBullyCount(event.target.value);
+            break;
+        }
+    }
+
     return (
         <div id="session">
             <div id="session-header">
@@ -421,21 +452,21 @@ function Room () {
             </div>
             <div id='game-option-container'>
                 <label for='meetingTime'>회의시간</label>
-                <input value={meetingTime} type='number' id='meetingTime' name="meetingTime" min="15" max="300"></input>
+                <input onChange={changeOption} value={meetingTime} type='number' id='meetingTime' name="meetingTime" min="15" max="300" step="15"></input>
                 <label for='citizenCount'>시민</label>
-                <input value={citizenCount} type='number' id='citizenCount' name="citizenCount" min="1" max="10"></input>
+                <input onChange={changeOption} value={citizenCount} type='number' id='citizenCount' name="citizenCount" min="1" max="10"></input>
                 <label for='sarkCount'>마피아</label>
-                <input value={sarkCount} type='number' id='sarkCount' name="sarkCount" min="1" max="10"></input>
+                <input onChange={changeOption} value={sarkCount} type='number' id='sarkCount' name="sarkCount" min="1" max="10"></input>
                 <label for='doctorCount'>의사</label>
-                <input value={doctorCount} type='number' id='doctorCount' name="doctorCount" min="1" max="10"></input>
+                <input onChange={changeOption} value={doctorCount} type='number' id='doctorCount' name="doctorCount" min="1" max="10"></input>
                 <label for='policeCount'>경찰</label>
-                <input value={policeCount} type='number' id='policeCount' name="policeCount" min="1" max="10"></input>
+                <input onChange={changeOption} value={policeCount} type='number' id='policeCount' name="policeCount" min="1" max="10"></input>
                 <label for='ditectiveCount'>탐정</label>
-                <input value={ditectiveCount} type='number' id='ditectiveCount' name="ditectiveCount" min="1" max="10"></input>
+                <input onChange={changeOption} value={ditectiveCount} type='number' id='ditectiveCount' name="ditectiveCount" min="1" max="10"></input>
                 <label for='psychologistCount'>심리학자</label>
-                <input value={psychologistCount} type='number' id='psychologistCount' name="psychologistCount" min="1" max="10"></input>
+                <input onChange={changeOption} value={psychologistCount} type='number' id='psychologistCount' name="psychologistCount" min="1" max="10"></input>
                 <label for='bullyCount'>냥아치</label>
-                <input value={bullyCount} type='number' id='bullyCount' name="bullyCount" min="1" max="10"></input>
+                <input onChange={changeOption} value={bullyCount} type='number' id='bullyCount' name="bullyCount" min="1" max="10"></input>
             </div>
             {dead ? <Chat sessionId={mySessionId} userName={myUserName}/> : null}
             
