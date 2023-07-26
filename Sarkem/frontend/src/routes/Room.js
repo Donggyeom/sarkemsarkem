@@ -133,6 +133,9 @@ function Room () {
         if (token != sysMessage.playerId) return;
 
         switch (sysMessage.code) {
+        case "NOTICE_MESSAGE":
+            alert(sysMessage.param.message);
+            break;
         case "GAME_START":   
             alert('게임시작');
             break;

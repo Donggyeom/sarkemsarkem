@@ -180,7 +180,6 @@ public class GameManager {
 		GameRoom room = gameRoomMap.get(roomId);
 		// 방장과 플레이어 일치 여부 확인
 		if(!room.getHostId().equals(playerId)) {
-			sendSystemMessage(roomId, playerId, SystemCode.ONLY_HOST_ACTION, null);
 			return;
 		}
 		
