@@ -19,7 +19,7 @@ const CamCat = (props) => {
         backgroundPosition: 'center center',
       }}
     >
-      {props.streamManager !== undefined} ? (
+      {props.streamManager !== undefined} 
         <div className="streamcomponent">
           <OpenViduVideoComponent streamManager={props.props}/>
           <div>
@@ -27,7 +27,7 @@ const CamCat = (props) => {
 
           </div>
       </div>
-      )
+      
     </div>
 
   );
