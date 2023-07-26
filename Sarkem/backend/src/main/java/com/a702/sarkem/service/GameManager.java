@@ -105,6 +105,12 @@ public class GameManager {
 		gameRoomMap.put(roomId, gameRoom);
 	}
 
+	// 현재 게임 세션 호스트 호출하기
+	public String getHostId(String roomId) {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		return gameRoom.getHostId();
+	}
+
 	/**
 	 * 게임룸 정보 조회
 	 */

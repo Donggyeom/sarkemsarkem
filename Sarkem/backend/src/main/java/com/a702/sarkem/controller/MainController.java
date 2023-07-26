@@ -1,5 +1,6 @@
 package com.a702.sarkem.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +56,10 @@ public class MainController {
     	//Openvidu Session
         SessionProperties properties = SessionProperties.fromJson(params).build();
         Session session = openvidu.createSession(properties);
+
         //Game Session
         gameManager.createGameRoom(session.getSessionId());
-        String token = getConnectionToken(session, paramMap);
         String roomId = session.getSessionId();
-        gameManager.setHostId(roomId, token.substring(42));
-        System.out.println(token.substring(42));
         System.out.println("방생성");
         return new ResponseEntity<>(roomId, HttpStatus.OK);
     }
@@ -85,14 +84,22 @@ public class MainController {
     		@RequestBody String nickName)
     				throws OpenViduJavaClientException, OpenViduHttpException{
     	Session session = openvidu.getActiveSession(roomId);
-    	if (session == null) {
-    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    	}
+
+		// 해당 roomId에 대한 세션이 없을 시 return;
+    	if (session == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+		// 토큰 발급
     	String token = getConnectionToken(session, paramMap);
-    	String playerId = token.substring(42);	// 토큰 앞부분 삭제
+		String playerId = token.split("token=")[1];	// 토큰 앞부분 삭제
     	Player player = new Player(playerId, nickName);
+
     	log.debug(player.toString());
+
+		// 해당 게임 세션에 player 연결
     	gameManager.connectPlayer(roomId, player);
+
+		// 해당 게임 세션에 host가 없을 시 현재 player를 host로 지정
+		if(gameManager.getHostId(roomId) == null) gameManager.setHostId(roomId,playerId);
     	System.out.println("방접속");
     	return new ResponseEntity<>(token, HttpStatus.OK);
     }
