@@ -179,11 +179,10 @@ public class GameManager {
 				
 		GameRoom room = gameRoomMap.get(roomId);
 		// 방장과 플레이어 일치 여부 확인
-		List<String> target = new ArrayList<>();
-		target.add(playerId);
 		if(!room.getHostId().equals(playerId)) {
-			sendSystemMessage(roomId, target, SystemCode.ONLY_HOST_ACTION, null);
+			sendSystemMessage(roomId, playerId, SystemCode.ONLY_HOST_ACTION, null);
 			return;
+
 		}
 		
 		// 플레이어 수와 역할 수 일치 여부 확인
@@ -222,6 +221,19 @@ public class GameManager {
 	/**
 	 * 시스템 메시지를 대상에게 전송
 	 * @param roomId
+	 * @param target
+	 * @param code
+	 * @param param
+	 */
+	public void sendSystemMessage(String roomId, String target, SystemCode code, Object param) {
+		ChannelTopic gameTopic = getGameTopic(roomId);
+		SystemMessage systemMessage = new SystemMessage(code, roomId, target, param);
+		gamePublisher.publish(gameTopic, systemMessage);
+	}
+
+	/**
+	 * 시스템 메시지를 대상에게 전송
+	 * @param roomId
 	 * @param targets
 	 * @param code
 	 * @param param
@@ -229,8 +241,7 @@ public class GameManager {
 	public void sendSystemMessage(String roomId, List<String> targets, SystemCode code, Object param) {
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		for (String target : targets) {
-			SystemMessage systemMessage = new SystemMessage(code, roomId, target, param);
-			gamePublisher.publish(gameTopic, systemMessage);
+			sendSystemMessage(roomId, target, code, param);
 		}
 	}
 
@@ -243,12 +254,8 @@ public class GameManager {
 	 */
 	public void sendSystemMessageToAll(String roomId, SystemCode code, Object param) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		List<Player> players = gameRoom.getPlayers();
-		ChannelTopic gameTopic = getGameTopic(roomId);
-		for (Player target : players) {
-			SystemMessage systemMessage = new SystemMessage(code, roomId, target.getPlayerId(), param);
-			gamePublisher.publish(gameTopic, systemMessage);
-		}
+		List<String> players = gameRoom.getPlayersId();
+		sendSystemMessage(roomId, players, code, param);
 	}
 
 	// 0. 공통기능
@@ -311,12 +318,8 @@ public class GameManager {
 	public void sendRoleAsignMessage(String roomId, Map<String, RolePlayer> roleMap) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
 		List<String> playersId = gameRoom.getPlayersId();
-		System.out.println(roleMap);
-		ChannelTopic gameTopic = getGameTopic(roomId);
-		for (String target : playersId) {
-			SystemMessage systemMessage = new SystemMessage(SystemCode.ROLE_ASIGNED, roomId, target, roleMap.get(target));
-			gamePublisher.publish(gameTopic, systemMessage);
-		}
+		for (String target : playersId)
+			sendSystemMessage(roomId, target, SystemCode.ROLE_ASIGNED, roleMap.get(target));
 	}
 
 	// "낮 페이즈" 메시지 전송

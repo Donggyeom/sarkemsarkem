@@ -136,6 +136,7 @@ function Room () {
             alert('게임시작');
             break;
         case "ONLY_HOST_ACTION":
+            console.log(sysMessage);
             alert('방장만 실행 가능합니다.');
             break;
         case "OPTION_CHANGED":
@@ -149,8 +150,8 @@ function Room () {
             setPsychologistCount(sysMessage.param.psychologistCount);
             break;
         case "ROLE_ASIGNED":
-            alert(`당신은 ${sysMessage.body.role} 입니다.`);
-            console.log(`당신은 ${sysMessage.body.role} 입니다.`)
+            alert(`당신은 ${sysMessage.param.role} 입니다.`);
+            console.log(`당신은 ${sysMessage.param.role} 입니다.`)
             break;
     
         }
