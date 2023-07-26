@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.a702.sarkem.model.player.RolePlayer;
-import org.redisson.misc.Hash;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
@@ -19,10 +17,12 @@ import com.a702.sarkem.model.game.message.SystemMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
 import com.a702.sarkem.model.player.Player;
+import com.a702.sarkem.model.player.RolePlayer;
 import com.a702.sarkem.redis.ChatPublisher;
 import com.a702.sarkem.redis.ChatSubscriber;
 import com.a702.sarkem.redis.GamePublisher;
 import com.a702.sarkem.redis.SystemSubscriber;
+import com.esotericsoftware.minlog.Log;
 
 import lombok.RequiredArgsConstructor;
 
@@ -182,7 +182,6 @@ public class GameManager {
 		if(!room.getHostId().equals(playerId)) {
 			sendSystemMessage(roomId, playerId, SystemCode.ONLY_HOST_ACTION, null);
 			return;
-
 		}
 		
 		// 플레이어 수와 역할 수 일치 여부 확인
@@ -201,7 +200,17 @@ public class GameManager {
 			return;
 		}
 		
-		// redis 메시지 전송
+		// session 변경
+		GameSession gameSession = gameSessionMap.get(roomId);
+		gameSession.setMeetingTime(option.getMeetingTime());
+		gameSession.setCitizenCount(option.getCitizenCount());
+		gameSession.setSarkCount(option.getSarkCount());
+		gameSession.setDoctorCount(option.getDoctorCount());
+		gameSession.setPoliceCount(option.getPoliceCount());
+		gameSession.setDetectiveCount(option.getDetectiveCount());
+		gameSession.setPsychologistCount(option.getPsychologistCount());
+		gameSession.setBullyCount(option.getBullyCount());
+		Log.debug(gameSession.toString());
 		sendGameOptionChangedMessage(roomId, option);
 	}
 
@@ -266,7 +275,6 @@ public class GameManager {
 	 * @param message
 	 */
 	public void sendNoticeMessageToPlayer(String roomId, String playerId, String message) {
-		ChannelTopic gameTopic = getGameTopic(roomId);
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
 		List<String> targets = new ArrayList<>();
@@ -281,7 +289,13 @@ public class GameManager {
 	 * @param message
 	 */
 	public void sendNoticeMessageToPlayers(String roomId, String[] playersId, String message) {
-		
+		HashMap<String, String> param = new HashMap<>();
+		param.put("message", message);
+		List<String> targets = new ArrayList<>();
+		for(int i = 0; i<playersId.length; i++) {
+			targets.add(playersId[i]);
+		}
+		sendSystemMessage(roomId, targets, SystemCode.NOTICE_MESSAGE, param);
 	}
 
 	/**
