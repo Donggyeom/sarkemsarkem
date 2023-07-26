@@ -5,6 +5,7 @@ import OpenViduVideoComponent from './OvVideo';
 const CamCat = (props) => {
   // const nickName = JSON.parse(streamManager.stream.connection.data).userData;
   console.log(props.props);
+  
   return (
     <div
       style={{
@@ -21,7 +22,10 @@ const CamCat = (props) => {
       {props.streamManager !== undefined} ? (
         <div className="streamcomponent">
           <OpenViduVideoComponent streamManager={props.props}/>
-          <div><p>{JSON.parse(props.props.stream.connection.data).userData}</p></div>
+          <div>
+           <p style={{ textAlign: 'center' }}>{JSON.parse(props.props.stream.connection.data).userData}</p>
+
+          </div>
       </div>
       )
     </div>
