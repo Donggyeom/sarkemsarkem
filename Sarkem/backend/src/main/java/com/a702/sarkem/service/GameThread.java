@@ -7,6 +7,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import com.a702.sarkem.exception.GameOptionSettingException;
 import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
+import com.a702.sarkem.model.game.NightVote;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
 
@@ -106,4 +107,20 @@ public class GameThread extends Thread {
 		
 	}
 	
+	// 밤 투표 받아온거 정리
+	private void nightVote(NightVote nightVote) {
+
+		String deadPlayerId = nightVote.getSarkVoted(); // 삵이 투표해서 죽은 플래이어 아이디
+		String protectedPlayerId = nightVote.getDoctorVoted(); // 의사가 투표해서 지켜진 플래이어 아이디
+		String suspectPlayerId = nightVote.getPoliceVoted(); // 경찰이 투표해서 조사받을 플래이어 아이디
+		String slientPlayerId = nightVote.getAchiVoted(); // 냥아치가 투표해서 조용해야 할 플래이어 아이디
+
+		// 의사가 살렸을 경우 부활
+		if (deadPlayerId != null && deadPlayerId.equals(protectedPlayerId)) {
+			deadPlayerId = null;
+		}
+
+//		SystemMessage message = new SystemMessage(gameRoom.getRoomId(), SystemCode.BE_HUNTED, deadPlayerId);
+//		gamePublisher.publish(gameTopic, message);
+	}
 }

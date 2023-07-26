@@ -8,8 +8,11 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
+import com.a702.sarkem.exception.GameOptionSettingException;
 import com.a702.sarkem.exception.GameRoomNotFoundException;
+import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
+import com.a702.sarkem.model.game.NightVote;
 import com.a702.sarkem.model.game.message.SystemMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
@@ -150,7 +153,32 @@ public class GameManager {
 	}
 
 	/**
-	 * 게임 쓰레드 시작
+	 * 게임 설정 변경
+	 */
+	public void gameOptionChange(String roomId, GameOptionDTO option) throws GameOptionSettingException {
+		// 플레이어 수와 역할 수 일치 여부 확인
+		GameRoom room = gameRoomMap.get(roomId);
+		int playerCount = room.getPlayerCount();
+		int optionRoleCount = option.getTotalRoleCount();
+		if (playerCount != optionRoleCount)
+			throw new GameOptionSettingException("플레이어 수와 역할 수가 일치하지 않습니다.");
+
+		// TODO: 역할 별 최소, 최대 수 검증 필요
+		// 삵은 1~3까지만 설정 가능
+		int sarkCount = option.getSarkCount();
+		if (sarkCount < 0 || sarkCount > 3)
+			throw new GameOptionSettingException("삵은 1 ~ 3 사이로 설정 가능합니다.");
+
+		// 회의 시간 변경
+		int meetingTime = option.getMeetingTime();
+		if (meetingTime < 30 || meetingTime > 180)
+			throw new GameOptionSettingException("회의 시간은 30s ~ 180s 사이로 설정 가능합니다.");
+
+		// redis 메시지 전송
+	}
+
+	/**
+	 * 게임 시작 ======= 게임 쓰레드 시작
 	 */
 	public void gameStart(String roomId) {
 		// 게임 러너 생성 및 시작
@@ -177,12 +205,17 @@ public class GameManager {
 		}
 	}
 
-	/**
-	 * 시스템 메시지를 모두에게 전송
-	 * @param roomId
-	 * @param code
-	 * @param param
-	 */
+	public void sendSystemMessageToAll(String roomId, SystemCode code) {
+
+		/**
+		 * 시스템 메시지를 모두에게 전송
+		 * 
+		 * @param roomId
+		 * @param code
+		 * @param param
+		 */
+	}
+
 	public void sendSystemMessageToAll(String roomId, SystemCode code, Map param) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
 		List<Player> players = gameRoom.getPlayers();
