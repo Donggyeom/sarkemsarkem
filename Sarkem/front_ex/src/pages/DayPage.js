@@ -123,50 +123,50 @@ const DayPage = () => {
     //   renderCamCats();
     // }, [userCount]);
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //   console.log(nickName);
-    //   if (session) {
-    //     // 토큰 발급
-    //     getToken().then(async (token) => {
-    //       try{
-    //         setToken(token);
-    //         console.log(token);
-    //         // 세션에 유저 데이터 입력 후 연결 시도
-    //         await session.connect(token, {userData: nickName});
+      console.log(nickName);
+      if (session) {
+        // 토큰 발급
+        getToken().then(async (token) => {
+          try{
+            setToken(token);
+            console.log(token);
+            // 세션에 유저 데이터 입력 후 연결 시도
+            await session.connect(token, {userData: nickName});
 
-    //         // 내 퍼블리셔 객체 생성
-    //         let publisher = await OV.initPublisherAsync(undefined, {
-    //           audioSource: undefined,
-    //             videoSource: undefined,
-    //             publishAudio: isMicOn,
-    //             publishVideo: isCamOn,
-    //             resolution: '640x480',
-    //             frameRate: 30,
-    //             insertMode: 'APPEND',
-    //             mirror: true,
-    //         });
-    //         // 세션에 내 정보 게시
-    //         session.publish(publisher);
+            // 내 퍼블리셔 객체 생성
+            let publisher = await OV.initPublisherAsync(undefined, {
+              audioSource: undefined,
+                videoSource: undefined,
+                publishAudio: isMicOn,
+                publishVideo: isCamOn,
+                resolution: '640x480',
+                frameRate: 30,
+                insertMode: 'APPEND',
+                mirror: true,
+            });
+            // 세션에 내 정보 게시
+            session.publish(publisher);
 
-    //         // 내 디바이스 on/off 상태 게시
-    //         publisher.publishVideo(isCamOn);
-    //         publisher.publishAudio(isMicOn);
+            // 내 디바이스 on/off 상태 게시
+            publisher.publishVideo(isCamOn);
+            publisher.publishAudio(isMicOn);
 
-    //         // 퍼블리셔 useState 갱신
-    //         setPublisher(publisher);
-    //         setCamArray((camArray) => [...camArray, publisher]);
-    //         console.log(publisher)
-    //       }
-    //       catch (error) {
-    //         console.error(error);
-    //         alert("세션 연결 오류");
-    //         navigate("/");
-    //         return;
-    //       }
-    //     })
-    //   }
-    // }, [session]);
+            // 퍼블리셔 useState 갱신
+            setPublisher(publisher);
+            setCamArray((camArray) => [...camArray, publisher]);
+            console.log(publisher)
+          }
+          catch (error) {
+            console.error(error);
+            alert("세션 연결 오류");
+            navigate("/");
+            return;
+          }
+        })
+      }
+    }, [session]);
 
     // 특정 유저가 룸을 떠날 시 subscribers 배열에서 삭제
     const deleteSubscriber = (streamManager) => {

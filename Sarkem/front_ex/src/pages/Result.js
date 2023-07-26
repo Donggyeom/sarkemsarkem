@@ -15,7 +15,15 @@ const StyledSunsetPage = styled.div`
 
 const Result = () => {
     return ( 
-			<div>결과창</div>
+			<Background>
+
+
+				<StyledSunsetPage>
+					<div>결과창</div>
+
+				</StyledSunsetPage>
+			</Background>
+			
     );
 
 }
