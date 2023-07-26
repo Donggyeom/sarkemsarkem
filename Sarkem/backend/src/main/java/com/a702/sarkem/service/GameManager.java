@@ -213,6 +213,7 @@ public class GameManager {
 		sendGameOptionChangedMessage(roomId, option);
 	}
 
+
 	/**
 	 * 게임 시작 ======= 게임 쓰레드 시작
 	 */
@@ -225,7 +226,16 @@ public class GameManager {
 		GameThread gameThread = new GameThread(this, gameRoom, gameSession, gameTopic, chatTopic);
 		gameThread.run();
 	}
-
+	
+	/**
+	 * 대상 선택
+	 */
+	public void selectTarget(String roomId, Map<String, String> targets) {
+		GameRoom room = gameRoomMap.get(roomId);
+		
+	}
+	
+	
 	/**
 	 * 시스템 메시지를 대상에게 전송
 	 * @param roomId
@@ -324,12 +334,12 @@ public class GameManager {
 
 	// 2. 게임 진행
 	// "대상선택" 메시지 전송
-	public void sendTargetSelectMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECT, null);
+	public void sendTargetSelectMessage(String roomId, Map<String, String> targets) {
+		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION, targets);
 	}
 	// "대상선택 종료" 메시지 전송
-	public void sendTargetSelectdMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTD, null);
+	public void sendTargetSelectdMessage(String roomId, Map<String, String> targets) {
+		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION_END, targets);
 	}
 	// "역할배정" 메시지 전송
 	public void sendRoleAsignMessage(String roomId, Map<String, RolePlayer> roleMap) {
@@ -353,11 +363,11 @@ public class GameManager {
 	}
 	// "낮 투표 종료" 메시지 전송
 	public void sendEndDayVoteMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.END_DAY_VOTE, null);
+		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, null);
 	}
 	// "저녁 투표 종료" 메시지 전송
 	public void sendEndNightVoteMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.END_NIGHT_VOTE, null);
+		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE_END, null);
 	}
 	// "추방당함" 메시지 전송
 	public void sendExcludedMessage(String roomId) {
@@ -369,11 +379,11 @@ public class GameManager {
 	}
 	// "투표현황" 메시지 전송
 	public void sendCurrentVoteMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.CURRENT_VOTE, null);
+		sendSystemMessageToAll(roomId, SystemCode.VOTE_SITUATION, null);
 	}
 	// "심리분석 시작" 메시지 전송	*
 	public void sendPsychoStartMessage(String roomId, String playerId) {
-		sendSystemMessage(roomId, playerId, SystemCode.PSYCHO_START, null);
+		sendSystemMessage(roomId, playerId, SystemCode.PSYCHOANALYSIS_START, null);
 	}
 	// "협박당함" 메시지 전송	*
 	public void sendThreatingMessage(String roomId, String playerId) {
@@ -385,11 +395,11 @@ public class GameManager {
 		for(int i = 0; i<playerId.length; i++) {
 			targets.add(playerId[i]);
 		}
-		sendSystemMessage(roomId, targets, SystemCode.HMISSION_START, null);
+		sendSystemMessage(roomId, targets, SystemCode.MISSION_START, null);
 	}
 	// "히든미션 성공" 메시지 전송
 	public void sendHiddenMissionSuccessMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.HMISSION_SUCCESS, null);
+		sendSystemMessageToAll(roomId, SystemCode.MISSION_SUCCESS, null);
 	}
 	// 2. 게임 진행 끝
 

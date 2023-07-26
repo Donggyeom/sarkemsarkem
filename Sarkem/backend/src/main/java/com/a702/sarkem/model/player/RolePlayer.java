@@ -13,9 +13,10 @@ import lombok.ToString;
 @AllArgsConstructor
 public class RolePlayer extends Player {
 	
-	private GameRole role = GameRole.OBSERVER; 	// 배정받은 역할
-	private boolean alive = true; 				// 살았는지 여부
-	private String target = null;
+	private GameRole role; 	// 배정받은 역할
+	private boolean alive; 	// 살았는지 여부
+	private String target;	// 지정한 플레이어
+	private int votedCnt;	// 받은 투표 수
 	
 	public RolePlayer(String playerId, String nickname, GameRole role) {
 		super(playerId, nickname);
