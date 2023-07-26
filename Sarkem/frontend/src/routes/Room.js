@@ -113,8 +113,10 @@ function Room () {
     // 세션 해제
     const leaveSession = () => {
         // 세션 연결 종료
-        if (session) session.disconnect();
-        
+        if (session) {
+            session.disconnect();
+            deletePlayer(mySessionId,token);
+        }
         // 데이터 초기화
         setSession(undefined);
         setSubscribers([]);
@@ -269,7 +271,6 @@ function Room () {
             deleteSubscriber(event.stream.streamManager);
             console.log(JSON.parse(event.stream.streamManager.stream.connection.data).clientData, "님이 접속을 종료했습니다.")
             console.log(mySessionId);
-            deletePlayer(JSON.parse(event.stream.streamManager.stream.connection.data).playerId.slice(30, 35), JSON.parse(event.stream.streamManager.stream.connection.data).playerId.slice(42));
             getPlayers(JSON.parse(event.stream.streamManager.stream.connection.data).playerId.slice(30, 35));
         })
 

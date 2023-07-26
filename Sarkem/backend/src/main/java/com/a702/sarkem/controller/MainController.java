@@ -136,7 +136,8 @@ public class MainController {
     @DeleteMapping("/api/game/{roomId}/player/{playerId}")
     public void exitGame(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
     	gameManager.deletePlayer(roomId, playerId);
-    	System.out.println("게임방 나감");
+
+		System.out.println("게임방 나감");
     }
     
         

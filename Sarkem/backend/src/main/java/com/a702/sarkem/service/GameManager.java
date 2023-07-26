@@ -95,7 +95,19 @@ public class GameManager {
 	public void deletePlayer(String roomId, String token) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
 		gameRoom.deletePlayer(token);
-		gameRoomMap.put(token, gameRoom);
+
+		// 더 이상 게임 세션에 남은 인원이 없을 때
+		if (gameRoom.getPlayerCount() == 0) {
+			// gameRoom 정보와 redis topic 삭제
+			gameRoomMap.remove(roomId);
+			gameSessionMap.remove(roomId);
+			topics.remove(getGameTopic(roomId));
+			topics.remove(getChatTopic(roomId));
+		}else if (getHostId(roomId).equals(token)) {
+			// 방장 변경하기
+			setHostId(roomId, gameRoom.getPlayersId().get(0));
+			System.out.println("방장이 변경되었습니다." + token + " " + getHostId(roomId));
+		}
 	}
 
 	// 호스트 아이디 지정해주기
