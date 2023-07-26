@@ -232,7 +232,8 @@ public class GameManager {
 	 */
 	public void selectTarget(String roomId, String playerId, Map<String, String> target) {
 		GameRoom room = gameRoomMap.get(roomId);
-		String targetId = target.get(playerId);
+//		GameSession session
+		String targetId = target.get("target");
 		RolePlayer player = (RolePlayer) room.getPlayer(playerId);
 		player.setTarget(targetId);
 		player.setVotedCnt(player.getVotedCnt()+1);
