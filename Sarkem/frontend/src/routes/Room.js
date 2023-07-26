@@ -85,7 +85,6 @@ function Room () {
                 JSON.stringify({
                     code:'OPTION_CHANGE', 
                     roomId: mySessionId, 
-                    actionCode: 'OPTION_CHANGE',
                     playerId: token,
                     param: {
                         meetingTime,
@@ -263,11 +262,11 @@ function Room () {
             getToken().then(async (response) => {
                 try {
                     // 토큰의 고유 번호만 파싱하여 useState에 저장
-                    setToken(response.split("token=", 2)[1]);
-                    console.log(response.split("token=", 2)[1])
+                    let playerId = response.split("token=", 2)[1];
+                    setToken(playerId);
                     
                     // 생성된 토큰을 통해 세션에 연결 요청
-                    await session.connect(response, {clientData: myUserName, playerId: response})
+                    await session.connect(response, {clientData: myUserName, playerId: playerId})
                     
                     // 내 통신정보(퍼블리셔) 객체 생성
                     let publisher = await OV.initPublisherAsync(undefined, {
@@ -353,11 +352,26 @@ function Room () {
         JSON.stringify({
             code:'GAME_START', 
             roomId: mySessionId, 
-            actionCode: 'GAME_START',
             playerId: token
         })
         );
     }
+
+    const selectAction = ((player) => {
+        console.log("다른 플레이어 선택 ")
+        console.log(player.playerId);
+        if(stompCilent.current.connected && token !== null) {
+            stompCilent.current.send("/pub/game/action", {}, 
+                JSON.stringify({
+                    code:'TARGET_SELECT', 
+                    roomId: mySessionId, 
+                    playerId: token,
+                    param: {
+                        target: player.playerId
+                    }
+                }))
+        }
+    })
 
     // 다른 유저 카메라 on/off 하는 함수
     const toggleSubbsVideoHandler = (sub) => {
@@ -464,7 +478,10 @@ function Room () {
                     <div
                         key={i}
                         className="stream-container"
-                        onClick={() => toggleSubbsVideoHandler(sub)}
+                        onClick={() => {
+                            toggleSubbsVideoHandler(sub);
+                            selectAction(JSON.parse(sub.stream.connection.data));
+                        }}
                     >
                         <span>{sub.id}</span>
                         <UserVideoComponent streamManager={sub} />
