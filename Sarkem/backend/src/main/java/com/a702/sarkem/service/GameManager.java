@@ -1,5 +1,6 @@
 package com.a702.sarkem.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,6 @@ import com.a702.sarkem.exception.GameOptionSettingException;
 import com.a702.sarkem.exception.GameRoomNotFoundException;
 import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
-import com.a702.sarkem.model.game.NightVote;
 import com.a702.sarkem.model.game.message.SystemMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
@@ -175,26 +175,35 @@ public class GameManager {
 	/**
 	 * 게임 설정 변경
 	 */
-	public void gameOptionChange(String roomId, GameOptionDTO option) throws GameOptionSettingException {
-		// 플레이어 수와 역할 수 일치 여부 확인
+	public void gameOptionChange(String roomId, String playerId, GameOptionDTO option) {
+				
 		GameRoom room = gameRoomMap.get(roomId);
+		// 방장과 플레이어 일치 여부 확인
+		List<String> target = new ArrayList<>();
+		target.add(playerId);
+		if(!room.getHostId().equals(playerId)) {
+			sendSystemMessage(roomId, target, SystemCode.ONLY_HOST_ACTION, null);
+			return;
+		}
+		
+		// 플레이어 수와 역할 수 일치 여부 확인
 		int playerCount = room.getPlayerCount();
 		int optionRoleCount = option.getTotalRoleCount();
-		if (playerCount != optionRoleCount)
-			throw new GameOptionSettingException("플레이어 수와 역할 수가 일치하지 않습니다.");
-
-		// TODO: 역할 별 최소, 최대 수 검증 필요
-		// 삵은 1~3까지만 설정 가능
-		int sarkCount = option.getSarkCount();
-		if (sarkCount < 0 || sarkCount > 3)
-			throw new GameOptionSettingException("삵은 1 ~ 3 사이로 설정 가능합니다.");
-
+		String hostId = room.getHostId();
+		if (playerCount != optionRoleCount) {
+			sendNoticeMessageToPlayer(roomId, hostId, "플래이어 수와 역할 수가 일치하지 않습니다.");
+			return;
+		}
+			
 		// 회의 시간 변경
 		int meetingTime = option.getMeetingTime();
-		if (meetingTime < 30 || meetingTime > 180)
-			throw new GameOptionSettingException("회의 시간은 30s ~ 180s 사이로 설정 가능합니다.");
-
+		if (meetingTime < 15 || meetingTime > 180) {
+			sendNoticeMessageToPlayer(roomId, hostId, "회의 시간은 15s ~ 180s 사이로 설정 가능합니다.");
+			return;
+		}
+		
 		// redis 메시지 전송
+		sendGameOptionChangedMessage(roomId, option);
 	}
 
 	/**
@@ -217,31 +226,27 @@ public class GameManager {
 	 * @param code
 	 * @param param
 	 */
-	public void sendSystemMessage(String roomId, List<String> targets, SystemCode code, Map param) {
+	public void sendSystemMessage(String roomId, List<String> targets, SystemCode code, Object param) {
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		for (String target : targets) {
-			SystemMessage systemMessage = new SystemMessage(code, roomId, target, null);
+			SystemMessage systemMessage = new SystemMessage(code, roomId, target, param);
 			gamePublisher.publish(gameTopic, systemMessage);
 		}
 	}
 
-	public void sendSystemMessageToAll(String roomId, SystemCode code) {
-
-		/**
-		 * 시스템 메시지를 모두에게 전송
-		 * 
-		 * @param roomId
-		 * @param code
-		 * @param param
-		 */
-	}
-
-	public void sendSystemMessageToAll(String roomId, SystemCode code, Map param) {
+	/**
+	 * 시스템 메시지를 모두에게 전송
+	 * 
+	 * @param roomId
+	 * @param code
+	 * @param param
+	 */
+	public void sendSystemMessageToAll(String roomId, SystemCode code, Object param) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
 		List<Player> players = gameRoom.getPlayers();
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		for (Player target : players) {
-			SystemMessage systemMessage = new SystemMessage(code, roomId, target.getPlayerId(), null);
+			SystemMessage systemMessage = new SystemMessage(code, roomId, target.getPlayerId(), param);
 			gamePublisher.publish(gameTopic, systemMessage);
 		}
 	}
@@ -254,7 +259,12 @@ public class GameManager {
 	 * @param message
 	 */
 	public void sendNoticeMessageToPlayer(String roomId, String playerId, String message) {
-
+		ChannelTopic gameTopic = getGameTopic(roomId);
+		HashMap<String, String> param = new HashMap<>();
+		param.put("message", message);
+		List<String> targets = new ArrayList<>();
+		targets.add(playerId);
+		sendSystemMessage(roomId, targets, SystemCode.NOTICE_MESSAGE, param);
 	}
 
 	/**
@@ -264,7 +274,7 @@ public class GameManager {
 	 * @param message
 	 */
 	public void sendNoticeMessageToPlayers(String roomId, String[] playersId, String message) {
-
+		
 	}
 
 	/**
@@ -281,8 +291,10 @@ public class GameManager {
 
 	// 1. 게임 로비
 	// "게임방 설정 변경" 메시지 전송
-	public void sendGameOptionChangedMessage() {
+	public void sendGameOptionChangedMessage(String roomId, GameOptionDTO option) {
+//		Map<String, Integer> param = new HashMap<>();
 		
+		sendSystemMessageToAll(roomId, SystemCode.OPTION_CHANGED, option);
 	}
 	// "게임시작" 메시지 전송
 	public void sendGameStartMessage(String roomId) {

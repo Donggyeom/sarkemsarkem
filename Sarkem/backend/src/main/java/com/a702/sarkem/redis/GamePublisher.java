@@ -21,4 +21,5 @@ public class GamePublisher {
     public void publish(ChannelTopic topic, ActionMessage message) {
         redisTemplate.convertAndSend(topic.getTopic(), message);
     }
+    
 }

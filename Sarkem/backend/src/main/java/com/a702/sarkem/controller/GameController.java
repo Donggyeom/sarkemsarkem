@@ -8,10 +8,12 @@ import java.util.List;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
+import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.chat.ChatMessage;
 import com.a702.sarkem.model.game.message.ActionMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.service.GameManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +33,7 @@ public class GameController {
 		String roomId = actionMessage.getRoomId();
 		String gameId = actionMessage.getGameId();
 		String playerId = actionMessage.getPlayerId();
+		ObjectMapper mapper = new ObjectMapper();
 		switch(actionMessage.getCode()) {
 		// 게임시작
 		case GAME_START:
@@ -50,7 +53,10 @@ public class GameController {
 		case HIDDENMISSION_SUCCESS:
 			break;
 		// 게임 설정 변경
-		case OPTION_CHANGED:
+		case OPTION_CHANGE:
+			Object option = actionMessage.getParam();
+			GameOptionDTO gameOption = mapper.convertValue(option,GameOptionDTO.class);
+			gameManager.gameOptionChange(roomId, actionMessage.getPlayerId(), gameOption);
 			break;
 		// 대상 선택
 		case TARGET_SELECT:

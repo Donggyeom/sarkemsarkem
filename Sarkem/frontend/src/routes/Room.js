@@ -24,13 +24,13 @@ function Room () {
     const [token, setToken] = useState(null);
     const [dead, setDead] = useState(false);
     const [meetingTime, setMeetingTime] = useState(30);
-    const [citizenCount, setCitizenCount] = useState("1");
-    const [sarkCount, setSarkCount] = useState("1");
-    const [policeCount, setPoliceCount] = useState("1");
-    const [doctorCount, setDoctorCount] = useState("1");
-    const [ditectiveCount, setDitectiveCount] = useState("1");
-    const [bullyCount, setBullyCount] = useState("1");
-    const [psychologistCount, setPsychologistCount] = useState("1");
+    const [citizenCount, setCitizenCount] = useState("0");
+    const [sarkCount, setSarkCount] = useState("0");
+    const [policeCount, setPoliceCount] = useState("0");
+    const [doctorCount, setDoctorCount] = useState("0");
+    const [detectiveCount, setDetectiveCount] = useState("0");
+    const [bullyCount, setBullyCount] = useState("0");
+    const [psychologistCount, setPsychologistCount] = useState("0");
     
 
 
@@ -89,13 +89,13 @@ function Room () {
                     roomId: mySessionId, 
                     actionCode: 'OPTION_CHANGE',
                     playerId: token,
-                    gameOption: {
+                    param: {
                         meetingTime,
                         citizenCount,
                         sarkCount,
                         doctorCount,
                         policeCount,
-                        ditectiveCount,
+                        detectiveCount,
                         psychologistCount,
                         bullyCount
                     }
@@ -106,7 +106,7 @@ function Room () {
         sarkCount,
         doctorCount,
         policeCount,
-        ditectiveCount,
+        detectiveCount,
         psychologistCount,
         bullyCount])
 
@@ -124,28 +124,42 @@ function Room () {
         console.log("game websocket 연결 완료");
     }
 
+    
+    const receiveMessage = (message) => {
+        // 시스템 메시지 처리
+        let sysMessage = JSON.parse(message.body);
+        
+        if (token != sysMessage.playerId) return;
+
+        switch (sysMessage.code) {
+        case "GAME_START":   
+            alert('게임시작');
+            break;
+        case "ONLY_HOST_ACTION":
+            alert('방장만 실행 가능합니다.');
+            break;
+        case "OPTION_CHANGED":
+            setMeetingTime(sysMessage.param.meetingTime);
+            setCitizenCount(sysMessage.param.citizenCount);
+            setSarkCount(sysMessage.param.sarkCount);
+            setPoliceCount(sysMessage.param.policeCount);
+            setDoctorCount(sysMessage.param.doctorCount);
+            setDetectiveCount(sysMessage.param.detectiveCount);
+            setBullyCount(sysMessage.param.bullyCount);
+            setPsychologistCount(sysMessage.param.psychologistCount);
+            break;
+        case "ROLE_ASIGNED":
+            alert(`당신은 ${sysMessage.body.role} 입니다.`);
+            console.log(`당신은 ${sysMessage.body.role} 입니다.`)
+            break;
+    
+        }
+    }
+
     const connectGame = () => {
         // 게임방 redis 구독
         console.log('/sub/game/system/' + mySessionId + " redis 구독")
-        stompCilent.current.subscribe('/sub/game/system/' + mySessionId, function(message){
-            // 시스템 메시지 처리
-            let sysMessage = JSON.parse(message.body);
-            
-            if (token != sysMessage.playerId) return;
-
-            switch (sysMessage.code) {
-            case "GAME_START":   
-                alert('게임시작');
-                break;
-            case "ONLY_HOST_ACTION":
-                alert('방장만 실행 가능합니다.' + ' ' + myUserName);
-                break;
-            case "ROLE_ASIGNED":
-                alert(`당신은 ${sysMessage.body.role} 입니다.`);
-                console.log(`당신은 ${sysMessage.body.role} 입니다.`)
-                break;
-            }
-        })
+        stompCilent.current.subscribe('/sub/game/system/' + mySessionId, receiveMessage)
     }
 
     // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
@@ -370,8 +384,8 @@ function Room () {
             case "policeCount":
                 setPoliceCount(event.target.value);
             break;
-            case "ditectiveCount":
-                setDitectiveCount(event.target.value);
+            case "detectiveCount":
+                setDetectiveCount(event.target.value);
             break;
             case "psychologistCount":
                 setPsychologistCount(event.target.value);
@@ -464,8 +478,8 @@ function Room () {
                 <input onChange={changeOption} value={doctorCount} type='number' id='doctorCount' name="doctorCount" min="1" max="10"></input>
                 <label for='policeCount'>경찰</label>
                 <input onChange={changeOption} value={policeCount} type='number' id='policeCount' name="policeCount" min="1" max="10"></input>
-                <label for='ditectiveCount'>탐정</label>
-                <input onChange={changeOption} value={ditectiveCount} type='number' id='ditectiveCount' name="ditectiveCount" min="1" max="10"></input>
+                <label for='detectiveCount'>탐정</label>
+                <input onChange={changeOption} value={detectiveCount} type='number' id='detectiveCount' name="detectiveCount" min="1" max="10"></input>
                 <label for='psychologistCount'>심리학자</label>
                 <input onChange={changeOption} value={psychologistCount} type='number' id='psychologistCount' name="psychologistCount" min="1" max="10"></input>
                 <label for='bullyCount'>냥아치</label>

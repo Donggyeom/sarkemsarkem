@@ -15,7 +15,7 @@ public class ActionMessage implements Serializable {
 
 	// 액션 코드
 	public enum ActionCode {
-		OPTION_CHANGED,			// 게임 설정 변경 
+		OPTION_CHANGE,			// 게임 설정 변경 
 		GAME_START,             // 게임시작
 		TARGET_SELECT,          // 대상 선택
 		TARGET_SELECTED,        // 대상 선택 종료
