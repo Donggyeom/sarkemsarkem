@@ -13,7 +13,7 @@ import Chat from "../components/Chat";
 function Room () {
     let stompCilent = useRef({});
 
-    const [mySessionId, setMySessionId] = useState('tmpSession42');
+    const [mySessionId, setMySessionId] = useState(null);
     const [myUserName, setMyUserName] = useState('');
     const [session, setSession] = useState(undefined);
     const [mainStreamManager, setMainStreamManager] = useState(undefined);
@@ -31,7 +31,7 @@ function Room () {
     const [detectiveCount, setDetectiveCount] = useState("0");
     const [bullyCount, setBullyCount] = useState("0");
     const [psychologistCount, setPsychologistCount] = useState("0");
-
+    const [isConnected, setIsConnected] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -49,6 +49,7 @@ function Room () {
 
         // 이전 화면으로부터 받아온 데이터 세팅
         setMySessionId(location.state.sessionId);
+        console.log(location.state);
         setMyUserName(location.state.userName);
         setVideoEnabled(location.state.videoEnabled);
         setAudioEnabled(location.state.audioEnabled);
@@ -59,24 +60,22 @@ function Room () {
         // 세션에 가입
         joinSession();
 
-        // 게임 모듈 연결
-        connectGameWS();
 
         return () => {
             window.removeEventListener('beforeunload', onbeforeunload);
             leaveSession();
         }
-
-        
     }, []);
 
     useEffect(() => {
-        console.log("이건가?");
-        if (token === null) return;
-        if(stompCilent.current.connected && token !== null) {
-            connectGame();
+        // 토큰이 발급되면 WS 연결 
+        if (location.state === null || location.state.sessionId === null) {
+            console.log("세션 정보가 없습니다.")
+            navigate("/");
+            return;
         }
-    }, [stompCilent.current, token])
+        connectGameWS();
+    }, [token])
 
     // 게임 옵션 변경 시 실행
     useEffect(() => {
@@ -115,6 +114,8 @@ function Room () {
         await stompCilent.current.connect({}, () => {
          setTimeout(function() {
            onSocketConnected();
+            connectGame();
+           console.log(stompCilent.current.connected);
          }, 500);
         })
     }
@@ -159,8 +160,9 @@ function Room () {
 
     const connectGame = () => {
         // 게임방 redis 구독
-        console.log('/sub/game/system/' + mySessionId + " redis 구독")
-        stompCilent.current.subscribe('/sub/game/system/' + mySessionId, receiveMessage)
+        console.log('/sub/game/system/' + location.state.sessionId + " redis 구독")
+        stompCilent.current.subscribe('/sub/game/system/' + location.state.sessionId, receiveMessage)
+        console.log()
     }
 
     // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
