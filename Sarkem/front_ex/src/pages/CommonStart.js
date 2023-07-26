@@ -122,6 +122,9 @@ const CommonStart = ({onClick} ) => {
   useEffect(()=>{
     getUserCamera();
     getUserAudio();
+    const checkRoomId = () => {
+      //// 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
+    }
   }, [videoRef, audioRef])
 
   const getUserCamera = async () => {

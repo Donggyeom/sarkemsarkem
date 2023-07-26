@@ -26,7 +26,7 @@ const App = () => {
         <Route path="/:roomId/day" element={<DayPage />}/>
         <Route path="/:roomId/sunset" element={<SunsetPage />}/>
         <Route path="/:roomId/night" element={<NightPage />}/>
-        <Route path="/:roomId/result" element={<NightPage />}/>
+        <Route path="/:roomId/result" element={<Result />}/>
         <Route path="*" element={<NotFound />}/>
       </Routes>
 

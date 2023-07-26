@@ -9,7 +9,7 @@ const StartButtonImage = styled.img`
   cursor: pointer;
 `;
 
-const StartButton = () => {
+const OnfOffButton = () => {
   const [isOn, setIsOn] = useState(false);
 
   const handleButtonClick = () => {
@@ -25,4 +25,4 @@ const StartButton = () => {
   );
 };
 
-export default StartButton;
+export default OnfOffButton;
