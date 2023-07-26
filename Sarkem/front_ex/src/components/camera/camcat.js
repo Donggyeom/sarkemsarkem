@@ -20,11 +20,12 @@ const CamCat = (props) => {
     >
       {props.streamManager !== undefined} ? (
         <div className="streamcomponent">
-          <OpenViduVideoComponent streamManager={props.props} />
+          <OpenViduVideoComponent streamManager={props.props}/>
           <div><p>{JSON.parse(props.props.stream.connection.data).userData}</p></div>
       </div>
       )
     </div>
+
   );
 };
 
