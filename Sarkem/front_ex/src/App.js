@@ -13,6 +13,7 @@ import SunsetPage from './pages/SunsetPage';
 import NightPage from './pages/NightPage';
 import NotFound from './pages/NotFound';
 import Result from './pages/Result';
+import Chatting from './pages/Chatting';
 
 
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/:roomId/night" element={<NightPage />}/>
         <Route path="/:roomId/result" element={<Result />}/>
         <Route path="*" element={<NotFound />}/>
+        <Route path="chatting" element={<Chatting/>}/>
       </Routes>
 
 
