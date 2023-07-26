@@ -313,8 +313,6 @@ public class GameManager {
 	// 1. 게임 로비
 	// "게임방 설정 변경" 메시지 전송
 	public void sendGameOptionChangedMessage(String roomId, GameOptionDTO option) {
-//		Map<String, Integer> param = new HashMap<>();
-		
 		sendSystemMessageToAll(roomId, SystemCode.OPTION_CHANGED, option);
 	}
 	// "게임시작" 메시지 전송
@@ -337,22 +335,68 @@ public class GameManager {
 	}
 
 	// "낮 페이즈" 메시지 전송
+	public void sendDayPhaseMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.PHASE_DAY, null);
+	}
 	// "저녁 페이즈" 메시지 전송
+	public void sendTwilightPhaseMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, null);
+	}
 	// "밤 페이즈" 메시지 전송
+	public void sendNightPhaseMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.PHASE_NIGHT, null);
+	}
 	// "낮 투표 종료" 메시지 전송
+	public void sendEndDayVoteMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.END_DAY_VOTE, null);
+	}
 	// "저녁 투표 종료" 메시지 전송
+	public void sendEndNightVoteMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.END_NIGHT_VOTE, null);
+	}
 	// "추방당함" 메시지 전송
+	public void sendExcludedMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.BE_EXCLUDED, null);
+	}
 	// "사냥당함" 메시지 전송
+	public void sendHuntedMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.BE_HUNTED, null);
+	}
 	// "투표현황" 메시지 전송
-	// "심리분석 시작" 메시지 전송
-	// "협박당함" 메시지 전송
-	// "히든미션 시작" 메시지 전송
+	public void sendCurrentVoteMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.CURRENT_VOTE, null);
+	}
+	// "심리분석 시작" 메시지 전송	*
+	public void sendPsychoStartMessage(String roomId, String playerId) {
+		sendSystemMessage(roomId, playerId, SystemCode.PSYCHO_START, null);
+	}
+	// "협박당함" 메시지 전송	*
+	public void sendThreatingMessage(String roomId, String playerId) {
+		sendSystemMessage(roomId, playerId, SystemCode.BE_THREATED, null);
+	}
+	// "히든미션 시작" 메시지 전송	**
+	public void sendHiddenMissionStartMessage(String roomId, String[] playerId) {
+		List<String> targets = new ArrayList<>();
+		for(int i = 0; i<playerId.length; i++) {
+			targets.add(playerId[i]);
+		}
+		sendSystemMessage(roomId, targets, SystemCode.HMISSION_START, null);
+	}
 	// "히든미션 성공" 메시지 전송
+	public void sendHiddenMissionSuccessMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.HMISSION_SUCCESS, null);
+	}
 	// 2. 게임 진행 끝
 
 	// 3. 게임 종료
 	// "게임종료" 메시지 전송
+	public void sendGameEndMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.GAME_END, null);
+	}
 	// "게임준비" 메시지 전송
+	public void sendGameReadyMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.GAME_READY, null);
+	}
 	// 3. 게임 종료 끝
 
 }
