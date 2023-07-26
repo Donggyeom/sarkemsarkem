@@ -169,7 +169,7 @@ public class GameManager {
 	 * @param code
 	 * @param param
 	 */
-	public void sendSystemMessage(String roomId, String[] targets, SystemCode code, Map param) {
+	public void sendSystemMessage(String roomId, List<String> targets, SystemCode code, Map param) {
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		for (String target : targets) {
 			SystemMessage systemMessage = new SystemMessage(code, roomId, target, null);
@@ -200,7 +200,7 @@ public class GameManager {
 	 * @param playerId
 	 * @param message
 	 */
-	private void sendNoticeMessageToPlayer(String roomId, String playerId, String message) {
+	public void sendNoticeMessageToPlayer(String roomId, String playerId, String message) {
 
 	}
 
@@ -210,7 +210,7 @@ public class GameManager {
 	 * @param playersId
 	 * @param message
 	 */
-	private void sendNoticeMessageToPlayers(String roomId, String[] playersId, String message) {
+	public void sendNoticeMessageToPlayers(String roomId, String[] playersId, String message) {
 
 	}
 
@@ -219,7 +219,7 @@ public class GameManager {
 	 * 
 	 * @param message
 	 */
-	private void sendNoticeMessageToAll(String roomId, String message) {
+	public void sendNoticeMessageToAll(String roomId, String message) {
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
 		sendSystemMessageToAll(roomId, SystemCode.NOTICE_MESSAGE, param);
@@ -228,10 +228,15 @@ public class GameManager {
 
 	// 1. 게임 로비
 	// "게임방 설정 변경" 메시지 전송
-	private void sendGameOptionChangedMessage() {
+	public void sendGameOptionChangedMessage() {
 		
 	}
 	// "게임시작" 메시지 전송
+	public void sendGameStartMessage(String roomId) {
+		GameRoom gameRoom = gameRoomMap.get(roomId);
+		List<String> playersId = gameRoom.getPlayersId();
+		sendSystemMessage(roomId, playersId, SystemCode.GAME_START, null);
+	}
 	// 1. 게임 로비 끝
 
 	// 2. 게임 진행

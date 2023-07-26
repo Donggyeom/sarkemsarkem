@@ -39,6 +39,14 @@ public class GameRoom {
 		return null;
 	}
 	
+	public List<String> getPlayersId() {
+		List<String> playersId = new ArrayList<>();
+		for (Player player : this.players) {
+			playersId.add(player.getPlayerId());
+		}
+		return playersId;
+	}
+	
 	public void deletePlayer(String playerId) {
 		int a = this.getPlayerCount();
 		for(int i = 0; i<a; i++) {

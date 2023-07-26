@@ -30,7 +30,7 @@ public class GameThread extends Thread {
 	public void run() {
 		// TODO: 게임 로직 구현
 		// "게임시작" 메시지 전송
-		gameManager.sendSystemMessageToAll(gameRoom.getRoomId(), SystemCode.GAME_START, null);
+		gameManager.sendGameStartMessage(gameRoom.getRoomId());
 
 		// 역할배정
 		// 역할배정 메시지 전송
