@@ -23,7 +23,15 @@ function Room () {
     const [audioEnabled, setAudioEnabled] = useState(true);
     const [token, setToken] = useState(null);
     const [dead, setDead] = useState(false);
-
+    const [meetingTime, setMeetingTime] = useState(30);
+    const [citizenCount, setCitizenCount] = useState(1);
+    const [sarkCount, setSarkCount] = useState(1);
+    const [policeCount, setPoliceCount] = useState(1);
+    const [doctorCount, setDoctorCount] = useState(1);
+    const [ditectiveCount, setDetectiveCount] = useState(1);
+    const [bullyCount, setBullyCount] = useState(1);
+    const [psychologistCount, setPsychologistCount] = useState(1);
+    
 
 
     const navigate = useNavigate();
@@ -71,6 +79,36 @@ function Room () {
         }
     }, [stompCilent.current, token])
 
+    // 게임 옵션 변경 시 실행
+    useEffect(() => {
+        console.log("게임옵션 변경됨")
+        stompCilent.current.send("/pub/game/action", {}, 
+            JSON.stringify({
+                code:'OPTION_CHANGE', 
+                roomId: mySessionId, 
+                actionCode: 'OPTION_CHANGE',
+                playerId: token,
+                gameOption: {
+                    meetingTime,
+                    citizenCount,
+                    sarkCount,
+                    doctorCount,
+                    policeCount,
+                    ditectiveCount,
+                    psychologistCount,
+                    bullyCount
+                }
+            })
+        );
+    }, [meetingTime,
+        citizenCount,
+        sarkCount,
+        doctorCount,
+        policeCount,
+        ditectiveCount,
+        psychologistCount,
+        bullyCount])
+
     const connectGameWS = (event) => {
         let socket = new SockJS("http://localhost:8080/ws-stomp");
         stompCilent.current = Stomp.over(socket);
@@ -113,11 +151,10 @@ function Room () {
     // 세션 해제
     const leaveSession = () => {
         // 세션 연결 종료
-        if (session) session.disconnect();
-        
-        // game 세션에 유저 정보 삭제 요청
-        if (token) deletePlayer(mySessionId,token);
-        
+        if (session) {
+            session.disconnect();
+            deletePlayer(mySessionId,token);
+        }
         // 데이터 초기화
         setSession(undefined);
         setSubscribers([]);
@@ -286,6 +323,7 @@ function Room () {
         await navigator.clipboard.writeText("localhost:3000/"+mySessionId).then(alert("게임 링크가 복사되었습니다."));
     }
 
+    // 게임시작
     const gameStart = () => {
         console.log("게임시작 클릭")
         console.log(token);
@@ -380,6 +418,24 @@ function Room () {
                         <UserVideoComponent streamManager={sub} />
                     </div>
                 ))}
+            </div>
+            <div id='game-option-container'>
+                <label for='meetingTime'>회의시간</label>
+                <input value={meetingTime} type='number' id='meetingTime' name="meetingTime" min="15" max="300"></input>
+                <label for='citizenCount'>시민</label>
+                <input value={citizenCount} type='number' id='citizenCount' name="citizenCount" min="1" max="10"></input>
+                <label for='sarkCount'>마피아</label>
+                <input value={sarkCount} type='number' id='sarkCount' name="sarkCount" min="1" max="10"></input>
+                <label for='doctorCount'>의사</label>
+                <input value={doctorCount} type='number' id='doctorCount' name="doctorCount" min="1" max="10"></input>
+                <label for='policeCount'>경찰</label>
+                <input value={policeCount} type='number' id='policeCount' name="policeCount" min="1" max="10"></input>
+                <label for='ditectiveCount'>탐정</label>
+                <input value={ditectiveCount} type='number' id='ditectiveCount' name="ditectiveCount" min="1" max="10"></input>
+                <label for='psychologistCount'>심리학자</label>
+                <input value={psychologistCount} type='number' id='psychologistCount' name="psychologistCount" min="1" max="10"></input>
+                <label for='bullyCount'>냥아치</label>
+                <input value={bullyCount} type='number' id='bullyCount' name="bullyCount" min="1" max="10"></input>
             </div>
             {dead ? <Chat sessionId={mySessionId} userName={myUserName}/> : null}
             
