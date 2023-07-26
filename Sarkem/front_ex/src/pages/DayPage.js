@@ -16,6 +16,8 @@ import StartButton from '../components/buttons/StartButton'
 import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
 import axios from 'axios';
 
+import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
+
 
 const CamCatGrid = styled.div`
   display: grid;
@@ -48,6 +50,7 @@ const TimeSecond = styled.text`
     left: 22px; /* 원하는 위치 값을 지정합니다. */
     top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
+
 
 const handleCamButtonClick = () => {
     // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
@@ -299,7 +302,7 @@ const DayPage = () => {
               </CamCatGrid>
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             </div>
-            
+            <ChatButtonAndPopup />
         </StyledDayPage>
     </Background>
   );
