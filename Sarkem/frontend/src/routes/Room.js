@@ -31,7 +31,6 @@ function Room () {
     const [detectiveCount, setDetectiveCount] = useState("0");
     const [bullyCount, setBullyCount] = useState("0");
     const [psychologistCount, setPsychologistCount] = useState("0");
-    
 
 
     const navigate = useNavigate();
@@ -110,10 +109,10 @@ function Room () {
         psychologistCount,
         bullyCount])
 
-    const connectGameWS = (event) => {
+    const connectGameWS = async (event) => {
         let socket = new SockJS("http://localhost:8080/ws-stomp");
         stompCilent.current = Stomp.over(socket);
-        stompCilent.current.connect({}, () => {
+        await stompCilent.current.connect({}, () => {
          setTimeout(function() {
            onSocketConnected();
          }, 500);
@@ -128,7 +127,8 @@ function Room () {
     const receiveMessage = (message) => {
         // 시스템 메시지 처리
         let sysMessage = JSON.parse(message.body);
-        
+        console.log(sysMessage);
+        console.log(token);
         if (token != sysMessage.playerId) return;
 
         switch (sysMessage.code) {
@@ -302,8 +302,6 @@ function Room () {
                  * 아마 router 설정에서 룸 (로비, 게임) 이렇게 나눈 다음에 네비게이션 처리를 해야할 것 같다.
                  * 게임이 끝나고 로비로 돌아오면 또 화상채팅 세션을 만들게 되니까
                  */
-                
-                connectGame();
             });
         }
     }, [session])
