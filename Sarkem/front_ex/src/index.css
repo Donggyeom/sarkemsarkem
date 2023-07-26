@@ -1,12 +1,16 @@
+@font-face {
+  font-family: "RixInooAriDuri";
+  font-weight: 1200;
+  src: url("./fonts/RixInooAriDuri.ttf") format("truetype");
+}
+
 body {
   margin: 0;
-  font-family: 
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "RixInooAriDuri";
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+

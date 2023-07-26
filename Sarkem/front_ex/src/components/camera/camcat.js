@@ -5,6 +5,7 @@ import OpenViduVideoComponent from './OvVideo';
 const CamCat = (props) => {
   // const nickName = JSON.parse(streamManager.stream.connection.data).userData;
   console.log(props.props);
+  
   return (
     <div
       style={{
