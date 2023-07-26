@@ -110,7 +110,7 @@ const CommonStart = ({onClick} ) => {
   const roomId = location.pathname.slice(1);
   const isHost = location.state?.isHost;
 
-  const [nickName, setNickName] = useState('이름모를유저' + Math.floor(Math.random() * 100));
+  const [nickName, setNickName] = useState('냥냥' + Math.floor(Math.random() * 100));
 
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
