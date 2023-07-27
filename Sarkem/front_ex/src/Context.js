@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { OpenVidu } from 'openvidu-browser';
@@ -20,6 +20,17 @@ const RoomProvider = ({ children }) => {
 
     const OV = new OpenVidu();
     const navigate = useNavigate();
+
+    useEffect(() => {
+
+        console.log(nickName);
+        console.log(isHost);
+        console.log(camArray);
+        if (session) {
+          // 토큰 발급
+          connectSession();
+        }
+      }, [session]);
 
     // 세션 해제
     const leaveSession = () => {

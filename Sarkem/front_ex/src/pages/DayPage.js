@@ -83,7 +83,14 @@ const DayPage = () => {
       navigate("/");
       return;
     }
-
+    window.history.pushState(null, "", location.href);
+    window.addEventListener("popstate", () => window.history.pushState(null, "", location.href));
+    window.addEventListener('beforeunload', (event) => {
+      // 표준에 따라 기본 동작 방지
+      event.preventDefault();
+      // Chrome에서는 returnValue 설정이 필요함
+      event.returnValue = '';
+    });
   }, [])
 
 

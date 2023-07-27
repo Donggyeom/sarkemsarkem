@@ -16,11 +16,10 @@ import timesetting from '../img/timesetting.png';
 import settingbuttonImage from '../img/settingbutton.png';
 import BackButton from '../components/buttons/backButton';
 import CamCat from '../components/camera/camcat';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import StartButton from '../components/buttons/StartButton';
 import InviteButton from '../components/buttons/InviteButton';
 import { useRoomContext } from '../Context';
-
 
 const StyledContent = styled.div`
   display: flex;
@@ -136,6 +135,7 @@ const CommonLobby = ()=>{
   const {roomId, isHost, nickName
     ,session, camArray, joinSession, connectSession, leaveSession} = useRoomContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (roomId === undefined){
@@ -143,31 +143,30 @@ const CommonLobby = ()=>{
       navigate("/");
       return;
     }
-    joinSession();
 
+    window.history.pushState(null, "", location.href);
+    window.addEventListener("popstate", () => window.history.pushState(null, "", location.href));
+    window.addEventListener('beforeunload', (event) => {
+      // 표준에 따라 기본 동작 방지
+      event.preventDefault();
+      // Chrome에서는 returnValue 설정이 필요함
+      event.returnValue = '';
+    });
+    
     // 윈도우 객체에 화면 종료 이벤트 추가
-    window.addEventListener('beforeunload', onbeforeunload);
-    return () => {
-        window.removeEventListener('beforeunload', onbeforeunload);
-        leaveSession();
-    }
+    // window.addEventListener('unload', onbeforeunload);
+    // return () => {
+    //     window.removeEventListener('unload', onbeforeunload);
+    //     // leaveSession();
+    // }
   }, [])
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
-  const onbeforeunload = () => {
-    leaveSession();
+  const onbeforeunload = (event) => {
+    event.preventDefault();
+    event.returnValue = '';
+    // leaveSession();
 }
-
-  useEffect(() => {
-
-    console.log(nickName);
-    console.log(isHost);
-    console.log(camArray);
-    if (session) {
-      // 토큰 발급
-      connectSession();
-    }
-  }, [session]);
 
   const handleGamePageClick = () => {
     // Logic to navigate to the GamePage when the user is a host
