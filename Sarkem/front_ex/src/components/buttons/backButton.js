@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import backbuttonImage from '../../img/backbutton.png';
+import { useRoomContext } from '../../Context';
 
 const BackButtonContainer = styled.div`
   position: absolute;
@@ -11,14 +12,11 @@ const BackButtonContainer = styled.div`
 `;
 
 const BackButton = () => {
+  const {leaveSession} = useRoomContext();
   const navigate = useNavigate();
 
-  const handleBack = () => {
-    navigate(-1); // 이전 페이지로 이동
-  };
-
   return (
-    <BackButtonContainer onClick={handleBack}>
+    <BackButtonContainer onClick={leaveSession}>
       <img src={backbuttonImage} alt="Back" />
     </BackButtonContainer>
   );

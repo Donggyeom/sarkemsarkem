@@ -16,12 +16,9 @@ import timesetting from '../img/timesetting.png';
 import settingbuttonImage from '../img/settingbutton.png';
 import BackButton from '../components/buttons/backButton';
 import CamCat from '../components/camera/camcat';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import StartButton from '../components/buttons/StartButton';
 import InviteButton from '../components/buttons/InviteButton';
-import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
-import axios from 'axios';
-import UserVideoComponent from '../components/camera/UserVideoComponent';
 import { useRoomContext } from '../Context';
 
 
@@ -165,6 +162,7 @@ const CommonLobby = ()=>{
 
     console.log(nickName);
     console.log(isHost);
+    console.log(camArray);
     if (session) {
       // 토큰 발급
       connectSession();
