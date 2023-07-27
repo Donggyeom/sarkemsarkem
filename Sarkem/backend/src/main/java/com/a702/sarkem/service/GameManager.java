@@ -429,11 +429,11 @@ public class GameManager {
 	}
 
 	// "역할배정" 메시지 전송
-	public void sendRoleAsignMessage(String roomId, Map<String, RolePlayer> roleMap) {
-		GameRoom gameRoom = gameRoomMap.get(roomId);
-		List<String> playersId = gameRoom.getPlayersId();
-		for (String target : playersId)
-			sendSystemMessage(roomId, target, SystemCode.ROLE_ASIGNED, roleMap.get(target));
+	public void sendRoleAsignMessage(String roomId) {
+		GameSession gameSession = gameSessionMap.get(roomId);
+		List<RolePlayer> rPlayers = gameSession.getPlayers();
+		for (RolePlayer target : rPlayers)
+			sendSystemMessage(roomId, target.getPlayerId(), SystemCode.ROLE_ASIGNED, target.getRole());
 	}
 
 	// "낮 페이즈" 메시지 전송

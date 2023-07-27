@@ -21,12 +21,9 @@ public class GameThread extends Thread {
 	private ChannelTopic gameTopic;
 	private ChannelTopic chatTopic;
 
-	private static HashMap<String, RolePlayer> roleMap;
-
 	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession
 			, ChannelTopic gameTopic, ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
-		roleMap = new HashMap<String, RolePlayer>();
 		this.gameRoom = gameRoom;
 		this.gameSession = gameSession;
 		this.gameTopic = gameTopic;
@@ -44,7 +41,7 @@ public class GameThread extends Thread {
 		// 역할배정
 		assignRole();
 		// 역할배정 메시지 전송
-		gameManager.sendRoleAsignMessage(gameRoom.getRoomId(), roleMap);
+		gameManager.sendRoleAsignMessage(gameRoom.getRoomId());
 
 		// 게임 진행
 		while (true) {
@@ -101,13 +98,15 @@ public class GameThread extends Thread {
 		Collections.shuffle(roles);
 
 		List<Player> players = gameRoom.getPlayers();
+		List<RolePlayer> rPlaysers = new ArrayList<>(6); 
 		for (int i = 0; i < playerCnt; i++) {
-			String playerId = players.get(i).getPlayerId();
-			String nickName = players.get(i).getNickname();
+			Player player = players.get(i);
+			String playerId = player.getPlayerId();
+			String nickName = player.getNickname();
 			GameRole role = roles.get(i);
-			roleMap.put(players.get(i).getPlayerId(), new RolePlayer(playerId, nickName, role));
+			rPlaysers.add(new RolePlayer(playerId, nickName, role));
 		}
-		// 각 플레이어 별 역할을 랜덤으로 해쉬맵에 넣는다.
+		gameSession.setPlayers(rPlaysers);
 	}
 	// 낮 페이즈
 	private void convertPhaseToDay() {
