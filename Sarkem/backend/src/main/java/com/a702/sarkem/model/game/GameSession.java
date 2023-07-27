@@ -63,8 +63,8 @@ public class GameSession {
 		this.day = 0;
 	}
 	
-	public Player getPlayer(String playerId) {
-		for(Player p : this.players) {
+	public RolePlayer getPlayer(String playerId) {
+		for(RolePlayer p : this.players) {
 			if (p.getPlayerId().equals(playerId)) {
 				return p;
 			}

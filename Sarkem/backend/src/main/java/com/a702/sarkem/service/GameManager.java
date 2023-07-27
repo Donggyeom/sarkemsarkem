@@ -16,6 +16,7 @@ import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.message.SystemMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
+import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.model.player.RolePlayer;
 import com.a702.sarkem.redis.ChatPublisher;
@@ -247,14 +248,16 @@ public class GameManager {
 		RolePlayer player = (RolePlayer) gameSession.getPlayer(playerId); // 타겟을 지목한 플레이어
 		RolePlayer newTargetPlayer = (RolePlayer) gameSession.getPlayer(targetId); // 플레이어가 새로 지목한 타겟 플레이어
 		// 이전에 지목한 타겟이 없을 때
-		if ("".equals(player.getTarget())) {
+		if (player.getTarget() == null || "".equals(player.getTarget())) {
 			newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
 			player.setTarget(targetId); // 현재 타겟 업데이트
 		} // 기존 타겟과 새로 지목한 타겟이 다르면
 		else if (!player.getTarget().equals(targetId)) {
 			RolePlayer targetedPlayer = (RolePlayer) gameSession.getPlayer(player.getTarget()); // 플레이어의 기존 타겟이었던 플레이어
 			targetedPlayer.setVotedCnt(targetedPlayer.getVotedCnt() - 1); // 기존 타겟이 받은 투표수--
-			newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
+			if (newTargetPlayer != null) {
+				newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
+			}
 			player.setTarget(targetId); // 현재 타겟 업데이트
 		}
 		sendVoteSituationMessage(roomId, mergeTargets(gameSession.getPlayers()));
@@ -432,8 +435,11 @@ public class GameManager {
 	public void sendRoleAsignMessage(String roomId) {
 		GameSession gameSession = gameSessionMap.get(roomId);
 		List<RolePlayer> rPlayers = gameSession.getPlayers();
-		for (RolePlayer target : rPlayers)
-			sendSystemMessage(roomId, target.getPlayerId(), SystemCode.ROLE_ASIGNED, target.getRole());
+		Map<String, GameRole> param = new HashMap<>();
+		for (RolePlayer rp : rPlayers) {
+			param.put("role", rp.getRole());
+			sendSystemMessage(roomId, rp.getPlayerId(), SystemCode.ROLE_ASIGNED, param);
+		}
 	}
 
 	// "낮 페이즈" 메시지 전송

@@ -162,6 +162,9 @@ function Room () {
             alert("선택 완료");
             setSelectedTarget("");
             break;
+        case "VOTE_SITUATION":
+            console.log(sysMessage.param);
+            break;
         }
     }
 
@@ -366,6 +369,7 @@ function Room () {
     const selectAction = ((target) => {
         if (selectedTarget != "") {
             setSelectedTarget("");
+            target.playerId = "";
         }
         else {
             setSelectedTarget(target.playerId)

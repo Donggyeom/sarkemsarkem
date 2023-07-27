@@ -40,8 +40,6 @@ public class GameThread extends Thread {
 		gameManager.sendGameStartMessage(gameRoom.getRoomId());
 		// 역할배정
 		assignRole();
-		// 역할배정 메시지 전송
-		gameManager.sendRoleAsignMessage(gameRoom.getRoomId());
 
 		// 게임 진행
 		while (true) {
@@ -107,6 +105,9 @@ public class GameThread extends Thread {
 			rPlaysers.add(new RolePlayer(playerId, nickName, role));
 		}
 		gameSession.setPlayers(rPlaysers);
+
+		// 역할배정 메시지 전송
+		gameManager.sendRoleAsignMessage(gameRoom.getRoomId());
 	}
 	// 낮 페이즈
 	private void convertPhaseToDay() {
