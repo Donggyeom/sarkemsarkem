@@ -184,14 +184,8 @@ public class GameManager {
 		}
 		
 		// 플레이어 수와 역할 수 일치 여부 확인
-		int playerCount = room.getPlayerCount();
-		int optionRoleCount = option.getTotalRoleCount();
 		String hostId = room.getHostId();
-		if (playerCount != optionRoleCount) {
-			sendNoticeMessageToPlayer(roomId, hostId, "플래이어 수와 역할 수가 일치하지 않습니다.");
-			return;
-		}
-			
+
 		// 회의 시간 변경
 		int meetingTime = option.getMeetingTime();
 		if (meetingTime < 15 || meetingTime > 180) {
@@ -211,6 +205,22 @@ public class GameManager {
 		gameSession.setBullyCount(option.getBullyCount());
 		Log.debug(gameSession.toString());
 		sendGameOptionChangedMessage(roomId, option);
+	}
+
+	/**
+	 * 현재 플레이어 수와 옵션에 설정된 직업의 수 일치 여부 확인
+	 * @param roomId
+	 * @return
+	 */
+	public boolean checkStartable(String roomId) {
+		// 플레이어 수와 역할 수 일치 여부 확인
+		GameRoom room = gameRoomMap.get(roomId);
+		GameSession gameSession = gameSessionMap.get(roomId);
+		int playerCount = room.getPlayerCount();
+		int optionRoleCount = gameSession.getTotalRoleCnt();
+
+		if (playerCount != optionRoleCount) return false;
+		return true;
 	}
 
 
