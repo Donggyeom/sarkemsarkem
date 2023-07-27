@@ -258,17 +258,11 @@ const leftSectionRef = useRef(null);
             {camArray.slice(0, 1).map((user, index) => (
               <CamCat key={index} props={user} />
             ))}
-            <CamCatGrid camCount={camArray.length}> {/* camCount를 camArray.length로 설정하여 동적으로 레이아웃을 조정합니다. */}
-            {/* Render the first cam in the upper row */}
-            {camArray.slice(0, 1).map((user, index) => (
-              <CamCat key={index} props={user} />
-            ))}
             {/* Render the rest of the cams in the lower row */}
             <CamCatGrid camCount={camArray.length - 1}>
               {camArray.slice(1).map((user, index) => (
                 <CamCat key={index} props={user} />
               ))}
-            </CamCatGrid>
             </CamCatGrid>
           </CamCatGrid>
         </LeftSection>
