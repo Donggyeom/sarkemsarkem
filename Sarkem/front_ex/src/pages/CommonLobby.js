@@ -22,7 +22,7 @@ import InviteButton from '../components/buttons/InviteButton';
 import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
 import axios from 'axios';
 import UserVideoComponent from '../components/camera/UserVideoComponent';
-import { useRoomContext, getToken } from '../Context';
+import { useRoomContext } from '../Context';
 
 
 const StyledContent = styled.div`
@@ -270,7 +270,6 @@ const leftSectionRef = useRef(null);
               ))}
             </CamCatGrid>
             </CamCatGrid>
-
           </CamCatGrid>
         </LeftSection>
 
