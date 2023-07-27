@@ -9,7 +9,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
-import com.a702.sarkem.exception.GameOptionSettingException;
 import com.a702.sarkem.exception.GameRoomNotFoundException;
 import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
@@ -26,9 +25,11 @@ import com.a702.sarkem.redis.SystemSubscriber;
 import com.esotericsoftware.minlog.Log;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class GameManager {
 
 	private final Map<String, GameRoom> gameRoomMap; // Key: roomId
@@ -332,6 +333,7 @@ public class GameManager {
 	public void sendSystemMessage(String roomId, String target, SystemCode code, Object param) {
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		SystemMessage systemMessage = new SystemMessage(code, roomId, target, param);
+		log.debug(systemMessage.toString());
 		gamePublisher.publish(gameTopic, systemMessage);
 	}
 
