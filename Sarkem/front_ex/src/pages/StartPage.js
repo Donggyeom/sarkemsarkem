@@ -6,7 +6,7 @@ import StartButton from '../components/buttons/StartButton';
 import Logo from '../components/buttons/Logo';
 import { useNavigate } from 'react-router-dom';
 import createRandomId from '../utils';
-
+import { useRoomContext } from '../Context';
 const StyledStartPage = styled.div`
   display: flex;
   flex-direction: column;
@@ -24,13 +24,15 @@ const StartButtonContainer = styled.div`
 `;
 
 const StartPage = () => {
+  const {setIsHost} = useRoomContext();
   // useNavigate 호출
   const navigate = useNavigate();
 
   // 랜덤한 16진수 5자리를 생성하여 URL로 넘겨줍니다.
   const goToCreateRoom = () => {
-    navigate(`/${createRandomId()}`, { state: { isHost: true } });
-  };
+    setIsHost(()=>true);
+    navigate(`/${createRandomId()}`)
+  }
 
   return (
     <Background>
