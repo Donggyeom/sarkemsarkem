@@ -13,10 +13,12 @@ import SunsetPage from './pages/SunsetPage';
 import NightPage from './pages/NightPage';
 import NotFound from './pages/NotFound';
 import ResultPage from './pages/ResultPage';
+import { RoomProvider } from './Context';
 
 
 const App = () => {
   return (
+    <RoomProvider>
       <Routes>
         <Route path="/" element={<StartPage />} />
         <Route path="/loading" element={<LoadingPage />} />
@@ -29,6 +31,7 @@ const App = () => {
         <Route path="/:roomId/result" element={<ResultPage />}/>
         <Route path="*" element={<NotFound />}/>
       </Routes>
+    </RoomProvider>
 
 
   );
