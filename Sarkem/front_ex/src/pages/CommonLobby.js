@@ -46,14 +46,11 @@ const RightSection = styled.div`
   /* 원하는 크기로 설정 */
 `;
 
-const Rightrightsection = styled.div`
-display : flex;
-flex-direcion : column;
-`
 
 const DivWrapper = styled.div`
   /* Wrapper for each RightDiv to split into two parts, except for Div 4 */
   display: flex;
+  justify-content : space-between;
 `;
 
 const LeftPart = styled.div`
@@ -109,22 +106,33 @@ const LeftPartWrapper = styled.div`
 const RightPartWrapper = styled.div`
   flex: 0.75;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   background-position : center center;
-  padding: 10px;
+  padding: 13px;
   height: 100%; /* Adjust the height as needed */
   width : 100%;
+  margin-right : 0px;
+
+  button {
+    font-size: 18px;
+    // background: none;
+    // border: none;
+    margin-right: 10px;
+    margin-left : 10px;
+  }
+
+  div {
+    font-size: 20px;
+  }
+
 `;
 
 const ButtonContainer = styled.div`
   width: 60%;
   height: 85%;
 `;
-
-const InviteButtonContainer = styled.div`
-  flex : `
 
 const CommonLobby = ()=>{
 
@@ -154,10 +162,10 @@ const CommonLobby = ()=>{
 
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
-    // return () => {
-    //     window.removeEventListener('beforeunload', onbeforeunload);
-    //     leaveSession();
-    // }
+    return () => {
+        window.removeEventListener('beforeunload', onbeforeunload);
+        leaveSession();
+    }
   }, [])
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
@@ -174,7 +182,7 @@ const leaveSession = () => {
     setSession(undefined);
     setSubscribers([]);
     setPublisher(undefined);
-    navigate("/")
+    navigate(`/${roomId}`)
 }
 
   // useEffect(() => {
@@ -393,42 +401,74 @@ const leftSectionRef = useRef(null);
           />
         <DivWrapper>
           <LeftPart>
-            <LeftPartWrapper style={{backgroundImage: `url(${sc_sark})` }} />
-            <RightPartWrapper> <input type="number" value={peopleCount.sark} onChange={(e) => handlePeopleCountChange('sark', e.target.value)}/></RightPartWrapper>
-          </LeftPart>
-          <RightPart>
-            <LeftPartWrapper style={{ backgroundImage: `url(${sc_citizen})` }} />
-            <RightPartWrapper> <input type="number" value={peopleCount.sark} onChange={(e) => handlePeopleCountChange('citizen', e.target.value)}/></RightPartWrapper>
-          </RightPart>
-        </DivWrapper>
-      <DivWrapper>
-        <LeftPart>
-        <LeftPartWrapper style={{ backgroundImage: `url(${sc_vet})` }} />
-        <RightPartWrapper> <input type="number" value={peopleCount.vet} onChange={(e) => handlePeopleCountChange('vet', e.target.value)}/></RightPartWrapper>
-        </LeftPart>
-        <RightPart>
-        <LeftPartWrapper style={{ backgroundImage: `url(${sc_police})` }} />
-        <RightPartWrapper> <input type="number" value={peopleCount.police} onChange={(e) => handlePeopleCountChange('police', e.target.value)}/></RightPartWrapper>
+          <LeftPartWrapper style={{ backgroundImage: `url(${sc_sark})` }} />
+              <RightPartWrapper>
+                <button onClick={() => handlePeopleCountChange('sark', peopleCount.sark + 1)}>+</button>
+                <div>{peopleCount.sark}</div>
+                <button onClick={() => handlePeopleCountChange('sark', peopleCount.sark - 1)}>-</button>
+              </RightPartWrapper>
+            </LeftPart>
+            <RightPart>
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_citizen})` }} />
+              <RightPartWrapper>
+                <button onClick={() => handlePeopleCountChange('citizen', peopleCount.citizen + 1)}>+</button>
+                <div>{peopleCount.citizen}</div>
+                <button onClick={() => handlePeopleCountChange('citizen', peopleCount.citizen - 1)}>-</button>
+              </RightPartWrapper>
+            </RightPart>
+          </DivWrapper>
+          <DivWrapper>
+            <LeftPart>
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_vet})` }} />
+              <RightPartWrapper>
+                <button onClick={() => handlePeopleCountChange('vet', peopleCount.vet + 1)}>+</button>
+                <div>{peopleCount.vet}</div>
+                <button onClick={() => handlePeopleCountChange('vet', peopleCount.vet - 1)}>-</button>
+              </RightPartWrapper>
+            </LeftPart>
+            <RightPart>
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_police})` }} />
+              <RightPartWrapper>
+                <button onClick={() => handlePeopleCountChange('police', peopleCount.police + 1)}>+</button>
+                <div>{peopleCount.police}</div>
+                <button onClick={() => handlePeopleCountChange('police', peopleCount.police - 1)}>-</button>
+              </RightPartWrapper>
         </RightPart>
       </DivWrapper>
       <DivWrapper>
-        <LeftPart>
-        <LeftPartWrapper style={{ backgroundImage: `url(${sc_scoop})` }} />
-        <RightPartWrapper> <input type="number" value={peopleCount.scoop} onChange={(e) => handlePeopleCountChange('scoop', e.target.value)}/></RightPartWrapper>
-        </LeftPart>
-        <RightPart>
-        <LeftPartWrapper style={{ backgroundImage: `url(${sc_psychologist})` }} />
-        <RightPartWrapper> <input type="number" value={peopleCount.psychologist} onChange={(e) => handlePeopleCountChange('psychologist', e.target.value)}/></RightPartWrapper>
+            <LeftPart>
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_scoop})` }} />
+              <RightPartWrapper>
+                <button onClick={() => handlePeopleCountChange('scoop', peopleCount.scoop + 1)}>+</button>
+                <div>{peopleCount.scoop}</div>
+                <button onClick={() => handlePeopleCountChange('scoop', peopleCount.scoop - 1)}>-</button>
+              </RightPartWrapper>
+            </LeftPart>
+            <RightPart>
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_psychologist})` }} />
+              <RightPartWrapper>
+                <button onClick={() => handlePeopleCountChange('psychologist', peopleCount.psychologist + 1)}>+</button>
+                <div>{peopleCount.psychologist}</div>
+                <button onClick={() => handlePeopleCountChange('psychologist', peopleCount.psychologist - 1)}>-</button>
+              </RightPartWrapper>
         </RightPart>
       </DivWrapper>
       <DivWrapper>
-        <LeftPart>
-        <LeftPartWrapper style={{ backgroundImage: `url(${sc_nyangachi})` }} />
-        <RightPartWrapper> <input type="number" value={peopleCount.nyangachi} onChange={(e) => handlePeopleCountChange('nyangachi', e.target.value)}/></RightPartWrapper>
-        </LeftPart>
-        <RightPart>
-        <LeftPartWrapper style={{ backgroundImage: `url(${timesetting})` }} />
-        <RightPartWrapper> <input type="number" value={peopleCount.timesetting} onChange={(e) => handlePeopleCountChange('timesetting', e.target.value)}/></RightPartWrapper>
+            <LeftPart>
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_nyangachi})` }} />
+              <RightPartWrapper>
+                <button onClick={() => handlePeopleCountChange('nyangachi', peopleCount.nyangachi + 1)}>+</button>
+                <div>{peopleCount.nyangachi}</div>
+                <button onClick={() => handlePeopleCountChange('nyangachi', peopleCount.nyangachi - 1)}>-</button>
+              </RightPartWrapper>
+            </LeftPart>
+            <RightPart>
+              <LeftPartWrapper style={{ backgroundImage: `url(${timesetting})` }} />
+              <RightPartWrapper>
+                <button onClick={() => handlePeopleCountChange('timesetting', peopleCount.timesetting + 60)}>+</button>
+                <div>{peopleCount.timesetting}</div>
+                <button onClick={() => handlePeopleCountChange('timesetting', peopleCount.timesetting - 60)}>-</button>
+              </RightPartWrapper>
         </RightPart>
       </DivWrapper>
           <DivWrapper>
@@ -449,7 +489,9 @@ const leftSectionRef = useRef(null);
             ) : (
               <>
                 <RightPart>
+                  <ButtonContainer style ={{flex : '0.3'}}>
                   <InviteButton onClick={handleInviteClick} />
+                  </ButtonContainer>
                 </RightPart>
               </>
             )}

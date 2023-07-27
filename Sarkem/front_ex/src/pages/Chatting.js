@@ -31,20 +31,6 @@ const ChatWrapper = styled.div`
   position: relative; // Add this to enable positioning of ChatCloseButton
 `;
 
-// const ChatMessage = styled.div`
-//   background-color: transparent;
-//   background-image: url(${chatsenderImage});
-//   background-size: cover;
-//   background-repeat: no-repeat;
-//   margin-bottom: 10px;
-//   padding: 12px;
-//   border-radius: 5px;
-//   width: fit-content;
-//   position: relative;
-//   margin-left : auto;
-//   margin-right : 10px;
-// `;
-
 const ChatMessage = styled.div`
   word-wrap : break-word; // 문자 수가 많아지면 가로로 넘어가는 현상 해결하기위함
   max-width: 60%; // 문자 수가 많아지면 가로로 넘어가는 현상 해결하기위함

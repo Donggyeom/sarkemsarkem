@@ -5,7 +5,8 @@ import makeRoomButtonSrc from '../../img/makebutton.png'
 import { useNavigate } from 'react-router-dom';
 
 const GoroomButtonImage = styled.img`
-  width: 200px;
+  width: 25%;
+  height : 80%;
   cursor: pointer;
 `;
 

@@ -4,7 +4,8 @@ import makeroomButtonSrc from '../../img/makebutton.png';
 import { useNavigate } from 'react-router-dom';
 
 const MakeroomButtonImage = styled.img`
-  width: 200px;
+  width: 20%;
+  height: 20%; 
   cursor: pointer;
 `;
 
