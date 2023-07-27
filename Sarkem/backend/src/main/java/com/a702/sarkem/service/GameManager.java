@@ -231,12 +231,27 @@ public class GameManager {
 	 * 대상 선택
 	 */
 	public void selectTarget(String roomId, String playerId, Map<String, String> target) {
-		GameRoom room = gameRoomMap.get(roomId);
-//		GameSession session
+		GameSession gameSession = gameSessionMap.get(roomId);
 		String targetId = target.get("target");
-		RolePlayer player = (RolePlayer) room.getPlayer(playerId);
-		player.setTarget(targetId);
-		player.setVotedCnt(player.getVotedCnt()+1);
+		RolePlayer player = (RolePlayer) gameSession.getPlayer(playerId); // 타겟을 지목한 플레이어
+		RolePlayer newTargetPlayer = (RolePlayer) gameSession.getPlayer(targetId); // 플레이어가 새로 지목한 타겟 플레이어
+		// 이전에 지목한 타겟이 없을 때
+		if(player.getTarget().equals("")){
+			newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt()+1); // 현재 타겟이 받은 투표수++
+			player.setTarget(targetId); // 현재 타겟 업데이트
+		}// 기존 타겟과 새로 지목한 타겟이 다르면
+		else if(!player.getTarget().equals(targetId)) {
+			RolePlayer targetedPlayer = (RolePlayer) gameSession.getPlayer(player.getTarget()); // 플레이어의 기존 타겟이었던 플레이어
+			targetedPlayer.setVotedCnt(targetedPlayer.getVotedCnt()-1); // 기존 타겟이 받은 투표수--
+			newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt()+1); // 현재 타겟이 받은 투표수++
+			player.setTarget(targetId); // 현재 타겟 업데이트
+		}
+		
+		List<RolePlayer> players = gameSession.getPlayers();
+		for(RolePlayer rPlayer : players) {
+			
+		}
+		
 		
 	}
 	
@@ -347,11 +362,11 @@ public class GameManager {
 
 	// 2. 게임 진행
 	// "대상선택" 메시지 전송
-	public void sendTargetSelectMessage(String roomId, Map<String, String> targets) {
-		sendSystemMessageToAll(roomId, SystemCode.VOTE_SITUATION, targets);
+	public void sendTargetSelectionMessage(String roomId, Map<String, String> targets) {
+		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION, targets);
 	}
 	// "대상선택 종료" 메시지 전송
-	public void sendTargetSelectdMessage(String roomId, Map<String, String> targets) {
+	public void sendTargetSelectionEndMessage(String roomId, Map<String, String> targets) {
 		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION_END, targets);
 	}
 	// "역할배정" 메시지 전송
@@ -391,8 +406,8 @@ public class GameManager {
 		sendSystemMessageToAll(roomId, SystemCode.BE_HUNTED, null);
 	}
 	// "투표현황" 메시지 전송
-	public void sendCurrentVoteMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.VOTE_SITUATION, null);
+	public void sendVoteSituationMessage(String roomId, Map<String, String> targets) {
+		sendSystemMessageToAll(roomId, SystemCode.VOTE_SITUATION, targets);
 	}
 	// "심리분석 시작" 메시지 전송	*
 	public void sendPsychoStartMessage(String roomId, String playerId) {

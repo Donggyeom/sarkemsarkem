@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.model.player.RolePlayer;
 
 import lombok.AllArgsConstructor;
@@ -56,6 +57,15 @@ public class GameSession {
 		this.phase = PhaseType.READY;
 		this.meetingTime = 60;
 		this.day = 0;
+	}
+	
+	public Player getPlayer(String playerId) {
+		for(Player p : this.players) {
+			if (p.getPlayerId().equals(playerId)) {
+				return p;
+			}
+		}
+		return null;
 	}
 	
 	public int getMafiaCount() {
