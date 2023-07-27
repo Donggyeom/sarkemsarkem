@@ -127,8 +127,10 @@ public class GameThread extends Thread {
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
 		gameManager.sendTwilightPhaseMessage(gameRoom.getRoomId());
 		// 대상이 있으면 저녁투표 시작
+		// 대상 없다면
 		if (gameSession.getExpultionTargetId() == null || "".equals(gameSession.getExpultionTargetId())) {
-			// 노티스메시지 보내기
+			// 대상 없다 노티스메시지 보내기
+			gameManager.sendNoticeMessageToAll(gameRoom.getRoomId(), "추방당할 대상이 없습니다.");
 			return;
 		}
 		gameManager.sendTwilightVoteMessage(gameRoom.getRoomId());
