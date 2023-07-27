@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
 import StartButton from '../components/buttons/StartButton';
 import Logo from '../components/buttons/Logo';
-import { useNavigate }  from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import createRandomId from '../utils';
 
 const StyledStartPage = styled.div`
@@ -18,20 +18,27 @@ const StyledStartPage = styled.div`
   overflow: hidden;
 `;
 
+const StartButtonContainer = styled.div`
+  width: 15%;
+  height: 10%;
+`;
+
 const StartPage = () => {
   // useNavigate 호출
   const navigate = useNavigate();
 
   // 랜덤한 16진수 5자리를 생성하여 URL로 넘겨줍니다.
   const goToCreateRoom = () => {
-    navigate(`/${createRandomId()}`, {state: {isHost: true}})
-  }
+    navigate(`/${createRandomId()}`, { state: { isHost: true } });
+  };
 
   return (
     <Background>
       <StyledStartPage>
         <Logo />
-        <StartButton alt="Go to Login" onClick={goToCreateRoom} />
+        <StartButtonContainer>
+          <StartButton alt="Go to Login" onClick={goToCreateRoom} />
+        </StartButtonContainer>
       </StyledStartPage>
     </Background>
   );

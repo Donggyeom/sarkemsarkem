@@ -1,3 +1,5 @@
+
+
 import Background from '../components/backgrounds/BackgroundSunset';
 import styled from 'styled-components';
 import React, { useState, useEffect, useRef } from 'react';
@@ -12,42 +14,29 @@ import sc_psychologist from '../img/sc_심리학자.png';
 import sc_nyangachi from '../img/sc_냥아치.png';
 import timesetting from '../img/timesetting.png';
 import settingbuttonImage from '../img/settingbutton.png';
-import startButtonImage from '../img/startbutton.png';
-import inviteButtonImage from '../img/invitebutton.png';
 import BackButton from '../components/buttons/backButton';
 import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
-import StartButton from '../components/buttons/StartButton'
+import StartButton from '../components/buttons/StartButton';
+import InviteButton from '../components/buttons/InviteButton';
 import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
 import axios from 'axios';
 import UserVideoComponent from '../components/camera/UserVideoComponent';
 
 
-const StyledStartPage = styled.div`
-`;
-
 const StyledContent = styled.div`
   display: flex;
-  height: 100vh;
+  height: 100%;
   width: 100%;
+  background-size : cover;
 `;
-
-
-
-// const LeftSection = styled.div`
-//   flex: 4.5;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-// `;
-
 
 const RightSection = styled.div`
   /* 오른쪽 섹션 스타일 작성 */
   flex: 5.5;
   /* 60% of the available width */
   background-image: url(${boxImage});
-  background-size: 92% 95%;
+  background-size: 97% 98%;
   background-repeat: no-repeat;
   background-position: center center;
   display: flex;
@@ -57,42 +46,36 @@ const RightSection = styled.div`
   /* 원하는 크기로 설정 */
 `;
 
+const Rightrightsection = styled.div`
+display : flex;
+flex-direcion : column;
+`
+
 const DivWrapper = styled.div`
   /* Wrapper for each RightDiv to split into two parts, except for Div 4 */
   display: flex;
-  width: 100%;
-  height: 100%;
 `;
 
 const LeftPart = styled.div`
   /* Left part of each RightDiv */
-  flex: 5;
+  flex: 2.75;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-size: 15vw;
   background-position: center center;
   background-repeat: no-repeat;
 `;
 
 const RightPart = styled.div`
   /* Right part of each RightDiv */
-  flex: 5;
+  flex: 2.75;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-size: 15vw;
   background-position: center center;
   background-repeat: no-repeat;
-  padding: 50px 0px 50px 150px;
 `;
 
-const LeftContainer = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
 
 const Logo = styled.img`
   /* 로고 이미지 스타일 작성 */
@@ -111,7 +94,37 @@ const LeftSection = styled.div`
   overflow: hidden; /* Hide any overflow content if needed */
 `;
 
+const LeftPartWrapper = styled.div`
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-position: center center;
+  justify-content: center;
+  background-size: contain;
+  height: 180%;
+  width : 120%;
+`;
+const RightPartWrapper = styled.div`
+  flex: 0.75;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-position : center center;
+  padding: 10px;
+  height: 100%; /* Adjust the height as needed */
+  width : 100%;
+`;
 
+const ButtonContainer = styled.div`
+  width: 60%;
+  height: 85%;
+`;
+
+const InviteButtonContainer = styled.div`
+  flex : `
 
 const CommonLobby = ()=>{
 
@@ -259,16 +272,6 @@ const leaveSession = () => {
     await navigator.clipboard.writeText("localhost:3000/"+roomId).then(alert("게임 링크가 복사되었습니다."));
     console.log('Invite functionality for hosts');
   };
-
-  // const renderCamCats = () => {
-  //   const camCats = [];
-  //   for (let i = 0; i < userCount; i++) {
-      
-  //     camCats.push(<CamCat key={i}/>);
-  //   }
-  //   return camCats;
-  // };
-
       // 토큰 생성하는 함수
   const getToken = async () => {
     // 내 세션ID에 해당하는 세션 생성
@@ -337,6 +340,24 @@ const calculateCamCatHeight = () => {
   return `${leftSectionHeight / camCatCount}px`;
 };
 
+  const [peopleCount, setPeopleCount] = useState({
+    sark: 0,
+    citizen: 0,
+    vet: 0,
+    police: 0,
+    scoop: 0,
+    psychologist: 0,
+    nyangachi: 0,
+    timesetting: 0,
+  });
+
+  const handlePeopleCountChange = (part, value) => {
+    setPeopleCount((prevPeopleCount) => ({
+      ...prevPeopleCount,
+      [part]: value,
+    }));
+  };
+
 const leftSectionRef = useRef(null);
 
   return (
@@ -368,38 +389,72 @@ const leftSectionRef = useRef(null);
 
         <RightSection>
           <DivWrapper
-            style={{ backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: '95%', backgroundImage: `url(${settingbuttonImage})` }}
+            style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}
           />
-          <DivWrapper>
-            <LeftPart style={{ backgroundImage: `url(${sc_sark})` }} />
-            <RightPart style={{ backgroundImage: `url(${sc_citizen})` }} />
-          </DivWrapper>
-          <DivWrapper>
-            <LeftPart style={{ backgroundImage: `url(${sc_vet})` }} />
-            <RightPart style={{ backgroundImage: `url(${sc_police})` }} />
-          </DivWrapper>
-          <DivWrapper>
-            <LeftPart style={{ backgroundImage: `url(${sc_scoop})` }} />
-            <RightPart style={{ backgroundImage: `url(${sc_psychologist})` }} />
-          </DivWrapper>
-          <DivWrapper>
-            <LeftPart style={{ backgroundImage: `url(${sc_nyangachi})` }} />
-            <RightPart style={{ backgroundImage: `url(${timesetting})` }} />
-          </DivWrapper>
+        <DivWrapper>
+          <LeftPart>
+            <LeftPartWrapper style={{backgroundImage: `url(${sc_sark})` }} />
+            <RightPartWrapper> <input type="number" value={peopleCount.sark} onChange={(e) => handlePeopleCountChange('sark', e.target.value)}/></RightPartWrapper>
+          </LeftPart>
+          <RightPart>
+            <LeftPartWrapper style={{ backgroundImage: `url(${sc_citizen})` }} />
+            <RightPartWrapper> <input type="number" value={peopleCount.sark} onChange={(e) => handlePeopleCountChange('citizen', e.target.value)}/></RightPartWrapper>
+          </RightPart>
+        </DivWrapper>
+      <DivWrapper>
+        <LeftPart>
+        <LeftPartWrapper style={{ backgroundImage: `url(${sc_vet})` }} />
+        <RightPartWrapper> <input type="number" value={peopleCount.vet} onChange={(e) => handlePeopleCountChange('vet', e.target.value)}/></RightPartWrapper>
+        </LeftPart>
+        <RightPart>
+        <LeftPartWrapper style={{ backgroundImage: `url(${sc_police})` }} />
+        <RightPartWrapper> <input type="number" value={peopleCount.police} onChange={(e) => handlePeopleCountChange('police', e.target.value)}/></RightPartWrapper>
+        </RightPart>
+      </DivWrapper>
+      <DivWrapper>
+        <LeftPart>
+        <LeftPartWrapper style={{ backgroundImage: `url(${sc_scoop})` }} />
+        <RightPartWrapper> <input type="number" value={peopleCount.scoop} onChange={(e) => handlePeopleCountChange('scoop', e.target.value)}/></RightPartWrapper>
+        </LeftPart>
+        <RightPart>
+        <LeftPartWrapper style={{ backgroundImage: `url(${sc_psychologist})` }} />
+        <RightPartWrapper> <input type="number" value={peopleCount.psychologist} onChange={(e) => handlePeopleCountChange('psychologist', e.target.value)}/></RightPartWrapper>
+        </RightPart>
+      </DivWrapper>
+      <DivWrapper>
+        <LeftPart>
+        <LeftPartWrapper style={{ backgroundImage: `url(${sc_nyangachi})` }} />
+        <RightPartWrapper> <input type="number" value={peopleCount.nyangachi} onChange={(e) => handlePeopleCountChange('nyangachi', e.target.value)}/></RightPartWrapper>
+        </LeftPart>
+        <RightPart>
+        <LeftPartWrapper style={{ backgroundImage: `url(${timesetting})` }} />
+        <RightPartWrapper> <input type="number" value={peopleCount.timesetting} onChange={(e) => handlePeopleCountChange('timesetting', e.target.value)}/></RightPartWrapper>
+        </RightPart>
+      </DivWrapper>
           <DivWrapper>
             {isHost ? (
               <>
                 <LeftPart>
-                <StartButton url="/${roomId}/day" onClick={() => navigate(`/${roomId}/day`, {state: {isHost: isHost, roomId: roomId, nickName: nickName}})} alt="Start Game" />
+                <ButtonContainer>
+                <StartButton url="/${roomId}/day" onClick={() => navigate(`/${roomId}/day`, {state: {isHost: isHost, roomId: roomId, nickName: nickName}})} alt="Start Game"/>
+                </ButtonContainer>
                 </LeftPart>
-                <RightPart onClick={handleInviteClick} style={{ backgroundImage: `url(${inviteButtonImage})` }} />
+                <RightPart>
+                <ButtonContainer>
+                  <InviteButton onClick={handleInviteClick} />
+                  </ButtonContainer>
+                </RightPart>
+                
               </>
             ) : (
               <>
-                <RightPart onClick={handleInviteClick} style={{ backgroundImage: `url(${inviteButtonImage})` }} />
+                <RightPart>
+                  <InviteButton onClick={handleInviteClick} />
+                </RightPart>
               </>
             )}
           </DivWrapper>
+        
         </RightSection>
       </StyledContent>
     </Background>
@@ -407,3 +462,4 @@ const leftSectionRef = useRef(null);
 };
 
 export default CommonLobby;
+
