@@ -96,17 +96,15 @@ public class GameThread extends Thread {
 	private void assignRole() {
 		int playerCnt = gameRoom.getPlayerCount();
 
-		// 현재 직업 정보를 불러온다. 일단 임시로 시민2 마피아1
-		GameRole[] roles = {GameRole.CITIZEN,GameRole.CITIZEN, GameRole.SARK};
-		List<GameRole> roleList = Arrays.asList(roles);
-		Collections.shuffle(roleList);
-
+		// 현재 설정된 직업 정보를 불러온다.
+		List<GameRole> roles = gameSession.getAllRoles();
+		Collections.shuffle(roles);
 
 		List<Player> players = gameRoom.getPlayers();
 		for (int i = 0; i < playerCnt; i++) {
 			String playerId = players.get(i).getPlayerId();
 			String nickName = players.get(i).getNickname();
-			GameRole role = roles[i];
+			GameRole role = roles.get(i);
 			roleMap.put(players.get(i).getPlayerId(), new RolePlayer(playerId, nickName, role));
 		}
 		// 각 플레이어 별 역할을 랜덤으로 해쉬맵에 넣는다.

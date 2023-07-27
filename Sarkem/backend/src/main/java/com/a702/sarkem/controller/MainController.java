@@ -95,6 +95,7 @@ public class MainController {
 
     	log.debug(player.toString());
 
+		System.out.println(roomId + " " + playerId);
 		// 해당 게임 세션에 player 연결
     	gameManager.connectPlayer(roomId, player);
 

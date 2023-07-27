@@ -231,7 +231,7 @@ function Room () {
 
     //플레이어 나갔을때 확인
     const deletePlayer = async (sessionId, playerId) => {
-        const respose = await axios.delete(`/api/game/`+sessionId+`/player/`+playerId);
+        const respose = await axios.delete(`/api/game/`+location.state.sessionId+`/player/`+playerId);
         console.log(respose);
         return respose.data;
     }
@@ -239,14 +239,14 @@ function Room () {
 
     //서버에 있는 유저 전부 가져오기
     const getPlayers = async (sessionId) => {
-        const response = await axios.get(`/api/game/`+sessionId+`/player`);
+        const response = await axios.get(`/api/game/`+location.state.sessionId+`/player`);
         console.log(response);
         return response.data;
     }
     
     // 서버에 요청하여 세션 생성하는 함수
     const createSession = async (sessionId) => {
-        const response = await axios.post('/api/game', { customSessionId: sessionId, nickName:myUserName }, {
+        const response = await axios.post('/api/game', { customSessionId: location.state.sessionId, nickName:myUserName }, {
             headers: { 'Content-Type': 'application/json', },
         });
         return response.data; // The sessionId
@@ -254,7 +254,7 @@ function Room () {
 
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
-        const response = await axios.post('/api/game/' + sessionId + `/player`, myUserName,
+        const response = await axios.post('/api/game/' + location.state.sessionId + `/player`, myUserName,
         );
         console.log(response);
         return response.data; // The token
@@ -376,7 +376,7 @@ function Room () {
             stompCilent.current.send("/pub/game/action", {}, 
                 JSON.stringify({
                     code:'TARGET_SELECT', 
-                    roomId: mySessionId, 
+                    roomId: location.state.sessionId, 
                     playerId: token,
                     param: {
                         target: target.playerId
