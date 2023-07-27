@@ -1,12 +1,12 @@
 import React from 'react'
 import { useNavigate, useLocation } from "react-router-dom";
-
+import createSessionId from '../Utils';
 function Welcome() {
     const navigate = useNavigate();
     const location = useLocation();
     
     const goToCreateRoom = () => {
-        navigate(`/G${Math.floor(Math.random() * 100)}`, {state: {host: true}});
+        navigate(`/${createSessionId()}`, {state: {host: true}});
     }
     return (
         <>

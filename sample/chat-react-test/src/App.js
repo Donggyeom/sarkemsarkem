@@ -29,8 +29,13 @@ function App() {
   }
 
   function onConnected() {
+    axios.post("http://localhost:8080/test/gameroom")
+    .then(res => {
+      console.log("테스트 게임방 생성")
+    })
+
     // user 개인 구독
-    stompCilent.current.subscribe('/sub/chat/room/'+roomId, function(message){
+    stompCilent.current.subscribe('/sub/game/system/testroom', function(message){
       setChatMessage((messages) => [...messages, message.body]);
       console.log(chatMessage);
       console.log(message.body);
@@ -38,18 +43,17 @@ function App() {
     // stompClient.current.subscribe('/room/' + chatObj.id + '/queue/messages', onMessageReceived);
   }
   const enterChatRoom =  () => {
-    console.log("채팅방 생성");
-    axios.post(`/chat/room?name=${roomId}`)
-    .then(res => {
-      console.log(res);
-    })
+    // console.log("채팅방 생성");
+    // axios.post(`/game/system?name=${roomId}`)
+    // .then(res => {
+    //   console.log(res);
+    // })
     
-    axios.get(`/chat/room/${roomId}`)
-    .then(res => {
-      console.log(res);
-    })
-    onConnected();
-    stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomId:roomId, sender:sender}));
+    // axios.get(`/chat/room/${roomId}`)
+    // .then(res => {
+    //   console.log(res);
+    // })
+    stompCilent.current.send("/pub/game/action", {}, JSON.stringify({code:'GAME_START', roomId:roomId, actionCode: 'GAME_START', param: {citizenCount: '1'}}));
   }
 
   const sendMessage = async (e) => {
@@ -72,7 +76,7 @@ function App() {
     <div className="App">
       <header className="App-header">
           <input onChange={ChangeRoomId} placeholder='채팅방 번호'></input>
-          <button onClick={enterChatRoom}>채팅방 입장</button>
+          <button onClick={enterChatRoom}>게임시작</button>
           <input placeholder={sender} onChange={ChangeSender}></input>
           <form onSubmit={sendMessage}>
           <input onChange={ChangeMessage} placeholder='메시지 입력'></input>

@@ -1,15 +1,21 @@
-package com.a702.sarkem.model.game;
+package com.a702.sarkem.model.game.message;
+
+import java.io.Serializable;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
-public class ActionMessage {
+@ToString
+@NoArgsConstructor
+public class ActionMessage implements Serializable {
 
 	// 액션 코드
 	public enum ActionCode {
-		OPTION_CHANGED,			// 게임 설정 변경 
+		OPTION_CHANGE,			// 게임 설정 변경 
 		GAME_START,             // 게임시작
 		TARGET_SELECT,          // 대상 선택
 		TARGET_SELECTED,        // 대상 선택 종료
@@ -20,7 +26,7 @@ public class ActionMessage {
 	private ActionCode code;
 	private String roomId;
 	private String gameId;
-	private String actionCode;
-	private Object message;
+	private String playerId;
+	private Object param;
 	
 }

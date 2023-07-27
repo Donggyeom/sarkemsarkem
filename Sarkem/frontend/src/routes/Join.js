@@ -53,7 +53,7 @@ function Join() {
     
     const joinRoom = async() => {
             console.log(sessionId);
-            navigate("/lobby", {state: {sessionId: sessionId, userName: userName, videoEnabled: videoEnabled, audioEnabled: audioEnabled}});
+            navigate("/lobby", {state: {sessionId: sessionId, userName: userName, videoEnabled: videoEnabled, audioEnabled: audioEnabled, isHost: isHost}});
             
         }
         
