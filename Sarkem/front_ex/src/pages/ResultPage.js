@@ -44,17 +44,44 @@ const Title = styled.div`
   font-size: 75px; /* 폰트 크기 설정 */
   color: #ffffff;
   text-shadow: 1px 1px black;
-  -webkit-text-stroke: 1px black; /* For webkit-based browsers like Chrome, Safari */
-  text-stroke: 1px black; /* Standard property for future compatibility */
+  -webkit-text-stroke: 3px black; /* For webkit-based browsers like Chrome, Safari */
+  text-stroke: 5px black; /* Standard property for future compatibility */
+`;
 
+const LeftResult = styled.div`
+  position: absolute;
+  top: 30%;
+  left: 14%;
+  width: 34.5%;
+  height: 80%;
+  display: flex;
+  flex-direction: column; /* Add this line to stack elements vertically */
+`;
 
-  // box-sizing: border-box;
-  // background: none;
-  // border-radius: 20px;
-  // border-style: dashed;
-  // border-color: gray;
-  // border-width: 5.16px;
-  // padding: 10px;
+const RightResult = styled.div`
+  position: absolute;
+  top: 30%;
+  right: 16%;
+  width: 34.5%;
+  height: 80%;
+  display: flex;
+  flex-direction: column; /* Add this line to stack elements vertically */
+`;
+
+const TextAbove = styled.div`
+  font-size: 40px;
+  color: #333;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 30.94px;
+  border-style: solid;
+  border-color: #000000;
+  border-width: 5.16px;
+  padding: 13px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-bottom: 10px; /* Add margin-bottom to create space between elements */
 `;
 
 
@@ -80,7 +107,22 @@ const ResultPage = () => {
         </ButtonContainer>
         <Title> 냥냥이팀 승리!</Title>
         {/* Title; 무슨 팀이 승리했는지 변수로 받아오세요.......... */}
-
+        <LeftResult>
+          {/* 실제로 데이터 받을 때는 for문 돌려서 for 0~5 */}
+          <TextAbove>김냥냥 | 삵</TextAbove>
+          <TextAbove>김수한무 | 냥아치</TextAbove>
+          <TextAbove>냥214 | 심리학자</TextAbove>
+          <TextAbove>김민석 | 댄스머신</TextAbove>
+          <TextAbove>김신일 | 원피스</TextAbove>
+        </LeftResult>
+        <RightResult>
+          {/* 실제로 데이터 받을 때는 for문 돌려서 for 5~N */}
+          <TextAbove>박현철 | 락앤롤</TextAbove>
+          <TextAbove>김동겸 | 사진 다흔들림</TextAbove>
+          <TextAbove>이예슬 | 집가고싶음</TextAbove>
+          <TextAbove>박시원 | 화면 죽이는중</TextAbove>
+          <TextAbove>임혜진 | 캠 죽이는중</TextAbove>
+        </RightResult>
       </StyledSunsetPage>
     </Background>
   );
