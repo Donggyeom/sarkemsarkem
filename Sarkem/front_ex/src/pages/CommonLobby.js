@@ -346,7 +346,7 @@ const leftSectionRef = useRef(null);
               <>
                 <LeftPart>
                 <ButtonContainer>
-                <StartButton url="/${roomId}/day" onClick={() => navigate(`/${roomId}/day`, {state: {isHost: isHost, roomId: roomId, nickName: nickName}})} alt="Start Game"/>
+                <StartButton url="/${roomId}/day" onClick={() => navigate(`/${roomId}/day`)} alt="Start Game" />
                 </ButtonContainer>
                 </LeftPart>
                 <RightPart>
