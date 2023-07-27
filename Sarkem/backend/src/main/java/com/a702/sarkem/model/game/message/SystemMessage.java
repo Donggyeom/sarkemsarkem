@@ -31,6 +31,7 @@ public class SystemMessage implements Serializable {
 		BE_HUNTED		, // 사냥당함
 		                  // 채팅방 접속
 		DAY_VOTE_END	, // 낮 투표 종료
+		TWILIGHT_VOTE, // 저녁 투표 시작
 		TWILIGHT_VOTE_END, // 저녁 투표 종료
 		VOTE_SITUATION	, // 투표 현황
 		PSYCHOANALYSIS_START, // 심리분석 시작

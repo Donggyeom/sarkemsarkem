@@ -300,16 +300,8 @@ public class GameManager {
 		//끝날 조건
 		if(gameSession.getExpultionVoteCnt()==gameSession.getPlayers().size() // 모두가 투표를 했거나
 				|| gameSession.getExpultionVoteCnt()>=(gameSession.getPlayers().size()+1)/2) { // 찬성 투표가 과반수 이상일 때			
-			// 게임 세션에 추방 투표 대상 저장
-			int max = 0; String maxVotedPlayer = "";
-			for(RolePlayer r : gameSession.getPlayers()) {
-				if(r.getVotedCnt()>max) {
-					max = r.getVotedCnt();
-					maxVotedPlayer = r.getPlayerId();
-				}
-			}
-			// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
-			gameSession.setExpultionTargetId(maxVotedPlayer);
+			//스레드 깨우기
+			
 			// 추방 투표 결과 전송
 			HashMap<String, Boolean> result = new HashMap<>();
 			// 과반수 이상 찬성일 때
@@ -453,6 +445,10 @@ public class GameManager {
 	public void sendTwilightPhaseMessage(String roomId) {
 		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, null);
 	}
+	// "저녁 투표 시작" 메시지 전송
+	public void sendTwilightVoteMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE, null);
+	}
 
 	// "밤 페이즈" 메시지 전송
 	public void sendNightPhaseMessage(String roomId) {
@@ -460,7 +456,7 @@ public class GameManager {
 	}
 
 	// "낮 투표 종료" 메시지 전송
-	public void sendEndDayVoteMessage(String roomId) {
+	public void sendEndDayVoteMessage(String roomId, Map<String, String> param) {
 		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, null);
 	}
 

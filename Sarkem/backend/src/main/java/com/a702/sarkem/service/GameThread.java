@@ -21,8 +21,8 @@ public class GameThread extends Thread {
 	private ChannelTopic gameTopic;
 	private ChannelTopic chatTopic;
 
-	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession
-			, ChannelTopic gameTopic, ChannelTopic chatTopic) {
+	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
+			ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
 		this.gameRoom = gameRoom;
 		this.gameSession = gameSession;
@@ -30,9 +30,10 @@ public class GameThread extends Thread {
 		this.chatTopic = chatTopic;
 	}
 
-	//CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
+	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
 	int CITIZEN = 0;
 	int SARK = 1;
+
 	@Override
 	public void run() {
 		// TODO: 게임 로직 구현
@@ -41,52 +42,39 @@ public class GameThread extends Thread {
 		// 역할배정
 		assignRole();
 
+		// 1일차 낮
+		// 1일차 저녁
+
 		// 게임 진행
 		while (true) {
 			// 게임종료 검사
-			if (isGameEnd()) break;
+			if (isGameEnd())
+				break;
+
+			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
+			convertPhaseToNight();
+			// 게임종료 검사
+			if (isGameEnd())
+				break;
 			// 낮 페이즈
 			convertPhaseToDay();
-			
-			// 저녁 페이즈
+
+			// 투표타임 타이머
+
+			// 낮페이즈 끝나면
+			// 저녁 페이즈 => 추방투표 시작
 			convertPhaseToTwilight();
-			// 게임종료 검사
-			if (isGameEnd()) break;
-			
-			// 밤 페이즈
-			convertPhaseToNight();
+			// 투표타임 타이머
+
+			// 저녁 페이즈 끝나면
+
 		}
-		
+
 		// 게임 종료 메시지 전송
+		gameManager.sendGameEndMessage(gameRoom.getRoomId());
 		// 게임 결과 DB저장
 	}
-	
-	/**
-	 * 게임 옵션 변경
-	 * @param option
-	 */
-	private void gameOptionChange(GameOptionDTO option) {
-		// 플레이어 수와 역할 수 일치 여부 확인
-		int playerCount = gameRoom.getPlayerCount();
-		int optionRoleCount = option.getTotalRoleCount();
-		if (playerCount != optionRoleCount)
-			throw new GameOptionSettingException("플레이어 수와 역할 수가 일치하지 않습니다.");
 
-		// TODO: 역할 별 최소, 최대 수 검증 필요
-		// 삵은 1~3까지만 설정 가능
-		int sarkCount = option.getSarkCount();
-		if (sarkCount < 0 || sarkCount > 3)
-			throw new GameOptionSettingException("삵은 1 ~ 3 사이로 설정 가능합니다.");
-
-		// 회의 시간 변경
-		int meetingTime = option.getMeetingTime();
-		if (meetingTime < 30 || meetingTime > 180)
-			throw new GameOptionSettingException("회의 시간은 30s ~ 180s 사이로 설정 가능합니다.");
-
-		// "게임 옵션 변경" 메시지 전송
-	}
-	
-	// 
 	// 역할배정
 	private void assignRole() {
 		int playerCnt = gameRoom.getPlayerCount();
@@ -96,7 +84,7 @@ public class GameThread extends Thread {
 		Collections.shuffle(roles);
 
 		List<Player> players = gameRoom.getPlayers();
-		List<RolePlayer> rPlaysers = new ArrayList<>(6); 
+		List<RolePlayer> rPlaysers = new ArrayList<>(6);
 		for (int i = 0; i < playerCnt; i++) {
 			Player player = players.get(i);
 			String playerId = player.getPlayerId();
@@ -109,27 +97,54 @@ public class GameThread extends Thread {
 		// 역할배정 메시지 전송
 		gameManager.sendRoleAsignMessage(gameRoom.getRoomId());
 	}
+
 	// 낮 페이즈
 	private void convertPhaseToDay() {
 		// "낮 페이즈" 메시지 전송
+		gameManager.sendDayPhaseMessage(gameRoom.getRoomId());
+		// "대상 선택" 메시지 전송
+		gameManager.sendTargetSelectionMessage(gameRoom.getRoomId());
+
+		// 낮 투표결과 종합 // 게임 세션에 추방 투표 대상 저장
+		int max = 0;
+		String maxVotedPlayer = "";
+		for (RolePlayer r : gameSession.getPlayers()) {
+			if (r.getVotedCnt() > max) {
+				max = r.getVotedCnt();
+				maxVotedPlayer = r.getPlayerId();
+			}
+		}
+		// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
+		gameSession.setExpultionTargetId(maxVotedPlayer);
+		HashMap<String, String> expulsionPlayer = new HashMap<>();
+		expulsionPlayer.put("target", maxVotedPlayer);
+		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
+		gameManager.sendEndDayVoteMessage(gameRoom.getRoomId(), expulsionPlayer);
 	}
+
 	// 저녁 페이즈
 	private void convertPhaseToTwilight() {
-		// "저녁 페이즈" 메시지 전송
+		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
+		gameManager.sendTwilightPhaseMessage(gameRoom.getRoomId());
+		// 대상이 있으면 저녁투표 시작
+		if (gameSession.getExpultionTargetId() == null || "".equals(gameSession.getExpultionTargetId())) {
+			// 노티스메시지 보내기
+			return;
+		}
+		gameManager.sendTwilightVoteMessage(gameRoom.getRoomId());
 	}
+
 	// 밤 페이즈
 	private void convertPhaseToNight() {
 		// "밤 페이즈" 메시지 전송
+		gameManager.sendNightPhaseMessage(gameRoom.getRoomId());
 	}
+
 	// 게임 종료
 	private boolean isGameEnd() {
 		return true;
 	}
-	// 대상 지정
-	private void updateTarget() {
-		
-	}
-	
+
 	// 밤 투표 받아온거 정리
 	private void nightVote(NightVote nightVote) {
 
@@ -147,4 +162,3 @@ public class GameThread extends Thread {
 //		gamePublisher.publish(gameTopic, message);
 	}
 }
-
