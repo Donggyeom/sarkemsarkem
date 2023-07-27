@@ -187,11 +187,14 @@ const CommonStart = ({onClick} ) => {
           <div
             style={{
               flex: 1,
+              marginLeft : '5%',
+              marginTop : '5%',
+              marginBottom : '5%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               backgroundImage: `url(${camcatImage})`,
-              backgroundSize: '100% 100%', // Increase the background image size to 120% to make it larger
+              backgroundSize: '98% 95%', // Increase the background image size to 120% to make it larger
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center center',
             }}
@@ -200,9 +203,9 @@ const CommonStart = ({onClick} ) => {
               ref={videoRef}
               autoPlay
               style={{
-                marginTop: "20vh",
-                width: '95%',
-                height: '73%',
+                marginTop: "17vh",
+                width: '85%',
+                height: '63%',
                 objectFit: 'cover',
                 borderRadius: '10%',
 

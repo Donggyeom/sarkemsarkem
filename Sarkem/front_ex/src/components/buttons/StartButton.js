@@ -7,8 +7,10 @@ const StartButtonImage = styled.img`
   height: 100%;
 `;
 
-const StartButton = ({ src, alt, onClick, url }) => {
+const StartButton = ({ src, alt, onClick }) => {
   return <StartButtonImage src={startButtonImageSrc} alt={alt} onClick={onClick} />;
 };
 
 export default StartButton;
+
+

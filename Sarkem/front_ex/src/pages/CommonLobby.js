@@ -83,12 +83,12 @@ const Logo = styled.img`
 
 const LeftSection = styled.div`
   flex: 4.5;
-  height : 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-height: 100vh; /* Set a maximum height to adjust to the available space */
-  overflow: hidden; /* Hide any overflow content if needed */
+  overflow: hidden;
+  position: relative; /* Add position relative */
 `;
 
 const LeftPartWrapper = styled.div`
@@ -117,8 +117,6 @@ const RightPartWrapper = styled.div`
 
   button {
     font-size: 18px;
-    // background: none;
-    // border: none;
     margin-right: 10px;
     margin-left : 10px;
   }
@@ -311,42 +309,58 @@ const leaveSession = () => {
   }
 
   const CamCatGrid = styled.div`
+  flex: 1;
   display: grid;
-  grid-auto-rows: auto;
-  grid-template-rows: ${({ camCount }) => {
-    if (camCount === 1) {
-      return 'repeat(1, minmax(300px, 1fr))';
-    } else if (camCount === 2 || camCount === 3) {
-      return 'repeat(1, minmax(100px, 1fr))';
-    } else {
-      return 'repeat(auto-fill, minmax(200px, 1fr))'; // Default row height for other camCount values
-    }
-  }};
-  grid-template-columns: ${({ camCount }) => {
-    if (camCount === 1) {
-      return 'repeat(1, minmax(300px, 1fr))';
-    } else if (camCount === 2) {
-      return 'repeat(2, minmax(100px, 1fr))';
-    } else if (camCount === 3) {
-      return 'repeat(1, minmax(100px, 1fr))'; // Change this line to have 1 column for the upper row
-    } else {
-      const numColumns = Math.min(camCount, 3);
-      return `repeat(${numColumns}, minmax(300px, 1fr))`;
-    }
-  }};
+  max-height : 1080px;
   gap: 10px;
   justify-items: center;
   align-items: center;
-  width: 100%;
-  overflow: hidden; /* 내용물이 넘어갈 경우를 처리하기 위해 overflow 속성을 추가합니다. */
+  width : 88%;
+  overflow: hidden;
+  ${({ style }) => style && `
+    grid-template-rows: ${style.gridTemplateRows};
+    grid-template-columns: ${style.gridTemplateColumns};
+  `}
 `;
 
-const calculateCamCatHeight = () => {
-  const leftSectionHeight = leftSectionRef.current.offsetHeight;
-  const maxCamCatCount = 10; 
-  const camCatCount = Math.min(camArray.length, maxCamCatCount);
-  return `${leftSectionHeight / camCatCount}px`;
+const calculateGrid = (camCount) => {
+  if (camCount === 1) {
+    return {
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr',
+    };
+  } else if (camCount === 2) {
+    return {
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr',
+    };
+  } else if (camCount === 3) {
+    return {
+      gridTemplateRows: '1fr 2fr',
+      gridTemplateColumns: '1fr',
+    };
+  } else if (camCount === 4) {
+    return {
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
+    };
+  } else if (camCount === 6) {
+    return {
+      gridTemplateRows: '1fr 1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
+    };
+
+  } else {
+    // Add more cases as needed
+    return {
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
+    };
+  }
 };
+
+const camCount = camArray.length;
+const gridStyles = calculateGrid(camCount);
 
   const [peopleCount, setPeopleCount] = useState({
     sark: 0,
@@ -373,26 +387,11 @@ const leftSectionRef = useRef(null);
       <BackButton />
       <StyledContent>
         <LeftSection ref={leftSectionRef}>
-          {/* Use the dynamic CamCatGrid */}
-          {/* <CamCatGrid camCount={camArray.length}>
-<<<<<<< HEAD
-=======
-            {camArray.map((user, index) => (
-              <CamCat key={index} props={user} style={{ height: calculateCamCatHeight() }} />
-            ))}
-          </CamCatGrid> */}
-            <CamCatGrid camCount={camArray.length}> {/* camCount를 camArray.length로 설정하여 동적으로 레이아웃을 조정합니다. */}
-            {/* Render the first cam in the upper row */}
-            {camArray.slice(0, 1).map((user, index) => (
-              <CamCat key={index} props={user} />
-            ))}
-            {/* Render the rest of the cams in the lower row */}
-            <CamCatGrid camCount={camArray.length - 1}>
-              {camArray.slice(1).map((user, index) => (
-                <CamCat key={index} props={user} />
-              ))}
-            </CamCatGrid>
-          </CamCatGrid>
+            <CamCatGrid style={gridStyles}>
+        {camArray.map((user, index) => (
+          <CamCat key={index} props={user} />
+        ))}
+      </CamCatGrid>
         </LeftSection>
 
         <RightSection>
@@ -476,7 +475,7 @@ const leftSectionRef = useRef(null);
               <>
                 <LeftPart>
                 <ButtonContainer>
-                <StartButton url="/${roomId}/day" onClick={() => navigate(`/${roomId}/day`, {state: {isHost: isHost, roomId: roomId, nickName: nickName}})} alt="Start Game"/>
+                <StartButton onClick={() => navigate(`/${roomId}/day`, {state: {isHost: isHost, roomId: roomId, nickName: nickName}})} alt="Start Game"/>
                 </ButtonContainer>
                 </LeftPart>
                 <RightPart>
