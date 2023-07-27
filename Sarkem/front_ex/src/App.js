@@ -11,10 +11,12 @@ import CommonLobby from './pages/CommonLobby';
 import DayPage from './pages/DayPage';
 import SunsetPage from './pages/SunsetPage';
 import NightPage from './pages/NightPage';
+import { RoomProvider } from './Context';
 
 
 const App = () => {
   return (
+    <RoomProvider>
       <Routes>
         <Route path="/" element={<StartPage />} />
         <Route path="/:roomId" element={<CommonStart />} /> 
@@ -25,6 +27,7 @@ const App = () => {
         <Route path="/sunset" element={<SunsetPage />}/>
         <Route path="/night" element={<NightPage />}/>
       </Routes>
+    </RoomProvider>
 
 
   );

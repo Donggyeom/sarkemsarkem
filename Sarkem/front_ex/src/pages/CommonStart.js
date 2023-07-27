@@ -14,6 +14,7 @@ import camImage from '../img/cam.png';
 import MakeroomButton from '../components/buttons/makeroomButton';
 import GoroomButton from '../components/buttons/goroomButton';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useRoomContext } from '../Context';
 import CamCat from '../components/camera/camcat';
 
 
@@ -104,13 +105,13 @@ const Logo = styled.img`
 `;
 
 const CommonStart = ({onClick} ) => {
-
+  const { setRoomId, isHost, nickName, setNickName } = useRoomContext();
   const navigate = useNavigate();
   const location = useLocation();
-  const roomId = location.pathname.slice(1);
-  const isHost = location.state?.isHost;
+  
+  // setRoomId(location.pathname.slice(1));
+  // const isHost = location.state?.isHost;
 
-  const [nickName, setNickName] = useState('이름모를유저' + Math.floor(Math.random() * 100));
 
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
@@ -120,9 +121,20 @@ const CommonStart = ({onClick} ) => {
 
 
   useEffect(()=>{
+    checkRoomId();
+    setRoomId(location.pathname.slice(1));
     getUserCamera();
     getUserAudio();
+    console.log(isHost);
   }, [videoRef, audioRef])
+
+  const checkRoomId = () => {
+    //// 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
+    if (location.pathname.slice(1) === ""){
+      alert("roomId 정보가 없습니다.")
+      navigate("/");
+    }
+  }
 
   const getUserCamera = async () => {
     try {
@@ -231,7 +243,7 @@ const CommonStart = ({onClick} ) => {
             </DivWrapper>
             <DivWrapper>
               {/* 조건부 렌더링을 사용하여 버튼 선택 */}
-              <GoroomButton isHost={isHost} roomId={roomId} nickName={nickName} onClick={onClick}/>
+              <GoroomButton onClick={onClick}/>
             </DivWrapper>
           </RightSection>
         </StyledContent>
