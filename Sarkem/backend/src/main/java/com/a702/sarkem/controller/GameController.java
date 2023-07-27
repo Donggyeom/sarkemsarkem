@@ -69,8 +69,7 @@ public class GameController {
 			break;
 		// 대상 선택 종료
 		case TARGET_SELECTED:
-			Map<String, String> selectedTargets = mapper.convertValue(param, Map.class);
-			gameManager.selectedTarget(roomId, playerId, selectedTargets);
+			gameManager.selectedTarget(roomId, playerId);
 			break;
 		default:
 			break;
