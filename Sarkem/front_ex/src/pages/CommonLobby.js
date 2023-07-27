@@ -311,15 +311,14 @@ const leaveSession = () => {
   const CamCatGrid = styled.div`
   flex: 1;
   display: grid;
-  max-height : 1080px;
-  gap: 10px;
+  gap: 3px;
   justify-items: center;
-  align-items: center;
-  width : 88%;
+  
   overflow: hidden;
   ${({ style }) => style && `
     grid-template-rows: ${style.gridTemplateRows};
     grid-template-columns: ${style.gridTemplateColumns};
+    width : ${style.width};
   `}
 `;
 
@@ -328,26 +327,61 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr',
+      width : '100%',
     };
   } else if (camCount === 2) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr',
+      width : '50%',
     };
   } else if (camCount === 3) {
     return {
-      gridTemplateRows: '1fr 2fr',
-      gridTemplateColumns: '1fr',
+      gridTemplateRows: '1fr 1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
+      width : '100%',
     };
   } else if (camCount === 4) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
     };
+  } else if (camCount === 5) {
+    return {
+      gridTemplateRows: '1fr 1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
+      width : '62%',
+    };
   } else if (camCount === 6) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
+      width : '62%',
+    };
+  } else if (camCount === 7) {
+    return {
+      gridTemplateRows: '1fr 1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      width : '92%',
+    };
+  } else if (camCount === 8) {
+    return {
+      gridTemplateRows: '1fr 1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      width : '92%',
+    };
+  } else if (camCount === 9) {
+    return {
+      gridTemplateRows: '1fr 1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      width : '92%',
+    };
+  } else if (camCount === 10) {
+    return {
+      gridTemplateRows: 'repeat(3, 1fr)',
+      gridTemplateColumns: 'repeat(3, 1fr) repeat(4, 1fr) repeat(3, 1fr)',
+       /* 3칸, 4칸, 3칸으로 구성 */
+      width : '92%',
     };
 
   } else {
