@@ -1,6 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react'
 import { useNavigate, useLocation } from "react-router-dom";
+import * as canvas from 'canvas';
 
+import * as faceapi from 'face-api.js';
+
+// patch nodejs environment, we need to provide an implementation of
+// HTMLCanvasElement and HTMLImageElement, additionally an implementation
+// of ImageData is required, in case you want to use the MTCNN
+const { Canvas, Image, ImageData } = canvas
+faceapi.env.monkeyPatch({ Canvas, Image, ImageData })
 
 function Join() {
     const [videoEnabled, setVideoEnabled] = useState(true);
@@ -18,6 +26,7 @@ function Join() {
     const getUserCamera = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            await faceapi.loadSsdMobilenetv1Model('/models')
             videoRef.current.srcObject = stream;
         } catch (error) {
             console.error('Failed to start video:', error);
@@ -27,6 +36,12 @@ function Join() {
     const getUserAudio = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const input = audioRef.current.srcObject;
+            await faceapi.detectSingleFace(input)
+            await faceapi.detectSingleFace(input).withFaceExpressions()
+            await faceapi.detectSingleFace(input).withFaceLandmarks()
+            await faceapi.detectSingleFace(input).withFaceExpressions().withFaceLandmarks()
+            await faceapi.detectSingleFace(input).withFaceExpressions().withFaceLandmarks().withFaceDescriptor()
             audioRef.current.srcObject = stream;
         } catch (error) {
             console.error('Failed to start audio:', error);
