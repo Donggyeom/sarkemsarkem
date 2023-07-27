@@ -53,6 +53,8 @@ public class GameController {
 			break;
 		// 추방투표
 		case EXPULSION_VOTE:
+			Map<String, Boolean> voteOX = mapper.convertValue(param, Map.class);
+			gameManager.expulsionVote(roomId, voteOX);
 			break;
 		// 히든미션 성공
 		case HIDDENMISSION_SUCCESS:

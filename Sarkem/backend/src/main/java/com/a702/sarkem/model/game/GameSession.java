@@ -50,6 +50,9 @@ public class GameSession {
 	private LocalDateTime finishedTime;
 	private boolean bHiddenMissionStatus;
 	private boolean bHiddenMissionSuccess;
+	private int expultionVoteCnt; // 추방 투표 수
+	private int expultionVotePlayerCnt; // 추방 투표 한 사람 수 
+	private String expultionTargetId; // 추방 투표 대상
 	
 	public GameSession(String roomId, String gameId) {
 		this.roomId = roomId;

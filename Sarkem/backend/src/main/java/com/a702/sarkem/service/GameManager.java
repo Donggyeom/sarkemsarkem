@@ -283,6 +283,40 @@ public class GameManager {
 		
 		sendTargetSelectionEndMessage(roomId, param);
 	}
+	
+	// 추방 투표 처리
+	public void expulsionVote(String roomId, Map<String, Boolean> voteOX) {
+		GameSession gameSession = gameSessionMap.get(roomId);
+		Boolean voteResult = voteOX.get("result");
+		// 투표자수++
+		gameSession.setExpultionVotePlayerCnt(gameSession.getExpultionVotePlayerCnt()+1); 
+		if(voteResult) { // 추방 투표 찬성수 ++
+			gameSession.setExpultionVoteCnt(gameSession.getExpultionVoteCnt()+1);
+		}
+		//끝날 조건
+		if(gameSession.getExpultionVoteCnt()==gameSession.getPlayers().size() // 모두가 투표를 했거나
+				|| gameSession.getExpultionVoteCnt()>=(gameSession.getPlayers().size()+1)/2) { // 찬성 투표가 과반수 이상일 때			
+			// 게임 세션에 추방 투표 대상 저장
+			int max = 0; String maxVotedPlayer = "";
+			for(RolePlayer r : gameSession.getPlayers()) {
+				if(r.getVotedCnt()>max) {
+					max = r.getVotedCnt();
+					maxVotedPlayer = r.getPlayerId();
+				}
+			}
+			// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
+			gameSession.setExpultionTargetId(maxVotedPlayer);
+			// 추방 투표 결과 전송
+			HashMap<String, Boolean> result = new HashMap<>();
+			// 과반수 이상 찬성일 때
+			if(gameSession.getExpultionVoteCnt()>=(gameSession.getPlayers().size()+1)/2){
+				result.put("result", true);
+			}else {// 반대일 때
+				result.put("result", false);
+			}
+			sendExcludedMessage(roomId, result);
+		}
+	}
 
 	/**
 	 * 시스템 메시지를 대상에게 전송
@@ -428,8 +462,8 @@ public class GameManager {
 	}
 
 	// "추방당함" 메시지 전송
-	public void sendExcludedMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.BE_EXCLUDED, null);
+	public void sendExcludedMessage(String roomId, Map<String, Boolean> param) {
+		sendSystemMessageToAll(roomId, SystemCode.BE_EXCLUDED, param);
 	}
 
 	// "사냥당함" 메시지 전송
