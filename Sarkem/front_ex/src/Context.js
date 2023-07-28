@@ -14,12 +14,12 @@ const RoomProvider = ({ children }) => {
     const [camArray, setCamArray] = useState([]);
     const [session, setSession] = useState(undefined);
     const [token, setToken] = useState(null);
-
     const [isMicOn, setIsMicOn] = useState(true);
     const [isCamOn, setIsCamOn] = useState(true);
 
     const OV = new OpenVidu();
     const navigate = useNavigate();
+
 
     useEffect(() => {
 
@@ -79,12 +79,13 @@ const RoomProvider = ({ children }) => {
   }
 
   const connectSession = () => {
-    getToken(roomId, nickName, isHost).then(async (token) => {
+    getToken(roomId, nickName, isHost).then(async (response) => {
         try{
+          const token = response.split("token=")[1];
           setToken(token);
           console.log(token);
           // 세션에 유저 데이터 입력 후 연결 시도
-          await session.connect(token, {userData: nickName});
+          await session.connect(response, {userData: nickName});
 
           // 내 퍼블리셔 객체 생성
           let publisher = await OV.initPublisherAsync(undefined, {
@@ -117,10 +118,45 @@ const RoomProvider = ({ children }) => {
       })
   }
 
+
+  // 토큰 생성하는 함수
+const getToken = async () => {
+  // 내 세션ID에 해당하는 세션 생성
+  if (isHost){
+      console.log("방장이므로 세션을 생성합니다.")
+      await createSession(roomId, nickName);
+  }
+  // 세션에 해당하는 토큰 요청
+  return await createToken(roomId, nickName);
+  }
+  
+  // 서버에 요청하여 화상 채팅 세션 생성하는 함수
+  const createSession = async () => {
+  console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
+  const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
+      headers: { 'Content-Type': 'application/json', },
+  });
+  return response.data; // The sessionId
+  }
+  
+  
+  // 서버에 요청하여 토큰 생성하는 함수
+  const createToken = async () => {
+  console.log("세션에 연결을 시도합니다.")
+  const response = await axios.post(`/api/game/${roomId}/player`,nickName);
+  return response.data; // The token
+  }
+
+  const getPlayer = async (roomId) => {
+    const response = await axios.get(`/api/game/${roomId}/player`);
+    return response.data;
+  }
+
   return (
     <RoomContext.Provider value={{ roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn}}>
+    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
+    , getToken, getPlayer}}>
       {children}
     </RoomContext.Provider>
   );
@@ -134,37 +170,4 @@ const useRoomContext = () => {
   return context;
 };
 
-
-
-// 토큰 생성하는 함수
-const getToken = async (roomId, nickName, isHost) => {
-    // 내 세션ID에 해당하는 세션 생성
-    if (isHost){
-        console.log("방장이므로 세션을 생성합니다.")
-        await createSession(roomId, nickName);
-    }
-    // 세션에 해당하는 토큰 요청
-    return await createToken(roomId, nickName);
-    }
-    
-    // 서버에 요청하여 화상 채팅 세션 생성하는 함수
-    const createSession = async (roomId, nickName) => {
-    console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
-    const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
-        headers: { 'Content-Type': 'application/json', },
-    });
-    return response.data; // The sessionId
-    }
-    
-    
-    // 서버에 요청하여 토큰 생성하는 함수
-    const createToken = async (roomId, nickName) => {
-    console.log("세션에 연결을 시도합니다.")
-    const response = await axios.put(`/api/game/${roomId}`,
-    {nickName: nickName},
-    );
-    console.log(response);
-    return response.data; // The token
-    }
-
-export { RoomProvider, useRoomContext, getToken };
+export { RoomProvider, useRoomContext };

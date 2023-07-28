@@ -73,7 +73,10 @@ public class GameThread extends Thread {
 	private void gameOptionChange(GameOptionDTO option) {
 		// 플레이어 수와 역할 수 일치 여부 확인
 		int playerCount = gameRoom.getPlayerCount();
-		int optionRoleCount = option.getTotalRoleCount();
+//		int optionRoleCount = option.getTotalRoleCount();
+		int optionRoleCount = gameSession.getCitizenCount() + gameSession.getSarkCount() + gameSession.getDoctorCount()
+				+ gameSession.getPoliceCount() + gameSession.getBullyCount()
+				+ gameSession.getDetectiveCount() + gameSession.getPsychologistCount();
 		if (playerCount != optionRoleCount)
 			throw new GameOptionSettingException("플레이어 수와 역할 수가 일치하지 않습니다.");
 

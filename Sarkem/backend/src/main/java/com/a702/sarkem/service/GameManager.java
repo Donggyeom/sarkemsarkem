@@ -182,7 +182,7 @@ public class GameManager {
 		if(!room.getHostId().equals(playerId)) {
 			return;
 		}
-		
+
 		// 플레이어 수와 역할 수 일치 여부 확인
 		String hostId = room.getHostId();
 
@@ -203,7 +203,7 @@ public class GameManager {
 		gameSession.setDetectiveCount(option.getDetectiveCount());
 		gameSession.setPsychologistCount(option.getPsychologistCount());
 		gameSession.setBullyCount(option.getBullyCount());
-		Log.debug(gameSession.toString());
+//		Log.debug(gameSession.toString());
 		sendGameOptionChangedMessage(roomId, option);
 	}
 
@@ -217,7 +217,10 @@ public class GameManager {
 		GameRoom room = gameRoomMap.get(roomId);
 		GameSession gameSession = gameSessionMap.get(roomId);
 		int playerCount = room.getPlayerCount();
-		int optionRoleCount = gameSession.getTotalRoleCnt();
+//		int optionRoleCount = gameSession.getTotalRoleCnt(); // DTO에서는 getTotalCnt를 쓸 수가 없답니다
+		int optionRoleCount = gameSession.getCitizenCount() + gameSession.getSarkCount() + gameSession.getDoctorCount()
+				 + gameSession.getPoliceCount() + gameSession.getBullyCount()
+				+ gameSession.getDetectiveCount() + gameSession.getPsychologistCount();
 
 		if (playerCount != optionRoleCount) return false;
 		return true;

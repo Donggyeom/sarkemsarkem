@@ -44,10 +44,10 @@ public class GameController {
 			if ( !gameManager.isHost(roomId, playerId) ) {
 				// 방장이 아닌 사용자에게 에러 메세지 전송
 				gameManager.sendSystemMessage(roomId, playerId, SystemCode.ONLY_HOST_ACTION, null);
-			} else if (!gameManager.checkStartable(roomId)){
+			} //else if (!gameManager.checkStartable(roomId)){
 				// 시작 가능 여부 확인
-				gameManager.sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.");
-			}
+//				gameManager.sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.");
+//			}
 			// 게임 실행
 			else gameManager.gameStart(roomId);
 			break;

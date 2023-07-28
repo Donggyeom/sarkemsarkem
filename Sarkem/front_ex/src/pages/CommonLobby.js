@@ -19,6 +19,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import StartButton from '../components/buttons/StartButton';
 import InviteButton from '../components/buttons/InviteButton';
 import { useRoomContext } from '../Context';
+import { useGameContext } from '../GameContext';
 
 const StyledContent = styled.div`
   display: flex;
@@ -130,6 +131,8 @@ const ButtonContainer = styled.div`
 
 const CommonLobby = ()=>{
   const {roomId, isHost, camArray, leaveSession} = useRoomContext();
+  const {peopleCount, setPeopleCount, handleGamePageClick, stompCilent, token} = useGameContext();
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -154,12 +157,7 @@ const CommonLobby = ()=>{
     leaveSession();
   }
 
-  const handleGamePageClick = () => {
-    // Logic to navigate to the GamePage when the user is a host
-    // Replace the following line with the actual logic to navigate to the GamePage
-    console.log('Navigate to the GamePage');
-  };
-
+  
   // Function to handle the click event when the user wants to invite others
   const handleInviteClick = async () => {
     await navigator.clipboard.writeText("localhost:3000/"+roomId).then(alert("게임 링크가 복사되었습니다."));
@@ -256,22 +254,26 @@ const calculateGrid = (camCount) => {
 const camCount = camArray.length;
 const gridStyles = calculateGrid(camCount);
 
-  const [peopleCount, setPeopleCount] = useState({
-    sark: 0,
-    citizen: 0,
-    vet: 0,
-    police: 0,
-    scoop: 0,
-    psychologist: 0,
-    nyangachi: 0,
-    timesetting: 0,
-  });
-
   const handlePeopleCountChange = (part, value) => {
+    if (!isHost) return;
+    if (stompCilent.current.connect === undefined) return;
     setPeopleCount((prevPeopleCount) => ({
       ...prevPeopleCount,
       [part]: value,
     }));
+    console.log("게임옵션 변경됨")
+    console.log(stompCilent.current.connected, token);
+
+    if(stompCilent.current.connected && token !== null) {
+        stompCilent.current.send("/pub/game/action", {}, 
+            JSON.stringify({
+                code:'OPTION_CHANGE', 
+                roomId: roomId, 
+                playerId: token,
+                param: peopleCount
+            }))
+            console.log(peopleCount)
+    }
   };
 
 const leftSectionRef = useRef(null);
@@ -295,17 +297,17 @@ const leftSectionRef = useRef(null);
           <LeftPart>
           <LeftPartWrapper style={{ backgroundImage: `url(${sc_sark})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('sark', peopleCount.sark + 1)}>+</button>
-                <div>{peopleCount.sark}</div>
-                <button onClick={() => handlePeopleCountChange('sark', peopleCount.sark - 1)}>-</button>
+                <button onClick={() => handlePeopleCountChange('sarkCount', peopleCount.sarkCount + 1)}>+</button>
+                <div>{peopleCount.sarkCount}</div>
+                <button onClick={() => handlePeopleCountChange('sarkCount', peopleCount.sarkCount - 1)}>-</button>
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_citizen})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('citizen', peopleCount.citizen + 1)}>+</button>
-                <div>{peopleCount.citizen}</div>
-                <button onClick={() => handlePeopleCountChange('citizen', peopleCount.citizen - 1)}>-</button>
+                <button onClick={() => handlePeopleCountChange('citizenCount', peopleCount.citizenCount + 1)}>+</button>
+                <div>{peopleCount.citizenCount}</div>
+                <button onClick={() => handlePeopleCountChange('citizenCount', peopleCount.citizenCount - 1)}>-</button>
               </RightPartWrapper>
             </RightPart>
           </DivWrapper>
@@ -313,17 +315,17 @@ const leftSectionRef = useRef(null);
             <LeftPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_vet})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('vet', peopleCount.vet + 1)}>+</button>
-                <div>{peopleCount.vet}</div>
-                <button onClick={() => handlePeopleCountChange('vet', peopleCount.vet - 1)}>-</button>
+                <button onClick={() => handlePeopleCountChange('doctorCount', peopleCount.doctorCount + 1)}>+</button>
+                <div>{peopleCount.doctorCount}</div>
+                <button onClick={() => handlePeopleCountChange('doctorCount', peopleCount.doctorCount - 1)}>-</button>
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_police})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('police', peopleCount.police + 1)}>+</button>
-                <div>{peopleCount.police}</div>
-                <button onClick={() => handlePeopleCountChange('police', peopleCount.police - 1)}>-</button>
+                <button onClick={() => handlePeopleCountChange('policeCount', peopleCount.policeCount + 1)}>+</button>
+                <div>{peopleCount.policeCount}</div>
+                <button onClick={() => handlePeopleCountChange('policeCount', peopleCount.policeCount - 1)}>-</button>
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
@@ -331,17 +333,17 @@ const leftSectionRef = useRef(null);
             <LeftPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_scoop})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('scoop', peopleCount.scoop + 1)}>+</button>
-                <div>{peopleCount.scoop}</div>
-                <button onClick={() => handlePeopleCountChange('scoop', peopleCount.scoop - 1)}>-</button>
+                <button onClick={() => handlePeopleCountChange('detectiveCount', peopleCount.detectiveCount + 1)}>+</button>
+                <div>{peopleCount.detectiveCount}</div>
+                <button onClick={() => handlePeopleCountChange('detectiveCount', peopleCount.detectiveCount - 1)}>-</button>
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_psychologist})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('psychologist', peopleCount.psychologist + 1)}>+</button>
-                <div>{peopleCount.psychologist}</div>
-                <button onClick={() => handlePeopleCountChange('psychologist', peopleCount.psychologist - 1)}>-</button>
+                <button onClick={() => handlePeopleCountChange('psychologistCount', peopleCount.psychologistCount + 1)}>+</button>
+                <div>{peopleCount.psychologistCount}</div>
+                <button onClick={() => handlePeopleCountChange('psychologistCount', peopleCount.psychologistCount - 1)}>-</button>
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
@@ -349,17 +351,17 @@ const leftSectionRef = useRef(null);
             <LeftPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_nyangachi})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('nyangachi', peopleCount.nyangachi + 1)}>+</button>
-                <div>{peopleCount.nyangachi}</div>
-                <button onClick={() => handlePeopleCountChange('nyangachi', peopleCount.nyangachi - 1)}>-</button>
+                <button onClick={() => handlePeopleCountChange('bullyCount', peopleCount.bullyCount + 1)}>+</button>
+                <div>{peopleCount.bullyCount}</div>
+                <button onClick={() => handlePeopleCountChange('bullyCount', peopleCount.bullyCount - 1)}>-</button>
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${timesetting})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('timesetting', peopleCount.timesetting + 60)}>+</button>
-                <div>{peopleCount.timesetting}</div>
-                <button onClick={() => handlePeopleCountChange('timesetting', peopleCount.timesetting - 60)}>-</button>
+                <button onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime + 60)}>+</button>
+                <div>{peopleCount.meetingTime}</div>
+                <button onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime - 60)}>-</button>
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
@@ -368,7 +370,7 @@ const leftSectionRef = useRef(null);
               <>
                 <LeftPart>
                 <ButtonContainer>
-                <StartButton url="/${roomId}/day" onClick={() => navigate(`/${roomId}/day`)} alt="Start Game" />
+                <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
                 </ButtonContainer>
                 </LeftPart>
                 <RightPart>

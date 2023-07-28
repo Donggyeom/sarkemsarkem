@@ -19,18 +19,18 @@ public class GameOptionDTO implements Serializable {
 	private int psychologistCount;
 	private int detectiveCount;
 	private int meetingTime;
-	
+
 	/**
 	 * 총 역할 수 반환
 	 * @return 총 역할 수 
 	 */
-	public int getTotalRoleCount() {
-		return citizenCount + sarkCount + policeCount + doctorCount + bullyCount + psychologistCount + detectiveCount;
-	}
+//	public int getTotalRoleCount() {
+//		return citizenCount + sarkCount + policeCount + doctorCount + bullyCount + psychologistCount + detectiveCount;
+//	}
 
-	public int [] getRoles() {
-		return new int[]{citizenCount, sarkCount, policeCount, doctorCount, bullyCount, psychologistCount, detectiveCount};
-	}
+//	public int [] getRoles() {
+//		return new int[]{citizenCount, sarkCount, policeCount, doctorCount, bullyCount, psychologistCount, detectiveCount};
+//	}
 }
 
 

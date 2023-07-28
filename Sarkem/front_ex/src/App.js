@@ -14,23 +14,26 @@ import NightPage from './pages/NightPage';
 import NotFound from './pages/NotFound';
 import ResultPage from './pages/ResultPage';
 import { RoomProvider } from './Context';
+import { GameProvider } from './GameContext';
 
 
 const App = () => {
   return (
     <RoomProvider>
-      <Routes>
-        <Route path="/" element={<StartPage />} />
-        <Route path="/loading" element={<LoadingPage />} />
-        <Route path="/:roomId" element={<CommonStart />} /> 
-        {/* <Route path="/start/unhost" element={<StartUnhost />} />  */}
-        <Route path="/:roomId/lobby" element={<CommonLobby />}/>
-        <Route path="/:roomId/day" element={<DayPage />}/>
-        <Route path="/:roomId/sunset" element={<SunsetPage />}/>
-        <Route path="/:roomId/night" element={<NightPage />}/>
-        <Route path="/:roomId/result" element={<ResultPage />}/>
-        <Route path="*" element={<NotFound />}/>
-      </Routes>
+      <GameProvider>
+        <Routes>
+          <Route path="/" element={<StartPage />} />
+          <Route path="/loading" element={<LoadingPage />} />
+          <Route path="/:roomId" element={<CommonStart />} /> 
+          {/* <Route path="/start/unhost" element={<StartUnhost />} />  */}
+          <Route path="/:roomId/lobby" element={<CommonLobby />}/>
+          <Route path="/:roomId/day" element={<DayPage />}/>
+          <Route path="/:roomId/sunset" element={<SunsetPage />}/>
+          <Route path="/:roomId/night" element={<NightPage />}/>
+          <Route path="/:roomId/result" element={<ResultPage />}/>
+          <Route path="*" element={<NotFound />}/>
+        </Routes>
+      </GameProvider>
     </RoomProvider>
 
 
