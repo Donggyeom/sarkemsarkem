@@ -151,7 +151,7 @@ const getToken = async (roomId, nickName, isHost) => {
     const createSession = async (roomId, nickName) => {
     console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
     const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
-        headers: { 'Content-Type': 'application/json', },
+        headers: { 'Content-Type': 'cation/json', },
     });
     return response.data; // The sessionId
     }
@@ -168,3 +168,4 @@ const getToken = async (roomId, nickName, isHost) => {
     }
 
 export { RoomProvider, useRoomContext, getToken };
+
