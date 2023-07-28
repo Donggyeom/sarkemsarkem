@@ -6,12 +6,15 @@ import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.model.player.RolePlayer;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.redis.listener.ChannelTopic;
 
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.NightVote;
 import com.a702.sarkem.model.gameroom.GameRoom;
 
+@Slf4j
 public class GameThread extends Thread {
 	private static GameManager gameManager;
 	private GameRoom gameRoom;
@@ -32,35 +35,36 @@ public class GameThread extends Thread {
 
 	@Override
 	public void run() {
-		int meetingTime = gameSession.getMeetingTime();
+		int meetingTime = gameSession.getMeetingTime() * 1000;
 		// TODO: 게임 로직 구현
 		// "게임시작" 메시지 전송
 		gameManager.sendGameStartMessage(gameRoom.getRoomId());
 		// 역할배정
 		assignRole();
-
-		// 1일차 낮
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				// 낮 페이즈 시작
-				convertPhaseToDay();
-				List<RolePlayer> players = gameSession.getPlayers();
-				int confirmCnt = 0;
-				while (true) {
-					confirmCnt = 0;
-					for (RolePlayer p : players) {
-						if (p.isTargetConfirmed()) confirmCnt++;
-					}
-					// 투표가 모두 완료되면 종료
-					if (confirmCnt == players.size()) this.cancel();
-					
-					try {
-						sleep(500);
-					} catch (InterruptedException e) { }
-				}
+		
+		// 낮 페이즈 시작
+		convertPhaseToDay();
+		Thread dayVoteThread = new DayVoteThread();
+		dayVoteThread.start();
+		try {
+			dayVoteThread.join(meetingTime);
+		} catch (InterruptedException e) { }
+		
+		// 낮 투표결과 종합 // 게임 세션에 추방 투표 대상 저장
+		int max = 0;
+		String maxVotedPlayer = "";
+		for (RolePlayer r : gameSession.getPlayers()) {
+			if (r.getVotedCnt() > max) {
+				max = r.getVotedCnt();
+				maxVotedPlayer = r.getPlayerId();
 			}
-		}, meetingTime);
+		}
+		// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
+		gameSession.setExpultionTargetId(maxVotedPlayer);
+		HashMap<String, String> expulsionPlayer = new HashMap<>();
+		expulsionPlayer.put("target", maxVotedPlayer);
+		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
+		gameManager.sendEndDayVoteMessage(gameRoom.getRoomId(), expulsionPlayer);
 		
 		// 1일차 저녁
 
@@ -123,22 +127,6 @@ public class GameThread extends Thread {
 		gameManager.sendDayPhaseMessage(gameRoom.getRoomId());
 		// "대상 선택" 메시지 전송
 		gameManager.sendTargetSelectionMessage(gameRoom.getRoomId());
-
-		// 낮 투표결과 종합 // 게임 세션에 추방 투표 대상 저장
-		int max = 0;
-		String maxVotedPlayer = "";
-		for (RolePlayer r : gameSession.getPlayers()) {
-			if (r.getVotedCnt() > max) {
-				max = r.getVotedCnt();
-				maxVotedPlayer = r.getPlayerId();
-			}
-		}
-		// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
-		gameSession.setExpultionTargetId(maxVotedPlayer);
-		HashMap<String, String> expulsionPlayer = new HashMap<>();
-		expulsionPlayer.put("target", maxVotedPlayer);
-		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
-		gameManager.sendEndDayVoteMessage(gameRoom.getRoomId(), expulsionPlayer);
 	}
 
 	// 저녁 페이즈
@@ -181,5 +169,26 @@ public class GameThread extends Thread {
 
 //		SystemMessage message = new SystemMessage(gameRoom.getRoomId(), SystemCode.BE_HUNTED, deadPlayerId);
 //		gamePublisher.publish(gameTopic, message);
+	}
+	
+	class DayVoteThread extends Thread {
+		@Override
+		public void run() {
+			// 투표 대기
+			List<RolePlayer> players = gameSession.getPlayers();
+			int confirmCnt = 0;
+			while (true) {
+				confirmCnt = 0;
+				for (RolePlayer p : players) {
+					if (p.isTargetConfirmed()) confirmCnt++;
+				}
+				// 투표가 모두 완료되면 종료
+				if (confirmCnt == players.size()) this.interrupt();
+				
+				try {
+					sleep(500);
+				} catch (InterruptedException e) { }
+			}
+		}
 	}
 }

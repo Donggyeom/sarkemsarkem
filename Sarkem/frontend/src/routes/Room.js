@@ -165,6 +165,9 @@ function Room () {
         case "VOTE_SITUATION":
             console.log(sysMessage.param);
             break;
+        case "DAY_VOTE_END":
+            console.log("낮 투표 종료");
+            break;
         }
     }
 
