@@ -4,7 +4,8 @@ import Background from '../components/backgrounds/BackgroundSunset';
 import ReButton from '../components/buttons/reButton';
 import ResultBox from '../components/games/ResultBox';
 import logoImage from '../img/logo.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
+import { useRoomContext } from '../Context';
 import createRandomId from '../utils';
 
 const StyledSunsetPage = styled.div`
@@ -86,13 +87,38 @@ const TextAbove = styled.div`
 
 
 const ResultPage = () => {
+  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
+    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
+    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn} = useRoomContext(); 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleAgainButtonClick = () => {
+
+    console.log("세션 해제중입니다.....")
+    // 세션 연결 종료
+    if (session) session.disconnect();
+    
+    // 데이터 초기화
+    setSession(undefined);
+    setSubscribers([]);
+    setPublisher(undefined);
+    setCamArray([]);
+    console.log("새로운 방 만들기")
     navigate(`/${createRandomId()}`, { state: { isHost: true } });
   };
 
   const handleExitButtonClick = () => {
+    console.log("세션 해제중입니다.....")
+    // 세션 연결 종료
+    if (session) session.disconnect();
+    
+    // 데이터 초기화
+    setSession(undefined);
+    setSubscribers([]);
+    setPublisher(undefined);
+    setCamArray([]);
+    console.log("홈으로 나가기")
     navigate('/');
   };
 
@@ -102,6 +128,8 @@ const ResultPage = () => {
         <ResultBox> </ResultBox>
         <ButtonContainer>
           <Logo src={logoImage} alt="로고" />
+          {/* 지금 함수 적용 안되는중. button 클릭할 때 세션 삭제되고 navigate 자동으로 돼서.
+          근데 함수에서 navigate 삭제하면 그냥 아무것도 안돼서... 일단 보류함 */}
           <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
           <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
         </ButtonContainer>

@@ -11,6 +11,7 @@ import ScMini from '../components/games/ScMini';
 import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
+import TempButton from '../components/buttons/TempButton';
 
 const CamCatGridContainer = styled.div`
   flex: 1;
@@ -200,6 +201,8 @@ const SunsetPage = () => {
           ))}
         </CamCatGrid>
       </CamCatGridContainer>
+
+      <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomId}/night`)}/>
     </Background>
   );
 };

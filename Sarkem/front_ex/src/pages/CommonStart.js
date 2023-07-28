@@ -94,6 +94,7 @@ const RightPart = styled.div`
     outline: none;
     text-align: center; 
     margin-right: 160px;
+    font-family: "RixInooAriDuri";
   }
 `;
 
@@ -158,8 +159,8 @@ const CommonStart = ({onClick} ) => {
   }
 
   const handleMicToggle = () => {
-    const micOn = isMicOn
-    setIsMicOn(!micOn);
+    const micOn = !isMicOn
+    setIsMicOn(micOn);
     const tracks = audioRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = micOn;
@@ -167,8 +168,8 @@ const CommonStart = ({onClick} ) => {
   };
 
   const handleCamToggle = () => {
-    const camOn = isCamOn
-    setIsCamOn(!camOn);
+    const camOn = !isCamOn
+    setIsCamOn(camOn);
     const tracks = videoRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = camOn;
@@ -227,7 +228,7 @@ const CommonStart = ({onClick} ) => {
               type="text"
               value={nickName}
               onChange={handleNickNameChange}
-              placeholder="닉네임을 입력하세요"
+              placeholder="닉네임 입력"
             />
             </RightPart>
             </DivWrapper>

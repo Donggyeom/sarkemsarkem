@@ -14,14 +14,14 @@ const ResultBoxStyle = styled.div`
   gap: 12.89px;
   align-items: flex-start;
   justify-content: flex-start;
-  width: 1100px;
-  height: 650px;
+  width: 76%;
+  height: 85%;
   position: relative;
   box-shadow: 0px 5.16px 5.16px 0px rgba(0, 0, 0, 0.25),
     10.31px 10.31px 0px 0px rgba(0, 0, 0, 1);
   
-  top: 65px;
-  left: 200px;
+  top: 7%;
+  left: 10%;
 `;
 
 const BigSepStyle = styled.svg`
@@ -33,7 +33,7 @@ const BigSepStyle = styled.svg`
 `;
 
 const ResultBox = ({ ...props }) => {
-  const resultBoxWidth = 1320; // ResultBoxStyle의 너비
+  const resultBoxWidth = 1400; // ResultBoxStyle의 너비
 
   // path 시작점을 왼쪽으로 15px만큼 이동, 우측 끝점을 너비에 맞춰서 조정
   const pathStartX = -65;

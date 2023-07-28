@@ -19,7 +19,6 @@ import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 //tempbutton
 import TempButton from '../components/buttons/TempButton';
 
-
 const StyledDayPage = styled.div`
   display: flex;
   flex-direction: column;
@@ -70,42 +69,16 @@ const DayPage = () => {
 
   useEffect(() => {
     console.log(roomId);
-    if (roomId === undefined){
+    if (roomId === ''){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
     }
-    window.history.pushState(null, "", location.href);
     window.addEventListener("popstate", () => leaveSession);
-    window.addEventListener('beforeunload', (event) => {
-      // 표준에 따라 기본 동작 방지
-      event.preventDefault();
-      // Chrome에서는 returnValue 설정이 필요함
-      event.returnValue = '';
-    });
+    window.addEventListener('beforeunload', onbeforeunload);
   }, [])
 
 
-    const handleGamePageClick = () => {
-      // Logic to navigate to the GamePage when the user is a host
-      // Replace the following line with the actual logic to navigate to the GamePage
-      console.log('Navigate to the GamePage');
-    };
-
-    // Function to handle the click event when the user wants to invite others
-    const handleInviteClick = async () => {
-      await navigator.clipboard.writeText("localhost:3000/"+roomId).then(alert("게임 링크가 복사되었습니다."));
-      console.log('Invite functionality for hosts');
-    };
-
-    // const renderCamCats = () => {
-    //   const camCats = [];
-    //   for (let i = 0; i < userCount; i++) {
-        
-    //     camCats.push(<CamCat key={i}/>);
-    //   }
-    //   return camCats;
-    // };
 
   const CamCatGrid = styled.div`
     display: grid;
@@ -118,14 +91,7 @@ const DayPage = () => {
     overflow: auto; /* Add overflow property to handle overflow if needed */
   `;
 
-  // const LeftSection = styled.div`
-  // flex: 4.5;
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // max-height: 80vh; /* Set a maximum height to adjust to the available space */
-  // overflow: hidden; /* Hide any overflow content if needed */
-  // `;
+
 
   const calculateCamCatHeight = () => {
     const leftSectionHeight = leftSectionRef.current.offsetHeight;

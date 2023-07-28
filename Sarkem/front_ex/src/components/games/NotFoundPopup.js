@@ -7,6 +7,7 @@ const fadeInOut = keyframes`
   }
   100% {
     opacity: 0;
+    display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
   }
 `;
 
