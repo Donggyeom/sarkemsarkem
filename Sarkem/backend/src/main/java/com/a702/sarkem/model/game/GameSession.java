@@ -74,7 +74,7 @@ public class GameSession {
 	
 
 	// 현재 옵션으로 설정된 역할을 리스트로 반환
-	public List getAllRoles() {
+	public List<GameRole> getAllRoles() {
 		List<GameRole> roles = new ArrayList<>();
 		for (int i = 0; i < this.citizenCount; i++) 		roles.add(GameRole.CITIZEN);
 		for (int i = 0; i < this.sarkCount; i++) 			roles.add(GameRole.SARK);

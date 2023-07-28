@@ -5,29 +5,25 @@ import java.util.*;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.model.player.RolePlayer;
+
 import org.springframework.data.redis.listener.ChannelTopic;
 
-import com.a702.sarkem.exception.GameOptionSettingException;
-import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.NightVote;
-import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
 
 public class GameThread extends Thread {
 	private static GameManager gameManager;
 	private GameRoom gameRoom;
 	private GameSession gameSession;
-	private ChannelTopic gameTopic;
-	private ChannelTopic chatTopic;
+	private Timer timer;
 
 	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
 			ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
 		this.gameRoom = gameRoom;
 		this.gameSession = gameSession;
-		this.gameTopic = gameTopic;
-		this.chatTopic = chatTopic;
+		this.timer = new Timer();
 	}
 
 	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
@@ -36,6 +32,7 @@ public class GameThread extends Thread {
 
 	@Override
 	public void run() {
+		int meetingTime = gameSession.getMeetingTime();
 		// TODO: 게임 로직 구현
 		// "게임시작" 메시지 전송
 		gameManager.sendGameStartMessage(gameRoom.getRoomId());
@@ -43,6 +40,28 @@ public class GameThread extends Thread {
 		assignRole();
 
 		// 1일차 낮
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				// 낮 페이즈 시작
+				convertPhaseToDay();
+				List<RolePlayer> players = gameSession.getPlayers();
+				int confirmCnt = 0;
+				while (true) {
+					confirmCnt = 0;
+					for (RolePlayer p : players) {
+						if (p.isTargetConfirmed()) confirmCnt++;
+					}
+					// 투표가 모두 완료되면 종료
+					if (confirmCnt == players.size()) this.cancel();
+					
+					try {
+						sleep(500);
+					} catch (InterruptedException e) { }
+				}
+			}
+		}, meetingTime);
+		
 		// 1일차 저녁
 
 		// 게임 진행
@@ -95,7 +114,7 @@ public class GameThread extends Thread {
 		gameSession.setPlayers(rPlaysers);
 
 		// 역할배정 메시지 전송
-		gameManager.sendRoleAsignMessage(gameRoom.getRoomId());
+		gameManager.sendRoleAssignMessage(gameRoom.getRoomId());
 	}
 
 	// 낮 페이즈

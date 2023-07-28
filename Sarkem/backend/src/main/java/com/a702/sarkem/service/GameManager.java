@@ -281,6 +281,9 @@ public class GameManager {
 		RolePlayer rPlayer =  (RolePlayer) gameSession.getPlayer(playerId);
 		RolePlayer targetPlayer = (RolePlayer) gameSession.getPlayer(rPlayer.getTarget());
 		HashMap<String, String> param = new HashMap<>();
+		
+		rPlayer.setTargetConfirmed(true);
+		
 		param.put("playerId", playerId);
 		param.put("targetId", rPlayer.getTarget());
 		param.put("targetNickname", targetPlayer.getNickname());
@@ -426,13 +429,13 @@ public class GameManager {
 	}
 
 	// "역할배정" 메시지 전송
-	public void sendRoleAsignMessage(String roomId) {
+	public void sendRoleAssignMessage(String roomId) {
 		GameSession gameSession = gameSessionMap.get(roomId);
 		List<RolePlayer> rPlayers = gameSession.getPlayers();
 		Map<String, GameRole> param = new HashMap<>();
 		for (RolePlayer rp : rPlayers) {
 			param.put("role", rp.getRole());
-			sendSystemMessage(roomId, rp.getPlayerId(), SystemCode.ROLE_ASIGNED, param);
+			sendSystemMessage(roomId, rp.getPlayerId(), SystemCode.ROLE_ASSIGNED, param);
 		}
 	}
 
