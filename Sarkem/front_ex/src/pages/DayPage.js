@@ -15,20 +15,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
 import axios from 'axios';
 import { useRoomContext } from '../Context';
-
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
-
-
-const CamCatGrid = styled.div`
-  display: grid;
-  grid-template-rows: ${({ camCount }) => `repeat(${camCount / 2}, 1fr)`};
-  gap: 10px;
-  justify-items: center;
-  align-items: center;
-  width: 100%;
-  max-height: 80vh;
-  overflow: auto;
-`;
+//tempbutton
+import BackButton from '../components/buttons/backButton';
 
 
 const StyledDayPage = styled.div`
@@ -50,6 +39,9 @@ const TimeSecond = styled.text`
     left: 22px; /* 원하는 위치 값을 지정합니다. */
     top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
+
+// const BackButton = styled.button`
+// `
 
 
 const handleCamButtonClick = () => {
@@ -92,6 +84,11 @@ const DayPage = () => {
       event.returnValue = '';
     });
   }, [])
+  
+  //지울거
+  const handleBackButtonClick = () => {
+    navigate("/result");
+  };
 
 
     const handleGamePageClick = () => {
@@ -162,6 +159,7 @@ const DayPage = () => {
               </CamCatGrid>
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             </div>
+            <BackButton onClick={handleBackButtonClick}></BackButton>
             <ChatButtonAndPopup />
         </StyledDayPage>
     </Background>
