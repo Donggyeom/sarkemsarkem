@@ -151,7 +151,7 @@ const getToken = async (roomId, nickName, isHost) => {
     const createSession = async (roomId, nickName) => {
     console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
     const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
-        headers: { 'Content-Type': 'cation/json', },
+        headers: { 'Content-Type': 'application/json', },
     });
     return response.data; // The sessionId
     }
@@ -160,6 +160,7 @@ const getToken = async (roomId, nickName, isHost) => {
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (roomId, nickName) => {
     console.log("세션에 연결을 시도합니다.")
+    console.log(roomId);
     const response = await axios.put(`/api/game/${roomId}`,
     {nickName: nickName},
     );
