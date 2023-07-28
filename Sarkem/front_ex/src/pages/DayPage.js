@@ -78,19 +78,13 @@ const DayPage = () => {
 
   useEffect(() => {
     console.log(roomId);
-    if (roomId === undefined){
+    if (roomId === ''){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
     }
-    window.history.pushState(null, "", location.href);
     window.addEventListener("popstate", () => leaveSession);
-    window.addEventListener('beforeunload', (event) => {
-      // 표준에 따라 기본 동작 방지
-      event.preventDefault();
-      // Chrome에서는 returnValue 설정이 필요함
-      event.returnValue = '';
-    });
+    window.addEventListener('beforeunload', onbeforeunload);
   }, [])
 
 
