@@ -18,8 +18,6 @@ import { useRoomContext } from '../Context';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 //tempbutton
 import TempButton from '../components/buttons/TempButton';
-import on from '../img/on.png';
-
 
 const StyledDayPage = styled.div`
   display: flex;
@@ -81,26 +79,6 @@ const DayPage = () => {
   }, [])
 
 
-    const handleGamePageClick = () => {
-      // Logic to navigate to the GamePage when the user is a host
-      // Replace the following line with the actual logic to navigate to the GamePage
-      console.log('Navigate to the GamePage');
-    };
-
-    // Function to handle the click event when the user wants to invite others
-    const handleInviteClick = async () => {
-      await navigator.clipboard.writeText("localhost:3000/"+roomId).then(alert("게임 링크가 복사되었습니다."));
-      console.log('Invite functionality for hosts');
-    };
-
-    // const renderCamCats = () => {
-    //   const camCats = [];
-    //   for (let i = 0; i < userCount; i++) {
-        
-    //     camCats.push(<CamCat key={i}/>);
-    //   }
-    //   return camCats;
-    // };
 
   const CamCatGrid = styled.div`
     display: grid;
@@ -113,14 +91,7 @@ const DayPage = () => {
     overflow: auto; /* Add overflow property to handle overflow if needed */
   `;
 
-  // const LeftSection = styled.div`
-  // flex: 4.5;
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // max-height: 80vh; /* Set a maximum height to adjust to the available space */
-  // overflow: hidden; /* Hide any overflow content if needed */
-  // `;
+
 
   const calculateCamCatHeight = () => {
     const leftSectionHeight = leftSectionRef.current.offsetHeight;
@@ -130,11 +101,6 @@ const DayPage = () => {
   };
 
   const leftSectionRef = useRef(null);
-
-  const handleImageClick = () => {
-    console.log('눌림');
-  };
-
 
     
     return (
@@ -155,8 +121,6 @@ const DayPage = () => {
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             </div>
             <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
-
-            <img src={on} alt="Back" onClick={handleImageClick} />
             <ChatButtonAndPopup />
         </StyledDayPage>
     </Background>

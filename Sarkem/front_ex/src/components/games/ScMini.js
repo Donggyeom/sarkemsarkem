@@ -38,8 +38,8 @@ const ScButtonImage = styled.img`
   width: 175px;
   cursor: pointer;
   position: absolute;
-  left: 1350px;
-  top: 15px;
+  top: 3%;
+  right: 2%;
 `;
 
 const ScMiniButton = styled.div`

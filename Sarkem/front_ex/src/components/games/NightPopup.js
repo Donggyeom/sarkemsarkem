@@ -48,7 +48,7 @@ const NightPopup = () => {
   useEffect(() => {
     const fadeOutTimeout = setTimeout(() => {
       setShowPopup(false);
-    }, 4000);
+    }, 3500);
 
     return () => clearTimeout(fadeOutTimeout);
   }, []);

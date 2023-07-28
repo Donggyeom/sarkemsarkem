@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
 import NotFoundButton from '../components/games/NotFoundPopup';
-import StartButton from '../components/buttons/StartButton';
+import ReButton from '../components/buttons/reButton';
 import { useNavigate } from 'react-router-dom';
 
 const StyledSunsetPage = styled.div`
@@ -15,6 +15,8 @@ const StyledSunsetPage = styled.div`
   height: 100vh;
   overflow: hidden;
 `;
+
+
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -36,7 +38,7 @@ const NotFound = () => {
     <Background>
       <StyledSunsetPage>
         <NotFoundButton showPopup={showPopup} />
-        {showPopup ? null : <StartButton alt="Go to Home" onClick={goToHome} />}
+        {showPopup ? null : <ReButton alt="Go to Home" onClick={goToHome}>나가기</ReButton> }
       </StyledSunsetPage>  
     </Background>
   );
