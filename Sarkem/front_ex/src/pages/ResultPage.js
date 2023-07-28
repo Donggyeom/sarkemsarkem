@@ -5,6 +5,7 @@ import ReButton from '../components/buttons/reButton';
 import ResultBox from '../components/games/ResultBox';
 import logoImage from '../img/logo.png';
 import { useNavigate } from 'react-router-dom';
+
 import createRandomId from '../utils';
 
 const StyledSunsetPage = styled.div`
@@ -102,6 +103,8 @@ const ResultPage = () => {
         <ResultBox> </ResultBox>
         <ButtonContainer>
           <Logo src={logoImage} alt="로고" />
+          {/* 지금 함수 적용 안되는중. button 클릭할 때 세션 삭제되고 navigate 자동으로 돼서.
+          근데 함수에서 navigate 삭제하면 그냥 아무것도 안돼서... 일단 보류함 */}
           <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
           <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
         </ButtonContainer>

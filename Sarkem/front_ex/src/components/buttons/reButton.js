@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useRoomContext } from '../../Context';
 
 const ReButtonStyle = styled.div`
   box-sizing: border-box;
@@ -32,7 +33,8 @@ const ReButtonStyle = styled.div`
 `;
 
 const ReButton = ({ onClick, ...props }) => {
-  return <ReButtonStyle onClick={onClick} {...props} />;
+  const {leaveSession} = useRoomContext();
+  return <ReButtonStyle onClick={leaveSession} {...props} />;
 };
 
 export default ReButton;

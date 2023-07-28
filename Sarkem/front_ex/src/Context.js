@@ -40,7 +40,7 @@ const RoomProvider = ({ children }) => {
         setSubscribers([]);
         setPublisher(undefined);
         setCamArray([]);
-        navigate(`/${roomId}`)
+        // navigate(`/${roomId}`)
     }
 
     // 특정 유저가 룸을 떠날 시 subscribers 배열에서 삭제
