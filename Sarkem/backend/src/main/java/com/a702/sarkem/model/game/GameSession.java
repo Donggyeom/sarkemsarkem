@@ -53,6 +53,7 @@ public class GameSession {
 	private int expultionVoteCnt; // 추방 투표 수
 	private int expultionVotePlayerCnt; // 추방 투표 한 사람 수 
 	private String expultionTargetId; // 추방 투표 대상
+	private int winTeam; // 0: 진행 중 , 1: 삵 승리 , 2: 시민 승리
 	
 	public GameSession(String roomId, String gameId) {
 		this.roomId = roomId;
@@ -61,6 +62,7 @@ public class GameSession {
 		this.phase = PhaseType.READY;
 		this.meetingTime = 60;
 		this.day = 0;
+		this.winTeam = 0;
 	}
 	
 	public RolePlayer getPlayer(String playerId) {
