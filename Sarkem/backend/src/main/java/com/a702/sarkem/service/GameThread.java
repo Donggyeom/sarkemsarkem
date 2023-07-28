@@ -19,15 +19,12 @@ public class GameThread extends Thread {
 	private static GameManager gameManager;
 	private GameRoom gameRoom;
 	private GameSession gameSession;
-<<<<<<< HEAD
 	private Timer timer;
 
-=======
 	private ChannelTopic gameTopic;
 	private ChannelTopic chatTopic;
 	private String roomId;
 	
->>>>>>> branch 'BE_GameSystem' of https://lab.ssafy.com/s09-webmobile1-sub2/S09P12A702.git
 	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
 			ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
@@ -39,7 +36,6 @@ public class GameThread extends Thread {
 	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
 	int CITIZEN = 0;
 	int SARK = 1;
-	
 
 	@Override
 	public void run() {
@@ -123,6 +119,37 @@ public class GameThread extends Thread {
 
 	}
 
+	// 낮 투표 결과 종합
+	private void dayVote() {
+		// 낮 투표결과 종합 // 게임 세션에 추방 투표 대상 저장
+		int max = 0; // 최다득표 수
+		String maxVotedPlayer = ""; // 최다 득표자 아이디
+		// 최다 득표 수, 최다 득표자 구하기
+		for (RolePlayer r : gameSession.getPlayers()) {
+			if (r.getVotedCnt() > max) {
+				max = r.getVotedCnt();
+				maxVotedPlayer = r.getPlayerId();
+			}
+		}
+		// 최다 득표자가 2명 이상이면 최다득표자 없음 => 저녁투표 안함
+		int cnt = 0;
+		for (RolePlayer r : gameSession.getPlayers()) {
+			if (r.getVotedCnt() == max)
+				cnt++;
+			if (cnt > 1) {
+				maxVotedPlayer = "";
+				break;
+			}
+		}
+
+		// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
+		gameSession.setExpultionTargetId(maxVotedPlayer);
+		HashMap<String, String> expulsionPlayer = new HashMap<>();
+		expulsionPlayer.put("target", maxVotedPlayer);
+		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
+		gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
+	}
+
 	// 저녁 페이즈
 	private void convertPhaseToTwilight() {
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
@@ -141,7 +168,12 @@ public class GameThread extends Thread {
 	private void convertPhaseToNight() {
 		// "밤 페이즈" 메시지 전송
 		gameManager.sendNightPhaseMessage(roomId);
-		
+		// 밤페이즈 됐다고 메시지 전송하면
+		// 삵 제외 화면, 카메라, 마이크, 오디오 끄기
+		// 탐정 오디오만 변조된 음성으로 켜기
+		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하겠지??
+		// 이에 대한 시스템, 액션 코드 필요할 듯
+
 	}
 
 	// 게임 종료
