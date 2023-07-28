@@ -128,15 +128,6 @@ const TimeSecond = styled.text`
     top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
 
-const handleCamButtonClick = () => {
-    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-    console.log('Cam Button clicked!');
-};
-
-const handleMicButtonClick = () => {
-    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-    console.log('Mic Button clicked!');
-};
 
 const handleScMiniClick = () => {
     // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
@@ -144,12 +135,31 @@ const handleScMiniClick = () => {
 };
 
 const SunsetPage = () => {
-    const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
-        publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-        session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn} = useRoomContext(); 
-    const navigate = useNavigate();
-    const location = useLocation();
+   
+  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
+    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
+    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const handleCamButtonClick = () => {
+    const camOn = !isCamOn;
+    setIsCamOn(camOn);
+    if (publisher) {
+      publisher.publishVideo(camOn);
+    }
+  };
+  
+  
+  const handleMicButtonClick = () => {
+    const micOn = !isMicOn;
+    setIsMicOn(micOn);
+    if (publisher) {
+      publisher.publishAudio(micOn);
+    }
+  };
+  
+  
     useEffect(() => {
         console.log(roomId);
         if (roomId === undefined){
@@ -171,8 +181,8 @@ const SunsetPage = () => {
     <Background>
       <SunMoon alt="SunMoon"></SunMoon>
       <TimeSecond>60s</TimeSecond>
-      <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
-      <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
+      <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
+      <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
       <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
       <CamCatGrid camCount={camArray.length}>
         {camArray.map((user, index) => (
