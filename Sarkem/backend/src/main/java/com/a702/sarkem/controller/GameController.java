@@ -10,8 +10,8 @@ import java.util.Map;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
-import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.chat.ChatMessage;
+import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.game.message.ActionMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.service.GameManager;

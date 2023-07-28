@@ -10,8 +10,8 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import com.a702.sarkem.exception.GameRoomNotFoundException;
-import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
+import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.game.message.SystemMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
