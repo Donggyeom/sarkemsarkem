@@ -160,6 +160,7 @@ const getToken = async (roomId, nickName, isHost) => {
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (roomId, nickName) => {
     console.log("세션에 연결을 시도합니다.")
+    console.log(roomId);
     const response = await axios.put(`/api/game/${roomId}`,
     {nickName: nickName},
     );
@@ -168,3 +169,4 @@ const getToken = async (roomId, nickName, isHost) => {
     }
 
 export { RoomProvider, useRoomContext, getToken };
+

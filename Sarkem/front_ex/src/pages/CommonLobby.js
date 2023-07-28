@@ -1,5 +1,3 @@
-
-
 import Background from '../components/backgrounds/BackgroundSunset';
 import styled from 'styled-components';
 import React, { useState, useEffect, useRef } from 'react';

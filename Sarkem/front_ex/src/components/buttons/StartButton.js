@@ -13,5 +13,3 @@ const StartButton = ({ src, alt, onClick }) => {
 };
 
 export default StartButton;
-
-
