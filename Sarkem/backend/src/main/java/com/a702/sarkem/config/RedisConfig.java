@@ -5,8 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import com.a702.sarkem.redis.SystemSubscriber;
 
 @Configuration
 public class RedisConfig {
@@ -20,7 +23,7 @@ public class RedisConfig {
         container.setConnectionFactory(connectionFactory);
         return container;
     }
-
+    
     /**
      * 어플리케이션에서 사용할 redisTemplate 설정
      */

@@ -1,5 +1,7 @@
 package com.a702.sarkem.model;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -7,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class GameOptionDTO {
+public class GameOptionDTO implements Serializable {
 	
 	private int citizenCount;
 	private int sarkCount;
@@ -24,6 +26,10 @@ public class GameOptionDTO {
 	 */
 	public int getTotalRoleCount() {
 		return citizenCount + sarkCount + policeCount + doctorCount + bullyCount + psychologistCount + detectiveCount;
+	}
+
+	public int [] getRoles() {
+		return new int[]{citizenCount, sarkCount, policeCount, doctorCount, bullyCount, psychologistCount, detectiveCount};
 	}
 }
 
