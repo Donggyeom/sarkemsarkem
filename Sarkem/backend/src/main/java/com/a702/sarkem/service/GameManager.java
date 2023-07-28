@@ -278,39 +278,75 @@ public class GameManager {
 	 */
 	public void selectedTarget(String roomId, String playerId) {
 		GameSession gameSession = gameSessionMap.get(roomId);
-		RolePlayer rPlayer =  (RolePlayer) gameSession.getPlayer(playerId);
+		RolePlayer rPlayer = (RolePlayer) gameSession.getPlayer(playerId);
 		RolePlayer targetPlayer = (RolePlayer) gameSession.getPlayer(rPlayer.getTarget());
 		HashMap<String, String> param = new HashMap<>();
 		param.put("playerId", playerId);
 		param.put("targetId", rPlayer.getTarget());
 		param.put("targetNickname", targetPlayer.getNickname());
-		
+		// 누가 누구 지목했는지 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
+		// 낮 투표 결과 종합
+		dayVote(gameSession);
 	}
-	
+
+	// 낮 투표 결과 종합
+	private void dayVote(GameSession gameSession) {
+		// 낮 투표결과 종합 // 게임 세션에 추방 투표 대상 저장
+		int max = 0; // 최다득표 수
+		String maxVotedPlayer = ""; // 최다 득표자 아이디
+		// 최다 득표 수, 최다 득표자 구하기
+		for (RolePlayer r : gameSession.getPlayers()) {
+			if (r.getVotedCnt() > max) {
+				max = r.getVotedCnt();
+				maxVotedPlayer = r.getPlayerId();
+			}
+		}
+		// 최다 득표자가 2명 이상이면 최다득표자 없음 => 저녁투표 안함
+		int cnt = 0;
+		for (RolePlayer r : gameSession.getPlayers()) {
+			if (r.getVotedCnt() == max)
+				cnt++;
+			if (cnt > 1) {
+				maxVotedPlayer = "";
+				break;
+			}
+		}
+
+		// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
+		gameSession.setExpultionTargetId(maxVotedPlayer);
+		HashMap<String, String> expulsionPlayer = new HashMap<>();
+		expulsionPlayer.put("target", maxVotedPlayer);
+		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
+		sendEndDayVoteMessage(gameSession.getRoomId(), expulsionPlayer);
+	}
+
 	// 추방 투표 처리
 	public void expulsionVote(String roomId, Map<String, Boolean> voteOX) {
 		GameSession gameSession = gameSessionMap.get(roomId);
 		Boolean voteResult = voteOX.get("result");
 		// 투표자수++
-		gameSession.setExpultionVotePlayerCnt(gameSession.getExpultionVotePlayerCnt()+1); 
-		if(voteResult) { // 추방 투표 찬성수 ++
-			gameSession.setExpultionVoteCnt(gameSession.getExpultionVoteCnt()+1);
+		gameSession.setExpultionVotePlayerCnt(gameSession.getExpultionVotePlayerCnt() + 1);
+		if (voteResult) { // 추방 투표 찬성수 ++
+			gameSession.setExpultionVoteCnt(gameSession.getExpultionVoteCnt() + 1);
 		}
-		//끝날 조건
-		if(gameSession.getExpultionVoteCnt()==gameSession.getPlayers().size() // 모두가 투표를 했거나
-				|| gameSession.getExpultionVoteCnt()>=(gameSession.getPlayers().size()+1)/2) { // 찬성 투표가 과반수 이상일 때			
-			//스레드 깨우기
-			
-			// 추방 투표 결과 전송
-			HashMap<String, Boolean> result = new HashMap<>();
-			// 과반수 이상 찬성일 때
-			if(gameSession.getExpultionVoteCnt()>=(gameSession.getPlayers().size()+1)/2){
-				result.put("result", true);
-			}else {// 반대일 때
-				result.put("result", false);
-			}
-			sendExcludedMessage(roomId, result);
+		// 끝날 조건
+		if (gameSession.getExpultionVoteCnt() == gameSession.getPlayers().size() // 모두가 투표를 했거나
+				|| gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
+			// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
+			if (gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
+				sendExcludedMessage(roomId, gameSession.getExpultionTargetId());
+				// 실제로 추방하기
+				RolePlayer expultionPlayer = gameSession.getPlayer(gameSession.getExpultionTargetId());
+				expultionPlayer.setAlive(false);
+				// 채팅방 입장시키기
+				
+			} 
+			// 추방 투표 결과 전송 // 저녁 페이즈 종료
+			HashMap<String, String> result = new HashMap<>();
+			// 추방 당한 사람 아이디를 파람으로 전달
+			result.put("expultionPlayer", gameSession.getExpultionTargetId());
+			sendEndTwilightVoteMessage(roomId, result);
 		}
 	}
 
@@ -445,6 +481,7 @@ public class GameManager {
 	public void sendTwilightPhaseMessage(String roomId) {
 		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, null);
 	}
+
 	// "저녁 투표 시작" 메시지 전송
 	public void sendTwilightVoteMessage(String roomId) {
 		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE, null);
@@ -457,17 +494,17 @@ public class GameManager {
 
 	// "낮 투표 종료" 메시지 전송
 	public void sendEndDayVoteMessage(String roomId, Map<String, String> param) {
-		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, null);
+		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, param);
 	}
 
 	// "저녁 투표 종료" 메시지 전송
-	public void sendEndNightVoteMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE_END, null);
+	public void sendEndTwilightVoteMessage(String roomId, Map<String, String> param) {
+		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE_END, param);
 	}
 
 	// "추방당함" 메시지 전송
-	public void sendExcludedMessage(String roomId, Map<String, Boolean> param) {
-		sendSystemMessageToAll(roomId, SystemCode.BE_EXCLUDED, param);
+	public void sendExcludedMessage(String roomId, String playerId) {
+		sendSystemMessage(roomId, playerId, SystemCode.BE_EXCLUDED, null);
 	}
 
 	// "사냥당함" 메시지 전송
