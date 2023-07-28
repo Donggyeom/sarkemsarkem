@@ -19,10 +19,6 @@ public class GameThread extends Thread {
 	private static GameManager gameManager;
 	private GameRoom gameRoom;
 	private GameSession gameSession;
-	private Timer timer;
-
-	private ChannelTopic gameTopic;
-	private ChannelTopic chatTopic;
 	private String roomId;
 	
 	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
@@ -30,7 +26,6 @@ public class GameThread extends Thread {
 		GameThread.gameManager = gameManager;
 		this.gameRoom = gameRoom;
 		this.gameSession = gameSession;
-		this.timer = new Timer();
 	}
 
 	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
@@ -103,7 +98,7 @@ public class GameThread extends Thread {
 		gameSession.setPlayers(rPlaysers);
 
 		// 역할배정 메시지 전송
-		gameManager.sendRoleAsignMessage(roomId);
+		gameManager.sendRoleAssignMessage(roomId);
 	}
 
 	// 낮 페이즈
