@@ -31,6 +31,7 @@ public class SystemMessage implements Serializable {
 		BE_HUNTED		, // 사냥당함
 		                  // 채팅방 접속
 		DAY_VOTE_END	, // 낮 투표 종료
+		TWILIGHT_VOTE, // 저녁 투표 시작
 		TWILIGHT_VOTE_END, // 저녁 투표 종료
 		VOTE_SITUATION	, // 투표 현황
 		PSYCHOANALYSIS_START, // 심리분석 시작
@@ -41,7 +42,7 @@ public class SystemMessage implements Serializable {
 		TARGET_SELECTION_END	, // 대상 선택 종료
 		                  // 추방 투표 종료
 		NOTICE_MESSAGE	, // 메세지 출력
-		ROLE_ASIGNED    , // 역할배정
+		ROLE_ASSIGNED    , // 역할배정
 		OPTION_CHANGED	, // 게임방 설정 변경
 		
 		// 에러 코드

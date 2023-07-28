@@ -5,96 +5,79 @@ import java.util.*;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.model.player.RolePlayer;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.redis.listener.ChannelTopic;
 
-import com.a702.sarkem.exception.GameOptionSettingException;
-import com.a702.sarkem.model.GameOptionDTO;
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.NightVote;
-import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.model.gameroom.GameRoom;
 
+@Slf4j
 public class GameThread extends Thread {
 	private static GameManager gameManager;
 	private GameRoom gameRoom;
 	private GameSession gameSession;
-	private ChannelTopic gameTopic;
-	private ChannelTopic chatTopic;
-
-	private static HashMap<String, RolePlayer> roleMap;
-
-	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession
-			, ChannelTopic gameTopic, ChannelTopic chatTopic) {
+	private String roomId;
+	
+	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
+			ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
-		roleMap = new HashMap<String, RolePlayer>();
 		this.gameRoom = gameRoom;
 		this.gameSession = gameSession;
-		this.gameTopic = gameTopic;
-		this.chatTopic = chatTopic;
 	}
 
-	//CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
+	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
 	int CITIZEN = 0;
 	int SARK = 1;
+
 	@Override
 	public void run() {
+		int meetingTime = gameSession.getMeetingTime() * 1000;
 		// TODO: 게임 로직 구현
 		// "게임시작" 메시지 전송
-		gameManager.sendGameStartMessage(gameRoom.getRoomId());
+		roomId = gameRoom.getRoomId();
+		gameManager.sendGameStartMessage(roomId);
 		// 역할배정
 		assignRole();
-		// 역할배정 메시지 전송
-		gameManager.sendRoleAsignMessage(gameRoom.getRoomId(), roleMap);
+
+		// 낮 페이즈 시작
+		convertPhaseToDay();
+		Thread dayVoteThread = new DayVoteThread();
+		dayVoteThread.start();
+		try {
+			dayVoteThread.join(meetingTime);
+		} catch (InterruptedException e) { }
 
 		// 게임 진행
 		while (true) {
 			// 게임종료 검사
-			if (isGameEnd()) break;
+			if (isGameEnd())
+				break;
 			// 낮 페이즈
 			convertPhaseToDay();
-			
-			// 저녁 페이즈
+
+			// 투표타임 타이머
+
+			// 낮페이즈 끝나면
+			// 저녁 페이즈 => 추방투표 시작
 			convertPhaseToTwilight();
+			// 투표타임 타이머
+
+			// 저녁 페이즈 끝나면
 			// 게임종료 검사
-			if (isGameEnd()) break;
-			
-			// 밤 페이즈
+			if (isGameEnd())
+				break;
+			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
 			convertPhaseToNight();
 		}
-		
+
 		// 게임 종료 메시지 전송
+		gameManager.sendGameEndMessage(roomId);
 		// 게임 결과 DB저장
 	}
-	
-	/**
-	 * 게임 옵션 변경
-	 * @param option
-	 */
-	private void gameOptionChange(GameOptionDTO option) {
-		// 플레이어 수와 역할 수 일치 여부 확인
-		int playerCount = gameRoom.getPlayerCount();
-//		int optionRoleCount = option.getTotalRoleCount();
-		int optionRoleCount = gameSession.getCitizenCount() + gameSession.getSarkCount() + gameSession.getDoctorCount()
-				+ gameSession.getPoliceCount() + gameSession.getBullyCount()
-				+ gameSession.getDetectiveCount() + gameSession.getPsychologistCount();
-		if (playerCount != optionRoleCount)
-			throw new GameOptionSettingException("플레이어 수와 역할 수가 일치하지 않습니다.");
 
-		// TODO: 역할 별 최소, 최대 수 검증 필요
-		// 삵은 1~3까지만 설정 가능
-		int sarkCount = option.getSarkCount();
-		if (sarkCount < 0 || sarkCount > 3)
-			throw new GameOptionSettingException("삵은 1 ~ 3 사이로 설정 가능합니다.");
-
-		// 회의 시간 변경
-		int meetingTime = option.getMeetingTime();
-		if (meetingTime < 30 || meetingTime > 180)
-			throw new GameOptionSettingException("회의 시간은 30s ~ 180s 사이로 설정 가능합니다.");
-
-		// "게임 옵션 변경" 메시지 전송
-	}
-	
-	// 
 	// 역할배정
 	private void assignRole() {
 		int playerCnt = gameRoom.getPlayerCount();
@@ -104,35 +87,114 @@ public class GameThread extends Thread {
 		Collections.shuffle(roles);
 
 		List<Player> players = gameRoom.getPlayers();
+		List<RolePlayer> rPlaysers = new ArrayList<>(6);
 		for (int i = 0; i < playerCnt; i++) {
-			String playerId = players.get(i).getPlayerId();
-			String nickName = players.get(i).getNickname();
+			Player player = players.get(i);
+			String playerId = player.getPlayerId();
+			String nickName = player.getNickname();
 			GameRole role = roles.get(i);
-			roleMap.put(players.get(i).getPlayerId(), new RolePlayer(playerId, nickName, role));
+			rPlaysers.add(new RolePlayer(playerId, nickName, role));
 		}
-		// 각 플레이어 별 역할을 랜덤으로 해쉬맵에 넣는다.
+		gameSession.setPlayers(rPlaysers);
+
+		// 역할배정 메시지 전송
+		gameManager.sendRoleAssignMessage(roomId);
 	}
+
 	// 낮 페이즈
 	private void convertPhaseToDay() {
 		// "낮 페이즈" 메시지 전송
+		gameManager.sendDayPhaseMessage(roomId);
+		// "대상 선택" 메시지 전송
+		gameManager.sendTargetSelectionMessage(roomId);
+
+		// 심리학자 기능 시작(표정분석 API)
+
+		// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
+
 	}
+
+	// 낮 투표 결과 종합
+	private void dayVote() {
+		// 낮 투표결과 종합 // 게임 세션에 추방 투표 대상 저장
+		int max = 0; // 최다득표 수
+		String maxVotedPlayer = ""; // 최다 득표자 아이디
+		// 최다 득표 수, 최다 득표자 구하기
+		for (RolePlayer r : gameSession.getPlayers()) {
+			if (r.getVotedCnt() > max) {
+				max = r.getVotedCnt();
+				maxVotedPlayer = r.getPlayerId();
+			}
+		}
+		// 최다 득표자가 2명 이상이면 최다득표자 없음 => 저녁투표 안함
+		int cnt = 0;
+		for (RolePlayer r : gameSession.getPlayers()) {
+			if (r.getVotedCnt() == max)
+				cnt++;
+			if (cnt > 1) {
+				maxVotedPlayer = "";
+				break;
+			}
+		}
+
+		// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
+		gameSession.setExpultionTargetId(maxVotedPlayer);
+		HashMap<String, String> expulsionPlayer = new HashMap<>();
+		expulsionPlayer.put("target", maxVotedPlayer);
+		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
+		gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
+	}
+
 	// 저녁 페이즈
 	private void convertPhaseToTwilight() {
-		// "저녁 페이즈" 메시지 전송
+		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
+		gameManager.sendTwilightPhaseMessage(roomId);
+		// 대상이 있으면 저녁투표 시작
+		// 대상 없다면
+		if (gameSession.getExpultionTargetId() == null || "".equals(gameSession.getExpultionTargetId())) {
+			// 대상 없다 노티스메시지 보내기
+			gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없습니다.");
+			return;
+		}
+		gameManager.sendTwilightVoteMessage(roomId);
 	}
+
 	// 밤 페이즈
 	private void convertPhaseToNight() {
 		// "밤 페이즈" 메시지 전송
+		gameManager.sendNightPhaseMessage(roomId);
+		// 밤페이즈 됐다고 메시지 전송하면
+		// 삵 제외 화면, 카메라, 마이크, 오디오 끄기
+		// 탐정 오디오만 변조된 음성으로 켜기
+		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하겠지??
+		// 이에 대한 시스템, 액션 코드 필요할 듯
+
 	}
+
 	// 게임 종료
 	private boolean isGameEnd() {
-		return true;
+		int aliveSark = 0;
+		int aliveCitizen = 0;
+		for (RolePlayer rPlayer : gameSession.getPlayers()) {
+			if (rPlayer.getRole().equals(GameRole.SARK) && rPlayer.isAlive()) {
+				aliveSark++;
+			} else if (rPlayer.isAlive()) {
+				aliveCitizen++;
+			}
+		}
+		// 마피아수>=시민수 => 마피아 win
+		if (aliveSark >= aliveCitizen) {
+			gameSession.setWinTeam(2);
+			return true;
+		}
+		// 마피아수==0 => 시민 win
+		if (aliveSark == 0) {
+			gameSession.setWinTeam(3);
+			return true;
+		}
+		return false;
 	}
-	// 대상 지정
-	private void updateTarget() {
-		
-	}
-	
+
 	// 밤 투표 받아온거 정리
 	private void nightVote(NightVote nightVote) {
 
@@ -146,8 +208,28 @@ public class GameThread extends Thread {
 			deadPlayerId = null;
 		}
 
-//		SystemMessage message = new SystemMessage(gameRoom.getRoomId(), SystemCode.BE_HUNTED, deadPlayerId);
+//		SystemMessage message = new SystemMessage(roomId, SystemCode.BE_HUNTED, deadPlayerId);
 //		gamePublisher.publish(gameTopic, message);
 	}
+	
+	class DayVoteThread extends Thread {
+		@Override
+		public void run() {
+			// 투표 대기
+			List<RolePlayer> players = gameSession.getPlayers();
+			int confirmCnt = 0;
+			while (true) {
+				confirmCnt = 0;
+				for (RolePlayer p : players) {
+					if (p.isTargetConfirmed()) confirmCnt++;
+				}
+				// 투표가 모두 완료되면 종료
+				if (confirmCnt == players.size()) this.interrupt();
+				
+				try {
+					sleep(500);
+				} catch (InterruptedException e) { }
+			}
+		}
+	}
 }
-

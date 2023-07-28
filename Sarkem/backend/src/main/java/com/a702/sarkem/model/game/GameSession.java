@@ -50,6 +50,10 @@ public class GameSession {
 	private LocalDateTime finishedTime;
 	private boolean bHiddenMissionStatus;
 	private boolean bHiddenMissionSuccess;
+	private int expultionVoteCnt; // 추방 투표 수
+	private int expultionVotePlayerCnt; // 추방 투표 한 사람 수 
+	private String expultionTargetId; // 추방 투표 대상
+	private int winTeam; // 0: 진행 중 , 1: 삵 승리 , 2: 시민 승리
 	
 	public GameSession(String roomId, String gameId) {
 		this.roomId = roomId;
@@ -58,10 +62,11 @@ public class GameSession {
 		this.phase = PhaseType.READY;
 		this.meetingTime = 60;
 		this.day = 0;
+		this.winTeam = 0;
 	}
 	
-	public Player getPlayer(String playerId) {
-		for(Player p : this.players) {
+	public RolePlayer getPlayer(String playerId) {
+		for(RolePlayer p : this.players) {
 			if (p.getPlayerId().equals(playerId)) {
 				return p;
 			}
@@ -71,7 +76,7 @@ public class GameSession {
 	
 
 	// 현재 옵션으로 설정된 역할을 리스트로 반환
-	public List getAllRoles() {
+	public List<GameRole> getAllRoles() {
 		List<GameRole> roles = new ArrayList<>();
 		for (int i = 0; i < this.citizenCount; i++) 		roles.add(GameRole.CITIZEN);
 		for (int i = 0; i < this.sarkCount; i++) 			roles.add(GameRole.SARK);

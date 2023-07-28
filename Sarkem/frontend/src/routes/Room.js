@@ -32,6 +32,7 @@ function Room () {
     const [bullyCount, setBullyCount] = useState("0");
     const [psychologistCount, setPsychologistCount] = useState("0");
     const [isConnected, setIsConnected] = useState(false);
+    const [selectedTarget, setSelectedTarget] = useState("");
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -156,7 +157,17 @@ function Room () {
             alert(`당신은 ${sysMessage.param.role} 입니다.`);
             console.log(`당신은 ${sysMessage.param.role} 입니다.`)
             break;
-    
+        case "TARGET_SELECTION_END":
+            // 선택 완료
+            alert("선택 완료");
+            setSelectedTarget("");
+            break;
+        case "VOTE_SITUATION":
+            console.log(sysMessage.param);
+            break;
+        case "DAY_VOTE_END":
+            console.log("낮 투표 종료");
+            break;
         }
     }
 
@@ -357,9 +368,17 @@ function Room () {
         );
     }
 
-    const selectAction = ((player) => {
+    // 대상 선택
+    const selectAction = ((target) => {
+        if (selectedTarget != "") {
+            setSelectedTarget("");
+            target.playerId = "";
+        }
+        else {
+            setSelectedTarget(target.playerId)
+        }
+
         console.log("다른 플레이어 선택 ")
-        console.log(player.playerId);
         if(stompCilent.current.connected && token !== null) {
             stompCilent.current.send("/pub/game/action", {}, 
                 JSON.stringify({
@@ -367,11 +386,27 @@ function Room () {
                     roomId: location.state.sessionId, 
                     playerId: token,
                     param: {
-                        target: player.playerId
+                        target: target.playerId
                     }
                 }))
         }
     })
+
+    // 대상 확정
+    const selectConfirm = () => {
+        console.log(selectedTarget + " 플레이어 선택 ");
+        if(stompCilent.current.connected && token !== null) {
+            stompCilent.current.send("/pub/game/action", {}, 
+                JSON.stringify({
+                    code:'TARGET_SELECTED',
+                    roomId: mySessionId, 
+                    playerId: token,
+                    param: {
+                        target: selectedTarget
+                    }
+                }))
+        }
+    }
 
     // 다른 유저 카메라 on/off 하는 함수
     const toggleSubbsVideoHandler = (sub) => {
@@ -460,6 +495,7 @@ function Room () {
                     onClick={deathAndOpenChat}
                     value={`죽기`}
                 /> 
+                {selectedTarget != "" ? <button onClick={selectConfirm}>대상확정</button> : null}
             </div>
             {/* {mainStreamManager !== undefined ? (
                 <div id="main-video" className="col-md-6">
