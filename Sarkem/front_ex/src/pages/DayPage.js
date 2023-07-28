@@ -15,6 +15,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
 import axios from 'axios';
 import { useRoomContext } from '../Context';
+import StartButton from '../components/buttons/StartButton';
 
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 
@@ -162,6 +163,7 @@ const DayPage = () => {
               </CamCatGrid>
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             </div>
+            <StartButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
             <ChatButtonAndPopup />
         </StyledDayPage>
     </Background>
