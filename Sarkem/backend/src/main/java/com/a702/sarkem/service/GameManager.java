@@ -285,7 +285,7 @@ public class GameManager {
 		param.put("targetId", rPlayer.getTarget());
 		param.put("targetNickname", targetPlayer.getNickname());
 		
-		sendTargetSelectionEndMessage(roomId, param);
+		sendTargetSelectionEndMessage(roomId, playerId, param);
 	}
 	
 	// 추방 투표 처리
@@ -421,8 +421,8 @@ public class GameManager {
 	}
 
 	// "대상선택 종료" 메시지 전송
-	public void sendTargetSelectionEndMessage(String roomId, Map<String, String> selected) {
-		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION_END, selected);
+	public void sendTargetSelectionEndMessage(String roomId, String playerId, Map<String, String> selected) {
+		sendSystemMessage(roomId, playerId, SystemCode.TARGET_SELECTION_END, selected);
 	}
 
 	// "역할배정" 메시지 전송
