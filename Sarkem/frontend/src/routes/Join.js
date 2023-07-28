@@ -1,14 +1,7 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from "react-router-dom";
-import * as canvas from 'canvas';
-
+// import { FaceDetection } from 'face-api.js/dist/face-api';
 import * as faceapi from 'face-api.js';
-
-// patch nodejs environment, we need to provide an implementation of
-// HTMLCanvasElement and HTMLImageElement, additionally an implementation
-// of ImageData is required, in case you want to use the MTCNN
-const { Canvas, Image, ImageData } = canvas
-faceapi.env.monkeyPatch({ Canvas, Image, ImageData })
 
 function Join() {
     const [videoEnabled, setVideoEnabled] = useState(true);
@@ -17,37 +10,74 @@ function Join() {
     const [isHost, setIsHost] = useState(false);
     const videoRef = useRef(null);
     const audioRef = useRef(null);
-    
+    const canvasRef = useRef();
+
     const navigate = useNavigate();
     const location = useLocation();
-    
+
     const sessionId = useLocation().pathname.slice(1);
+
+
+    const loadModels = () => {
+        Promise.all([
+            faceapi.loadTinyFaceDetectorModel('/models'),
+            faceapi.loadFaceLandmarkModel('/models'),
+            faceapi.loadFaceRecognitionModel('/models'),
+            faceapi.loadFaceExpressionModel('/models'),
+
+            faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+            faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+            faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+            faceapi.nets.faceExpressionNet.loadFromUri("/models")
+        ]).then(() => {
+            faceMyDetect()
+        })
+    }
+
+    const faceMyDetect = () => {
+        setInterval(async () => {
+            const detections = await faceapi.detectAllFaces(videoRef.current,
+                new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
+
+            // DRAW YOU FACE IN WEBCAM
+            canvasRef.current.innerHtml = faceapi.createCanvasFromMedia(videoRef.current)
+            faceapi.matchDimensions(canvasRef.current, {
+                width: 940,
+                height: 650
+            })
+
+            const resized = faceapi.resizeResults(detections, {
+                width: 940,
+                height: 650
+            })
+
+            faceapi.draw.drawDetections(canvasRef.current, resized)
+            faceapi.draw.drawFaceLandmarks(canvasRef.current, resized)
+            faceapi.draw.drawFaceExpressions(canvasRef.current, resized)
+
+
+        }, 1000)
+    }
 
     const getUserCamera = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            await faceapi.loadSsdMobilenetv1Model('/models')
             videoRef.current.srcObject = stream;
         } catch (error) {
             console.error('Failed to start video:', error);
         }
     }
-    
+
     const getUserAudio = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const input = audioRef.current.srcObject;
-            await faceapi.detectSingleFace(input)
-            await faceapi.detectSingleFace(input).withFaceExpressions()
-            await faceapi.detectSingleFace(input).withFaceLandmarks()
-            await faceapi.detectSingleFace(input).withFaceExpressions().withFaceLandmarks()
-            await faceapi.detectSingleFace(input).withFaceExpressions().withFaceLandmarks().withFaceDescriptor()
             audioRef.current.srcObject = stream;
         } catch (error) {
             console.error('Failed to start audio:', error);
         }
     }
-    
+
     const toggleVideo = () => {
         const enabled = !videoEnabled;
         setVideoEnabled(enabled);
@@ -56,7 +86,7 @@ function Join() {
             track.enabled = enabled;
         });
     }
-    
+
     const toggleAudio = () => {
         const enabled = !audioEnabled;
         setAudioEnabled(enabled);
@@ -65,34 +95,37 @@ function Join() {
             track.enabled = enabled;
         });
     }
-    
-    const joinRoom = async() => {
-            console.log(sessionId);
-            navigate("/lobby", {state: {sessionId: sessionId, userName: userName, videoEnabled: videoEnabled, audioEnabled: audioEnabled, isHost: isHost}});
-            
-        }
-        
-        const changeUser = (event) => {
-            setUserName(event.target.value);
-        }
 
-    useEffect(()=>{
-        if(location.state && location.state.host) setIsHost(true);
+    const joinRoom = async () => {
+        console.log(sessionId);
+        navigate("/lobby", { state: { sessionId: sessionId, userName: userName, videoEnabled: videoEnabled, audioEnabled: audioEnabled, isHost: isHost } });
+
+    }
+
+    const changeUser = (event) => {
+        setUserName(event.target.value);
+    }
+
+    useEffect(() => {
+        if (location.state && location.state.host) setIsHost(true);
         getUserCamera();
         getUserAudio();
+        loadModels()
     }, [videoRef])
-    
+
     return (
         <>
-        <div className='joinContainer'>
-            <video ref={videoRef} autoPlay/>
-            <audio ref={audioRef} autoPlay/>
-            <input onChange={changeUser} placeholder='이름' value={userName}/>
-            <button onClick={toggleVideo}>카메라 {videoEnabled ? "Off" : "On"}</button>
-            <button onClick={toggleAudio}>마이크 {audioEnabled ? "Off" : "On"}</button>
-            <button id="joinButton" onClick={joinRoom} >{isHost ? "방 만들기" : "입장하기"}</button>
-            
-        </div>
+            <div className='joinContainer'>
+                <video ref={videoRef} autoPlay />
+                <audio ref={audioRef} autoPlay />
+                <input onChange={changeUser} placeholder='이름' value={userName} />
+                <button onClick={toggleVideo}>카메라 {videoEnabled ? "Off" : "On"}</button>
+                <button onClick={toggleAudio}>마이크 {audioEnabled ? "Off" : "On"}</button>
+                <button id="joinButton" onClick={joinRoom} >{isHost ? "방 만들기" : "입장하기"}</button>
+
+            </div>
+            <canvas ref={canvasRef} width="940" height="650"
+                className="appcanvas" />
         </>
     )
 }
