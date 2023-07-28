@@ -17,7 +17,7 @@ import axios from 'axios';
 import { useRoomContext } from '../Context';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 //tempbutton
-import BackButton from '../components/buttons/backButton';
+import TempButton from '../components/buttons/TempButton';
 
 
 const StyledDayPage = styled.div`
@@ -84,11 +84,6 @@ const DayPage = () => {
       event.returnValue = '';
     });
   }, [])
-  
-  //지울거
-  const handleBackButtonClick = () => {
-    navigate("/result");
-  };
 
 
     const handleGamePageClick = () => {
@@ -159,8 +154,7 @@ const DayPage = () => {
               </CamCatGrid>
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             </div>
-            <BackButton onClick={handleBackButtonClick}></BackButton>
-            <StartButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
+            <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
             <ChatButtonAndPopup />
         </StyledDayPage>
     </Background>
