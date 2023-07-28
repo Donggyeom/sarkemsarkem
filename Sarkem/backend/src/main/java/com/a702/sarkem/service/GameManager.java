@@ -286,41 +286,9 @@ public class GameManager {
 		param.put("targetNickname", targetPlayer.getNickname());
 		// 누가 누구 지목했는지 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
-		// 낮 투표 결과 종합
-		dayVote(gameSession);
 	}
 
-	// 낮 투표 결과 종합
-	private void dayVote(GameSession gameSession) {
-		// 낮 투표결과 종합 // 게임 세션에 추방 투표 대상 저장
-		int max = 0; // 최다득표 수
-		String maxVotedPlayer = ""; // 최다 득표자 아이디
-		// 최다 득표 수, 최다 득표자 구하기
-		for (RolePlayer r : gameSession.getPlayers()) {
-			if (r.getVotedCnt() > max) {
-				max = r.getVotedCnt();
-				maxVotedPlayer = r.getPlayerId();
-			}
-		}
-		// 최다 득표자가 2명 이상이면 최다득표자 없음 => 저녁투표 안함
-		int cnt = 0;
-		for (RolePlayer r : gameSession.getPlayers()) {
-			if (r.getVotedCnt() == max)
-				cnt++;
-			if (cnt > 1) {
-				maxVotedPlayer = "";
-				break;
-			}
-		}
-
-		// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
-		gameSession.setExpultionTargetId(maxVotedPlayer);
-		HashMap<String, String> expulsionPlayer = new HashMap<>();
-		expulsionPlayer.put("target", maxVotedPlayer);
-		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
-		sendEndDayVoteMessage(gameSession.getRoomId(), expulsionPlayer);
-	}
-
+	
 	// 추방 투표 처리
 	public void expulsionVote(String roomId, Map<String, Boolean> voteOX) {
 		GameSession gameSession = gameSessionMap.get(roomId);
