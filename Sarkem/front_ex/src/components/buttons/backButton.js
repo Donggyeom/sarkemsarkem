@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import backbuttonImage from '../../img/backbutton.png';
 import { useRoomContext } from '../../Context';
 
@@ -13,7 +12,6 @@ const BackButtonContainer = styled.div`
 
 const BackButton = () => {
   const {leaveSession} = useRoomContext();
-  const navigate = useNavigate();
 
   return (
     <BackButtonContainer onClick={leaveSession}>

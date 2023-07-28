@@ -85,7 +85,7 @@ const DayPage = () => {
       return;
     }
     window.history.pushState(null, "", location.href);
-    window.addEventListener("popstate", () => window.history.pushState(null, "", location.href));
+    window.addEventListener("popstate", () => leaveSession);
     window.addEventListener('beforeunload', (event) => {
       // 표준에 따라 기본 동작 방지
       event.preventDefault();
