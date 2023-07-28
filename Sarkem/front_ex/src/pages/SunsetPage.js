@@ -13,48 +13,46 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import TempButton from '../components/buttons/TempButton';
 
-const CamCatGridContainer = styled.div`
-  flex: 1;
-  left : 5%;
-  width : 80%;
-  height: 100%;
-  display: flex;
+const StyledContent = styled.div`
+  display : flex;
+  height : 100%;
+  width : 100%;
   flex-direction: column;
   align-items: center;
-  justify-content : center;
-  overflow: visible;
-  position: relative; /* Add position relative */
+  overflow: hidden;
+  position: relative;
+`
+
+const CamCatGridContainer = styled.div`
+  flex : 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction : column;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
 `;
 
 const CamCatGrid = styled.div`
-  display: grid;
-  gap: 3px;
+  flex : 1;
+  overflow : hidden;
+  // display: grid;
   align-items: center;
   justify-items: center;
-  ${({ style }) =>
-    style &&
-    `
+  ${({ style }) => style && `
     grid-template-rows: ${style.gridTemplateRows};
     grid-template-columns: ${style.gridTemplateColumns};
     width: ${style.width};
     max-height: ${style.maxHeight};
+    height : auto;
   `}
 `;
-
 
 const calculateGrid = (camCount) => {
   const positions = [
   ];
-
-  if (camCount <= positions.length) {
-    const { gridTemplateRows, gridTemplateColumns } = positions[camCount - 1];
-    return {
-      gridTemplateRows,
-      gridTemplateColumns,
-      positions: positions.slice(0, camCount),
-      width: '90%',
-    };
-  } else if (camCount === 1) {
+   if (camCount === 1) {
     return {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr',
@@ -69,7 +67,8 @@ const calculateGrid = (camCount) => {
         { row: 1, col: 1 },
         { row: 1, col: 2 },
       ],
-      width: '50%',
+      width: '100%',
+      height : '100%'
     };
   } else if (camCount === 3) {
     return {
@@ -80,12 +79,13 @@ const calculateGrid = (camCount) => {
         { row: 2, col: 1 },
         { row: 2, col: 2 },
       ],
+      left : '5%',
       width: '90%',
     };
   } else if (camCount === 4) {
     return {
-      gridTemplateRows: '1fr 0.1fr',
-      gridTemplateColumns: '1fr 3fr 1fr',
+      gridTemplateRows: '0fr 0fr',
+      gridTemplateColumns: '1fr 2.5fr 1fr',
       positions:
       [
         { row: 1, col: 1 },
@@ -93,7 +93,8 @@ const calculateGrid = (camCount) => {
         { row: 2, col: 1 },
         { row: 2, col: 3 },
       ],
-      width: '100%',
+      width : '65%',
+      left : '17.5%',
     };
   } else if (camCount === 5) {
     return {
@@ -189,18 +190,23 @@ const SunsetPage = () => {
 
   return (
     <Background>
-      <SunMoon alt="SunMoon"></SunMoon>
+      <StyledContent>
       <TimeSecond>60s</TimeSecond>
-      <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
-      <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
-      <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
       <CamCatGridContainer>
-      <CamCatGrid style={{ gridTemplateRows: gridStyles.gridTemplateRows, gridTemplateColumns: gridStyles.gridTemplateColumns }}>
-          {gridStyles.positions.map(({ row, col }, index) => (
-            <CamCat key={index} props={camArray[index]} style={{ gridRow: row, gridColumn: col }} />
-          ))}
-        </CamCatGrid>
+        <SunMoon alt="SunMoon"></SunMoon>
+        
+        <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
+        <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
+        <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
+        {/* <CamCatGridContainer gridStyles={gridStyles}> */}
+          <CamCatGrid >죽여버림
+              {gridStyles.positions.map(({ row, col }, index) => (
+                <CamCat key={index} props={camArray[index]} style={{ gridRow: row, gridColumn: col }} />
+              ))}
+            </CamCatGrid>
       </CamCatGridContainer>
+      </StyledContent>
+      {/* </CamCatGridContainer> */}
 
       <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomId}/night`)}/>
     </Background>

@@ -22,13 +22,10 @@ const StyledContent = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
-  background-size : cover;
 `;
 
 const RightSection = styled.div`
-  /* 오른쪽 섹션 스타일 작성 */
   flex: 5.5;
-  /* 60% of the available width */
   background-image: url(${boxImage});
   background-size: 97% 98%;
   background-repeat: no-repeat;
@@ -236,9 +233,7 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 10) {
     return {
-      // gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
-       /* 3칸, 4칸, 3칸으로 구성 */
       width : '92%',
     };
 
