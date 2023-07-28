@@ -130,8 +130,8 @@ const ButtonContainer = styled.div`
 `;
 
 const CommonLobby = ()=>{
-  const {roomId, isHost, camArray, leaveSession} = useRoomContext();
-  const {peopleCount, setPeopleCount, handleGamePageClick, stompCilent, token} = useGameContext();
+  const {roomId, isHost, camArray, leaveSession, token} = useRoomContext();
+  const {peopleCount, setPeopleCount, handleGamePageClick, stompCilent} = useGameContext();
 
   const navigate = useNavigate();
   const location = useLocation();

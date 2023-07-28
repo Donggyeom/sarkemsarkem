@@ -71,7 +71,7 @@ const onSocketConnected = () => {
             break;
         case "OPTION_CHANGED":
             setPeopleCount(sysMessage.param);
-            console.log(sysMessage.param);
+            console.log(sysMessage.param.sarkCount);
             break;
         case "ROLE_ASIGNED":
             alert(`당신은 ${sysMessage.param.role} 입니다.`);
