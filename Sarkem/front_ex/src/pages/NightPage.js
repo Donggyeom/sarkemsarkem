@@ -35,27 +35,36 @@ const TimeSecond = styled.text`
     top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
 
-const handleCamButtonClick = () => {
-    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-    console.log('Cam Button clicked!');
-};
-
-const handleMicButtonClick = () => {
-    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-    console.log('Mic Button clicked!');
-};
-
 const handleScMiniClick = () => {
     // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
     console.log('ScMini clicked!');
 };
 
 const NightPage = () => {
-    const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
-        publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-        session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn} = useRoomContext(); 
-    const navigate = useNavigate();
-    const location = useLocation();
+  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
+    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
+    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleCamButtonClick = () => {
+    const camOn = !isCamOn;
+    setIsCamOn(camOn);
+    if (publisher) {
+      publisher.publishVideo(camOn);
+    }
+  };
+  
+  
+  const handleMicButtonClick = () => {
+    const micOn = !isMicOn;
+    setIsMicOn(micOn);
+    if (publisher) {
+      publisher.publishAudio(micOn);
+    }
+  };
+  
+  
 
     useEffect(() => {
         console.log(roomId);
@@ -73,6 +82,30 @@ const NightPage = () => {
           event.returnValue = '';
         });
       }, [])
+
+
+      const CamCatGrid = styled.div`
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+      justify-items: center;
+      align-items: center;
+      width: 100%;
+      max-height: 80vh; /* Set a maximum height to adjust to the available space */
+      overflow: auto; /* Add overflow property to handle overflow if needed */
+    `;
+  
+  
+  
+    const calculateCamCatHeight = () => {
+      const leftSectionHeight = leftSectionRef.current.offsetHeight;
+      const maxCamCatCount = 10; 
+      const camCatCount = Math.min(camArray.length, maxCamCatCount);
+      return `${leftSectionHeight / camCatCount}px`;
+    };
+  
+    const leftSectionRef = useRef(null);
+  
     
 
     return (
@@ -82,8 +115,15 @@ const NightPage = () => {
 
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
-        <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
+        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
+            <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <div ref={leftSectionRef}>
+          <CamCatGrid camCount={camArray.length}>
+            {camArray.map((user, index) => (
+              <CamCat key={index} props={user}/>
+            ))}
+          </CamCatGrid>
+        </div>
         <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
         <NightPopup></NightPopup>
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />

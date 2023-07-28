@@ -151,37 +151,53 @@ const calculateGrid = (camCount) => {
   /* 스타일 내용 동일 */
 `;
 
-const handleCamButtonClick = () => {
-  console.log('Cam Button clicked!');
-};
-
-const handleMicButtonClick = () => {
-  console.log('Mic Button clicked!');
-};
 
 const handleScMiniClick = () => {
   console.log('ScMini clicked!');
 };
 
 const SunsetPage = () => {
-  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName, publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray, session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn } = useRoomContext();
+   
+  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
+    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
+    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    console.log(roomId);
-    if (roomId === undefined) {
-      console.log("세션 정보가 없습니다.")
-      navigate("/");
-      return;
+  const handleCamButtonClick = () => {
+    const camOn = !isCamOn;
+    setIsCamOn(camOn);
+    if (publisher) {
+      publisher.publishVideo(camOn);
     }
-    window.history.pushState(null, "", location.href);
-    window.addEventListener("popstate", () => window.history.pushState(null, "", location.href));
-    window.addEventListener('beforeunload', (event) => {
-      event.preventDefault();
-      event.returnValue = '';
-    });
-  }, []);
+  };
+  
+  
+  const handleMicButtonClick = () => {
+    const micOn = !isMicOn;
+    setIsMicOn(micOn);
+    if (publisher) {
+      publisher.publishAudio(micOn);
+    }
+  };
+  
+  
+    useEffect(() => {
+        console.log(roomId);
+        if (roomId === undefined){
+          console.log("세션 정보가 없습니다.")
+          navigate("/");
+          return;
+        }
+        window.history.pushState(null, "", location.href);
+        window.addEventListener("popstate", () => window.history.pushState(null, "", location.href));
+        window.addEventListener('beforeunload', (event) => {
+          // 표준에 따라 기본 동작 방지
+          event.preventDefault();
+          // Chrome에서는 returnValue 설정이 필요함
+          event.returnValue = '';
+        });
+      }, [])
 
   const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
 
@@ -192,6 +208,9 @@ const SunsetPage = () => {
     <Background>
       <StyledContent>
       <TimeSecond>60s</TimeSecond>
+      <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
+      <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+      <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
       <CamCatGridContainer>
         <SunMoon alt="SunMoon"></SunMoon>
         
