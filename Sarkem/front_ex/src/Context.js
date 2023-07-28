@@ -23,9 +23,6 @@ const RoomProvider = ({ children }) => {
 
     useEffect(() => {
 
-        console.log(nickName);
-        console.log(isHost);
-        console.log(camArray);
         if (session) {
           // 토큰 발급
           connectSession();
@@ -49,7 +46,7 @@ const RoomProvider = ({ children }) => {
     // 특정 유저가 룸을 떠날 시 subscribers 배열에서 삭제
   const deleteSubscriber = (streamManager) => {
     setSubscribers((preSubscribers) => preSubscribers.filter((subscriber) => subscriber !== streamManager))
-    setCamArray((prevCamArray) => prevCamArray.filter((user) => user != streamManager));
+    setCamArray((prevCamArray) => prevCamArray.filter((user) => user !== streamManager));
   }
 
     // Openvidu 세션 생성 및 이벤트 정보 등록
@@ -106,7 +103,6 @@ const RoomProvider = ({ children }) => {
           // 내 디바이스 on/off 상태 게시
           publisher.publishVideo(isCamOn);
           publisher.publishAudio(isMicOn);
-
           // 퍼블리셔 useState 갱신
           setPublisher(publisher);
           setCamArray((camArray) => [...camArray, publisher]);
@@ -124,7 +120,7 @@ const RoomProvider = ({ children }) => {
   return (
     <RoomContext.Provider value={{ roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn}}>
+    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn}}>
       {children}
     </RoomContext.Provider>
   );

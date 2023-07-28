@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import logoImage from '../img/logo.png';
 import camcatImage from '../img/camcat.png';
@@ -11,11 +11,9 @@ import offImage from '../img/off.png';
 import onImage from '../img/on.png'
 import micImage from '../img/mic.png';
 import camImage from '../img/cam.png';
-import MakeroomButton from '../components/buttons/makeroomButton';
 import GoroomButton from '../components/buttons/goroomButton';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
-import CamCat from '../components/camera/camcat';
 
 
 const StyledStartPage = styled.div`
@@ -107,16 +105,12 @@ const Logo = styled.img`
 `;
 
 const CommonStart = ({onClick} ) => {
-  const { setRoomId, isHost, nickName, setNickName } = useRoomContext();
+  const { setRoomId, isHost, nickName, setNickName, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
   const navigate = useNavigate();
   const location = useLocation();
   
   // setRoomId(location.pathname.slice(1));
   // const isHost = location.state?.isHost;
-
-
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCamOn, setIsCamOn] = useState(true);
 
   const videoRef = useRef(null);
   const audioRef = useRef(null);
@@ -164,8 +158,8 @@ const CommonStart = ({onClick} ) => {
   }
 
   const handleMicToggle = () => {
-    const micOn = !isMicOn;
-    setIsMicOn(micOn)
+    const micOn = isMicOn
+    setIsMicOn(!micOn);
     const tracks = audioRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = micOn;
@@ -173,8 +167,8 @@ const CommonStart = ({onClick} ) => {
   };
 
   const handleCamToggle = () => {
-    const camOn = !isCamOn;
-    setIsCamOn(camOn);
+    const camOn = isCamOn
+    setIsCamOn(!camOn);
     const tracks = videoRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = camOn;
@@ -183,7 +177,6 @@ const CommonStart = ({onClick} ) => {
 
   const handleNickNameChange = (event) => {
     setNickName(event.target.value);
-    console.log(nickName)
   }
 
   return (

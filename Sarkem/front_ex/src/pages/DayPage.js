@@ -76,7 +76,7 @@ const DayPage = () => {
       return;
     }
     window.history.pushState(null, "", location.href);
-    window.addEventListener("popstate", () => window.history.pushState(null, "", location.href));
+    window.addEventListener("popstate", () => leaveSession);
     window.addEventListener('beforeunload', (event) => {
       // 표준에 따라 기본 동작 방지
       event.preventDefault();
@@ -160,6 +160,7 @@ const DayPage = () => {
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             </div>
             <BackButton onClick={handleBackButtonClick}></BackButton>
+            <StartButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
             <ChatButtonAndPopup />
         </StyledDayPage>
     </Background>

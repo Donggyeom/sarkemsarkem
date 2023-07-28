@@ -4,7 +4,6 @@ import Background from '../components/backgrounds/BackgroundSunset';
 import styled from 'styled-components';
 import React, { useState, useEffect, useRef } from 'react';
 import boxImage from '../img/box.png';
-import camcatImage from '../img/camcat.png';
 import sc_police from '../img/sc_경찰.png';
 import sc_vet from '../img/sc_수의사.png';
 import sc_sark from '../img/sc_삵.png';
@@ -130,8 +129,7 @@ const ButtonContainer = styled.div`
 `;
 
 const CommonLobby = ()=>{
-  const {roomId, isHost, nickName
-    ,session, camArray, joinSession, connectSession, leaveSession} = useRoomContext();
+  const {roomId, isHost, camArray, leaveSession} = useRoomContext();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -141,9 +139,8 @@ const CommonLobby = ()=>{
       navigate("/");
       return;
     }
-
     window.history.pushState(null, "", location.href);
-    window.addEventListener("popstate", () => window.history.pushState(null, "", location.href));
+    window.addEventListener("popstate", () => leaveSession());
     window.addEventListener('beforeunload', (event) => {
       // 표준에 따라 기본 동작 방지
       event.preventDefault();
@@ -160,11 +157,11 @@ const CommonLobby = ()=>{
   }, [])
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
-  const onbeforeunload = (event) => {
-    event.preventDefault();
-    event.returnValue = '';
-    // leaveSession();
-}
+  // const onbeforeunload = (event) => {
+  //   event.preventDefault();
+  //   event.returnValue = '';
+  //   // leaveSession();
+  // }
 
   const handleGamePageClick = () => {
     // Logic to navigate to the GamePage when the user is a host
@@ -182,13 +179,15 @@ const CommonLobby = ()=>{
   flex: 1;
   display: grid;
   gap: 3px;
+  align-items: center;
   justify-items: center;
-  
   overflow: hidden;
   ${({ style }) => style && `
     grid-template-rows: ${style.gridTemplateRows};
     grid-template-columns: ${style.gridTemplateColumns};
-    width : ${style.width};
+    width: ${style.width};
+    max-height: ${style.maxHeight};
+    height: auto;
   `}
 `;
 
@@ -207,7 +206,7 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 3) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr',
+      gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
     };
@@ -248,8 +247,8 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 10) {
     return {
-      gridTemplateRows: 'repeat(3, 1fr)',
-      gridTemplateColumns: 'repeat(3, 1fr) repeat(4, 1fr) repeat(3, 1fr)',
+      // gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr',
        /* 3칸, 4칸, 3칸으로 구성 */
       width : '92%',
     };
@@ -291,13 +290,12 @@ const leftSectionRef = useRef(null);
       <BackButton/>
       <StyledContent>
         <LeftSection ref={leftSectionRef}>
-            <CamCatGrid style={gridStyles}>
-        {camArray.map((user, index) => (
-          <CamCat key={index} props={user} />
-        ))}
-      </CamCatGrid>
+          <CamCatGrid style={gridStyles}>
+            {camArray.map((user, index) => (
+              <CamCat key={index} props={user} />
+            ))}
+          </CamCatGrid>
         </LeftSection>
-
         <RightSection>
           <DivWrapper
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}
