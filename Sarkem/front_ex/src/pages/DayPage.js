@@ -18,6 +18,7 @@ import { useRoomContext } from '../Context';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 //tempbutton
 import TempButton from '../components/buttons/TempButton';
+import on from '../img/on.png';
 
 
 const StyledDayPage = styled.div`
@@ -130,6 +131,11 @@ const DayPage = () => {
 
   const leftSectionRef = useRef(null);
 
+  const handleImageClick = () => {
+    console.log('눌림');
+  };
+
+
     
     return (
     <Background>
@@ -149,6 +155,8 @@ const DayPage = () => {
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             </div>
             <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
+
+            <img src={on} alt="Back" onClick={handleImageClick} />
             <ChatButtonAndPopup />
         </StyledDayPage>
     </Background>

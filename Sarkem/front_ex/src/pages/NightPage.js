@@ -14,6 +14,7 @@ import { useRoomContext } from '../Context';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CamCat from '../components/camera/camcat';
 
+
 const StyledNightPage = styled.div`
   display: flex;
   flex-direction: column;
@@ -73,8 +74,12 @@ const NightPage = () => {
         });
       }, [])
     
+
     return (
+    
     <Background>
+      <StyledNightPage>
+
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
@@ -82,6 +87,9 @@ const NightPage = () => {
         <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
         <NightPopup></NightPopup>
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
+        
+
+      </StyledNightPage>
         
     </Background>
   );
