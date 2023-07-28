@@ -170,13 +170,15 @@ const CommonLobby = ()=>{
   flex: 1;
   display: grid;
   gap: 3px;
+  align-items: center;
   justify-items: center;
-  
   overflow: hidden;
   ${({ style }) => style && `
     grid-template-rows: ${style.gridTemplateRows};
     grid-template-columns: ${style.gridTemplateColumns};
-    width : ${style.width};
+    width: ${style.width};
+    max-height: ${style.maxHeight};
+    height: auto;
   `}
 `;
 
@@ -195,7 +197,7 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 3) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr',
+      gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
     };
@@ -236,8 +238,8 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 10) {
     return {
-      gridTemplateRows: 'repeat(3, 1fr)',
-      gridTemplateColumns: 'repeat(3, 1fr) repeat(4, 1fr) repeat(3, 1fr)',
+      // gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr',
        /* 3칸, 4칸, 3칸으로 구성 */
       width : '92%',
     };
@@ -279,13 +281,12 @@ const leftSectionRef = useRef(null);
       <BackButton/>
       <StyledContent>
         <LeftSection ref={leftSectionRef}>
-            <CamCatGrid style={gridStyles}>
-        {camArray.map((user, index) => (
-          <CamCat key={index} props={user} />
-        ))}
-      </CamCatGrid>
+          <CamCatGrid style={gridStyles}>
+            {camArray.map((user, index) => (
+              <CamCat key={index} props={user} />
+            ))}
+          </CamCatGrid>
         </LeftSection>
-
         <RightSection>
           <DivWrapper
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}
