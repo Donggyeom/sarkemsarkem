@@ -92,6 +92,8 @@ const RightPart = styled.div`
     border: none;
     background-color: transparent;
     outline: none;
+    text-align: center; 
+    margin-right: 160px;
   }
 `;
 
@@ -225,7 +227,7 @@ const CommonStart = ({onClick} ) => {
               type="text"
               value={nickName}
               onChange={handleNickNameChange}
-              placeholder="Enter your nickname"
+              placeholder="닉네임을 입력하세요"
             />
             </RightPart>
             </DivWrapper>
