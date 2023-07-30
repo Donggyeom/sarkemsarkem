@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import OpenViduVideoComponent from './OvVideo';
+import OpenViduVideoComponent from './';
 
 const containerStyle = {
   position: 'relative', // Set container to relative position
