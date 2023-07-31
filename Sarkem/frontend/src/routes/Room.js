@@ -356,7 +356,7 @@ function Room () {
             break;
         case "TARGET_SELECTION_END":
             // 선택 완료
-            alert("선택 완료");
+            alert("선택 완료", sysMessage.param.targetNickname);
             setSelectedTarget("");
             break;
         case "VOTE_SITUATION":

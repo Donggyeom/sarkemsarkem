@@ -315,14 +315,21 @@ public class GameManager {
 	public void selectedTarget(String roomId, String playerId) {
 		GameSession gameSession = getGameSession(roomId);
 		RolePlayer rPlayer = (RolePlayer) gameSession.getPlayer(playerId);
-		RolePlayer targetPlayer = (RolePlayer) gameSession.getPlayer(rPlayer.getTarget());
-		HashMap<String, String> param = new HashMap<>();
-		
 		rPlayer.setTargetConfirmed(true);
 		
+		String targetId = rPlayer.getTarget();
+		String targetNickname = "";
+		RolePlayer targetPlayer = gameSession.getPlayer(targetId);
+		log.debug(targetPlayer.toString());
+		if (targetPlayer == null) {
+			targetId = "";
+			targetNickname = "";
+		}
+		HashMap<String, String> param = new HashMap<>();
 		param.put("playerId", playerId);
-		param.put("targetId", rPlayer.getTarget());
-		param.put("targetNickname", targetPlayer.getNickname());
+		param.put("targetId", targetId);
+		param.put("targetNickname", targetNickname);
+		
 		// 누가 누구 지목했는지 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
 	}
