@@ -25,7 +25,7 @@ const StyledContent = styled.div`
 `;
 
 const RightSection = styled.div`
-  flex: 5.5;
+  flex: 45%;
   background-image: url(${boxImage});
   background-size: 97% 98%;
   background-repeat: no-repeat;
@@ -39,7 +39,6 @@ const RightSection = styled.div`
 
 
 const DivWrapper = styled.div`
-  /* Wrapper for each RightDiv to split into two parts, except for Div 4 */
   display: flex;
   justify-content : space-between;
 `;
@@ -73,17 +72,17 @@ const Logo = styled.img`
 `;
 
 const LeftSection = styled.div`
-  flex: 4.5;
-  height: 100%;
+  flex: 55%;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
-  position: relative; /* Add position relative */
+  justify-content : center;
+  position: relative;
 `;
 
 const LeftPartWrapper = styled.div`
-  flex: 2;
+  flex: 1.75;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -91,11 +90,11 @@ const LeftPartWrapper = styled.div`
   background-position: center center;
   justify-content: center;
   background-size: contain;
-  height: 180%;
+  height: 140%;
   width : 120%;
 `;
 const RightPartWrapper = styled.div`
-  flex: 0.75;
+  flex: 0.5;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -162,89 +161,284 @@ const CommonLobby = ()=>{
   };
 
   const CamCatGrid = styled.div`
-  flex: 1;
+  left : 1.5%;
+  position : relative;
   display: grid;
-  gap: 3px;
   align-items: center;
   justify-items: center;
   overflow: hidden;
-  ${({ style }) => style && `
-    grid-template-rows: ${style.gridTemplateRows};
-    grid-template-columns: ${style.gridTemplateColumns};
+  ${({ style }) =>
+    style && `
     width: ${style.width};
-    max-height: ${style.maxHeight};
-    height: auto;
+    height : ${style.height};
+    left : ${style.left};
   `}
 `;
 
+// 이부분 건들면 됨 카메라 배치//
 const calculateGrid = (camCount) => {
   if (camCount === 1) {
     return {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr',
-      width : '100%',
+      width: '100%',
     };
   } else if (camCount === 2) {
     return {
-      gridTemplateRows: '1fr 1fr',
-      gridTemplateColumns: '1fr',
-      width : '50%',
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr 1fr',
+      width: '100%',
     };
   } else if (camCount === 3) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width : '100%',
+      width: '100%',
     };
   } else if (camCount === 4) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
+      width: '100%',
     };
   } else if (camCount === 5) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width : '62%',
+      width: '90%',
     };
   } else if (camCount === 6) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width : '62%',
+      width: '65%',
+      height : '100%',
     };
   } else if (camCount === 7) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
-      width : '92%',
+      width: '100%',
+      height : '100%',
     };
   } else if (camCount === 8) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
-      width : '92%',
+      width: '100%',
+      height : '100%',
     };
   } else if (camCount === 9) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
-      width : '92%',
+      width: '100%',
+      height : '100%',
     };
   } else if (camCount === 10) {
     return {
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
-      width : '92%',
+      width: '100%',
+      height : '100%',
     };
-
   } else {
-    // Add more cases as needed
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
     };
   }
 };
+
+const CamCatWrapper = styled.div`
+  ${({ camCount, index }) =>
+  camCount === 3 && index === 0
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 3 && index === 1
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 5 && index === 0
+  ? `
+    position: relative;
+    width : 75%;
+    left : 50%;
+  `
+  :
+  camCount === 5 && index === 1
+  ? `
+    position: relative;
+    width : 75%;
+    top : 100%;
+  `
+  :
+  camCount === 5 && index === 2
+  ? `
+    position: relative;
+    width : 75%;
+  `
+  :
+  camCount === 5 && index === 3
+  ? `
+    position: relative;
+    width : 75%;
+    top : 100%;
+  `
+  :
+  camCount === 5 && index === 4
+  ? `
+    position: relative;
+    width : 75%;
+  `
+  :
+  camCount === 7 && index === 0
+  ? `
+    position: relative;
+    left : 100%;
+  `
+  :
+  camCount === 7 && index === 1
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 7 && index === 2
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 7 && index === 3
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 7 && index === 4
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 7 && index === 5
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 7 && index === 6
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 8 && index === 0
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 8 && index === 1
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 8 && index === 2
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 8 && index === 3
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 8 && index === 4
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 8 && index === 5
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 8 && index === 6
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 8 && index === 7
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 10 && index === 0
+  ? `
+    position: relative;
+    left : 100%;
+  `
+  :
+  camCount === 10 && index === 1
+  ? `
+    position: relative;
+    left : 100%;
+  `
+  :
+  camCount === 10 && index === 2
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 10 && index === 3
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 10 && index === 4
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 10 && index === 5
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 10 && index === 6
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 10 && index === 7
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 10 && index === 8
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 10 && index === 9
+  ? `
+    position: relative;
+  `
+  : ''};
+`;
+
+// 이부분 건들면 됨 카메라 배치 여기까지//
 
 const camCount = camArray.length;
 const gridStyles = calculateGrid(camCount);
@@ -274,11 +468,13 @@ const leftSectionRef = useRef(null);
       <BackButton/>
       <StyledContent>
         <LeftSection ref={leftSectionRef}>
-          <CamCatGrid style={gridStyles}>
-            {camArray.map((user, index) => (
-              <CamCat key={index} props={user} />
-            ))}
-          </CamCatGrid>
+        <CamCatGrid style={gridStyles}>
+          {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
+            <CamCatWrapper key={index} camCount={camCount} index={index}>
+              <CamCat props={camArray[index]} />
+            </CamCatWrapper>
+          ))}
+        </CamCatGrid>
         </LeftSection>
         <RightSection>
           <DivWrapper

@@ -1,9 +1,6 @@
-/* eslint-disable */
-
 import React, { useState, useEffect, useRef }  from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
-/* Code generated with AutoHTML Plugin for Figma */
 import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
@@ -23,29 +20,20 @@ const StyledContent = styled.div`
   position: relative;
 `
 
-const CamCatGridContainer = styled.div`
-  flex : 1;
-  display: flex;
-  width: 100%;
-  height: 100%;
-  flex-direction : column;
-  align-items: center;
-  overflow: hidden;
-  position: relative;
-`;
-
 const CamCatGrid = styled.div`
-  flex : 1;
-  overflow : hidden;
-  // display: grid;
+  position : absolute;
+  display: grid;
+  // grid-gap: 10px;
   align-items: center;
   justify-items: center;
-  ${({ style }) => style && `
-    grid-template-rows: ${style.gridTemplateRows};
-    grid-template-columns: ${style.gridTemplateColumns};
+  overflow: hidden;
+  ${({ style }) =>
+    style && `
     width: ${style.width};
+    height : ${style.height};
     max-height: ${style.maxHeight};
-    height : auto;
+    left : ${style.left};
+
   `}
 `;
 
@@ -57,6 +45,7 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr',
       positions: [{ row: 1, col: 1 }],
+      height : '100%',
       width: '100%',
     };
   } else if (camCount === 2) {
@@ -73,18 +62,19 @@ const calculateGrid = (camCount) => {
   } else if (camCount === 3) {
     return {
       gridTemplateRows: '1fr',
-      gridTemplateColumns: '1fr 3fr 1fr',
+      gridTemplateColumns: '1fr 2.8fr 1fr',
       positions: [
         { row: 1, col: 1 },
         { row: 2, col: 1 },
         { row: 2, col: 2 },
       ],
       left : '5%',
+      height : '100%',
       width: '90%',
     };
   } else if (camCount === 4) {
     return {
-      gridTemplateRows: '0fr 0fr',
+      gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 2.5fr 1fr',
       positions:
       [
@@ -93,29 +83,56 @@ const calculateGrid = (camCount) => {
         { row: 2, col: 1 },
         { row: 2, col: 3 },
       ],
-      width : '65%',
-      left : '17.5%',
+      width : '100%',
+      height : '100%',
     };
   } else if (camCount === 5) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 1fr',
-      positions: positions.slice(0, camCount),
-      width: '62%',
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 2.5fr 1fr',
+      positions:
+      [
+        { row: 1, col: 1 },
+        { row: 1, col: 2 },
+        { row: 1, col: 3 },
+        { row: 2, col: 1 },
+        { row: 2, col: 3 },
+      ],
+      width : '100%',
+      height : '100%',
     };
   } else if (camCount === 6) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 1fr',
-      positions: positions.slice(0, camCount),
-      width: '62%',
+      gridTemplateColumns: '1fr 3fr 1fr',
+      positions:
+      [
+        { row: 1, col: 1 },
+        { row: 1, col: 2 },
+        { row: 1, col: 3 },
+        { row: 2, col: 1 },
+        { row: 2, col: 3 },
+        { row: 3, col: 1 },
+      ],
+      width : '100%',
+      height : '100%',
     };
   } else if (camCount === 7) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
-      positions: positions.slice(0, camCount),
-      width: '92%',
+      positions:
+      [
+        { row: 1, col: 1 },
+        { row: 1, col: 2 },
+        { row: 1, col: 3 },
+        { row: 2, col: 1 },
+        { row: 2, col: 3 },
+        { row: 3, col: 1 },
+        { row: 3, col: 3 }, 
+      ],
+      width : '100%',
+      height : '100%',
     };
   } else if (camCount === 8) {
     return {
@@ -146,6 +163,134 @@ const calculateGrid = (camCount) => {
     };
   }
 };
+
+const CamCatWrapper = styled.div`
+  ${({ camCount, index }) =>
+  
+  camCount === 4 && index === 0
+  ? `
+    position: relative;
+    left: 45%;
+  `
+  :
+  camCount === 4 && index === 1
+  ? `
+    position: relative;
+    top: 35%;
+    left : 1%;
+  `
+  :
+  camCount === 4 && index === 2
+  ? `
+    position: relative;
+    right : 45%;
+  `
+  
+  : camCount === 4 && index === 3
+  ? `
+    position: relative;
+    top: -25%; 
+    left: 45%;
+  `
+  : camCount === 5 && index === 0
+  ? `
+    position: relative;
+    left: 25%;
+  `
+  : camCount === 5 && index === 1
+  ? `
+    position : relative;
+    top : 30%;
+  `
+  : camCount === 5 && index === 2
+  ? `
+    position : relative;
+    right : 32.5%;
+
+  `
+  : camCount === 5 && index === 3
+  ? `
+    position: relative;
+    left: 25%;
+    bottom : 25%;
+  `
+  : camCount === 5 && index === 4
+  ? `
+    position: relative;
+    width : 40%;
+    left: 57%;
+    bottom : 25%;
+  `
+  : camCount === 6 && index === 0
+  ? `
+    position: relative;
+    left: 55%;
+    bottom : 25%;
+    width : 90%;
+  `
+  : camCount === 6 && index === 1
+  ? `
+    position: relative;
+    top : 35%;
+    left : 3%;
+  `
+  : camCount === 6 && index === 2
+  ? `
+    position: relative;
+    right : 35%;
+    width : 90%;
+  `
+  : camCount === 6 && index === 3
+  ? `
+    position: relative;
+    left: 25%;
+    bottom : 103%;
+    width : 90%;
+  `
+  : camCount === 6 && index === 4
+  ? `
+    position: relative;
+    width : 30%;
+    top : 6%;
+    right : 50%;
+  `
+  : camCount === 6 && index === 5
+  ? `
+    position: relative;
+    right : 35%;
+    bottom : 15%;
+    width : 90%;
+  `
+  : camCount === 7 && index === 0
+  ? `
+    position: relative;
+  `
+  : camCount === 7 && index === 1
+  ? `
+    position: relative;
+  `
+  : camCount === 7 && index === 2
+  ? `
+    position: relative;
+  `
+  : camCount === 7 && index === 3
+  ? `
+    position: relative;
+  `
+  : camCount === 7 && index === 4
+  ? `
+    position: relative;
+  `
+  : camCount === 7 && index === 5
+  ? `
+    position: relative;
+  `
+  : camCount === 7 && index === 6
+  ? `
+    position: relative;
+  `
+  : ''};
+`;
 
   const TimeSecond = styled.text`
   /* 스타일 내용 동일 */
@@ -200,8 +345,6 @@ const SunsetPage = () => {
       }, [])
 
   const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
-
-  // camCount가 변경될 때마다 gridStyles를 업데이트
   const gridStyles = calculateGrid(camCount);
 
   return (
@@ -212,22 +355,21 @@ const SunsetPage = () => {
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
       <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
-      <CamCatGridContainer>
+        <SunMoon alt="SunMoon"></SunMoon>
         
-        {/* <CamCatGridContainer gridStyles={gridStyles}> */}
-          <CamCatGrid >죽여버림
-              {gridStyles.positions.map(({ row, col }, index) => (
-                <CamCat key={index} props={camArray[index]} style={{ gridRow: row, gridColumn: col }} />
-              ))}
-            </CamCatGrid>
-      </CamCatGridContainer>
+        <CamCatGrid style={gridStyles}>
+          {gridStyles.positions.map(({ row, col }, index) => (
+            <CamCatWrapper key={index} camCount={camCount} index={index}>
+              <CamCat props={camArray[index]} style={{ gridRow: row, gridColumn: col }} />
+            </CamCatWrapper>
+          ))}
+        </CamCatGrid>
       </StyledContent>
       {/* </CamCatGridContainer> */}
 
       <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomId}/night`)}/>
-    </Background>
+      </Background>
   );
 };
-
 
 export default SunsetPage;
