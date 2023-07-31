@@ -117,7 +117,7 @@ function Room () {
             connectGame();
            console.log(stompCilent.current.connected);
          }, 500);
-        })
+        });
     }
 
     const onSocketConnected = () => {
@@ -128,7 +128,18 @@ function Room () {
         // 게임방 redis 구독
         console.log('/sub/game/system/' + location.state.sessionId + " redis 구독")
         stompCilent.current.subscribe('/sub/game/system/' + location.state.sessionId, receiveMessage)
-        console.log()
+        
+        // 입장 코드 전송
+        console.log("ENTER 코드 전송");
+        console.log("roomId : " + location.state.sessionId);
+        console.log("playerId : " + token);
+        stompCilent.current.send("/pub/game/action", {}, 
+        JSON.stringify({
+            code:'ENTER', 
+            roomId: location.state.sessionId, 
+            playerId: token
+        })
+        );
     }
 
     // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
