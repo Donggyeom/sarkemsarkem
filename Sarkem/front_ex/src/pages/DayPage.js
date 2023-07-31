@@ -108,7 +108,38 @@ const DayPage = () => {
 const calculateGrid = (camCount) => {
   const positions = [
   ];
-  if (camCount === 6) {
+  if (camCount === 1) {
+    return {
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr',
+      height : '100%',
+      width: '100%',
+    };
+  } else if (camCount === 2) {
+    return {
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr 1fr',
+      width: '90%',
+    };
+  } else if (camCount === 3) {
+    return {
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
+      width: '60%',
+    };
+  } else if (camCount === 4) {
+    return {
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
+      width : '60%',
+    };
+  } else if (camCount === 5) {
+    return {
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      width : '75%',
+    };
+} else if (camCount === 6) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
@@ -153,11 +184,40 @@ const calculateGrid = (camCount) => {
 
 const CamCatWrapper = styled.div`
   ${({ camCount, index }) =>
-  
-  camCount === 4 && index === 0
+
+  camCount === 3 && index === 0
   ? `
     position: relative;
-    left: 45%;
+    left : 50%;
+  `
+  :
+  camCount === 3 && index === 1
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 3 && index === 2
+  ? `
+    position: relative;
+  `
+  :
+  camCount === 5 && index === 0
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 5 && index === 1
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 5 && index === 2
+  ? `
+    position: relative;
+    top : 100%;
   `
   :
   camCount === 7 && index === 0
