@@ -44,28 +44,33 @@ public class GameThread extends Thread {
 
 		// 낮 페이즈 시작
 		convertPhaseToDay();
-		Thread dayVoteThread = new DayVoteThread();
-		dayVoteThread.start();
-		try {
-			dayVoteThread.join(meetingTime);
-		} catch (InterruptedException e) { }
-		
-		gameManager.sendEndDayVoteMessage(roomId, null);
 
 		// 게임 진행
 		while (true) {
-			// 게임종료 검사
-			if (isGameEnd())
-				break;
+
 			// 낮 페이즈
 			convertPhaseToDay();
 
 			// 투표타임 타이머
+			Thread dayVoteThread = new DayVoteThread();
+			dayVoteThread.start();
+			try {
+				dayVoteThread.join(meetingTime);
+			} catch (InterruptedException e) {
+			}
 
-			// 낮페이즈 끝나면
-			// 저녁 페이즈 => 추방투표 시작
-			convertPhaseToTwilight();
-			// 투표타임 타이머
+			// 낮페이즈 끝나면 // 투표 결과 처리 및 낮 투표 종료 메시지 보내기
+			dayVote();
+
+			// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로!!!!!!
+			if (gameSession.getExpultionTargetId() == null || "".equals(gameSession.getExpultionTargetId())) {
+				// 대상 없다 노티스메시지 보내기
+				gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.");
+			} else {
+				// 저녁 페이즈 => 추방투표 시작
+				convertPhaseToTwilight();
+				// 투표타임 타이머
+			}
 
 			// 저녁 페이즈 끝나면
 			// 게임종료 검사
@@ -73,6 +78,10 @@ public class GameThread extends Thread {
 				break;
 			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
 			convertPhaseToNight();
+
+			// 게임종료 검사
+			if (isGameEnd())
+				break;
 		}
 
 		// 게임 종료 메시지 전송
@@ -149,15 +158,11 @@ public class GameThread extends Thread {
 
 	// 저녁 페이즈
 	private void convertPhaseToTwilight() {
+
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
 		gameManager.sendTwilightPhaseMessage(roomId);
 		// 대상이 있으면 저녁투표 시작
-		// 대상 없다면
-		if (gameSession.getExpultionTargetId() == null || "".equals(gameSession.getExpultionTargetId())) {
-			// 대상 없다 노티스메시지 보내기
-			gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없습니다.");
-			return;
-		}
+
 		gameManager.sendTwilightVoteMessage(roomId);
 	}
 
@@ -172,7 +177,7 @@ public class GameThread extends Thread {
 		// 이에 대한 시스템, 액션 코드 필요할 듯
 
 	}
-	
+
 	// 플레이어 투표 종료 여부 반환
 	private boolean isPlayersVoteEnded() throws InterruptedException {
 		List<RolePlayer> players = gameSession.getPlayers();
@@ -180,11 +185,13 @@ public class GameThread extends Thread {
 		while (true) {
 			confirmCnt = 0;
 			for (RolePlayer p : players) {
-				if (p.isTargetConfirmed()) confirmCnt++;
+				if (p.isTargetConfirmed())
+					confirmCnt++;
 			}
 			// 투표가 모두 완료되면 종료
-			if (confirmCnt == players.size()) return true;
-			
+			if (confirmCnt == players.size())
+				return true;
+
 			sleep(500);
 		}
 	}
@@ -202,14 +209,15 @@ public class GameThread extends Thread {
 		}
 		// 마피아수>=시민수 => 마피아 win
 		if (aliveSark >= aliveCitizen) {
-			gameSession.setWinTeam(2);
+			gameSession.setWinTeam(1);
 			return true;
 		}
 		// 마피아수==0 => 시민 win
 		if (aliveSark == 0) {
-			gameSession.setWinTeam(3);
+			gameSession.setWinTeam(2);
 			return true;
 		}
+		log.debug("삵 수: " + aliveSark + " / 시민 수: " + aliveCitizen);
 		return false;
 	}
 
@@ -229,14 +237,16 @@ public class GameThread extends Thread {
 //		SystemMessage message = new SystemMessage(roomId, SystemCode.BE_HUNTED, deadPlayerId);
 //		gamePublisher.publish(gameTopic, message);
 	}
-	
+
 	class DayVoteThread extends Thread {
 		@Override
 		public void run() {
 			// 투표 대기
 			try {
-				if (isPlayersVoteEnded()) return;
-			} catch (InterruptedException e) { }
+				if (isPlayersVoteEnded())
+					return;
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 }

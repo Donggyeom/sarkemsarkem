@@ -363,7 +363,7 @@ function Room () {
             console.log(sysMessage.param);
             break;
         case "DAY_VOTE_END":
-            console.log("낮 투표 종료");
+            console.log("낮 투표 종료", sysMessage.param.target);
             break;
         case "GAME_END":
             alert("게임 종료");

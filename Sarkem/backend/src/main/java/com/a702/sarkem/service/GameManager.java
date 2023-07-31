@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.a702.sarkem.exception.GameRoomNotFoundException;
 import com.a702.sarkem.model.game.GameSession;
+import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.game.message.SystemMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
@@ -248,20 +249,43 @@ public class GameManager {
 		String targetId = target.get("target");
 		RolePlayer player = (RolePlayer) gameSession.getPlayer(playerId); // 타겟을 지목한 플레이어
 		RolePlayer newTargetPlayer = (RolePlayer) gameSession.getPlayer(targetId); // 플레이어가 새로 지목한 타겟 플레이어
-		// 이전에 지목한 타겟이 없을 때
-		if (player.getTarget() == null || "".equals(player.getTarget())) {
-			newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
-			player.setTarget(targetId); // 현재 타겟 업데이트
-		} // 기존 타겟과 새로 지목한 타겟이 다르면
-		else if (!player.getTarget().equals(targetId)) {
-			RolePlayer targetedPlayer = (RolePlayer) gameSession.getPlayer(player.getTarget()); // 플레이어의 기존 타겟이었던 플레이어
-			targetedPlayer.setVotedCnt(targetedPlayer.getVotedCnt() - 1); // 기존 타겟이 받은 투표수--
-			if (newTargetPlayer != null) {
-				newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
+		
+		// 밤 직업 별 투표 // 투표하는 애들은 삵, 의사, 경찰, 심리학자, 냥아치
+		if(gameSession.getPhase().equals(PhaseType.NIGHT)) {
+			List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
+			List<String> thisPlayers = new ArrayList<>(); // 이 직업을 가진 플레이어들id
+			for(RolePlayer rPlayer : players) {
+				if(player.getRole().equals(rPlayer.getRole())) {
+					rPlayer.setTargetConfirmed(false); // 이미 선택완료한 사람들 있을 수도 있으니까 선택완료false해주기
+					rPlayer.setTarget(targetId); // 직업이 일치하는 플레이어들의 타겟 동일하게 설정
+					thisPlayers.add(rPlayer.getPlayerId());
+				}
 			}
-			player.setTarget(targetId); // 현재 타겟 업데이트
+			HashMap<String, String> votingMap = new HashMap<>();
+			// 일단은 파람에 타겟이랑 롤 이름?? 을 보내볼게
+			votingMap.put("target", targetId);
+//			votingMap.put("role", player.getRole().toString());
+			sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
 		}
-		sendVoteSituationMessage(roomId, mergeTargets(gameSession.getPlayers()));
+		
+		// 낮 투표
+		if(gameSession.getPhase().equals(PhaseType.DAY)) {
+			// 이전에 지목한 타겟이 없을 때
+			if (player.getTarget() == null || "".equals(player.getTarget())) {
+				newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
+				player.setTarget(targetId); // 현재 타겟 업데이트
+			} // 기존 타겟과 새로 지목한 타겟이 다르면
+			else if (!player.getTarget().equals(targetId)) {
+				RolePlayer targetedPlayer = (RolePlayer) gameSession.getPlayer(player.getTarget()); // 플레이어의 기존 타겟이었던 플레이어
+				targetedPlayer.setVotedCnt(targetedPlayer.getVotedCnt() - 1); // 기존 타겟이 받은 투표수--
+				if (newTargetPlayer != null) {
+					newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
+				}
+				player.setTarget(targetId); // 현재 타겟 업데이트
+			}
+			sendVoteSituationMessage(roomId, mergeTargets(gameSession.getPlayers()));
+		}
+		
 	}
 
 	// 선택된 대상들 Map으로 묶어주는 함수
@@ -486,6 +510,11 @@ public class GameManager {
 	// "투표현황" 메시지 전송
 	public void sendVoteSituationMessage(String roomId, Map<String, Integer> votedSituation) {
 		sendSystemMessageToAll(roomId, SystemCode.VOTE_SITUATION, votedSituation);
+	}
+	
+	// "밤 투표현황" 대상자들한테만 메시지 전송 *
+	public void sendVoteSituationOnlyMessage(String roomId, List<String> players, Map<String, String> votingSituation) {
+		sendSystemMessage(roomId, players, SystemCode.VOTE_SITUATION, votingSituation);
 	}
 
 	// "심리분석 시작" 메시지 전송 *
