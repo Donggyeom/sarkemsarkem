@@ -23,7 +23,6 @@ import com.a702.sarkem.redis.ChatPublisher;
 import com.a702.sarkem.redis.ChatSubscriber;
 import com.a702.sarkem.redis.GamePublisher;
 import com.a702.sarkem.redis.SystemSubscriber;
-import com.esotericsoftware.minlog.Log;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -163,13 +162,19 @@ public class GameManager {
 	/**
 	 * 플레이어 게임방 연결
 	 */
-	public void connectPlayer(String roomId, Player player) {
+	public boolean connectPlayer(String roomId, Player player) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		List<Player> playerList = gameRoom.getPlayers();
-		playerList.add(player);
-		if (gameRoom.getHostId() == null)
-			gameRoom.setHostId(player.getPlayerId());
+		if (gameRoom.getPlayerCount() < 10) {
+			List<Player> playerList = gameRoom.getPlayers();
+			playerList.add(player);
+			if (gameRoom.getHostId() == null)
+				gameRoom.setHostId(player.getPlayerId());
+			return true;
+		} else {
+			return false;
+		}
 	}
+
 
 	/**
 	 * 게임방 정보 조회
@@ -216,7 +221,7 @@ public class GameManager {
 		gameSession.setDetectiveCount(option.getDetectiveCount());
 		gameSession.setPsychologistCount(option.getPsychologistCount());
 		gameSession.setBullyCount(option.getBullyCount());
-		Log.debug(gameSession.toString());
+		log.debug(gameSession.toString());
 		sendGameOptionChangedMessage(roomId, option);
 	}
 
