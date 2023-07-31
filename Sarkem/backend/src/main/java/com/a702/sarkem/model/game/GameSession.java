@@ -65,6 +65,18 @@ public class GameSession {
 		this.winTeam = 0;
 	}
 	
+	/**
+	 * 총 역할 수 반환
+	 * @return 총 역할 수 
+	 */
+	public int getTotalRoleCount() {
+		return citizenCount + sarkCount + policeCount + doctorCount + bullyCount + psychologistCount + detectiveCount;
+	}
+
+	public int [] getRoles() {
+		return new int[]{citizenCount, sarkCount, policeCount, doctorCount, bullyCount, psychologistCount, detectiveCount};
+	}
+	
 	public RolePlayer getPlayer(String playerId) {
 		for(RolePlayer p : this.players) {
 			if (p.getPlayerId().equals(playerId)) {

@@ -49,6 +49,8 @@ public class GameThread extends Thread {
 		try {
 			dayVoteThread.join(meetingTime);
 		} catch (InterruptedException e) { }
+		
+		gameManager.sendEndDayVoteMessage(roomId, null);
 
 		// 게임 진행
 		while (true) {
@@ -170,6 +172,22 @@ public class GameThread extends Thread {
 		// 이에 대한 시스템, 액션 코드 필요할 듯
 
 	}
+	
+	// 플레이어 투표 종료 여부 반환
+	private boolean isPlayersVoteEnded() throws InterruptedException {
+		List<RolePlayer> players = gameSession.getPlayers();
+		int confirmCnt = 0;
+		while (true) {
+			confirmCnt = 0;
+			for (RolePlayer p : players) {
+				if (p.isTargetConfirmed()) confirmCnt++;
+			}
+			// 투표가 모두 완료되면 종료
+			if (confirmCnt == players.size()) return true;
+			
+			sleep(500);
+		}
+	}
 
 	// 게임 종료
 	private boolean isGameEnd() {
@@ -216,20 +234,9 @@ public class GameThread extends Thread {
 		@Override
 		public void run() {
 			// 투표 대기
-			List<RolePlayer> players = gameSession.getPlayers();
-			int confirmCnt = 0;
-			while (true) {
-				confirmCnt = 0;
-				for (RolePlayer p : players) {
-					if (p.isTargetConfirmed()) confirmCnt++;
-				}
-				// 투표가 모두 완료되면 종료
-				if (confirmCnt == players.size()) this.interrupt();
-				
-				try {
-					sleep(500);
-				} catch (InterruptedException e) { }
-			}
+			try {
+				if (isPlayersVoteEnded()) return;
+			} catch (InterruptedException e) { }
 		}
 	}
 }

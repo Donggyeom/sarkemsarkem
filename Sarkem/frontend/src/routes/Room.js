@@ -124,53 +124,6 @@ function Room () {
         console.log("game websocket 연결 완료");
     }
 
-    
-    const receiveMessage = (message) => {
-        // 시스템 메시지 처리
-        let sysMessage = JSON.parse(message.body);
-        console.log(sysMessage);
-        console.log(token);
-        if (token != sysMessage.playerId) return;
-
-        switch (sysMessage.code) {
-        case "NOTICE_MESSAGE":
-            alert(sysMessage.param.message);
-            break;
-        case "GAME_START":   
-            alert('게임시작');
-            break;
-        case "ONLY_HOST_ACTION":
-            console.log(sysMessage);
-            alert('방장만 실행 가능합니다.');
-            break;
-        case "OPTION_CHANGED":
-            setMeetingTime(sysMessage.param.meetingTime);
-            setCitizenCount(sysMessage.param.citizenCount);
-            setSarkCount(sysMessage.param.sarkCount);
-            setPoliceCount(sysMessage.param.policeCount);
-            setDoctorCount(sysMessage.param.doctorCount);
-            setDetectiveCount(sysMessage.param.detectiveCount);
-            setBullyCount(sysMessage.param.bullyCount);
-            setPsychologistCount(sysMessage.param.psychologistCount);
-            break;
-        case "ROLE_ASIGNED":
-            alert(`당신은 ${sysMessage.param.role} 입니다.`);
-            console.log(`당신은 ${sysMessage.param.role} 입니다.`)
-            break;
-        case "TARGET_SELECTION_END":
-            // 선택 완료
-            alert("선택 완료");
-            setSelectedTarget("");
-            break;
-        case "VOTE_SITUATION":
-            console.log(sysMessage.param);
-            break;
-        case "DAY_VOTE_END":
-            console.log("낮 투표 종료");
-            break;
-        }
-    }
-
     const connectGame = () => {
         // 게임방 redis 구독
         console.log('/sub/game/system/' + location.state.sessionId + " redis 구독")
@@ -366,6 +319,56 @@ function Room () {
             playerId: token
         })
         );
+    }
+
+    
+    const receiveMessage = (message) => {
+        // 시스템 메시지 처리
+        let sysMessage = JSON.parse(message.body);
+        console.log(sysMessage);
+        console.log(token);
+        if (token != sysMessage.playerId) return;
+
+        switch (sysMessage.code) {
+        case "NOTICE_MESSAGE":
+            alert(sysMessage.param.message);
+            break;
+        case "GAME_START":   
+            alert('게임시작');
+            break;
+        case "ONLY_HOST_ACTION":
+            console.log(sysMessage);
+            alert('방장만 실행 가능합니다.');
+            break;
+        case "OPTION_CHANGED":
+            setMeetingTime(sysMessage.param.meetingTime);
+            setCitizenCount(sysMessage.param.citizenCount);
+            setSarkCount(sysMessage.param.sarkCount);
+            setPoliceCount(sysMessage.param.policeCount);
+            setDoctorCount(sysMessage.param.doctorCount);
+            setDetectiveCount(sysMessage.param.detectiveCount);
+            setBullyCount(sysMessage.param.bullyCount);
+            setPsychologistCount(sysMessage.param.psychologistCount);
+            break;
+        case "ROLE_ASSIGNED":
+            alert(`당신은 ${sysMessage.param.role} 입니다.`);
+            console.log(`당신은 ${sysMessage.param.role} 입니다.`)
+            break;
+        case "TARGET_SELECTION_END":
+            // 선택 완료
+            alert("선택 완료");
+            setSelectedTarget("");
+            break;
+        case "VOTE_SITUATION":
+            console.log(sysMessage.param);
+            break;
+        case "DAY_VOTE_END":
+            console.log("낮 투표 종료");
+            break;
+        case "GAME_END":
+            alert("게임 종료");
+            break;
+        }
     }
 
     // 대상 선택
