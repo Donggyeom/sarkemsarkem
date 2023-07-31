@@ -10,6 +10,7 @@ import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import NightPopup from '../components/games/NightPopup';
 import TempButton from '../components/buttons/TempButton';
+import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import { useRoomContext } from '../Context';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CamCat from '../components/camera/camcat';
@@ -299,7 +300,7 @@ const CamCatWrapper = styled.div`
         <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
         <NightPopup></NightPopup>
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
-        
+        <ChatButtonAndPopup />
 
       </StyledNightPage>
         
