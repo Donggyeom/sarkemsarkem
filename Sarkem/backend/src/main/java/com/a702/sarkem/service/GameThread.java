@@ -12,6 +12,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.NightVote;
+import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.gameroom.GameRoom;
 
 @Slf4j
@@ -116,6 +117,8 @@ public class GameThread extends Thread {
 
 	// 낮 페이즈
 	private void convertPhaseToDay() {
+		// 낮 페이즈로 변경
+		gameSession.setPhase(PhaseType.DAY);
 		// "낮 페이즈" 메시지 전송
 		gameManager.sendDayPhaseMessage(roomId);
 		// "대상 선택" 메시지 전송
