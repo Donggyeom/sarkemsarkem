@@ -351,24 +351,6 @@ public class GameManager {
 		if (voteResult) { // 추방 투표 찬성수 ++
 			gameSession.setExpultionVoteCnt(gameSession.getExpultionVoteCnt() + 1);
 		}
-		// 끝날 조건
-		if (gameSession.getExpultionVoteCnt() == gameSession.getPlayers().size() // 모두가 투표를 했거나
-				|| gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
-			// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
-			if (gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
-				sendExcludedMessage(roomId, gameSession.getExpultionTargetId());
-				// 실제로 추방하기
-				RolePlayer expultionPlayer = gameSession.getPlayer(gameSession.getExpultionTargetId());
-				expultionPlayer.setAlive(false);
-				// 채팅방 입장시키기
-				
-			} 
-			// 추방 투표 결과 전송 // 저녁 페이즈 종료
-			HashMap<String, String> result = new HashMap<>();
-			// 추방 당한 사람 아이디를 파람으로 전달
-			result.put("expultionPlayer", gameSession.getExpultionTargetId());
-			sendEndTwilightVoteMessage(roomId, result);
-		}
 	}
 
 	/**
