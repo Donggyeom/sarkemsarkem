@@ -117,7 +117,7 @@ function Room () {
             connectGame();
            console.log(stompCilent.current.connected);
          }, 500);
-        })
+        });
     }
 
     const onSocketConnected = () => {
@@ -128,7 +128,18 @@ function Room () {
         // 게임방 redis 구독
         console.log('/sub/game/system/' + location.state.sessionId + " redis 구독")
         stompCilent.current.subscribe('/sub/game/system/' + location.state.sessionId, receiveMessage)
-        console.log()
+        
+        // 입장 코드 전송
+        console.log("ENTER 코드 전송");
+        console.log("roomId : " + location.state.sessionId);
+        console.log("playerId : " + token);
+        stompCilent.current.send("/pub/game/action", {}, 
+        JSON.stringify({
+            code:'ENTER', 
+            roomId: location.state.sessionId, 
+            playerId: token
+        })
+        );
     }
 
     // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
@@ -206,14 +217,16 @@ function Room () {
     // 서버에 요청하여 세션 생성하는 함수
     const createSession = async (sessionId) => {
         const response = await axios.post('/api/game', { customSessionId: location.state.sessionId, nickName:myUserName }, {
-            headers: { 'Content-Type': 'application/json', },
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
         });
         return response.data; // The sessionId
     }
 
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
-        const response = await axios.post('/api/game/' + location.state.sessionId + `/player`, myUserName,
+        const response = await axios.post('/api/game/' + location.state.sessionId + `/player`, myUserName, {
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        }
         );
         console.log(response);
         return response.data; // The token
@@ -363,7 +376,7 @@ function Room () {
             console.log(sysMessage.param);
             break;
         case "DAY_VOTE_END":
-            console.log("낮 투표 종료", sysMessage.param.target);
+            console.log("낮 투표 종료", sysMessage.param.targetNickname);
             break;
         case "GAME_END":
             alert("게임 종료");
@@ -498,7 +511,7 @@ function Room () {
                     onClick={deathAndOpenChat}
                     value={`죽기`}
                 /> 
-                {selectedTarget != "" ? <button onClick={selectConfirm}>대상확정</button> : null}
+                {selectedTarget != <button onClick={selectConfirm}>대상확정</button> ? <button onClick={selectConfirm}>대상확정</button> : null}
             </div>
             {/* {mainStreamManager !== undefined ? (
                 <div id="main-video" className="col-md-6">
