@@ -46,9 +46,6 @@ public class GameThread extends Thread {
 		// 역할배정
 		assignRole();
 
-		// 낮 페이즈 시작
-		convertPhaseToDay();
-
 		// 게임 진행
 		while (true) {
 
@@ -74,6 +71,12 @@ public class GameThread extends Thread {
 				// 저녁 페이즈 => 추방투표 시작
 				convertPhaseToTwilight();
 				// 투표타임 타이머
+				Thread twilightVoteThread = new DayVoteThread();
+				twilightVoteThread.start();
+				try {
+					twilightVoteThread.join(meetingTime);
+				} catch (InterruptedException e) {
+				}
 			}
 
 			// 저녁 페이즈 끝나면
@@ -86,6 +89,8 @@ public class GameThread extends Thread {
 			// 게임종료 검사
 			if (isGameEnd())
 				break;
+			// 무한루프 방지 임시 break
+			break;
 		}
 
 		// 게임 종료 메시지 전송
@@ -200,6 +205,24 @@ public class GameThread extends Thread {
 			sleep(500);
 		}
 	}
+	
+	// 저녁 투표 종료 여부 반환
+	private boolean isTwilightVoteEnded() throws InterruptedException {
+		List<RolePlayer> players = gameSession.getPlayers();
+		int confirmCnt = 0;
+		while (true) {
+			confirmCnt = 0;
+			for (RolePlayer p : players) {
+				if (p.isTargetConfirmed())
+					confirmCnt++;
+			}
+			// 투표가 모두 완료되면 종료
+			if (confirmCnt == players.size())
+				return true;
+
+			sleep(500);
+		}
+	}
 
 	// 게임 종료
 	private boolean isGameEnd() {
@@ -212,6 +235,7 @@ public class GameThread extends Thread {
 				aliveCitizen++;
 			}
 		}
+		log.debug("삵 수: " + aliveSark + " / 시민 수: " + aliveCitizen);
 		// 마피아수>=시민수 => 마피아 win
 		if (aliveSark >= aliveCitizen) {
 			gameSession.setWinTeam(1);
@@ -222,7 +246,7 @@ public class GameThread extends Thread {
 			gameSession.setWinTeam(2);
 			return true;
 		}
-		log.debug("삵 수: " + aliveSark + " / 시민 수: " + aliveCitizen);
+		
 		return false;
 	}
 

@@ -14,7 +14,7 @@ import lombok.ToString;
 public class RolePlayer extends Player {
 	
 	private GameRole role; 	// 배정받은 역할
-	private boolean alive; 	// 살았는지 여부
+	private boolean alive = true; 	// 살았는지 여부
 	private String target;	// 지정한 플레이어
 	private boolean targetConfirmed;	// 지정 플레이어 확정
 	private int votedCnt;	// 받은 투표 수
