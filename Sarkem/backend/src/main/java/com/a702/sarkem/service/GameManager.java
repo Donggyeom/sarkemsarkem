@@ -235,10 +235,13 @@ public class GameManager {
 		// 플레이어 수와 역할 수 일치 여부 확인
 		GameRoom room = gameRoomMap.get(roomId);
 		GameSession gameSession = getGameSession(roomId);
+		log.debug(room.toString());
+		log.debug(gameSession.toString());
 		if (room == null || gameSession == null) return false;
 		
 		int playerCount = room.getPlayerCount();
 		int optionRoleCount = gameSession.getTotalRoleCnt();
+		log.debug("플레이어 수 : " + playerCount + "\n 설정된 직업 수 : " + optionRoleCount);
 
 		if (playerCount != optionRoleCount)
 			return false;
@@ -353,6 +356,24 @@ public class GameManager {
 		if (voteResult) { // 추방 투표 찬성수 ++
 			gameSession.setExpultionVoteCnt(gameSession.getExpultionVoteCnt() + 1);
 		}
+		// 끝날 조건
+		if (gameSession.getExpultionVoteCnt() == gameSession.getPlayers().size() // 모두가 투표를 했거나
+				|| gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
+			// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
+			if (gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
+				sendExcludedMessage(roomId, gameSession.getExpultionTargetId());
+				// 실제로 추방하기
+				RolePlayer expultionPlayer = gameSession.getPlayer(gameSession.getExpultionTargetId());
+				expultionPlayer.setAlive(false);
+				// 채팅방 입장시키기
+				
+			} 
+			// 추방 투표 결과 전송 // 저녁 페이즈 종료
+			HashMap<String, String> result = new HashMap<>();
+			// 추방 당한 사람 아이디를 파람으로 전달
+			result.put("expultionPlayer", gameSession.getExpultionTargetId());
+			sendEndTwilightVoteMessage(roomId, result);
+		}
 	}
 
 	/**
@@ -442,6 +463,14 @@ public class GameManager {
 	// 0. 공통기능 끝
 
 	// 1. 게임 로비
+	// "게임방 설정" 메시지 전송
+	public void sendGameOptionMessage(String roomId, String playerId) {
+		GameSession gameSession = getGameSession(roomId);
+		GameOptionDTO option = gameSession.getGameOption();
+		
+		sendSystemMessage(roomId, playerId, SystemCode.OPTION_CHANGED, option);
+	}
+
 	// "게임방 설정 변경" 메시지 전송
 	public void sendGameOptionChangedMessage(String roomId, GameOptionDTO option) {
 		GameRoom gameRoom = getGameRoom(roomId);
