@@ -13,21 +13,16 @@ const MicButtonImage = styled.img`
   overflow: visible;
 `;
 
-const MicButton = ({ alt, onClick }) => {
-  const [isOn, setIsOn] = useState(true); // State를 사용하여 버튼 상태 관리
-
-  const handleButtonClick = () => {
-    setIsOn(!isOn); // 클릭 시 버튼 상태를 변경
-    onClick(); // 상위 컴포넌트로부터 전달받은 onClick 함수 호출
-  };
-
+const MicButton = ({ alt, onClick, isMicOn }) => {
   return (
     <MicButtonImage
-      src={isOn ? micButtonImageSrc : micOffButtonImageSrc}
+      src={isMicOn ? micButtonImageSrc : micOffButtonImageSrc} // 이미지는 더 이상 상태에 따라 변경할 필요가 없으므로 삭제
       alt={alt}
-      onClick={handleButtonClick} // 클릭 이벤트를 핸들링하는 함수 변경
+      onClick={onClick} // 클릭 이벤트를 핸들링하는 함수 변경
     />
   );
 };
 
 export default MicButton;
+
+

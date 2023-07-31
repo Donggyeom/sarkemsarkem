@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../../Context';
 
 const GoroomButtonImage = styled.img`
-  width: 25%;
-  height : 80%;
+  width: 28%;
+  height : 76%;
   cursor: pointer;
 `;
 
