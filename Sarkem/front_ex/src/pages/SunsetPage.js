@@ -350,6 +350,7 @@ const SunsetPage = () => {
   return (
     <Background>
       <StyledContent>
+      <SunMoon alt="SunMoon"></SunMoon>
       <TimeSecond>60s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
