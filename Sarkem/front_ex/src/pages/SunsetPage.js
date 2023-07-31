@@ -18,15 +18,14 @@ const StyledContent = styled.div`
   align-items: center;
   position: relative; /* position을 relative로 설정합니다. */
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 `;
 
 const CamCatGrid = styled.div`
-  position : absolute;
+  // position : absolute;
   display: grid;
-  // grid-gap: 10px;
-  align-items: center;
+  // align-items: center;
   justify-items: center;
   overflow: hidden;
   ${({ style }) =>
@@ -35,7 +34,7 @@ const CamCatGrid = styled.div`
     height : ${style.height};
     max-height: ${style.maxHeight};
     left : ${style.left};
-
+    top : ${style.top};
   `}
 `;
 
@@ -43,144 +42,327 @@ const calculateGrid = (camCount) => {
 
   if (camCount === 1) {
     return {
-      gridTemplateRows: '1fr',
-      gridTemplateColumns: '1fr',
-      height : '100%',
       width: '100%',
     };
   } else if (camCount === 2) {
     return {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr',
-      width: '90%',
+      width: '100%',
+      left: '2%',
     };
   } else if (camCount === 3) {
     return {
-      gridTemplateRows: '1fr 1fr',
-      gridTemplateColumns: '1fr 1fr',
-      width: '60%',
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      left: '2%',
     };
   } else if (camCount === 4) {
     return {
-      gridTemplateRows: '1fr 1fr',
-      gridTemplateColumns: '1fr 1fr',
-      width : '60%',
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 5) {
     return {
-      gridTemplateRows: '1fr 1fr',
-      gridTemplateColumns: '1fr 1fr 1fr',
-      width : '75%',
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
     };
 } else if (camCount === 6) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 1fr 1fr',
-      top : '7.5%',
-      width : '80%',
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 7) {
     return {
-      gridTemplateRows: '1fr 1fr',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      width : '90%',
+      gridTemplateRows: '1fr',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 8) {
     return {
-      gridTemplateRows: 'repeat(2, 1fr)',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      width: '85%',
+      gridTemplateRows: '1fr 1fr 1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
     };
   } else if (camCount === 9) {
     return {
-      gridTemplateRows: 'repeat(2, 1fr)',
-      gridTemplateColumns: 'repeat(5, 1fr)',
       width: '95%',
       height : '70%',
     };
   } else if (camCount === 10) {
     return {
-      gridTemplateRows: 'repeat(2, 1fr)',
-      gridTemplateColumns: 'repeat(5, 1fr)',
       left : '5%',
       width: '90%',
       height : '70%',
     };
   } else {
     return {
-      gridTemplateRows: '1fr 1fr',
-      gridTemplateColumns: '1fr 1fr',
     };
   }
 };
-
 const CamCatWrapper = styled.div`
   ${({ camCount, index }) =>
+
+  camCount === 2 && index === 0
+  ? `
+    position: relative;
+    left : 5%;
+  `
+  :
+  camCount === 2 && index === 1
+  ? `
+    position: relative;
+    right : 5%;
+  `
+  :
 
   camCount === 3 && index === 0
   ? `
     position: relative;
-    left : 50%;
+    width : 70%;
+    top : 22.5%;
   `
   :
   camCount === 3 && index === 1
   ? `
     position: relative;
-    top : 100%;
+    width : 150%;
   `
   :
   camCount === 3 && index === 2
   ? `
     position: relative;
+    width : 70%;
+    top : 22.5%;
+  `
+  :
+  camCount === 4 && index === 0
+  ? `
+    position: relative;
+    width : 70%;
+    left : 20%;
+  `
+  :
+  camCount === 4 && index === 1
+  ? `
+    position: relative;
+    width : 70%;
+    right : 80%;
+    top : 55%;
+  `
+  :
+  camCount === 4 && index === 2
+  ? `
+    position: relative;
+    width : 170%;
+    right : 40%;
+
+  `
+  :
+  camCount === 4 && index === 3
+  ? `
+    position: relative;
+    width : 70%;
+    right : 10%;
   `
   :
   camCount === 5 && index === 0
   ? `
     position: relative;
-    left : 50%;
+    width : 90%;
+    left : 45%;
   `
   :
   camCount === 5 && index === 1
   ? `
     position: relative;
-    left : 50%;
+    width : 90%;
+    right : 55%;
+    top : 50%;
   `
   :
   camCount === 5 && index === 2
   ? `
     position: relative;
-    top : 100%;
+    width : 250%;
+    left : center;
+  `
+  :
+  camCount === 5 && index === 3
+  ? `
+    position: relative;
+    width : 90%;
+    left : 45%;
+  `
+  :
+  camCount === 5 && index === 4
+  ? `
+    position: relative;
+    width : 90%;
+    right : 55%;
+    top : 50%;
+  `
+  :
+  camCount === 6 && index === 0
+  ? `
+    position: relative;
+    left : 75%;
+  `
+  :
+  camCount === 6 && index === 1
+  ? `
+    position: relative;
+    right : 25%;
+    top : 55%;
+  `
+  :
+  camCount === 6 && index === 2
+  ? `
+    position: relative;
+    width : 300%;
+    left : 55%;
+  `
+  :
+  camCount === 6 && index === 3
+  ? `
+    position: relative;
+    left : 125%;
+    top : 55%;
+  `
+  :
+  camCount === 6 && index === 4
+  ? `
+    position: relative;
+    left : 25%;
+  `
+  :
+  camCount === 6 && index === 5
+  ? `
+    position: relative;
+    top : 25%;
   `
   :
   camCount === 7 && index === 0
   ? `
     position: relative;
-    left : 50%;
+    left : 100%;
+
   `
   :
   camCount === 7 && index === 1
   ? `
     position: relative;
-    left : 50%;
+    top : 30%;
+    right : 100%;
+
   `
   :
   camCount === 7 && index === 2
   ? `
     position: relative;
-    left : 50%;
-  `
+    right : 100%;
+    top : 60%;
 
+  `
   :
   camCount === 7 && index === 3
   ? `
     position: relative;
-    top : 100%;
+    width : 300%;
+    left : 5%;
+  `
+  :
+  camCount === 7 && index === 4
+  ? `
+    position: relative;
+    left : 100%;
+
+  `
+  :
+  camCount === 7 && index === 5
+  ? `
+    position: relative;
+    left : 100%;
+    top : 30%;
+
+  `
+  :
+  camCount === 7 && index === 6
+  ? `
+    position: relative;
+    right : 100%;
+    top : 60%;
+  `
+  :
+  camCount === 8 && index === 0
+  ? `
+    position: relative;
+    width : 40%;
+    right : 30%;
+
+  `
+  :
+  camCount === 8 && index === 1
+  ? `
+    position: relative;
+    width : 40%;
+    left : 27.5%;
+
+  `
+  :
+  camCount === 8 && index === 2
+  ? `
+    position: relative;
+    width : 40%;
+    right : 10%;
+
+  `
+  :
+  camCount === 8 && index === 3
+  ? `
+    position: relative;
+    width : 40%;
+    left : 50%;
+
+  `
+  :
+  camCount === 8 && index === 4
+  ? `
+    position: relative;
+    width : 110%;
+    bottom : 60%;
+    left : 50%;
+
+  `
+  :
+  camCount === 8 && index === 5
+  ? `
+    position: relative;
+    width : 40%;
+    left : 30%;
+    bottom : 3%;
+
+  `
+  :
+  camCount === 8 && index === 6
+  ? `
+    position: relative;
+    width : 40%;
+    bottom : 220%;
+    right : 50%;
+
+  `
+  :
+  camCount === 8 && index === 7
+  ? `
+    position: relative;
+    width : 40%;
+    bottom : 200%;
+
   `
   :
   camCount === 9 && index === 0
   ? `
     position: relative;
-    left : 50%;
+
   `
   :
   camCount === 9 && index === 1
