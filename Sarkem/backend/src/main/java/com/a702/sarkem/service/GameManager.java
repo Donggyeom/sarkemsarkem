@@ -230,10 +230,13 @@ public class GameManager {
 		// 플레이어 수와 역할 수 일치 여부 확인
 		GameRoom room = gameRoomMap.get(roomId);
 		GameSession gameSession = getGameSession(roomId);
+		log.debug(room.toString());
+		log.debug(gameSession.toString());
 		if (room == null || gameSession == null) return false;
 		
 		int playerCount = room.getPlayerCount();
 		int optionRoleCount = gameSession.getTotalRoleCnt();
+		log.debug("플레이어 수 : " + playerCount + "\n 설정된 직업 수 : " + optionRoleCount);
 
 		if (playerCount != optionRoleCount)
 			return false;
