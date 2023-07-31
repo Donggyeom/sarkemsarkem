@@ -259,9 +259,12 @@ public class GameManager {
 	public void selectTarget(String roomId, String playerId, Map<String, String> target) {
 		GameSession gameSession = getGameSession(roomId);
 		String targetId = target.get("target");
+		
 		RolePlayer player = (RolePlayer) gameSession.getPlayer(playerId); // 타겟을 지목한 플레이어
 		RolePlayer newTargetPlayer = (RolePlayer) gameSession.getPlayer(targetId); // 플레이어가 새로 지목한 타겟 플레이어
 		
+		log.debug(player.getNickname()+"의 타겟아이디는 "+targetId);
+		log.debug(player.getNickname()+"의 타겟은 "+newTargetPlayer.getNickname());
 		// 밤 직업 별 투표 // 투표하는 애들은 삵, 의사, 경찰, 심리학자, 냥아치
 		if(gameSession.getPhase().equals(PhaseType.NIGHT)) {
 			List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
@@ -282,6 +285,7 @@ public class GameManager {
 		
 		// 낮 투표
 		if(gameSession.getPhase().equals(PhaseType.DAY)) {
+			log.debug("낮셀렉트 시작");
 			// 이전에 지목한 타겟이 없을 때
 			if (player.getTarget() == null || "".equals(player.getTarget())) {
 				newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
