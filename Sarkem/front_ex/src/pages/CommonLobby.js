@@ -175,6 +175,7 @@ const CommonLobby = ()=>{
   `}
 `;
 
+// 이부분 건들면 됨 카메라 배치//
 const calculateGrid = (camCount) => {
   if (camCount === 1) {
     return {
@@ -241,7 +242,6 @@ const calculateGrid = (camCount) => {
       height : '100%',
     };
   } else {
-    // 필요에 따라 추가적인 case를 추가해주세요
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
@@ -437,6 +437,8 @@ const CamCatWrapper = styled.div`
   `
   : ''};
 `;
+
+// 이부분 건들면 됨 카메라 배치 여기까지//
 
 const camCount = camArray.length;
 const gridStyles = calculateGrid(camCount);
