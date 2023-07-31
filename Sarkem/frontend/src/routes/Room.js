@@ -33,6 +33,8 @@ function Room () {
     const [psychologistCount, setPsychologistCount] = useState("0");
     const [isConnected, setIsConnected] = useState(false);
     const [selectedTarget, setSelectedTarget] = useState("");
+    const [expultionTarget, setExpultionTarget] = useState("");
+    const [isTwilightVote, setIsTwilightVote ] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -377,6 +379,11 @@ function Room () {
             break;
         case "DAY_VOTE_END":
             console.log("낮 투표 종료", sysMessage.param.targetNickname);
+            if (sysMessage.param.targetId == null) break;
+            setExpultionTarget(sysMessage.param.targetId);
+            break;
+        case "TWILIGHT_VOTE":
+            setIsTwilightVote(true);
             break;
         case "GAME_END":
             alert("게임 종료");
@@ -422,6 +429,34 @@ function Room () {
                     }
                 }))
         }
+    }
+
+    // 추방 투표 동의
+    const agreeExpultion = () => {
+        stompCilent.current.send("/pub/game/action", {}, 
+            JSON.stringify({
+                code:'EXPULSION_VOTE',
+                roomId: mySessionId, 
+                playerId: token,
+                param: {
+                    result: true
+                }
+            })
+        )
+    }
+
+    // 추방 투표 반대
+    const disagreeExpultion = () => {
+        stompCilent.current.send("/pub/game/action", {}, 
+            JSON.stringify({
+                code:'EXPULSION_VOTE',
+                roomId: mySessionId, 
+                playerId: token,
+                param: {
+                    result: false
+                }
+            })
+        )
     }
 
     // 다른 유저 카메라 on/off 하는 함수
@@ -511,7 +546,11 @@ function Room () {
                     onClick={deathAndOpenChat}
                     value={`죽기`}
                 /> 
-                {selectedTarget != <button onClick={selectConfirm}>대상확정</button> ? <button onClick={selectConfirm}>대상확정</button> : null}
+                {selectedTarget ? <button onClick={selectConfirm}>대상확정</button> : <button onClick={selectConfirm}>투표스킵</button>}
+                {isTwilightVote ? <div>
+                    <button onClick={agreeExpultion}>찬성</button>
+                    <button onClick={disagreeExpultion}>반대</button>
+                </div> : null}
             </div>
             {/* {mainStreamManager !== undefined ? (
                 <div id="main-video" className="col-md-6">

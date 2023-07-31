@@ -51,9 +51,9 @@ public class GameSession {
 	private LocalDateTime finishedTime;
 	private boolean bHiddenMissionStatus;
 	private boolean bHiddenMissionSuccess;
-	private int expultionVoteCnt; // 추방 투표 수
-	private int expultionVotePlayerCnt; // 추방 투표 한 사람 수 
-	private String expultionTargetId; // 추방 투표 대상
+	private int expulsionVoteCnt; // 추방 투표 수
+	private int expulsionVotePlayerCnt; // 추방 투표 한 사람 수 
+	private String expulsionTargetId; // 추방 투표 대상
 	private int winTeam; // 0: 진행 중 , 1: 삵 승리 , 2: 시민 승리
 	
 	public GameSession(String roomId, String gameId) {
