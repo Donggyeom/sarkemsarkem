@@ -87,7 +87,13 @@ public class GameThread extends Thread {
 				break;
 			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
 			convertPhaseToNight();
-
+			// 투표타임 타이머
+			Thread nightVoteThread = new NightVoteThread();
+			nightVoteThread.start();
+			try {
+				nightVoteThread.join(meetingTime);
+			} catch (InterruptedException e) {
+			}
 			// 게임종료 검사
 			if (isGameEnd())
 				break;
@@ -188,23 +194,25 @@ public class GameThread extends Thread {
 
 	// 저녁 페이즈
 	private void convertPhaseToTwilight() {
-
+		// 저녁 페이즈로 변경
+		gameSession.setPhase(PhaseType.TWILIGHT);
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
 		gameManager.sendTwilightPhaseMessage(roomId);
 		// 대상이 있으면 저녁투표 시작
-
 		gameManager.sendTwilightVoteMessage(roomId);
 	}
 
 	// 밤 페이즈
 	private void convertPhaseToNight() {
+		// 밤 페이즈로 변경
+		gameSession.setPhase(PhaseType.NIGHT);
 		// "밤 페이즈" 메시지 전송
 		gameManager.sendNightPhaseMessage(roomId);
 		// 밤페이즈 됐다고 메시지 전송하면
 		// 삵 제외 화면, 카메라, 마이크, 오디오 끄기
 		// 탐정 오디오만 변조된 음성으로 켜기
 		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하겠지??
-		// 이에 대한 시스템, 액션 코드 필요할 듯
+
 
 	}
 
@@ -301,6 +309,12 @@ public class GameThread extends Thread {
 					return;
 			} catch (InterruptedException e) {
 			}
+		}
+	}
+	class NightVoteThread extends Thread {
+		@Override
+		public void run() {
+			// 투표 대기
 		}
 	}
 }
