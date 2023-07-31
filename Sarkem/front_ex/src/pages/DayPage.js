@@ -24,7 +24,7 @@ const StyledDayPage = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: relative; /* position을 relative로 설정합니다. */
+  position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
@@ -138,6 +138,7 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: 'repeat(2, 1fr)',
       gridTemplateColumns: 'repeat(5, 1fr)',
+      left : '5%',
       width: '90%',
       height : '70%',
     };
@@ -219,15 +220,6 @@ const CamCatWrapper = styled.div`
 
   const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
   const gridStyles = calculateGrid(camCount);
-
-
-  const calculateCamCatHeight = () => {
-    const leftSectionHeight = leftSectionRef.current.offsetHeight;
-    const maxCamCatCount = 10; 
-    const camCatCount = Math.min(camArray.length, maxCamCatCount);
-    return `${leftSectionHeight / camCatCount}px`;
-  };
-
   const leftSectionRef = useRef(null);
 
     
@@ -239,20 +231,13 @@ const CamCatWrapper = styled.div`
             <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
             <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
             <DayPopup></DayPopup>
-            {/* <div ref={leftSectionRef}>
-              <CamCatGrid camCount={camArray.length}>
-                {camArray.map((user, index) => (
-                  <CamCat key={index} props={user}/>
+              <CamCatGrid style={gridStyles}>
+                {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
+                  <CamCatWrapper key={index} camCount={camCount} index={index}>
+                    <CamCat props={camArray[index]} />
+                  </CamCatWrapper>
                 ))}
               </CamCatGrid>
-            </div> */}
-        <CamCatGrid style={gridStyles}>
-          {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
-            <CamCatWrapper key={index} camCount={camCount} index={index}>
-              <CamCat props={camArray[index]} />
-            </CamCatWrapper>
-          ))}
-        </CamCatGrid>
             <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
             <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
             <ChatButtonAndPopup />

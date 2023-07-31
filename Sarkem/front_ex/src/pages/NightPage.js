@@ -55,7 +55,7 @@ const NightPage = () => {
     }
   };
   
-  
+
   const handleMicButtonClick = () => {
     const micOn = !isMicOn;
     setIsMicOn(micOn);
@@ -85,26 +85,137 @@ const NightPage = () => {
 
 
       const CamCatGrid = styled.div`
+      position : absolute;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 10px;
-      justify-items: center;
+      // grid-gap: 10px;
       align-items: center;
-      width: 100%;
-      max-height: 80vh; /* Set a maximum height to adjust to the available space */
-      overflow: auto; /* Add overflow property to handle overflow if needed */
+      justify-items: center;
+      overflow: hidden;
+      ${({ style }) =>
+        style && `
+        width: ${style.width};
+        height : ${style.height};
+        max-height: ${style.maxHeight};
+        left : ${style.left};
+  
+    `}
+  `;
+
+  const calculateGrid = (camCount) => {
+    const positions = [
+    ];
+    if (camCount === 6) {
+      return {
+        gridTemplateRows: '1fr 1fr 1fr',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        top : '7.5%',
+        width : '80%',
+      };
+    } else if (camCount === 7) {
+      return {
+        gridTemplateRows: '1fr 1fr',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        width : '90%',
+      };
+    } else if (camCount === 8) {
+      return {
+        gridTemplateRows: 'repeat(2, 1fr)',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        width: '85%',
+      };
+    } else if (camCount === 9) {
+      return {
+        gridTemplateRows: 'repeat(2, 1fr)',
+        gridTemplateColumns: 'repeat(5, 1fr)',
+        width: '95%',
+        height : '70%',
+      };
+    } else if (camCount === 10) {
+      return {
+        gridTemplateRows: 'repeat(2, 1fr)',
+        gridTemplateColumns: 'repeat(5, 1fr)',
+        width: '90%',
+        height : '70%',
+      };
+    } else {
+      // Add more cases as needed
+      return {
+        gridTemplateRows: '1fr 1fr',
+        gridTemplateColumns: '1fr 1fr',
+      };
+    }
+  };
+  
+  const CamCatWrapper = styled.div`
+    ${({ camCount, index }) =>
+    
+    camCount === 4 && index === 0
+    ? `
+      position: relative;
+      left: 45%;
+    `
+    :
+    camCount === 7 && index === 0
+    ? `
+      position: relative;
+      left : 50%;
+    `
+    :
+    camCount === 7 && index === 1
+    ? `
+      position: relative;
+      left : 50%;
+    `
+    :
+    camCount === 7 && index === 2
+    ? `
+      position: relative;
+      left : 50%;
+    `
+  
+    :
+    camCount === 7 && index === 3
+    ? `
+      position: relative;
+      top : 100%;
+    `
+    :
+    camCount === 9 && index === 0
+    ? `
+      position: relative;
+      left : 50%;
+    `
+    :
+    camCount === 9 && index === 1
+    ? `
+      position: relative;
+      left : 50%;
+    `
+    :
+    camCount === 9 && index === 2
+    ? `
+      position: relative;
+      left : 50%;
+    `
+    :
+    camCount === 9 && index === 3
+    ? `
+      position: relative;
+      left : 50%;
+    `
+    :
+    camCount === 9 && index === 4
+    ? `
+      position: relative;
+      top : 100%;
+    `
+    : ''};
     `;
-  
-  
-  
-    const calculateCamCatHeight = () => {
-      const leftSectionHeight = leftSectionRef.current.offsetHeight;
-      const maxCamCatCount = 10; 
-      const camCatCount = Math.min(camArray.length, maxCamCatCount);
-      return `${leftSectionHeight / camCatCount}px`;
-    };
-  
+
+    const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
+    const gridStyles = calculateGrid(camCount)
     const leftSectionRef = useRef(null);
+  
   
     
 
@@ -117,13 +228,13 @@ const NightPage = () => {
         <TimeSecond>60s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
-        <div ref={leftSectionRef}>
-          <CamCatGrid camCount={camArray.length}>
-            {camArray.map((user, index) => (
-              <CamCat key={index} props={user}/>
+          <CamCatGrid style={gridStyles}>
+            {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
+              <CamCatWrapper key={index} camCount={camCount} index={index}>
+                <CamCat props={camArray[index]} />
+              </CamCatWrapper>
             ))}
           </CamCatGrid>
-        </div>
         <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
         <NightPopup></NightPopup>
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
