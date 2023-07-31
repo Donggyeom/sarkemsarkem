@@ -71,12 +71,14 @@ public class GameThread extends Thread {
 				// 저녁 페이즈 => 추방투표 시작
 				convertPhaseToTwilight();
 				// 투표타임 타이머
-				Thread twilightVoteThread = new DayVoteThread();
+				Thread twilightVoteThread = new TwilightVoteThread();
 				twilightVoteThread.start();
 				try {
 					twilightVoteThread.join(meetingTime);
 				} catch (InterruptedException e) {
 				}
+				// 실제 추방 & 메시지 전송
+				twilightVote();
 			}
 
 			// 저녁 페이즈 끝나면
@@ -165,6 +167,24 @@ public class GameThread extends Thread {
 		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
 		gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
 	}
+	
+	// 저녁 투표 결과 종합
+	private void twilightVote() {
+		// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
+		if (gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
+			// 실제로 추방하기
+			RolePlayer expultionPlayer = gameSession.getPlayer(gameSession.getExpultionTargetId());
+			expultionPlayer.setAlive(false);
+			expultionPlayer.setRole(GameRole.OBSERVER);
+			// 추방 메시지 보내기
+			gameManager.sendExcludedMessage(roomId, gameSession.getExpultionTargetId());
+		} 
+		// 추방 투표 결과 전송 // 저녁 페이즈 종료
+		HashMap<String, String> result = new HashMap<>();
+		// 추방 당한 사람 아이디를 파람으로 전달
+		result.put("expultionPlayer", gameSession.getExpultionTargetId());
+		gameManager.sendEndTwilightVoteMessage(roomId, result);
+	}
 
 	// 저녁 페이즈
 	private void convertPhaseToTwilight() {
@@ -208,18 +228,12 @@ public class GameThread extends Thread {
 	
 	// 저녁 투표 종료 여부 반환
 	private boolean isTwilightVoteEnded() throws InterruptedException {
-		List<RolePlayer> players = gameSession.getPlayers();
-		int confirmCnt = 0;
 		while (true) {
-			confirmCnt = 0;
-			for (RolePlayer p : players) {
-				if (p.isTargetConfirmed())
-					confirmCnt++;
-			}
-			// 투표가 모두 완료되면 종료
-			if (confirmCnt == players.size())
+			// 끝날 조건  // 모두가 투표를 했거나  // 찬성 투표가 과반수 이상일 때
+			if (gameSession.getExpultionVoteCnt() == gameSession.getPlayers().size() 
+					|| gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
 				return true;
-
+			}
 			sleep(500);
 		}
 	}
@@ -273,6 +287,17 @@ public class GameThread extends Thread {
 			// 투표 대기
 			try {
 				if (isPlayersVoteEnded())
+					return;
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	class TwilightVoteThread extends Thread {
+		@Override
+		public void run() {
+			// 투표 대기
+			try {
+				if (isTwilightVoteEnded())
 					return;
 			} catch (InterruptedException e) {
 			}
