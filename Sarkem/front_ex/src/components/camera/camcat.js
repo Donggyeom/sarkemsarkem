@@ -9,11 +9,10 @@ const CamCat = (props) => {
   return (
     <div
       style={{
-        flex: 1,
+        position: 'relative',
+        overflow: 'hidden',
         display: 'flex',
         justifyContent: 'center',
-        backgroundImage: `url(${camcatImage})`,
-        backgroundSize: '100% 100%', // Increase the background image size to 120% to make it larger
         backgroundRepeat: 'no-repeat',
         flexDirection : 'column',
         alignItems : 'center',
@@ -21,10 +20,10 @@ const CamCat = (props) => {
       }}
     >
       {props.streamManager !== undefined} 
-        <div className="streamcomponent" style ={{flex:0.7}}>
-            <div style={{ flex: 0.4, display: 'flex', paddingTop: '25%', justifyContent: 'center' }}><OpenViduVideoComponent streamManager={props.props}/></div>
+        <div className="streamcomponent" style ={{flex:0.2}}>
+            <div style={{ flex: 0.6, justifyContent: 'center' }}><OpenViduVideoComponent streamManager={props.props}/></div>
 
-           <div style={{ flex: 0.3, textAlign: 'center' }}>{JSON.parse(props.props.stream.connection.data).userData}</div>
+           <div style={{ flex: 0.4, textAlign: 'center' }}>{JSON.parse(props.props.stream.connection.data).userData}</div>
 
           
       </div>

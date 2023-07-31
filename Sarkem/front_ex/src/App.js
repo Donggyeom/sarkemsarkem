@@ -14,6 +14,7 @@ import NightPage from './pages/NightPage';
 import NotFound from './pages/NotFound';
 import ResultPage from './pages/ResultPage';
 import { RoomProvider } from './Context';
+import SunsetCam from './pages/SunsetCam';
 
 
 const App = () => {
