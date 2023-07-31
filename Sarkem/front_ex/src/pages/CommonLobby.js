@@ -254,6 +254,28 @@ const calculateGrid = (camCount) => {
 const camCount = camArray.length;
 const gridStyles = calculateGrid(camCount);
 
+
+  // 변경된 게임 옵션을 redis 토픽에 전달
+  const callChangeOption = () => {
+    if(stompCilent.current.connected && token !== null) {
+      stompCilent.current.send("/pub/game/action", {}, 
+          JSON.stringify({
+              code:'OPTION_CHANGE', 
+              roomId: roomId, 
+              playerId: token,
+              param: peopleCount
+          }))
+          console.log(peopleCount)
+  }
+  }
+
+  // 게임 옵션이 변경되면, callChangeOption 호출
+  useEffect(()=> {
+   if(!isHost) return;
+   callChangeOption();
+  }, [peopleCount]);
+
+  // 게임 옵션을 변경처리 하는 함수
   const handlePeopleCountChange = (part, value) => {
     if (!isHost) return;
     if (stompCilent.current.connect === undefined) return;
@@ -261,19 +283,6 @@ const gridStyles = calculateGrid(camCount);
       ...prevPeopleCount,
       [part]: value,
     }));
-    console.log("게임옵션 변경됨")
-    console.log(stompCilent.current.connected, token);
-
-    if(stompCilent.current.connected && token !== null) {
-        stompCilent.current.send("/pub/game/action", {}, 
-            JSON.stringify({
-                code:'OPTION_CHANGE', 
-                roomId: roomId, 
-                playerId: token,
-                param: peopleCount
-            }))
-            console.log(peopleCount)
-    }
   };
 
 const leftSectionRef = useRef(null);

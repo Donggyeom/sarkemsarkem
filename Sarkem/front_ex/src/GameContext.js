@@ -54,7 +54,7 @@ const onSocketConnected = () => {
         // 시스템 메시지 처리
         let sysMessage = JSON.parse(message.body);
         console.log(sysMessage);
-        console.log(token);
+        console.log(token, sysMessage.playerId);
         if (token != sysMessage.playerId) return;
 
         switch (sysMessage.code) {
@@ -70,6 +70,7 @@ const onSocketConnected = () => {
             alert('방장만 실행 가능합니다.');
             break;
         case "OPTION_CHANGED":
+            if(isHost) return;
             setPeopleCount(sysMessage.param);
             console.log(sysMessage.param.sarkCount);
             break;
