@@ -9,16 +9,18 @@ import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import TempButton from '../components/buttons/TempButton';
+import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 
 const StyledContent = styled.div`
-  display : flex;
-  height : 100%;
-  width : 100%;
+  display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  position: relative; /* position을 relative로 설정합니다. */
+  width: 100%;
+  height: 100vh;
   overflow: hidden;
-  position: relative;
-`
+`;
 
 const CamCatGrid = styled.div`
   position : absolute;
@@ -38,13 +40,11 @@ const CamCatGrid = styled.div`
 `;
 
 const calculateGrid = (camCount) => {
-  const positions = [
-  ];
-   if (camCount === 1) {
+
+  if (camCount === 1) {
     return {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr',
-      positions: [{ row: 1, col: 1 }],
       height : '100%',
       width: '100%',
     };
@@ -52,250 +52,171 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr',
-      positions: [
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-      ],
-      width: '100%',
-      height : '100%'
+      width: '90%',
     };
   } else if (camCount === 3) {
     return {
-      gridTemplateRows: '1fr',
-      gridTemplateColumns: '1fr 2.8fr 1fr',
-      positions: [
-        { row: 1, col: 1 },
-        { row: 2, col: 1 },
-        { row: 2, col: 2 },
-      ],
-      left : '5%',
-      height : '100%',
-      width: '90%',
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
+      width: '60%',
     };
   } else if (camCount === 4) {
     return {
       gridTemplateRows: '1fr 1fr',
-      gridTemplateColumns: '1fr 2.5fr 1fr',
-      positions:
-      [
-        { row: 1, col: 1 },
-        { row: 1, col: 3 },
-        { row: 2, col: 1 },
-        { row: 2, col: 3 },
-      ],
-      width : '100%',
-      height : '100%',
+      gridTemplateColumns: '1fr 1fr',
+      width : '60%',
     };
   } else if (camCount === 5) {
     return {
       gridTemplateRows: '1fr 1fr',
-      gridTemplateColumns: '1fr 2.5fr 1fr',
-      positions:
-      [
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-        { row: 1, col: 3 },
-        { row: 2, col: 1 },
-        { row: 2, col: 3 },
-      ],
-      width : '100%',
-      height : '100%',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      width : '75%',
     };
-  } else if (camCount === 6) {
+} else if (camCount === 6) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 3fr 1fr',
-      positions:
-      [
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-        { row: 1, col: 3 },
-        { row: 2, col: 1 },
-        { row: 2, col: 3 },
-        { row: 3, col: 1 },
-      ],
-      width : '100%',
-      height : '100%',
+      gridTemplateColumns: '1fr 1fr 1fr',
+      top : '7.5%',
+      width : '80%',
     };
   } else if (camCount === 7) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 1fr 1fr',
-      positions:
-      [
-        { row: 1, col: 1 },
-        { row: 1, col: 2 },
-        { row: 1, col: 3 },
-        { row: 2, col: 1 },
-        { row: 2, col: 3 },
-        { row: 3, col: 1 },
-        { row: 3, col: 3 }, 
-      ],
-      width : '100%',
-      height : '100%',
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: 'repeat(4, 1fr)',
+      width : '90%',
     };
   } else if (camCount === 8) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 1fr 1fr',
-      positions: positions.slice(0, camCount),
-      width: '92%',
+      gridTemplateRows: 'repeat(2, 1fr)',
+      gridTemplateColumns: 'repeat(4, 1fr)',
+      width: '85%',
     };
   } else if (camCount === 9) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 1fr 1fr',
-      positions: positions.slice(0, camCount),
-      width: '92%',
+      gridTemplateRows: 'repeat(2, 1fr)',
+      gridTemplateColumns: 'repeat(5, 1fr)',
+      width: '95%',
+      height : '70%',
     };
   } else if (camCount === 10) {
     return {
-      gridTemplateColumns: '1fr 1fr 1fr 1fr',
-      positions: positions.slice(0, camCount),
-      width: '92%',
+      gridTemplateRows: 'repeat(2, 1fr)',
+      gridTemplateColumns: 'repeat(5, 1fr)',
+      left : '5%',
+      width: '90%',
+      height : '70%',
     };
   } else {
-    // Add more cases as needed
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      positions: positions.slice(0, camCount),
     };
   }
 };
 
 const CamCatWrapper = styled.div`
   ${({ camCount, index }) =>
-  
-  camCount === 4 && index === 0
-  ? `
-    position: relative;
-    left: 45%;
-  `
-  :
-  camCount === 4 && index === 1
-  ? `
-    position: relative;
-    top: 35%;
-    left : 1%;
-  `
-  :
-  camCount === 4 && index === 2
-  ? `
-    position: relative;
-    right : 45%;
-  `
-  
-  : camCount === 4 && index === 3
-  ? `
-    position: relative;
-    top: -25%; 
-    left: 45%;
-  `
-  : camCount === 5 && index === 0
-  ? `
-    position: relative;
-    left: 25%;
-  `
-  : camCount === 5 && index === 1
-  ? `
-    position : relative;
-    top : 30%;
-  `
-  : camCount === 5 && index === 2
-  ? `
-    position : relative;
-    right : 32.5%;
 
-  `
-  : camCount === 5 && index === 3
+  camCount === 3 && index === 0
   ? `
     position: relative;
-    left: 25%;
-    bottom : 25%;
+    left : 50%;
   `
-  : camCount === 5 && index === 4
+  :
+  camCount === 3 && index === 1
   ? `
     position: relative;
-    width : 40%;
-    left: 57%;
-    bottom : 25%;
+    top : 100%;
   `
-  : camCount === 6 && index === 0
-  ? `
-    position: relative;
-    left: 55%;
-    bottom : 25%;
-    width : 90%;
-  `
-  : camCount === 6 && index === 1
-  ? `
-    position: relative;
-    top : 35%;
-    left : 3%;
-  `
-  : camCount === 6 && index === 2
-  ? `
-    position: relative;
-    right : 35%;
-    width : 90%;
-  `
-  : camCount === 6 && index === 3
-  ? `
-    position: relative;
-    left: 25%;
-    bottom : 103%;
-    width : 90%;
-  `
-  : camCount === 6 && index === 4
-  ? `
-    position: relative;
-    width : 30%;
-    top : 6%;
-    right : 50%;
-  `
-  : camCount === 6 && index === 5
-  ? `
-    position: relative;
-    right : 35%;
-    bottom : 15%;
-    width : 90%;
-  `
-  : camCount === 7 && index === 0
+  :
+  camCount === 3 && index === 2
   ? `
     position: relative;
   `
-  : camCount === 7 && index === 1
+  :
+  camCount === 5 && index === 0
   ? `
     position: relative;
+    left : 50%;
   `
-  : camCount === 7 && index === 2
+  :
+  camCount === 5 && index === 1
   ? `
     position: relative;
+    left : 50%;
   `
-  : camCount === 7 && index === 3
+  :
+  camCount === 5 && index === 2
   ? `
     position: relative;
+    top : 100%;
   `
-  : camCount === 7 && index === 4
+  :
+  camCount === 7 && index === 0
   ? `
     position: relative;
+    left : 50%;
   `
-  : camCount === 7 && index === 5
+  :
+  camCount === 7 && index === 1
   ? `
     position: relative;
+    left : 50%;
   `
-  : camCount === 7 && index === 6
+  :
+  camCount === 7 && index === 2
   ? `
     position: relative;
+    left : 50%;
+  `
+
+  :
+  camCount === 7 && index === 3
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camCount === 9 && index === 0
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 9 && index === 1
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 9 && index === 2
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 9 && index === 3
+  ? `
+    position: relative;
+    left : 50%;
+  `
+  :
+  camCount === 9 && index === 4
+  ? `
+    position: relative;
+    top : 100%;
   `
   : ''};
-`;
+  `;
 
   const TimeSecond = styled.text`
-  /* 스타일 내용 동일 */
+  color: #FFFFFF;
+  text-align: left;
+  font: 400 42px "ONE Mobile POP", sans-serif;
+  position: absolute; /* position을 absolute로 설정합니다. */
+  left: 22px; /* 원하는 위치 값을 지정합니다. */
+  top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
-
 
 const handleScMiniClick = () => {
   console.log('ScMini clicked!');
@@ -354,17 +275,17 @@ const SunsetPage = () => {
       <TimeSecond>60s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
-      <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
-        <SunMoon alt="SunMoon"></SunMoon>
         
         <CamCatGrid style={gridStyles}>
-          {gridStyles.positions.map(({ row, col }, index) => (
-            <CamCatWrapper key={index} camCount={camCount} index={index}>
-              <CamCat props={camArray[index]} style={{ gridRow: row, gridColumn: col }} />
-            </CamCatWrapper>
-          ))}
-        </CamCatGrid>
+            {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
+              <CamCatWrapper key={index} camCount={camCount} index={index}>
+                <CamCat props={camArray[index]} />
+              </CamCatWrapper>
+            ))}
+          </CamCatGrid>
+          <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
       </StyledContent>
+      <ChatButtonAndPopup />
       {/* </CamCatGridContainer> */}
 
       <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomId}/night`)}/>
