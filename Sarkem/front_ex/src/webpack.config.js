@@ -7,9 +7,13 @@ module.exports = {
       rules: [
         {
           test: /\.(js|jsx)$/,
-          exclude: /node_modules/,
+          exclude: [/node_modules/,
+          /\/node_modules\/face-api.*/
+                    ],
           use: {
-            loader: 'babel-loader',
+            loader: ['babel-loader',
+            require.resolve('source-map-loader')
+          ],
           },
         },
       ],

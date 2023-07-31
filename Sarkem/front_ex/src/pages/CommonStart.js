@@ -12,6 +12,7 @@ import onImage from '../img/on.png'
 import micImage from '../img/mic.png';
 import camImage from '../img/cam.png';
 import GoroomButton from '../components/buttons/goroomButton';
+import FaceExpressionDetectors from '../components/camera/FaceExpressionsDetector'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 
@@ -137,7 +138,7 @@ const CommonStart = ({onClick} ) => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
       setIsCamOn(true);
-
+      FaceExpressionDetectors(videoRef);
       videoRef.current.style.transform = 'scaleX(-1)';
     }
     

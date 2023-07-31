@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import * as faceapi from 'face-api.js';
 
 export default class OpenViduVideoComponent extends Component {
 
