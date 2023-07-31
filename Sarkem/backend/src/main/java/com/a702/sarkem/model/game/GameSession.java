@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.a702.sarkem.model.player.Player;
+import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.RolePlayer;
 
@@ -86,6 +87,19 @@ public class GameSession {
 		return null;
 	}
 	
+	// 게임 옵션 반환
+	public GameOptionDTO getGameOption() {
+		GameOptionDTO gameOption = new GameOptionDTO();
+		gameOption.setBullyCount(bullyCount);
+		gameOption.setCitizenCount(citizenCount);
+		gameOption.setDetectiveCount(detectiveCount);
+		gameOption.setDoctorCount(doctorCount);
+		gameOption.setMeetingTime(meetingTime);
+		gameOption.setPoliceCount(policeCount);
+		gameOption.setPsychologistCount(psychologistCount);
+		gameOption.setSarkCount(sarkCount);
+		return gameOption;
+	}
 
 	// 현재 옵션으로 설정된 역할을 리스트로 반환
 	public List<GameRole> getAllRoles() {
