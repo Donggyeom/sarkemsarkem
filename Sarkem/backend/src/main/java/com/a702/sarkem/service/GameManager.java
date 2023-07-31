@@ -279,7 +279,7 @@ public class GameManager {
 				}
 			}
 			HashMap<String, String> votingMap = new HashMap<>();
-			// 일단은 파람에 타겟이랑 롤 이름?? 을 보내볼게
+			// 일단은 파람에 타겟을 보내볼게
 			votingMap.put("target", targetId);
 //			votingMap.put("role", player.getRole().toString());
 			sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
@@ -337,7 +337,13 @@ public class GameManager {
 		log.debug(param.toString());
 		// 누가 누구 지목했는지 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
+		
+		// 밤 투표 "경찰" 직업 전체가 투표 완료했을 때
+		if(rPlayer.getRole().equals(GameRole.POLICE)) {
+			
+		}
 	}
+
 
 	
 	// 추방 투표 처리
