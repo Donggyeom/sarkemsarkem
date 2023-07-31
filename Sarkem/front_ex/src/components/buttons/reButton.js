@@ -22,6 +22,10 @@ const ReButtonStyle = styled.div`
   box-shadow: 0px 5.16px 5.16px 0px rgba(0, 0, 0, 0.25),
     5px 5px 0px 0px rgba(0, 0, 0, 1);
   cursor: pointer;
+  &:hover {
+    filter: brightness(0.8);
+    
+  }
 
   color: #ffffff;
   font-size: 25px;

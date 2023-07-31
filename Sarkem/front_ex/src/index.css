@@ -1,8 +1,18 @@
 @font-face {
-  font-family: "RixInooAriDuri";
-  font-weight: 1200;
-  src: url("./fonts/RixInooAriDuri.ttf") format("truetype");
+  /* 이누아리두리 */
+  font-family: 'RixInooAriDuriR';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2207-01@1.0/RixInooAriDuriR.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
 }
+@font-face {
+  /* 스위트 */
+  font-family: 'SUITE-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/SUITE-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
 
 body {
   margin: 0;

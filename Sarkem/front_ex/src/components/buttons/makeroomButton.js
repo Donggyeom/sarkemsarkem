@@ -7,6 +7,9 @@ const MakeroomButtonImage = styled.img`
   width: 20%;
   height: 20%; 
   cursor: pointer;
+  &:hover {
+    filter: brightness(0.8);
+  }
 `;
 
 const MakeroomButton = ({ src, alt }) => {

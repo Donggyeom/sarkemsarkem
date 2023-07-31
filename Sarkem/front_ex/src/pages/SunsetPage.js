@@ -207,16 +207,13 @@ const SunsetPage = () => {
   return (
     <Background>
       <StyledContent>
+      <SunMoon alt="SunMoon"></SunMoon>
       <TimeSecond>60s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
       <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
       <CamCatGridContainer>
-        <SunMoon alt="SunMoon"></SunMoon>
         
-        <CamButton alt="Camera Button" onClick={handleCamButtonClick} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} />
-        <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
         {/* <CamCatGridContainer gridStyles={gridStyles}> */}
           <CamCatGrid >죽여버림
               {gridStyles.positions.map(({ row, col }, index) => (

@@ -116,7 +116,7 @@ const NightPage = () => {
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
-            <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
         <div ref={leftSectionRef}>
           <CamCatGrid camCount={camArray.length}>
             {camArray.map((user, index) => (

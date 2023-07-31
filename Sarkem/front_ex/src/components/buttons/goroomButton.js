@@ -9,6 +9,9 @@ const GoroomButtonImage = styled.img`
   width: 28%;
   height : 76%;
   cursor: pointer;
+  &:hover {
+    filter: brightness(0.8);
+  }
 `;
 
 const GoroomButton = () => {

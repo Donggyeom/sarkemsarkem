@@ -45,6 +45,7 @@ const ChatMessage = styled.div`
   position: relative;
   margin-left: auto;
   margin-right: 10px;
+  font-family: 'SUITE-Regular', sans-serif; // SUITE-Regular 폰트를 적용
 `;
 
 const ChatMessages = styled.div`
