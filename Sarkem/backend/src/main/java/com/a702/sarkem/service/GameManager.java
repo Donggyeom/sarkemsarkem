@@ -83,7 +83,7 @@ public class GameManager {
 		String newGameId = gameCodeGenerate(); // 새 게임 코드 획득
 		newGameRoom.setGameId(newGameId);
 		GameSession newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
-		gameSessionMap.put(roomId, newGame);
+		gameSessionMap.put(newGameId, newGame);
 
 		// reids topic 생성
 		String strRoomTopic = "GAME_" + roomId;
@@ -133,6 +133,16 @@ public class GameManager {
 	 */
 	public GameRoom getGameRoom(String roomId) {
 		return gameRoomMap.get(roomId);
+	}
+	
+	/**
+	 * 게임세션 정보 조회
+	 */
+	public GameSession getGameSession(String roomId) {
+		GameRoom room = gameRoomMap.get(roomId);
+		String gameId = room.getGameId();
+		if (gameId == null) return null;
+		return gameSessionMap.get(gameId);
 	}
 
 	/**
@@ -197,7 +207,7 @@ public class GameManager {
 		}
 
 		// session 변경
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		gameSession.setMeetingTime(option.getMeetingTime());
 		gameSession.setCitizenCount(option.getCitizenCount());
 		gameSession.setSarkCount(option.getSarkCount());
@@ -219,7 +229,9 @@ public class GameManager {
 	public boolean checkStartable(String roomId) {
 		// 플레이어 수와 역할 수 일치 여부 확인
 		GameRoom room = gameRoomMap.get(roomId);
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
+		if (room == null || gameSession == null) return false;
+		
 		int playerCount = room.getPlayerCount();
 		int optionRoleCount = gameSession.getTotalRoleCnt();
 
@@ -234,7 +246,7 @@ public class GameManager {
 	public void gameStart(String roomId) {
 		// 게임 러너 생성 및 시작
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		ChannelTopic gameTopic = topics.get("GAME_" + roomId);
 		ChannelTopic chatTopic = topics.get("CHAT_" + roomId);
 		GameThread gameThread = new GameThread(this, gameRoom, gameSession, gameTopic, chatTopic);
@@ -245,7 +257,7 @@ public class GameManager {
 	 * 대상 선택
 	 */
 	public void selectTarget(String roomId, String playerId, Map<String, String> target) {
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		String targetId = target.get("target");
 		RolePlayer player = (RolePlayer) gameSession.getPlayer(playerId); // 타겟을 지목한 플레이어
 		RolePlayer newTargetPlayer = (RolePlayer) gameSession.getPlayer(targetId); // 플레이어가 새로 지목한 타겟 플레이어
@@ -301,7 +313,7 @@ public class GameManager {
 	 * 대상 선택 완료
 	 */
 	public void selectedTarget(String roomId, String playerId) {
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		RolePlayer rPlayer = (RolePlayer) gameSession.getPlayer(playerId);
 		RolePlayer targetPlayer = (RolePlayer) gameSession.getPlayer(rPlayer.getTarget());
 		HashMap<String, String> param = new HashMap<>();
@@ -318,7 +330,7 @@ public class GameManager {
 	
 	// 추방 투표 처리
 	public void expulsionVote(String roomId, Map<String, Boolean> voteOX) {
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		Boolean voteResult = voteOX.get("result");
 		// 투표자수++
 		gameSession.setExpultionVotePlayerCnt(gameSession.getExpultionVotePlayerCnt() + 1);
@@ -434,7 +446,23 @@ public class GameManager {
 	// 1. 게임 로비
 	// "게임방 설정 변경" 메시지 전송
 	public void sendGameOptionChangedMessage(String roomId, GameOptionDTO option) {
-		sendSystemMessageToAll(roomId, SystemCode.OPTION_CHANGED, option);
+		GameRoom gameRoom = getGameRoom(roomId);
+		String hostId = gameRoom.getHostId();
+		List<Player> players = getGameRoom(roomId).getPlayers();
+		
+		if (hostId == null || hostId.equals("")) {
+			log.debug("방장 정보가 없습니다.");
+			return;
+		}
+		
+		List<String> playersId = new ArrayList<>();
+		for (Player p : players) {
+			String pId = p.getPlayerId();
+			if (hostId.equals(pId)) continue;
+			
+			playersId.add(pId);
+		}
+		sendSystemMessage(roomId, playersId, SystemCode.OPTION_CHANGED, option);
 	}
 
 	// "게임시작" 메시지 전송
@@ -458,7 +486,7 @@ public class GameManager {
 
 	// "역할배정" 메시지 전송
 	public void sendRoleAssignMessage(String roomId) {
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		List<RolePlayer> rPlayers = gameSession.getPlayers();
 		Map<String, GameRole> param = new HashMap<>();
 		for (RolePlayer rp : rPlayers) {

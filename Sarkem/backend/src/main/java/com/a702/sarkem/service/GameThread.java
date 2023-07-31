@@ -20,12 +20,15 @@ public class GameThread extends Thread {
 	private GameRoom gameRoom;
 	private GameSession gameSession;
 	private String roomId;
+	private String gameId;
 	
 	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
 			ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
 		this.gameRoom = gameRoom;
 		this.gameSession = gameSession;
+		this.roomId = gameRoom.getRoomId();
+		this.gameId = gameRoom.getGameId();
 	}
 
 	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
@@ -91,13 +94,12 @@ public class GameThread extends Thread {
 
 	// 역할배정
 	private void assignRole() {
-		int playerCnt = gameRoom.getPlayerCount();
-
 		// 현재 설정된 직업 정보를 불러온다.
 		List<GameRole> roles = gameSession.getAllRoles();
 		Collections.shuffle(roles);
 
 		List<Player> players = gameRoom.getPlayers();
+		int playerCnt = players.size();
 		List<RolePlayer> rPlaysers = new ArrayList<>(6);
 		for (int i = 0; i < playerCnt; i++) {
 			Player player = players.get(i);
