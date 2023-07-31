@@ -14,6 +14,7 @@ import camImage from '../img/cam.png';
 import GoroomButton from '../components/buttons/goroomButton';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
+import ToggleButton from '../components/buttons/ToggleButton';
 
 
 const StyledStartPage = styled.div`
@@ -82,21 +83,28 @@ const RightPart = styled.div`
   background-size: 15vw;
   background-position: center center;
   background-repeat: no-repeat;
-  padding: 50px 0px 50px 150px;
+  padding: 50px 10px 50px 10px;
+  font-family: "RixInooAriDuri";
+  font-size: 35px;
 
   /* Input styling */
   input {
-    width: 100%;
+    width: 300px; /* 원하는 너비로 설정 */
+    height: 50px; /* 원하는 높이로 설정 */
     padding: 5px;
-    font-size: 28px;
+    font-size: 35px;
     border: none;
     background-color: transparent;
     outline: none;
     text-align: center; 
-    margin-right: 160px;
     font-family: "RixInooAriDuri";
   }
+  span {
+    margin: 0 50px; /* You can adjust the margin as needed */
+  }
 `;
+
+
 
 const Logo = styled.img`
   /* 로고 이미지 스타일 작성 */
@@ -234,11 +242,17 @@ const CommonStart = ({onClick} ) => {
             </DivWrapper>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${camImage})` }}></LeftPart>
-              <RightPart onClick={handleCamToggle} style={{ backgroundImage: `url(${isCamOn ? onImage : offImage})` }}></RightPart>
+              {/* <RightPart onClick={handleCamToggle} style={{ backgroundImage: `url(${isCamOn ? onImage : offImage})` }}></RightPart> */}
+              <RightPart>
+                <span>OFF</span> <ToggleButton checked={true} onChange={handleCamToggle} /> <span>ON</span>
+              </RightPart>
             </DivWrapper>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${micImage})` }}></LeftPart>
-              <RightPart onClick={handleMicToggle} style={{ backgroundImage: `url(${isMicOn ? onImage : offImage})` }}></RightPart>
+              {/* <RightPart onClick={handleMicToggle} style={{ backgroundImage: `url(${isMicOn ? onImage : offImage})` }}></RightPart> */}
+              <RightPart>
+                <span>OFF</span> <ToggleButton checked={true} onChange={handleMicToggle} /> <span>ON</span>
+              </RightPart>
             </DivWrapper>
             <DivWrapper>
               {/* 조건부 렌더링을 사용하여 버튼 선택 */}
