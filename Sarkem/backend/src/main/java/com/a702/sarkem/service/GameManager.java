@@ -162,13 +162,19 @@ public class GameManager {
 	/**
 	 * 플레이어 게임방 연결
 	 */
-	public void connectPlayer(String roomId, Player player) {
+	public boolean connectPlayer(String roomId, Player player) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		List<Player> playerList = gameRoom.getPlayers();
-		playerList.add(player);
-		if (gameRoom.getHostId() == null)
-			gameRoom.setHostId(player.getPlayerId());
+		if (gameRoom.getPlayerCount() < 10) {
+			List<Player> playerList = gameRoom.getPlayers();
+			playerList.add(player);
+			if (gameRoom.getHostId() == null)
+				gameRoom.setHostId(player.getPlayerId());
+			return true;
+		} else {
+			return false;
+		}
 	}
+
 
 	/**
 	 * 게임방 정보 조회

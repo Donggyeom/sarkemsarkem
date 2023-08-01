@@ -10,6 +10,9 @@ export default class OpenViduVideoComponent extends Component {
     componentDidUpdate(props) {
         if (props && !!this.videoRef) {
             this.props.streamManager.addVideoElement(this.videoRef.current);
+            console.log(this.props.streamManager);
+            console.log("구분선");
+            console.log(this.videoRef);
         }
     }
 
