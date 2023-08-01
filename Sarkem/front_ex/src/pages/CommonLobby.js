@@ -28,6 +28,8 @@ import InviteButton from '../components/buttons/InviteButton';
 import { useRoomContext } from '../Context';
 import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
+import HelpButton from '../components/buttons/HelpButton';
+import Help from '../components/games/Help';
 
 
 const StyledContent = styled.div`
@@ -118,6 +120,7 @@ const ButtonContainer = styled.div`
   width: 60%;
   height: 85%;
 `;
+
 
 const CommonLobby = ()=>{
   const {roomId, isHost, camArray, leaveSession} = useRoomContext();
@@ -229,9 +232,16 @@ const CommonLobby = ()=>{
     setShowNyangachiPopup(false);
   };
 
+  //도움말
+  const [isHelpOn, setIsHelpOn] = useState(true);
+  const handleHelpButtonClick = () => {
+    setIsHelpOn((prevIsHelpOn) => !prevIsHelpOn);
+  };
+
 
   return (
     <Background>
+      {!isHelpOn && <Help top="47%" left="78%" />}
       {showSarkPopup && <ScPopup src={c_sark} top="20%" left="50%" />}
       {showVetPopup && <ScPopup src={c_vet} top="40%" left="50%" />}
       {showPolicePopup && <ScPopup src={c_police} top="40%" left="72.5%" />}
@@ -318,6 +328,7 @@ const CommonLobby = ()=>{
         </RightPart>
       </DivWrapper>
           <DivWrapper>
+          
             {isHost ? (
               <>
                 <LeftPart>
@@ -326,8 +337,8 @@ const CommonLobby = ()=>{
                 </ButtonContainer>
                 </LeftPart>
                 <RightPart>
-                <ButtonContainer>
-                  <InviteButton onClick={handleInviteClick} />
+                  <ButtonContainer>
+                    <InviteButton onClick={handleInviteClick} />
                   </ButtonContainer>
                 </RightPart>
                 
@@ -335,8 +346,8 @@ const CommonLobby = ()=>{
             ) : (
               <>
                 <RightPart>
-                  <ButtonContainer style ={{flex : '0.3'}}>
-                  <InviteButton onClick={handleInviteClick} />
+                  <ButtonContainer>
+                    <InviteButton onClick={handleInviteClick} />
                   </ButtonContainer>
                 </RightPart>
               </>
@@ -344,6 +355,7 @@ const CommonLobby = ()=>{
           </DivWrapper>
         
         </RightSection>
+        <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />
       </StyledContent>
     </Background>
   );

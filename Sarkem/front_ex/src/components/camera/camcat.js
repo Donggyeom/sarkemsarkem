@@ -47,7 +47,6 @@ const CamCat = (props) => {
               left: '-1%',
               width: '96%',
               height: '40%',
-              // zIndex: 1,
               overflow: 'visible', 
             }}
           />
