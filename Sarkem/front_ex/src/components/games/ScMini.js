@@ -68,9 +68,10 @@ const PopupImage = styled.img`
   width: 300px;
 `;
 
-const ScMini = ({ alt }) => {
+const ScMini = ({ alt, role }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state
+
 
   const handleScMiniClick = () => {
     setIsPopupOpen(true);
@@ -83,19 +84,6 @@ const ScMini = ({ alt }) => {
       setIsClosing(false); // 팝업이 완전히 사라지면 팝업 닫는 상태를 false로 변경
     }, 500); // 0.5초(500ms) 후에 팝업을 완전히 닫습니다.
   };
-
-  const roleImageMap = {
-    sark: cSarkImageSrc,
-    police: scPoliceImageSrc,
-    nyang: scNyangImageSrc,
-    vet: scVetImageSrc,
-    cat: scCatImageSrc,
-    mind: scMindImageSrc,
-    scoop: scDetectImageSrc,
-  };
-
-  // const roleImageSrc = roleImageMap[role] || cSarkImageSrc;
-
   return (
     <>
       <ScMiniButton onClick={handleScMiniClick}>
