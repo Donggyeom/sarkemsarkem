@@ -241,7 +241,7 @@ const CommonLobby = ()=>{
 
   return (
     <Background>
-      {!isHelpOn && <Help top="47%" left="78%" />}
+      {!isHelpOn && <Help top="50%" left="77.5%" />}
       {showSarkPopup && <ScPopup src={c_sark} top="20%" left="50%" />}
       {showVetPopup && <ScPopup src={c_vet} top="40%" left="50%" />}
       {showPolicePopup && <ScPopup src={c_police} top="40%" left="72.5%" />}

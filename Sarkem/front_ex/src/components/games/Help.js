@@ -9,8 +9,8 @@ const ChatContainer = styled.div`
   background-size: cover;
   background-color: transparent;
   background-repeat: no-repeat;
-  width: 550px;
-  height: 510px;
+  width: 580px;
+  height: 540px;
   display: flex;
   flex-direction: column;
   padding: 10px;
