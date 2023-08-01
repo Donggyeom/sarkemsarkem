@@ -25,6 +25,7 @@ public class GameThread extends Thread {
 	private String roomId;
 	private String gameId;
 	private String noticeMessage;
+	private int meetingTime;
 
 	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
 			ChannelTopic chatTopic) {
@@ -33,6 +34,7 @@ public class GameThread extends Thread {
 		this.gameSession = gameSession;
 		this.roomId = gameRoom.getRoomId();
 		this.gameId = gameRoom.getGameId();
+		this.meetingTime = gameSession.getMeetingTime() * 1000;
 	}
 
 	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
@@ -41,7 +43,6 @@ public class GameThread extends Thread {
 
 	@Override
 	public void run() {
-		int meetingTime = gameSession.getMeetingTime() * 1000;
 		// TODO: 게임 로직 구현
 		// "게임시작" 메시지 전송
 		roomId = gameRoom.getRoomId();
@@ -55,22 +56,25 @@ public class GameThread extends Thread {
 			// 낮 페이즈
 			convertPhaseToDay();
 
-			// 투표타임 타이머
-			Thread dayVoteThread = new DayVoteThread();
-			dayVoteThread.start();
-			try {
-				dayVoteThread.join(meetingTime);
-			} catch (InterruptedException e) {
+			// 투표 결과 처리 및 낮 투표 종료 메시지 보내기
+			RolePlayer maxVotedPlayer = dayVote();
+			if (maxVotedPlayer == null) {
+				maxVotedPlayer = new RolePlayer("", "", null);
 			}
-
-			// 낮페이즈 끝나면 // 투표 결과 처리 및 낮 투표 종료 메시지 보내기
-			dayVote();
+			
+			// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
+			HashMap<String, String> expulsionPlayer = new HashMap<>();
+			expulsionPlayer.put("targetId", maxVotedPlayer.getPlayerId());
+			expulsionPlayer.put("targetNickname", maxVotedPlayer.getNickname());
+			// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
+			gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
 
 			// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로!!!!!!
-			if (gameSession.getExpulsionTargetId() == null || "".equals(gameSession.getExpulsionTargetId())) {
+			if (maxVotedPlayer.getPlayerId().equals("")) {
 				// 대상 없다 노티스메시지 보내기
 				gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.");
-			} else {
+			} 
+			else {
 				// 저녁 페이즈 => 추방투표 시작
 				convertPhaseToTwilight();
 				// 투표타임 타이머
@@ -78,15 +82,14 @@ public class GameThread extends Thread {
 				twilightVoteThread.start();
 				try {
 					twilightVoteThread.join(meetingTime);
-				} catch (InterruptedException e) {
-				}
+				} catch (InterruptedException e) { }
+				
 				// 실제 추방 & 메시지 전송
-				twilightVote();
+				twilightVote(maxVotedPlayer);
 			}
 
 			// 게임종료 검사
-			if (isGameEnd())
-				break;
+			if (isGameEnd()) break;
 
 			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
 			convertPhaseToNight();
@@ -101,10 +104,7 @@ public class GameThread extends Thread {
 			nightVote();
 
 			// 게임종료 검사
-			if (isGameEnd())
-				break;
-			// 무한루프 방지 임시 break
-			break;
+			if (isGameEnd()) break;
 		}
 
 		// 게임 종료 메시지 전송
@@ -168,39 +168,31 @@ public class GameThread extends Thread {
 	}
 
 	// 낮 투표 결과 종합
-	private void dayVote() {
-		// 낮 투표결과 종합 // 게임 세션에 추방 투표 대상 저장
+	private RolePlayer dayVote() {
+
+		// 투표타임 타이머
+		Thread dayVoteThread = new DayVoteThread();
+		dayVoteThread.start();
+		try {
+			dayVoteThread.join(meetingTime);
+		} catch (InterruptedException e) {
+		}
+		
+		// 낮 투표결과 종합 
+		// 게임 세션에 추방 투표 대상 저장
 		int max = 0; // 최다득표 수
-		String maxVotedPlayerId = ""; // 최다 득표자 아이디
-		String maxVotedPlayerNickname = ""; // 최다 득표자 아이디
+		RolePlayer maxVotedPlayer = null; // 최다 득표자
 		// 최다 득표 수, 최다 득표자 구하기
 		for (RolePlayer r : gameSession.getPlayers()) {
 			if (r.getVotedCnt() > max) {
 				max = r.getVotedCnt();
-				maxVotedPlayerId = r.getPlayerId();
+				maxVotedPlayer = r;
+			}
+			else if (r.getVotedCnt() == max) {
+				maxVotedPlayer = null;
 			}
 		}
-		// 최다 득표자가 2명 이상이면 최다득표자 없음 => 저녁투표 안함
-		int cnt = 0;
-		for (RolePlayer r : gameSession.getPlayers()) {
-			if (r.getVotedCnt() == max) {
-				cnt++;
-				maxVotedPlayerNickname = r.getNickname();
-			}
-			if (cnt > 1) {
-				maxVotedPlayerId = "";
-				break;
-			}
-		}
-		log.debug("max : " + max + "\nmaxVotedPlayer : " + maxVotedPlayerId);
-
-		// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
-		gameSession.setExpulsionTargetId(maxVotedPlayerId);
-		HashMap<String, String> expulsionPlayer = new HashMap<>();
-		expulsionPlayer.put("targetId", maxVotedPlayerId);
-		expulsionPlayer.put("targetNickname", maxVotedPlayerNickname);
-		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
-		gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
+		return maxVotedPlayer;
 	}
 
 	// 저녁 페이즈
@@ -214,20 +206,19 @@ public class GameThread extends Thread {
 	}
 
 	// 저녁 투표 결과 종합
-	private void twilightVote() {
+	private void twilightVote(RolePlayer target) {
 		// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
 		if (gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
 			// 실제로 추방하기
-			RolePlayer expulsionPlayer = gameSession.getPlayer(gameSession.getExpulsionTargetId());
-			expulsionPlayer.setAlive(false);
-			expulsionPlayer.setRole(GameRole.OBSERVER);
+			target.setAlive(false);
+			target.setRole(GameRole.OBSERVER);
 			// 추방 메시지 보내기
-			gameManager.sendExcludedMessage(roomId, gameSession.getExpulsionTargetId());
+			gameManager.sendExcludedMessage(roomId, target.getPlayerId());
 		}
 		// 추방 투표 결과 전송 // 저녁 페이즈 종료
 		HashMap<String, String> result = new HashMap<>();
 		// 추방 당한 사람 아이디를 파람으로 전달
-		result.put("expulsionPlayer", gameSession.getExpulsionTargetId());
+		result.put("expulsionPlayer", target.getNickname());
 		gameManager.sendEndTwilightVoteMessage(roomId, result);
 	}
 
@@ -295,18 +286,6 @@ public class GameThread extends Thread {
 		}
 	}
 
-	// 저녁 투표 종료 여부 반환
-	private boolean isTwilightVoteEnded() throws InterruptedException {
-		while (true) {
-			// 끝날 조건 // 모두가 투표를 했을때
-			// TODO: 관전자 고려 필요
-			if (gameSession.getExpulsionVoteCnt() == gameSession.getPlayers().size()) {
-				return true;
-			}
-			sleep(500);
-		}
-	}
-
 	// 게임 종료
 	private boolean isGameEnd() {
 		int aliveSark = 0;
@@ -350,7 +329,7 @@ public class GameThread extends Thread {
 		public void run() {
 			// 투표 대기
 			try {
-				if (isTwilightVoteEnded())
+				if (isPlayersVoteEnded())
 					return;
 			} catch (InterruptedException e) {
 			}
