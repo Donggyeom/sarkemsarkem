@@ -51,6 +51,8 @@ const DayPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [intervalId, setIntervalId] = useState(null); // 변수 추가
+
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
     setIsCamOn(camOn);
@@ -281,7 +283,8 @@ const CamCatWrapper = styled.div`
   const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
   const gridStyles = calculateGrid(camCount);
   const leftSectionRef = useRef(null);
-
+  console.log("으아악");
+  console.log(CamCat.running);
     
     return (
     <Background>
