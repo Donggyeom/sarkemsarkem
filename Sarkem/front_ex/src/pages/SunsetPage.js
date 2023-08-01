@@ -27,7 +27,7 @@ const CamCatGrid = styled.div`
   display: grid;
   // align-items: center;
   justify-items: center;
-  overflow: hidden;
+  // overflow: hidden;
   ${({ style }) =>
     style && `
     width: ${style.width};

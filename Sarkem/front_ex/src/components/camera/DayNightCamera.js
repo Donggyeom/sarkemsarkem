@@ -8,7 +8,6 @@ const CamCatGrid = styled.div`
     // grid-gap: 10px;
     align-items: center;
     justify-items: center;
-    overflow: hidden;
     ${({ style }) =>
       style && `
       width: ${style.width};

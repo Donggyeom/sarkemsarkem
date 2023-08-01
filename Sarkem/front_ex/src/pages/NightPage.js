@@ -13,7 +13,7 @@ import TempButton from '../components/buttons/TempButton';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import { useRoomContext } from '../Context';
 import { useNavigate, useLocation } from 'react-router-dom';
-import DayNightCamera from '../components/camera/DayCamera';
+import DayNightCamera from '../components/camera/DayNightCamera';
 
 
 const StyledNightPage = styled.div`

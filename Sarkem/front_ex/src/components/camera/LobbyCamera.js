@@ -12,7 +12,7 @@ const LeftSectionWrapper = styled.div`
 `;
 
 const CamCatGrid = styled.div`
-left : 1.5%;
+// left : 1.5%;
 position : relative;
 display: grid;
 align-items: center;

@@ -170,6 +170,7 @@ const CommonLobby = ()=>{
   });
 
   const handlePeopleCountChange = (part, value) => {
+    if (value >= 0)
     setPeopleCount((prevPeopleCount) => ({
       ...prevPeopleCount,
       [part]: value,
