@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import logoImage from '../img/logo.png';
-import camcatImage from '../img/camcat.png';
+import camcatImage from '../img/camcat2.png';
 import boxImage from '../img/box.png';
 import Background from '../components/backgrounds/BackgroundSunset';
 import usernicknameImage from '../img/usernickname.png';
@@ -197,35 +197,35 @@ const CommonStart = ({onClick} ) => {
 
         <StyledContent>
           <LeftSection>
-          <div
-            style={{
-              flex: 1,
-              marginLeft : '5%',
-              marginTop : '5%',
-              marginBottom : '5%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundImage: `url(${camcatImage})`,
-              backgroundSize: '98% 95%', // Increase the background image size to 120% to make it larger
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center center',
-            }}
-          >
+          <div style={{ position: 'relative', width: '85%', height: '63%', borderRadius: '10%' }}>
             <video
-              ref={videoRef}
               autoPlay
               style={{
-                marginTop: "17vh",
-                width: '85%',
-                height: '63%',
+                marginTop: '30%',
+                width: '100%',
+                height: '100%',
                 objectFit: 'cover',
                 borderRadius: '10%',
-
+              }}
+            >
+              {/* Video source goes here */}
+            </video>
+            <img
+              src={camcatImage}
+              alt="CamCat"
+              style={{
+                position: 'absolute',
+                top: '42  %',
+                left: '50%',
+                transform: 'translate(-50%, -50%)', // Center the image
+                width: '102%', // Adjust the size of the image as needed
+                height: '45%',
+                zIndex: 1, // Ensure the image is above the video (z-index: 0 by default)
               }}
             />
-            <audio ref={audioRef} autoPlay />
           </div>
+          
+          
           </LeftSection>
           <RightSection>
             <DivWrapper>
