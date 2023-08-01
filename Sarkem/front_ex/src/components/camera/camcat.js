@@ -20,7 +20,9 @@ const CamCat = (props) => {
     >
       {props.streamManager !== undefined} 
         <div className="streamcomponent" style ={{flex:0.2}}>
-            <div style={{ flex: 0.6, justifyContent: 'center' }}><OpenViduVideoComponent streamManager={props.props}/></div>
+            <div style={{ flex: 0.6, justifyContent: 'center' }}>
+              <OpenViduVideoComponent style = {{transform: 'scaleX(-1)'}} streamManager={props.props}/>
+            </div>
 
            <div style={{ flex: 0.4, textAlign: 'center' }}>{JSON.parse(props.props.stream.connection.data).userData}</div>
 
