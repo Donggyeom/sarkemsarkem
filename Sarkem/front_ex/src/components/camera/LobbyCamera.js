@@ -7,7 +7,7 @@ const LeftSectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
+  // overflow: hidden;
   justify-content : center;
   position: relative;
 `;
@@ -18,7 +18,7 @@ position : relative;
 display: grid;
 align-items: center;
 justify-items: center;
-overflow: hidden;
+// overflow: hidden;
 ${({ style }) =>
   style && `
   width: ${style.width};
