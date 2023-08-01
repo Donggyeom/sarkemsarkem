@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.data.redis.listener.ChannelTopic;
 
@@ -61,7 +62,7 @@ public class GameThread extends Thread {
 			if (maxVotedPlayer == null) {
 				maxVotedPlayer = new RolePlayer("", "", null);
 			}
-			
+
 			// 가장 많은 투표수를 받은 플래이어를 추방 투표 대상으로 설정
 			HashMap<String, String> expulsionPlayer = new HashMap<>();
 			expulsionPlayer.put("targetId", maxVotedPlayer.getPlayerId());
@@ -73,8 +74,7 @@ public class GameThread extends Thread {
 			if (maxVotedPlayer.getPlayerId().equals("")) {
 				// 대상 없다 노티스메시지 보내기
 				gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.");
-			} 
-			else {
+			} else {
 				// 저녁 페이즈 => 추방투표 시작
 				convertPhaseToTwilight();
 				// 투표타임 타이머
@@ -82,14 +82,16 @@ public class GameThread extends Thread {
 				twilightVoteThread.start();
 				try {
 					twilightVoteThread.join(meetingTime);
-				} catch (InterruptedException e) { }
-				
+				} catch (InterruptedException e) {
+				}
+
 				// 실제 추방 & 메시지 전송
 				twilightVote(maxVotedPlayer);
 			}
 
 			// 게임종료 검사
-			if (isGameEnd()) break;
+			if (isGameEnd())
+				break;
 
 			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
 			convertPhaseToNight();
@@ -104,7 +106,8 @@ public class GameThread extends Thread {
 			nightVote();
 
 			// 게임종료 검사
-			if (isGameEnd()) break;
+			if (isGameEnd())
+				break;
 		}
 
 		// 게임 종료 메시지 전송
@@ -136,16 +139,11 @@ public class GameThread extends Thread {
 
 	// 낮 페이즈
 	private void convertPhaseToDay() {
-		
+
 		// 게임 세션 초기화
 		int day = gameSession.nextDay();
 		gameSession.setPhase(PhaseType.DAY);
-		for (RolePlayer rp : gameSession.getPlayers()) {
-			rp.setTarget("");
-			rp.setTargetConfirmed(false);
-			rp.setVotedCnt(0);
-		}
-		
+
 		// "낮 페이즈" 메시지 전송
 		Map<String, Integer> param = new HashMap<>();
 		param.put("day", day);
@@ -154,34 +152,49 @@ public class GameThread extends Thread {
 		if (gameSession.getDay() > 1) {
 			// 밤에 누가 죽었는지, 아무도 안죽었는지 전체한테 노티스 메시지 보내기
 			gameManager.sendNoticeMessageToAll(roomId, noticeMessage);
-			
+
+			// 히든미션 발생 여부 정하기
+			gameManager.hiddenMissionOccur(roomId);
+
+			// 히든미션 발생했으면 하라고 메시지 보내기
+			if (gameSession.isBHiddenMissionStatus()) {
+				Random rnd = new Random();
+				int num = rnd.nextInt(5);
+				HashMap<String, Integer> hMissionIdx = new HashMap<>();
+				hMissionIdx.put("missionIdx", num);
+				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK),
+						hMissionIdx);
+			}
+
 			// 경찰 기능: 대상 선택한 사람들 삵인지 여부 알려주기
-			for(RolePlayer rp : gameSession.getRolePlayers(GameRole.POLICE)) {
+			for (RolePlayer rp : gameSession.getRolePlayers(GameRole.POLICE)) {
 				RolePlayer target = gameSession.getPlayer(rp.getTarget());
-				if(target.getRole().equals(GameRole.SARK)) {
-					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), target.getNickname() + "님은 삵이 맞습니다.");
-				}else {
-					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), target.getNickname() + "님은 삵이 아닙니다.");
+				if (target.getRole().equals(GameRole.SARK)) {
+					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(),
+							target.getNickname() + "님은 삵이 맞습니다.");
+				} else {
+					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(),
+							target.getNickname() + "님은 삵이 아닙니다.");
 				}
 			}
-			
+
 			// 심리학자 기능 시작(표정분석 API)
-			for(RolePlayer rp : gameSession.getRolePlayers(GameRole.PSYCHO)) {
+			for (RolePlayer rp : gameSession.getRolePlayers(GameRole.PSYCHO)) {
 				HashMap<String, String> target = new HashMap<>();
 				target.put("target", rp.getTarget());
 				gameManager.sendPsychoStartMessage(roomId, rp.getPlayerId(), target);
 			}
-			
+
 			// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
-			for(RolePlayer rp : gameSession.getRolePlayers(GameRole.BULLY)) {
+			for (RolePlayer rp : gameSession.getRolePlayers(GameRole.BULLY)) {
 				gameManager.sendThreatingMessage(roomId, rp.getTarget());
 			}
-
-			// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택 초기화
-			for(RolePlayer rp : gameSession.getAlivePlayers()) {
-				rp.setTarget("");
-				rp.setTargetConfirmed(false);
-			}	
+		}
+		// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택, 받은 투표수 초기화
+		for (RolePlayer rp : gameSession.getPlayers()) {
+			rp.setTarget("");
+			rp.setTargetConfirmed(false);
+			rp.setVotedCnt(0);
 		}
 		// "대상 선택" 메시지 전송
 		gameManager.sendTargetSelectionMessage(roomId);
@@ -197,8 +210,8 @@ public class GameThread extends Thread {
 			dayVoteThread.join(meetingTime);
 		} catch (InterruptedException e) {
 		}
-		
-		// 낮 투표결과 종합 
+
+		// 낮 투표결과 종합
 		// 게임 세션에 추방 투표 대상 저장
 		int max = 0; // 최다득표 수
 		RolePlayer maxVotedPlayer = null; // 최다 득표자
@@ -207,8 +220,7 @@ public class GameThread extends Thread {
 			if (r.getVotedCnt() > max) {
 				max = r.getVotedCnt();
 				maxVotedPlayer = r;
-			}
-			else if (r.getVotedCnt() == max) {
+			} else if (r.getVotedCnt() == max) {
 				maxVotedPlayer = null;
 			}
 		}
@@ -246,6 +258,12 @@ public class GameThread extends Thread {
 	private void convertPhaseToNight() {
 		// 밤 페이즈로 변경
 		gameSession.setPhase(PhaseType.NIGHT);
+		// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택, 받은 투표수 초기화
+		for (RolePlayer rp : gameSession.getPlayers()) {
+			rp.setTarget("");
+			rp.setTargetConfirmed(false);
+			rp.setVotedCnt(0);
+		}
 		// "밤 페이즈" 메시지 전송
 		gameManager.sendNightPhaseMessage(roomId);
 		// 밤페이즈 됐다고 메시지 전송하면 프론트에서
@@ -264,7 +282,7 @@ public class GameThread extends Thread {
 			noticeMessage = "밤 사이 삵이 사냥에 실패했습니다.";
 			return;
 		}
-			
+
 		// 죽은 사람 처리
 		RolePlayer deadPlayer = gameSession.getPlayer(sarkTarget);
 		deadPlayer.setAlive(false);

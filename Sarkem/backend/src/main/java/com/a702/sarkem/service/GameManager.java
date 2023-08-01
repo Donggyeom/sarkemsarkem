@@ -318,6 +318,8 @@ public class GameManager {
 			
 			// 삵인 경우 논의해서 하나만 투표
 			if(role.equals(GameRole.SARK)) {
+				// 히든미션이 발행됐는데 성공 못했으면 바로 리턴
+				if(gameSession.isBHiddenMissionStatus() && !gameSession.isBHiddenMissionSuccess()) return;
 				// 같은 직업을 가진 플레이어들의 타겟을 모두 업데이트
 				List<String> thisPlayers = new ArrayList<>();	// 같은 직업 플레이어ID 저장
 				for(RolePlayer rPlayer : gameSession.getRolePlayers(role)) {					
@@ -436,7 +438,12 @@ public class GameManager {
 		if(num<3) gameSession.setBHiddenMissionStatus(true);
 	}
 	
-
+	// 히든 미션 성공 시
+	public void hiddenMissionSuccess(String roomId) {
+		GameSession gameSession = getGameSession(roomId);
+		sendHiddenMissionSuccessMessage(roomId);
+		gameSession.setBHiddenMissionSuccess(true);
+	}
 	/**
 	 * 시스템 메시지를 대상에게 전송
 	 * 
@@ -640,8 +647,8 @@ public class GameManager {
 	}
 
 	// "히든미션 시작" 메시지 전송 **
-	public void sendHiddenMissionStartMessage(String roomId, List<String> sarkPlayers) {
-		sendSystemMessage(roomId, sarkPlayers, SystemCode.MISSION_START, null);
+	public void sendHiddenMissionStartMessage(String roomId, List<String> sarkPlayers, Map<String, Integer> hMissionIdx) {
+		sendSystemMessage(roomId, sarkPlayers, SystemCode.MISSION_START, hMissionIdx);
 	}
 
 	// "히든미션 성공" 메시지 전송

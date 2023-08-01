@@ -63,6 +63,7 @@ public class GameController {
 			break;
 		// 히든미션 성공
 		case HIDDENMISSION_SUCCESS:
+			gameManager.hiddenMissionSuccess(roomId); 
 			break;
 		// 게임 설정 변경
 		case OPTION_CHANGE:
