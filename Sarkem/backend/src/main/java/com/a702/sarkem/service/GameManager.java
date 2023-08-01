@@ -83,6 +83,8 @@ public class GameManager {
 		newGameRoom.setGameId(newGameId);
 		GameSession newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
 		gameSessionMap.put(newGameId, newGame);
+		log.debug("createGameRoom - GameRoom : " + newGameRoom);
+		log.debug("createGameRoom - GameSession : " + newGame);
 
 		// reids topic 생성
 		String strRoomTopic = "GAME_" + roomId;
@@ -162,13 +164,19 @@ public class GameManager {
 	/**
 	 * 플레이어 게임방 연결
 	 */
-	public void connectPlayer(String roomId, Player player) {
+	public boolean connectPlayer(String roomId, Player player) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		List<Player> playerList = gameRoom.getPlayers();
-		playerList.add(player);
-		if (gameRoom.getHostId() == null)
-			gameRoom.setHostId(player.getPlayerId());
+		if (gameRoom.getPlayerCount() < 10) {
+			List<Player> playerList = gameRoom.getPlayers();
+			playerList.add(player);
+			if (gameRoom.getHostId() == null)
+				gameRoom.setHostId(player.getPlayerId());
+			return true;
+		} else {
+			return false;
+		}
 	}
+
 
 	/**
 	 * 게임방 정보 조회
@@ -234,7 +242,7 @@ public class GameManager {
 		if (room == null || gameSession == null) return false;
 		
 		int playerCount = room.getPlayerCount();
-		int optionRoleCount = gameSession.getTotalRoleCnt();
+		int optionRoleCount = gameSession.getTotalRoleCount();
 		log.debug("플레이어 수 : " + playerCount + "\n 설정된 직업 수 : " + optionRoleCount);
 
 		if (playerCount != optionRoleCount)
@@ -574,8 +582,8 @@ public class GameManager {
 	}
 
 	// "낮 페이즈" 메시지 전송
-	public void sendDayPhaseMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.PHASE_DAY, null);
+	public void sendDayPhaseMessage(String roomId, Map<String, Integer> param) {
+		sendSystemMessageToAll(roomId, SystemCode.PHASE_DAY, param);
 	}
 
 	// "저녁 페이즈" 메시지 전송

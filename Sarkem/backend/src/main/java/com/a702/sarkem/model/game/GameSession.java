@@ -66,6 +66,10 @@ public class GameSession {
 		this.winTeam = 0;
 	}
 	
+	public int nextDay() {
+		return ++day;
+	}
+	
 	/**
 	 * 총 역할 수 반환
 	 * @return 총 역할 수 
@@ -113,14 +117,6 @@ public class GameSession {
 		for (int i = 0; i < this.detectiveCount; i++) 		roles.add(GameRole.DETECTIVE);
 
 		return roles;
-	}
-
-	// 현재 설정된 전체 역할의 수 총합 반환
-	public int getTotalRoleCnt() {
-		return this.citizenCount + this.sarkCount
-				+ this.policeCount + this.doctorCount
-				+ this.bullyCount + this.policeCount
-				+ this.detectiveCount;
 	}
 
 	public int getMafiaCount() {

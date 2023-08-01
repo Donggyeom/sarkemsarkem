@@ -10,7 +10,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
-import com.a702.sarkem.model.game.NightVote;
 import com.a702.sarkem.model.gameroom.GameRoom;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
@@ -137,10 +136,20 @@ public class GameThread extends Thread {
 
 	// 낮 페이즈
 	private void convertPhaseToDay() {
-		// 낮 페이즈로 변경
+		
+		// 게임 세션 초기화
+		int day = gameSession.nextDay();
 		gameSession.setPhase(PhaseType.DAY);
+		for (RolePlayer rp : gameSession.getPlayers()) {
+			rp.setTarget("");
+			rp.setTargetConfirmed(false);
+			rp.setVotedCnt(0);
+		}
+		
 		// "낮 페이즈" 메시지 전송
-		gameManager.sendDayPhaseMessage(roomId);
+		Map<String, Integer> param = new HashMap<>();
+		param.put("day", day);
+		gameManager.sendDayPhaseMessage(roomId, param);
 		// 1일차에는 아래 기능 미실행
 		if (gameSession.getDay() > 1) {
 			// 누구 죽었는지, 아무도 안죽었는지 노티스 메시지 보내기
@@ -150,7 +159,7 @@ public class GameThread extends Thread {
 			// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
 
 			// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택 초기화
-			gameManager.sendNoticeMessageToAll(roomId, "밤 사이에 ");
+			gameManager.sendNoticeMessageToAll(roomId, noticeMessage);
 			// "대상 선택" 메시지 전송
 		}
 
