@@ -378,17 +378,9 @@ function Room() {
                 console.log(sysMessage.param);
                 break;
             case "DAY_VOTE_END":
-                alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
-                
-                if (sysMessage.param.targetId == null) break;
-                
-                setExpulsionTarget(sysMessage.param.targetId);
-            break;
-        case "TWILIGHT_VOTE":
-            setIsTwilightVote(true);
-                break;
-        case "GAME_END":
-            alert("게임 종료");
+                console.log("낮 투표 종료", sysMessage.param.targetNickname);
+            if (sysMessage.param.targetId == null) break;
+            setExpultionTarget(sysMessage.param.targetId);
             break;
         case "TWILIGHT_VOTE":
             setIsTwilightVote(true);
