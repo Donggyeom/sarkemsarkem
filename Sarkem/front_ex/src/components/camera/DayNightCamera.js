@@ -1,6 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
+import voteImage from '../../img/votefoot.png'
+
+
+const Votefoot = styled.img`
+  position: absolute;
+  transform: translateX(-50%);
+`;
 
 const CamCatGrid = styled.div`
     position : absolute;
@@ -96,6 +103,7 @@ const calculateGrid = (camCount) => {
 };
 
 const CamCatWrapper = styled.div`
+  position : relative;
   ${({ camCount, index }) =>
 
   camCount === 3 && index === 0
@@ -193,16 +201,35 @@ const CamCatWrapper = styled.div`
   const DayNightCamera = React.memo(({ camArray }) => {
     const camCount = camArray.length;
     const gridStyles = calculateGrid(camCount);
+    const [clickedCameras, setClickedCameras] = useState([]);
 
+    const handleCamClick = (index) => {
+      setClickedCameras((prevClicked) => {
+        const newClicked = [...prevClicked];
+        if (newClicked.includes(index)) {
+          // Camera was already clicked, remove it from the clickedCameras array
+          const indexToRemove = newClicked.indexOf(index);
+          newClicked.splice(indexToRemove, 1);
+        } else {
+          // Camera was not clicked, add it to the clickedCameras array
+          newClicked.push(index);
+        }
+        return newClicked;
+      });
+    };
+  
     return (
       <CamCatGrid style={gridStyles}>
-        {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
-          <CamCatWrapper key={index} camCount={camCount} index={index}>
+        {camArray.slice().reverse().map((user, index) => (
+          <CamCatWrapper key={index} camCount={camCount} index={index} onClick={() => handleCamClick(index)}>
             <CamCat props={camArray[index]} />
+            {clickedCameras.includes(index) && (
+              <Votefoot src={voteImage} alt="Vote" />
+            )}
           </CamCatWrapper>
         ))}
       </CamCatGrid>
     );
-});
-
-export default DayNightCamera;
+  });
+  
+  export default DayNightCamera;

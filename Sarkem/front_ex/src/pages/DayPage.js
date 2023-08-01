@@ -48,6 +48,11 @@ const DayPage = () => {
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
+  const [voteCount, setVoteCount] = useState(0);
+
+  const handleVoteClick = () => {
+    setVoteCount((prevCount) => prevCount + 1);
+  };
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
