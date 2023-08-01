@@ -19,6 +19,10 @@ import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import TempButton from '../components/buttons/TempButton';
 import DayNightCamera from '../components/camera/DayNightCamera';
 
+// log
+import LogButton from '../components/buttons/LogButton';
+import Log from '../components/games/Log';
+
 
 const StyledDayPage = styled.div`
   display: flex;
@@ -88,14 +92,21 @@ const DayPage = () => {
     window.addEventListener("popstate", () => leaveSession);
     window.addEventListener('beforeunload', onbeforeunload);
   }, [])
+
+  const [isLogOn, setIsLogOn] = useState(true);
+  const handleLogButtonClick = () => {
+    setIsLogOn((prevIsLogOn) => !prevIsLogOn);
+  };
    
     return (
     <Background>
       <StyledDayPage>
+        {!isLogOn && <Log top="60%" left="26%" />}
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <DayPopup></DayPopup>
           <DayNightCamera camArray={camArray}/>
           <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
