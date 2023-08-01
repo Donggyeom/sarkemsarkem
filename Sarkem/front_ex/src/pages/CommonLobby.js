@@ -40,11 +40,10 @@ const RightSection = styled.div`
 
 const DivWrapper = styled.div`
   display: flex;
-  justify-content : space-between;
+  // justify-content : space-around;
 `;
 
 const LeftPart = styled.div`
-  /* Left part of each RightDiv */
   flex: 2.75;
   display: flex;
   justify-content: center;
@@ -90,8 +89,9 @@ const LeftPartWrapper = styled.div`
   background-position: center center;
   justify-content: center;
   background-size: contain;
-  height: 140%;
-  width : 120%;
+  height: 120%;
+  width : 100%;
+  overflow : hidden;
 `;
 const RightPartWrapper = styled.div`
   flex: 0.5;
@@ -99,16 +99,18 @@ const RightPartWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-position : center center;
-  padding: 13px;
+  background-position : center;
+  padding: 18px;
   height: 100%; /* Adjust the height as needed */
   width : 100%;
-  margin-right : 0px;
+  margin-right : 10%;
+  overflow : hidden;
 
   button {
     font-size: 18px;
-    margin-right: 10px;
-    margin-left : 10px;
+    margin-right: 15%;
+    margin-left : 15%;
+    oveflow : hidden;
   }
 
   div {
