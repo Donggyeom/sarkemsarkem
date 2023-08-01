@@ -66,6 +66,10 @@ public class GameSession {
 		this.winTeam = 0;
 	}
 	
+	public int nextDay() {
+		return ++day;
+	}
+	
 	/**
 	 * 총 역할 수 반환
 	 * @return 총 역할 수 

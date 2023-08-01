@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.redis.listener.ChannelTopic;
 
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
-import com.a702.sarkem.model.game.NightVote;
 import com.a702.sarkem.model.gameroom.GameRoom;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
@@ -133,10 +133,20 @@ public class GameThread extends Thread {
 
 	// 낮 페이즈
 	private void convertPhaseToDay() {
-		// 낮 페이즈로 변경
+		
+		// 게임 세션 초기화
+		int day = gameSession.nextDay();
 		gameSession.setPhase(PhaseType.DAY);
+		for (RolePlayer rp : gameSession.getPlayers()) {
+			rp.setTarget("");
+			rp.setTargetConfirmed(false);
+			rp.setVotedCnt(0);
+		}
+		
 		// "낮 페이즈" 메시지 전송
-		gameManager.sendDayPhaseMessage(roomId);
+		Map<String, Integer> param = new HashMap<>();
+		param.put("day", day);
+		gameManager.sendDayPhaseMessage(roomId, param);
 		// "대상 선택" 메시지 전송
 		gameManager.sendTargetSelectionMessage(roomId);
 

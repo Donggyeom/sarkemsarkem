@@ -560,8 +560,8 @@ public class GameManager {
 	}
 
 	// "낮 페이즈" 메시지 전송
-	public void sendDayPhaseMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.PHASE_DAY, null);
+	public void sendDayPhaseMessage(String roomId, Map<String, Integer> param) {
+		sendSystemMessageToAll(roomId, SystemCode.PHASE_DAY, param);
 	}
 
 	// "저녁 페이즈" 메시지 전송
