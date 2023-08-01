@@ -265,6 +265,9 @@ public class GameManager {
 		RolePlayer player = (RolePlayer) gameSession.getPlayer(playerId); // 타겟을 지목한 플레이어
 		RolePlayer newTargetPlayer = (RolePlayer) gameSession.getPlayer(targetId); // 플레이어가 새로 지목한 타겟 플레이어
 		
+		// 이미 셀렉티드를 했는데 다시 셀렉트 하려고 하면 안됨
+		if(player.isTargetConfirmed()) return;
+		
 		if (newTargetPlayer == null) targetId = "";	// 타겟 플레이어를 찾지 못한 경우 targetId를 공백 문자열로 저장
 		
 		log.debug("selectTarget : " + player + "의 타겟은 " + newTargetPlayer);
@@ -299,23 +302,26 @@ public class GameManager {
 			GameRole role = player.getRole();	// 현재 플레이어의 직업
 			List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
 			
-			// 같은 직업을 가진 플레이어들의 타겟을 모두 업데이트
-			List<String> thisPlayers = new ArrayList<>();	// 같은 직업 플레이어ID 저장
-			for(RolePlayer rPlayer : players) {
-				if (!role.equals(rPlayer.getRole())) continue;
-				
-				rPlayer.setTargetConfirmed(false);	// 이미 선택완료한 사람들 있을 수도 있으니까 선택완료false해주기
-				rPlayer.setTarget(targetId); 		// 직업이 일치하는 플레이어들의 타겟 동일하게 설정
-				thisPlayers.add(rPlayer.getPlayerId());
-				
+			// 삵인 경우 논의해서 하나만 투표
+			if(role.equals(GameRole.SARK)) {
+				// 같은 직업을 가진 플레이어들의 타겟을 모두 업데이트
+				List<String> thisPlayers = new ArrayList<>();	// 같은 직업 플레이어ID 저장
+				for(RolePlayer rPlayer : players) {
+					if (!role.equals(rPlayer.getRole())) continue;
+					
+					rPlayer.setTargetConfirmed(false);	// 이미 선택완료한 사람들 있을 수도 있으니까 선택완료false해주기
+					rPlayer.setTarget(targetId); 		// 직업이 일치하는 플레이어들의 타겟 동일하게 설정
+					thisPlayers.add(rPlayer.getPlayerId());
+				}
+				// 투표 현황 메시지 전송
+				HashMap<String, String> votingMap = new HashMap<>();
+				votingMap.put("target", targetId);
+				sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
+			}else {
+				// 나머지애들은 각자 투표
+				player.setTarget(targetId); // 현재 타겟 업데이트..만 하면 될 듯?
 			}
-			
-			// 투표 현황 메시지 전송
-			HashMap<String, String> votingMap = new HashMap<>();
-			votingMap.put("target", targetId);
-			sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
 		}
-		
 	}
 
 	// 선택된 대상들 Map으로 묶어주는 함수
@@ -354,11 +360,19 @@ public class GameManager {
 		log.debug(param.toString());
 		// 타겟 선택 완료 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
-		
-		// 밤 투표 "경찰" 직업 전체가 투표 완료했을 때 메시지 보내기
-		if(rPlayer.getRole().equals(GameRole.POLICE)) {
-			policeNightActivity(roomId, targetPlayer, gameSession);
+	}
+	
+	// 해당 직업의 모든 플레이어의 아이디를 반환하는 함수
+	public List<String> findRolePlayers(String roomId, GameRole gameRole){
+		GameSession gameSession = getGameSession(roomId);
+		List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
+		List<String> thisPlayers = new ArrayList<>(); // 해당 직업의 플레이어 담을 배열
+		for(RolePlayer rp : players) {
+			if(rp.getRole().equals(gameRole)) {
+				thisPlayers.add(rp.getPlayerId());
+			}
 		}
+		return thisPlayers;
 	}
 	
 	// 밤투표 경찰 처리
@@ -595,8 +609,8 @@ public class GameManager {
 	}
 
 	// "사냥당함" 메시지 전송
-	public void sendHuntedMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.BE_HUNTED, null);
+	public void sendHuntedMessage(String roomId, Map<String, String> deadPlayer) {
+		sendSystemMessageToAll(roomId, SystemCode.BE_HUNTED, deadPlayer);
 	}
 
 	// "투표현황" 메시지 전송
@@ -604,7 +618,7 @@ public class GameManager {
 		sendSystemMessageToAll(roomId, SystemCode.VOTE_SITUATION, votedSituation);
 	}
 	
-	// "밤 투표현황" 대상자들한테만 메시지 전송 *
+	// "밤 투표현황" 대상자들(삵들)한테만 메시지 전송 **
 	public void sendVoteSituationOnlyMessage(String roomId, List<String> players, Map<String, String> votingSituation) {
 		sendSystemMessage(roomId, players, SystemCode.VOTE_SITUATION, votingSituation);
 	}
@@ -620,12 +634,8 @@ public class GameManager {
 	}
 
 	// "히든미션 시작" 메시지 전송 **
-	public void sendHiddenMissionStartMessage(String roomId, String[] playerId) {
-		List<String> targets = new ArrayList<>();
-		for (int i = 0; i < playerId.length; i++) {
-			targets.add(playerId[i]);
-		}
-		sendSystemMessage(roomId, targets, SystemCode.MISSION_START, null);
+	public void sendHiddenMissionStartMessage(String roomId, List<String> sarkPlayers) {
+		sendSystemMessage(roomId, sarkPlayers, SystemCode.MISSION_START, null);
 	}
 
 	// "히든미션 성공" 메시지 전송

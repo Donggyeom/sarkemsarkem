@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.redis.listener.ChannelTopic;
 
@@ -24,7 +25,8 @@ public class GameThread extends Thread {
 	private GameSession gameSession;
 	private String roomId;
 	private String gameId;
-	
+	private String noticeMessage;
+
 	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
 			ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
@@ -83,10 +85,10 @@ public class GameThread extends Thread {
 				twilightVote();
 			}
 
-			// 저녁 페이즈 끝나면
 			// 게임종료 검사
 			if (isGameEnd())
 				break;
+
 			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
 			convertPhaseToNight();
 			// 투표타임 타이머
@@ -96,7 +98,9 @@ public class GameThread extends Thread {
 				nightVoteThread.join(meetingTime);
 			} catch (InterruptedException e) {
 			}
-			
+			// 밤 사이 죽은 사람 있으면 처리
+			nightVote();
+
 			// 게임종료 검사
 			if (isGameEnd())
 				break;
@@ -137,12 +141,20 @@ public class GameThread extends Thread {
 		gameSession.setPhase(PhaseType.DAY);
 		// "낮 페이즈" 메시지 전송
 		gameManager.sendDayPhaseMessage(roomId);
-		// "대상 선택" 메시지 전송
+		// 1일차에는 아래 기능 미실행
+		if (gameSession.getDay() > 1) {
+			// 누구 죽었는지, 아무도 안죽었는지 노티스 메시지 보내기
+
+			// 심리학자 기능 시작(표정분석 API)
+
+			// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
+
+			// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택 초기화
+			gameManager.sendNoticeMessageToAll(roomId, "밤 사이에 ");
+			// "대상 선택" 메시지 전송
+		}
+
 		gameManager.sendTargetSelectionMessage(roomId);
-
-		// 심리학자 기능 시작(표정분석 API)
-
-		// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
 
 	}
 
@@ -181,7 +193,17 @@ public class GameThread extends Thread {
 		// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
 		gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
 	}
-	
+
+	// 저녁 페이즈
+	private void convertPhaseToTwilight() {
+		// 저녁 페이즈로 변경
+		gameSession.setPhase(PhaseType.TWILIGHT);
+		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
+		gameManager.sendTwilightPhaseMessage(roomId);
+		// 대상이 있으면 저녁투표 시작
+		gameManager.sendTwilightVoteMessage(roomId);
+	}
+
 	// 저녁 투표 결과 종합
 	private void twilightVote() {
 		// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
@@ -192,29 +214,12 @@ public class GameThread extends Thread {
 			expulsionPlayer.setRole(GameRole.OBSERVER);
 			// 추방 메시지 보내기
 			gameManager.sendExcludedMessage(roomId, gameSession.getExpulsionTargetId());
-		} 
+		}
 		// 추방 투표 결과 전송 // 저녁 페이즈 종료
 		HashMap<String, String> result = new HashMap<>();
 		// 추방 당한 사람 아이디를 파람으로 전달
 		result.put("expulsionPlayer", gameSession.getExpulsionTargetId());
 		gameManager.sendEndTwilightVoteMessage(roomId, result);
-	}
-	
-	// 밤 투표 결과 종합
-	private void nightVote() {
-		// 수의사가 살린 플레이어, 삵이 죽인 플레이어 비교해서 죽이거나 살리기
-		
-
-	}
-
-	// 저녁 페이즈
-	private void convertPhaseToTwilight() {
-		// 저녁 페이즈로 변경
-		gameSession.setPhase(PhaseType.TWILIGHT);
-		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
-		gameManager.sendTwilightPhaseMessage(roomId);
-		// 대상이 있으면 저녁투표 시작
-		gameManager.sendTwilightVoteMessage(roomId);
 	}
 
 	// 밤 페이즈
@@ -227,6 +232,40 @@ public class GameThread extends Thread {
 		// 삵 제외 화면, 카메라, 마이크, 오디오 끄기
 		// 탐정 오디오만 변조된 음성으로 켜기
 		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하겠지??
+	}
+
+	// 밤 투표 결과 종합
+	private void nightVote() {
+		// 수의사가 살린 플레이어 != 삵이 죽인 플레이어 이면 죽이기 (같은 경우는 아침에 처리)
+		String doctorTarget = findTarget(GameRole.DOCTOR);
+		String sarkTarget = findTarget(GameRole.SARK);
+		// 죽지 않았으면 메시지만 설정하고 바로 리턴
+		if (doctorTarget.equals(sarkTarget)) {
+			noticeMessage = "밤 사이 삵이 사냥에 실패했습니다.";
+			return;
+		}
+			
+		// 죽은 사람 처리
+		RolePlayer deadPlayer = gameSession.getPlayer(sarkTarget);
+		deadPlayer.setAlive(false);
+		deadPlayer.setRole(GameRole.OBSERVER);
+		HashMap<String, String> deadPlayerMap = new HashMap<>();
+		deadPlayerMap.put("deadPlayer", sarkTarget);
+		gameManager.sendHuntedMessage(roomId, deadPlayerMap);
+		noticeMessage = "밤 사이에 " + deadPlayer.getNickname() + "님이 삵에게 사냥 당했습니다.";
+	}
+
+	// 해당 직업의 타겟 찾기 함수
+	private String findTarget(GameRole role) {
+		String targetId = "";
+		List<RolePlayer> players = gameSession.getPlayers();
+		for (RolePlayer rp : players) {
+			if (rp.getRole().equals(role)) {
+				targetId = rp.getTarget();
+				break;
+			}
+		}
+		return targetId;
 	}
 
 	// 플레이어 투표 종료 여부 반환
@@ -246,13 +285,13 @@ public class GameThread extends Thread {
 			sleep(500);
 		}
 	}
-	
+
 	// 저녁 투표 종료 여부 반환
 	private boolean isTwilightVoteEnded() throws InterruptedException {
 		while (true) {
-			// 끝날 조건  // 모두가 투표를 했을때
+			// 끝날 조건 // 모두가 투표를 했을때
 			// TODO: 관전자 고려 필요
-			if (gameSession.getExpulsionVoteCnt() == gameSession.getPlayers().size() ) {
+			if (gameSession.getExpulsionVoteCnt() == gameSession.getPlayers().size()) {
 				return true;
 			}
 			sleep(500);
@@ -281,7 +320,7 @@ public class GameThread extends Thread {
 			gameSession.setWinTeam(2);
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -296,6 +335,7 @@ public class GameThread extends Thread {
 			}
 		}
 	}
+
 	class TwilightVoteThread extends Thread {
 		@Override
 		public void run() {
@@ -307,6 +347,7 @@ public class GameThread extends Thread {
 			}
 		}
 	}
+
 	class NightVoteThread extends Thread {
 		@Override
 		public void run() {
