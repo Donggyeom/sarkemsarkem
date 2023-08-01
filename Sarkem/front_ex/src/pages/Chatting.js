@@ -6,6 +6,7 @@ import chatsendbuttonImage from '../img/chatsendbutton.png';
 import chatsenderImage from '../img/chatsender.png';
 import chatcloseImage from '../img/closebutton.png'
 
+
 const ChatContainer = styled.div`
   background-image: url(${chatbox});
   background-size: cover;
@@ -63,30 +64,33 @@ const ChatInputWrapper = styled.div`
   margin: 10px;
   display: flex;
   height: 10%;
+  justify-content : space-between;
   align-items: center;
   margin-top: auto;
 `;
 
 const ChatInput = styled.input`
+  flex : 0.85;
   background-color: transparent;
-  margin-left: 10px;
+  margin-left: 2%;
   background-image: url(${chatinputboxImage});
+  background-repeat : no-repeat;
   background-size: cover;
-  width : 80%;
+  width : 100%;
   height : 100%;
   border: none;
   position : relative;
 `;
 
 const ChatButton = styled.button`
+  flex : 0.09;
   background-color: transparent;
   background-image: url(${chatsendbuttonImage});
   background-size: cover;
   background-repeat: no-repeat;
+  margin-right : 4.5%;
   border: none;
-  margin-left : 10px;
   cursor: pointer;
-  width : 10%;
   height : 100%;
   position : relative;
 `;
@@ -126,6 +130,7 @@ const Chatting = ({ handleCloseButtonClick, messages, onSendMessage }) => {
     }
   };
 
+  
   const handleInputChange = (e) => {
     setInputMessage(e.target.value);
   };
@@ -151,6 +156,7 @@ const Chatting = ({ handleCloseButtonClick, messages, onSendMessage }) => {
       <ChatInputWrapper>
         <ChatInput
           type="text"
+          img={chatinputboxImage}
           value={inputMessage}
           onChange={handleInputChange}
           onKeyPress={handleInputKeyPress}

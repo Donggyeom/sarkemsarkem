@@ -15,6 +15,7 @@ const ChatButton = styled.button`
   background-image: url(${props => props.showPopup ? chatoffbuttonImage : chatbuttonImage});
   background-size: cover;
   background-repeat: no-repeat;
+  z-index: ${props => (props.showPopup ? '-1' : '1')};
 `;
 
 const ChatPopup = styled.div`

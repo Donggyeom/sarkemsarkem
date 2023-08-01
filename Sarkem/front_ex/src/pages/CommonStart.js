@@ -224,6 +224,7 @@ const CommonStart = ({onClick} ) => {
                 zIndex: 1, // Ensure the image is above the video (z-index: 0 by default)
               }}
             />
+             <audio ref={audioRef} autoPlay />
           </div>
           
           
