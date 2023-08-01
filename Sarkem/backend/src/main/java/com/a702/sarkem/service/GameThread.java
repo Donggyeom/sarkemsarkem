@@ -1,19 +1,21 @@
 package com.a702.sarkem.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
+import org.springframework.data.redis.listener.ChannelTopic;
+
+import com.a702.sarkem.model.game.GameSession;
+import com.a702.sarkem.model.game.GameSession.PhaseType;
+import com.a702.sarkem.model.game.NightVote;
+import com.a702.sarkem.model.gameroom.GameRoom;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.model.player.RolePlayer;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.data.redis.listener.ChannelTopic;
-
-import com.a702.sarkem.model.game.GameSession;
-import com.a702.sarkem.model.game.NightVote;
-import com.a702.sarkem.model.game.GameSession.PhaseType;
-import com.a702.sarkem.model.gameroom.GameRoom;
 
 @Slf4j
 public class GameThread extends Thread {
@@ -94,6 +96,7 @@ public class GameThread extends Thread {
 				nightVoteThread.join(meetingTime);
 			} catch (InterruptedException e) {
 			}
+			
 			// 게임종료 검사
 			if (isGameEnd())
 				break;
@@ -196,6 +199,13 @@ public class GameThread extends Thread {
 		result.put("expulsionPlayer", gameSession.getExpulsionTargetId());
 		gameManager.sendEndTwilightVoteMessage(roomId, result);
 	}
+	
+	// 밤 투표 결과 종합
+	private void nightVote() {
+		// 수의사가 살린 플레이어, 삵이 죽인 플레이어 비교해서 죽이거나 살리기
+		
+
+	}
 
 	// 저녁 페이즈
 	private void convertPhaseToTwilight() {
@@ -213,12 +223,10 @@ public class GameThread extends Thread {
 		gameSession.setPhase(PhaseType.NIGHT);
 		// "밤 페이즈" 메시지 전송
 		gameManager.sendNightPhaseMessage(roomId);
-		// 밤페이즈 됐다고 메시지 전송하면
+		// 밤페이즈 됐다고 메시지 전송하면 프론트에서
 		// 삵 제외 화면, 카메라, 마이크, 오디오 끄기
 		// 탐정 오디오만 변조된 음성으로 켜기
 		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하겠지??
-
-
 	}
 
 	// 플레이어 투표 종료 여부 반환
@@ -275,23 +283,6 @@ public class GameThread extends Thread {
 		}
 		
 		return false;
-	}
-
-	// 밤 투표 받아온거 정리
-	private void nightVote(NightVote nightVote) {
-
-		String deadPlayerId = nightVote.getSarkVoted(); // 삵이 투표해서 죽은 플래이어 아이디
-		String protectedPlayerId = nightVote.getDoctorVoted(); // 의사가 투표해서 지켜진 플래이어 아이디
-		String suspectPlayerId = nightVote.getPoliceVoted(); // 경찰이 투표해서 조사받을 플래이어 아이디
-		String slientPlayerId = nightVote.getAchiVoted(); // 냥아치가 투표해서 조용해야 할 플래이어 아이디
-
-		// 의사가 살렸을 경우 부활
-		if (deadPlayerId != null && deadPlayerId.equals(protectedPlayerId)) {
-			deadPlayerId = null;
-		}
-
-//		SystemMessage message = new SystemMessage(roomId, SystemCode.BE_HUNTED, deadPlayerId);
-//		gamePublisher.publish(gameTopic, message);
 	}
 
 	class DayVoteThread extends Thread {

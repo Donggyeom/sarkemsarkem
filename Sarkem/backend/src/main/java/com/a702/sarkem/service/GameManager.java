@@ -338,14 +338,39 @@ public class GameManager {
 		// 누가 누구 지목했는지 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
 		
-		// 밤 투표 "경찰" 직업 전체가 투표 완료했을 때
+		// 밤 투표 "경찰" 직업 전체가 투표 완료했을 때 메시지 보내기
 		if(rPlayer.getRole().equals(GameRole.POLICE)) {
-			
+			policeNightActivity(roomId, targetPlayer, gameSession);
+		}
+	}
+	
+	// 밤투표 경찰 처리
+	private void policeNightActivity(String roomId, RolePlayer target, GameSession gameSession) {
+		List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
+		List<String> police = new ArrayList<>();
+		int policeCnt = 0; int endPoliceCnt = 0;
+		for(RolePlayer rp : players) {
+			if(rp.getRole().equals(GameRole.POLICE)) {
+				policeCnt++;
+				if(rp.isTargetConfirmed()) { //경찰인 플레이어가 대상 확정을 했다면
+					endPoliceCnt++;
+					police.add(rp.getPlayerId());
+				}
+			}
+		}
+		// 밤 투표 "경찰" 직업 전체가 투표 완료했을 때
+		// 모든 경찰 플레이어가 대상 확정을 했다면 대상 삵 여부 알려주기
+		if(policeCnt==endPoliceCnt) {
+			String message = "";
+			if(target.getRole().equals(GameRole.SARK)) {
+				message = target.getNickname() +"님은 삵입니다.";
+			}else {
+				message = target.getNickname() +"님은 삵이 아닙니다.";
+			}
+			sendNoticeMessageToPlayers(roomId, police, message);
 		}
 	}
 
-
-	
 	// 추방 투표 처리
 	public void expulsionVote(String roomId, Map<String, Boolean> voteOX) {
 		GameSession gameSession = getGameSession(roomId);
@@ -439,14 +464,10 @@ public class GameManager {
 	 * @param playersId
 	 * @param message
 	 */
-	public void sendNoticeMessageToPlayers(String roomId, String[] playersId, String message) {
+	public void sendNoticeMessageToPlayers(String roomId, List<String> playersId, String message) {
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
-		List<String> targets = new ArrayList<>();
-		for (int i = 0; i < playersId.length; i++) {
-			targets.add(playersId[i]);
-		}
-		sendSystemMessage(roomId, targets, SystemCode.NOTICE_MESSAGE, param);
+		sendSystemMessage(roomId, playersId, SystemCode.NOTICE_MESSAGE, param);
 	}
 
 	/**
