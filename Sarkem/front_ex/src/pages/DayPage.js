@@ -3,28 +3,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundDay';
-/* Code generated with AutoHTML Plugin for Figma */
+
 import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
-// 
+
 import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
 import axios from 'axios';
 import { useRoomContext } from '../Context';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
-//tempbutton
 import TempButton from '../components/buttons/TempButton';
+import DayNightCamera from '../components/camera/DayNightCamera';
+
+// log
+import LogButton from '../components/buttons/LogButton';
+import Log from '../components/games/Log';
+
 
 const StyledDayPage = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: relative; /* position을 relative로 설정합니다. */
+  position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
@@ -40,9 +45,6 @@ const TimeSecond = styled.text`
 `;
 
 
-
-
-
 const DayPage = () => {
 
   const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
@@ -50,6 +52,11 @@ const DayPage = () => {
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
+  const [voteCount, setVoteCount] = useState(0);
+
+  const handleVoteClick = () => {
+    setVoteCount((prevCount) => prevCount + 1);
+  };
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -86,50 +93,26 @@ const DayPage = () => {
     window.addEventListener('beforeunload', onbeforeunload);
   }, [])
 
-
-
-  const CamCatGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 10px;
-    justify-items: center;
-    align-items: center;
-    width: 100%;
-    max-height: 80vh; /* Set a maximum height to adjust to the available space */
-    overflow: auto; /* Add overflow property to handle overflow if needed */
-  `;
-
-
-
-  const calculateCamCatHeight = () => {
-    const leftSectionHeight = leftSectionRef.current.offsetHeight;
-    const maxCamCatCount = 10; 
-    const camCatCount = Math.min(camArray.length, maxCamCatCount);
-    return `${leftSectionHeight / camCatCount}px`;
+  const [isLogOn, setIsLogOn] = useState(true);
+  const handleLogButtonClick = () => {
+    setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
-
-  const leftSectionRef = useRef(null);
-
-    
+   
     return (
     <Background>
-        <StyledDayPage>
-            <SunMoon alt="SunMoon"></SunMoon>
-            <TimeSecond>60s</TimeSecond>
-            <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
-            <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
-            <DayPopup></DayPopup>
-            <div ref={leftSectionRef}>
-              <CamCatGrid camCount={camArray.length}>
-                {camArray.map((user, index) => (
-                  <CamCat key={index} props={user}/>
-                ))}
-              </CamCatGrid>
-            </div>
-            <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
-            <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
-            <ChatButtonAndPopup />
+      <StyledDayPage>
+        {!isLogOn && <Log top="60%" left="26%" />}
+        <SunMoon alt="SunMoon"></SunMoon>
+        <TimeSecond>60s</TimeSecond>
+        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
+        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
+          <DayPopup></DayPopup>
+          <DayNightCamera camArray={camArray}/>
+          <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
         </StyledDayPage>
+        <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
+        <ChatButtonAndPopup />
     </Background>
   );
 };

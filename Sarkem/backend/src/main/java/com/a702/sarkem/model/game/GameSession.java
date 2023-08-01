@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.a702.sarkem.model.player.Player;
+import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.RolePlayer;
 
@@ -50,9 +51,9 @@ public class GameSession {
 	private LocalDateTime finishedTime;
 	private boolean bHiddenMissionStatus;
 	private boolean bHiddenMissionSuccess;
-	private int expultionVoteCnt; // 추방 투표 수
-	private int expultionVotePlayerCnt; // 추방 투표 한 사람 수 
-	private String expultionTargetId; // 추방 투표 대상
+	private int expulsionVoteCnt; // 추방 투표 수
+	private int expulsionVotePlayerCnt; // 추방 투표 한 사람 수 
+	private String expulsionTargetId; // 추방 투표 대상
 	private int winTeam; // 0: 진행 중 , 1: 삵 승리 , 2: 시민 승리
 	
 	public GameSession(String roomId, String gameId) {
@@ -63,6 +64,10 @@ public class GameSession {
 		this.meetingTime = 60;
 		this.day = 0;
 		this.winTeam = 0;
+	}
+	
+	public int nextDay() {
+		return ++day;
 	}
 	
 	/**
@@ -86,6 +91,41 @@ public class GameSession {
 		return null;
 	}
 	
+	// 살아있는 플레이어만 반환하는 함수
+	public List<RolePlayer> getAlivePlayers() {
+		List<RolePlayer> alivePlayers = new ArrayList<>();
+		for(RolePlayer p : this.players) {
+			if (p.isAlive()) {
+				alivePlayers.add(p);
+			}
+		}
+		return alivePlayers;
+	}
+	
+	// 해당 롤 플레이어들 반환하는 함수
+	public List<RolePlayer> getRolePlayers(GameRole role) {
+		List<RolePlayer> rolePlayers = new ArrayList<>();
+		for(RolePlayer p : this.players) {
+			if (p.getRole().equals(role)) {
+				rolePlayers.add(p);
+			}
+		}
+		return rolePlayers;
+	}
+	
+	// 게임 옵션 반환
+	public GameOptionDTO getGameOption() {
+		GameOptionDTO gameOption = new GameOptionDTO();
+		gameOption.setBullyCount(bullyCount);
+		gameOption.setCitizenCount(citizenCount);
+		gameOption.setDetectiveCount(detectiveCount);
+		gameOption.setDoctorCount(doctorCount);
+		gameOption.setMeetingTime(meetingTime);
+		gameOption.setPoliceCount(policeCount);
+		gameOption.setPsychologistCount(psychologistCount);
+		gameOption.setSarkCount(sarkCount);
+		return gameOption;
+	}
 
 	// 현재 옵션으로 설정된 역할을 리스트로 반환
 	public List<GameRole> getAllRoles() {
@@ -99,14 +139,6 @@ public class GameSession {
 		for (int i = 0; i < this.detectiveCount; i++) 		roles.add(GameRole.DETECTIVE);
 
 		return roles;
-	}
-
-	// 현재 설정된 전체 역할의 수 총합 반환
-	public int getTotalRoleCnt() {
-		return this.citizenCount + this.sarkCount
-				+ this.policeCount + this.doctorCount
-				+ this.bullyCount + this.policeCount
-				+ this.detectiveCount;
 	}
 
 	public int getMafiaCount() {

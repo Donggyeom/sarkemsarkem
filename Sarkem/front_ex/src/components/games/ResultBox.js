@@ -20,7 +20,7 @@ const ResultBoxStyle = styled.div`
   box-shadow: 0px 5.16px 5.16px 0px rgba(0, 0, 0, 0.25),
     10.31px 10.31px 0px 0px rgba(0, 0, 0, 1);
   
-  top: 7%;
+  top: 1%;
   left: 10%;
 `;
 

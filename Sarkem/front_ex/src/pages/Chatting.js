@@ -45,6 +45,7 @@ const ChatMessage = styled.div`
   position: relative;
   margin-left: auto;
   margin-right: 10px;
+  font-family: 'SUITE-Regular', sans-serif; // SUITE-Regular 폰트를 적용
 `;
 
 const ChatMessages = styled.div`
@@ -62,30 +63,33 @@ const ChatInputWrapper = styled.div`
   margin: 10px;
   display: flex;
   height: 10%;
+  justify-content : space-between;
   align-items: center;
   margin-top: auto;
 `;
 
 const ChatInput = styled.input`
+  flex : 0.85;
   background-color: transparent;
-  margin-left: 10px;
+  margin-left: 2%;
   background-image: url(${chatinputboxImage});
+  background-repeat : no-repeat;
   background-size: cover;
-  width : 80%;
+  width : 100%;
   height : 100%;
   border: none;
   position : relative;
 `;
 
 const ChatButton = styled.button`
+  flex : 0.09;
   background-color: transparent;
   background-image: url(${chatsendbuttonImage});
   background-size: cover;
   background-repeat: no-repeat;
+  margin-right : 5%;
   border: none;
-  margin-left : 10px;
   cursor: pointer;
-  width : 10%;
   height : 100%;
   position : relative;
 `;
@@ -150,6 +154,7 @@ const Chatting = ({ handleCloseButtonClick, messages, onSendMessage }) => {
       <ChatInputWrapper>
         <ChatInput
           type="text"
+          img={chatinputboxImage}
           value={inputMessage}
           onChange={handleInputChange}
           onKeyPress={handleInputKeyPress}

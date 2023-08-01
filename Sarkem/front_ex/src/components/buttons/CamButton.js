@@ -11,6 +11,7 @@ const CamButtonImage = styled.img`
   left: 30px;
   top: 150px;
   overflow: visible;
+  z-index: 1;
 `;
 
 const CamButton = ({ alt, onClick, isCamOn }) => {

@@ -39,6 +39,11 @@ public class GameController {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		switch(actionMessage.getCode()) {
+		case ENTER:
+			if ( gameManager.isHost(roomId, playerId) ) break;
+			// 방장이 아닌 사용자 입장 시 게임 옵션 전송
+			gameManager.sendGameOptionMessage(roomId, playerId);
+			break;
 		// 게임시작
 		case GAME_START:
 			if ( !gameManager.isHost(roomId, playerId) ) {

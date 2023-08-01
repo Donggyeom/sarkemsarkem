@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@anatoliygatt/heart-switch": "^1.0.13",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
