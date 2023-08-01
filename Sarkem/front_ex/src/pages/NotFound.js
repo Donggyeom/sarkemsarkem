@@ -16,8 +16,6 @@ const StyledSunsetPage = styled.div`
   overflow: hidden;
 `;
 
-
-
 const NotFound = () => {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(true);

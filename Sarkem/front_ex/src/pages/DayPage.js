@@ -17,7 +17,7 @@ import axios from 'axios';
 import { useRoomContext } from '../Context';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import TempButton from '../components/buttons/TempButton';
-import DayNightCamera from '../components/camera/DayCamera';
+import DayNightCamera from '../components/camera/DayNightCamera';
 
 
 const StyledDayPage = styled.div`

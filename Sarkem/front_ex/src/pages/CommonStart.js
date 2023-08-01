@@ -198,24 +198,25 @@ const CommonStart = ({onClick} ) => {
         <StyledContent>
           <LeftSection>
           <div style={{ position: 'relative', width: '85%', height: '63%', borderRadius: '10%' }}>
-            <video
+          <video
+              ref={videoRef}
               autoPlay
               style={{
-                marginTop: '30%',
+                marginTop: "25%",
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
                 borderRadius: '10%',
+
               }}
-            >
-              {/* Video source goes here */}
-            </video>
+            />
+
             <img
               src={camcatImage}
               alt="CamCat"
               style={{
                 position: 'absolute',
-                top: '42  %',
+                top: '35%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)', // Center the image
                 width: '102%', // Adjust the size of the image as needed
