@@ -152,19 +152,39 @@ public class GameThread extends Thread {
 		gameManager.sendDayPhaseMessage(roomId, param);
 		// 1일차에는 아래 기능 미실행
 		if (gameSession.getDay() > 1) {
-			// 누구 죽었는지, 아무도 안죽었는지 노티스 메시지 보내기
-
+			// 밤에 누가 죽었는지, 아무도 안죽었는지 전체한테 노티스 메시지 보내기
+			gameManager.sendNoticeMessageToAll(roomId, noticeMessage);
+			
+			// 경찰 기능: 대상 선택한 사람들 삵인지 여부 알려주기
+			for(RolePlayer rp : gameSession.getRolePlayers(GameRole.POLICE)) {
+				RolePlayer target = gameSession.getPlayer(rp.getTarget());
+				if(target.getRole().equals(GameRole.SARK)) {
+					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), target.getNickname() + "님은 삵이 맞습니다.");
+				}else {
+					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), target.getNickname() + "님은 삵이 아닙니다.");
+				}
+			}
+			
 			// 심리학자 기능 시작(표정분석 API)
-
+			for(RolePlayer rp : gameSession.getRolePlayers(GameRole.PSYCHO)) {
+				HashMap<String, String> target = new HashMap<>();
+				target.put("target", rp.getTarget());
+				gameManager.sendPsychoStartMessage(roomId, rp.getPlayerId(), target);
+			}
+			
 			// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
+			for(RolePlayer rp : gameSession.getRolePlayers(GameRole.BULLY)) {
+				gameManager.sendThreatingMessage(roomId, rp.getTarget());
+			}
 
 			// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택 초기화
-			gameManager.sendNoticeMessageToAll(roomId, noticeMessage);
-			// "대상 선택" 메시지 전송
+			for(RolePlayer rp : gameSession.getAlivePlayers()) {
+				rp.setTarget("");
+				rp.setTargetConfirmed(false);
+			}	
 		}
-
+		// "대상 선택" 메시지 전송
 		gameManager.sendTargetSelectionMessage(roomId);
-
 	}
 
 	// 낮 투표 결과 종합

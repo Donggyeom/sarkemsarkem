@@ -93,6 +93,28 @@ public class GameSession {
 		return null;
 	}
 	
+	// 살아있는 플레이어만 반환하는 함수
+	public List<RolePlayer> getAlivePlayers() {
+		List<RolePlayer> alivePlayers = new ArrayList<>();
+		for(RolePlayer p : this.players) {
+			if (p.isAlive()) {
+				alivePlayers.add(p);
+			}
+		}
+		return alivePlayers;
+	}
+	
+	// 해당 롤 플레이어들 반환하는 함수
+	public List<RolePlayer> getRolePlayers(GameRole role) {
+		List<RolePlayer> rolePlayers = new ArrayList<>();
+		for(RolePlayer p : this.players) {
+			if (p.getRole().equals(role)) {
+				rolePlayers.add(p);
+			}
+		}
+		return rolePlayers;
+	}
+	
 	// 게임 옵션 반환
 	public GameOptionDTO getGameOption() {
 		GameOptionDTO gameOption = new GameOptionDTO();
