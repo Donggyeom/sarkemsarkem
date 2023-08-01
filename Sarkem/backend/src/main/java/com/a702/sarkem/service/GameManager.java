@@ -396,32 +396,24 @@ public class GameManager {
 	}
 
 	// 추방 투표 처리
-	public void expulsionVote(String roomId, Map<String, Boolean> voteOX) {
+	public void expulsionVote(String roomId, String playerId, Map<String, Boolean> voteOX) {
 		GameSession gameSession = getGameSession(roomId);
 		Boolean voteResult = voteOX.get("result");
-		// 투표자수++
-		gameSession.setExpulsionVotePlayerCnt(gameSession.getExpulsionVotePlayerCnt() + 1);
-		if (voteResult) { // 추방 투표 찬성수 ++
-			gameSession.setExpulsionVoteCnt(gameSession.getExpulsionVoteCnt() + 1);
+		
+		RolePlayer player = gameSession.getPlayer(playerId);
+		if (player == null) {
+			log.debug("expulsionVote - playerID를 찾을 수 없습니다. playerId : " + playerId);
+			return;
 		}
-		// 끝날 조건
-		if (gameSession.getExpulsionVoteCnt() == gameSession.getAlivePlayers().size() // 모두가 투표를 했거나
-				|| gameSession.getExpulsionVoteCnt() >= (gameSession.getAlivePlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
-			// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
-			if (gameSession.getExpulsionVoteCnt() >= (gameSession.getAlivePlayers().size() + 1) / 2) {
-				sendExcludedMessage(roomId, gameSession.getExpulsionTargetId());
-				// 실제로 추방하기
-				RolePlayer expulsionPlayer = gameSession.getPlayer(gameSession.getExpulsionTargetId());
-				expulsionPlayer.setAlive(false);
-				// 채팅방 입장시키기
-				
-			} 
-			// 추방 투표 결과 전송 // 저녁 페이즈 종료
-			HashMap<String, String> result = new HashMap<>();
-			// 추방 당한 사람 아이디를 파람으로 전달
-			result.put("expulsionPlayer", gameSession.getExpulsionTargetId());
-			sendEndTwilightVoteMessage(roomId, result);
+		
+		// 투표완료
+		player.setTargetConfirmed(true);
+		// 추방 투표 찬성수 ++
+		if (voteResult) { 
+			gameSession.addExpulsionVoteCnt();
+
 		}
+		// TODO: 추방 투표 현황 전송
 	}
 	
 	/**

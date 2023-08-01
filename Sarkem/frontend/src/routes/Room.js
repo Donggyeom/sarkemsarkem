@@ -33,7 +33,7 @@ function Room() {
     const [psychologistCount, setPsychologistCount] = useState("0");
     const [isConnected, setIsConnected] = useState(false);
     const [selectedTarget, setSelectedTarget] = useState("");
-    const [expultionTarget, setExpultionTarget] = useState("");
+    const [expulsionTarget, setExpulsionTarget] = useState("");
     const [isTwilightVote, setIsTwilightVote ] = useState(false);
 
     const navigate = useNavigate();
@@ -378,16 +378,18 @@ function Room() {
                 console.log(sysMessage.param);
                 break;
             case "DAY_VOTE_END":
-                console.log("낮 투표 종료", sysMessage.param.targetNickname);
-            if (sysMessage.param.targetId == null) break;
-            setExpultionTarget(sysMessage.param.targetId);
+                alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
+                
+                if (sysMessage.param.targetId == null) break;
+                
+                setExpulsionTarget(sysMessage.param.targetId);
             break;
         case "TWILIGHT_VOTE":
             setIsTwilightVote(true);
                 break;
-            case "GAME_END":
-                alert("게임 종료");
-                break;
+        case "GAME_END":
+            alert("게임 종료");
+            break;
         }
     }
 
@@ -436,7 +438,7 @@ function Room() {
     }
 
         // 추방 투표 동의
-    const agreeExpultion = () => {
+    const agreeExpulsion = () => {
         stompCilent.current.send("/pub/game/action", {}, 
             JSON.stringify({
                 code:'EXPULSION_VOTE',
@@ -450,7 +452,7 @@ function Room() {
     }
 
     // 추방 투표 반대
-    const disagreeExpultion = () => {
+    const disagreeExpulsion = () => {
         stompCilent.current.send("/pub/game/action", {}, 
             JSON.stringify({
                 code:'EXPULSION_VOTE',
@@ -559,8 +561,8 @@ function Room() {
                 />
                 {selectedTarget ? <button onClick={selectConfirm}>대상확정</button> : <button onClick={selectConfirm}>투표스킵</button>}
                 {isTwilightVote ? <div>
-                    <button onClick={agreeExpultion}>찬성</button>
-                    <button onClick={disagreeExpultion}>반대</button>
+                    <button onClick={agreeExpulsion}>찬성</button>
+                    <button onClick={disagreeExpulsion}>반대</button>
                 </div> : null}
             </div>
             {/* {mainStreamManager !== undefined ? (
