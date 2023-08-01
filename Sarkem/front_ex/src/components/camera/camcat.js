@@ -36,6 +36,8 @@ const CamCat = (props) => {
 
       <div className="streamcomponent" style={{ flex: 0.2 }}>
         <div style={{ flex: 0.6, justifyContent: 'center' }}>
+          
+          <OpenViduVideoComponent streamManager={props.props} />
           <img
             src={camcatImage}
             alt="CamCat"
@@ -49,7 +51,6 @@ const CamCat = (props) => {
               overflow: 'visible', 
             }}
           />
-          <OpenViduVideoComponent streamManager={props.props} />
         </div>
 
         <div style={{ flex: 0.4, textAlign: 'center' }}>

@@ -234,10 +234,10 @@ const CommonLobby = ()=>{
     <Background>
       {showSarkPopup && <ScPopup src={c_sark} top="20%" left="50%" />}
       {showVetPopup && <ScPopup src={c_vet} top="40%" left="50%" />}
-      {showPolicePopup && <ScPopup src={c_police} top="40%" left="73%" />}
-      {showCitizenPopup && <ScPopup src={c_citizen} top="20%" left="73%" />}
+      {showPolicePopup && <ScPopup src={c_police} top="40%" left="72.5%" />}
+      {showCitizenPopup && <ScPopup src={c_citizen} top="20%" left="72.5%" />}
       {showScoopPopup && <ScPopup src={c_scoop} top="60%" left="50%" />}
-      {showPsychologistPopup && <ScPopup src={c_psychologist} top="60%" left="73%" />}
+      {showPsychologistPopup && <ScPopup src={c_psychologist} top="60%" left="72.5%" />}
       {showNyangachiPopup && <ScPopup src={c_nyangachi} top="80%" left="50%" />}
       <BackButton/>
       <StyledContent>
