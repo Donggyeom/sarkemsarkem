@@ -285,7 +285,7 @@ public class GameManager {
 				}
 			}
 			HashMap<String, String> votingMap = new HashMap<>();
-			// 일단은 파람에 타겟이랑 롤 이름?? 을 보내볼게
+			// 일단은 파람에 타겟을 보내볼게
 			votingMap.put("target", targetId);
 //			votingMap.put("role", player.getRole().toString());
 			sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
@@ -332,7 +332,6 @@ public class GameManager {
 		String targetId = rPlayer.getTarget();
 		String targetNickname = "";
 		RolePlayer targetPlayer = gameSession.getPlayer(targetId);
-		log.debug(targetPlayer.toString());
 		if (targetPlayer == null) {
 			targetId = "";
 			targetNickname = "";
@@ -341,10 +340,16 @@ public class GameManager {
 		param.put("playerId", playerId);
 		param.put("targetId", targetId);
 		param.put("targetNickname", targetNickname);
-		
+		log.debug(param.toString());
 		// 누가 누구 지목했는지 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
+		
+		// 밤 투표 "경찰" 직업 전체가 투표 완료했을 때
+		if(rPlayer.getRole().equals(GameRole.POLICE)) {
+			
+		}
 	}
+
 
 	
 	// 추방 투표 처리
@@ -352,26 +357,26 @@ public class GameManager {
 		GameSession gameSession = getGameSession(roomId);
 		Boolean voteResult = voteOX.get("result");
 		// 투표자수++
-		gameSession.setExpultionVotePlayerCnt(gameSession.getExpultionVotePlayerCnt() + 1);
+		gameSession.setExpulsionVotePlayerCnt(gameSession.getExpulsionVotePlayerCnt() + 1);
 		if (voteResult) { // 추방 투표 찬성수 ++
-			gameSession.setExpultionVoteCnt(gameSession.getExpultionVoteCnt() + 1);
+			gameSession.setExpulsionVoteCnt(gameSession.getExpulsionVoteCnt() + 1);
 		}
 		// 끝날 조건
-		if (gameSession.getExpultionVoteCnt() == gameSession.getPlayers().size() // 모두가 투표를 했거나
-				|| gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
+		if (gameSession.getExpulsionVoteCnt() == gameSession.getPlayers().size() // 모두가 투표를 했거나
+				|| gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
 			// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
-			if (gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
-				sendExcludedMessage(roomId, gameSession.getExpultionTargetId());
+			if (gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
+				sendExcludedMessage(roomId, gameSession.getExpulsionTargetId());
 				// 실제로 추방하기
-				RolePlayer expultionPlayer = gameSession.getPlayer(gameSession.getExpultionTargetId());
-				expultionPlayer.setAlive(false);
+				RolePlayer expulsionPlayer = gameSession.getPlayer(gameSession.getExpulsionTargetId());
+				expulsionPlayer.setAlive(false);
 				// 채팅방 입장시키기
 				
 			} 
 			// 추방 투표 결과 전송 // 저녁 페이즈 종료
 			HashMap<String, String> result = new HashMap<>();
 			// 추방 당한 사람 아이디를 파람으로 전달
-			result.put("expultionPlayer", gameSession.getExpultionTargetId());
+			result.put("expulsionPlayer", gameSession.getExpulsionTargetId());
 			sendEndTwilightVoteMessage(roomId, result);
 		}
 	}
