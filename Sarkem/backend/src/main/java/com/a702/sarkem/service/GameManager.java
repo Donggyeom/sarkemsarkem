@@ -265,43 +265,55 @@ public class GameManager {
 		RolePlayer player = (RolePlayer) gameSession.getPlayer(playerId); // 타겟을 지목한 플레이어
 		RolePlayer newTargetPlayer = (RolePlayer) gameSession.getPlayer(targetId); // 플레이어가 새로 지목한 타겟 플레이어
 		
-		log.debug(player.getNickname()+"의 타겟아이디는 "+targetId);
-		log.debug(player.getNickname()+"의 타겟은 "+newTargetPlayer.getNickname());
-		// 밤 직업 별 투표 // 투표하는 애들은 삵, 의사, 경찰, 심리학자, 냥아치
-		if(gameSession.getPhase().equals(PhaseType.NIGHT)) {
-			List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
-			List<String> thisPlayers = new ArrayList<>(); // 이 직업을 가진 플레이어들id
-			for(RolePlayer rPlayer : players) {
-				if(player.getRole().equals(rPlayer.getRole())) {
-					rPlayer.setTargetConfirmed(false); // 이미 선택완료한 사람들 있을 수도 있으니까 선택완료false해주기
-					rPlayer.setTarget(targetId); // 직업이 일치하는 플레이어들의 타겟 동일하게 설정
-					thisPlayers.add(rPlayer.getPlayerId());
-				}
-			}
-			HashMap<String, String> votingMap = new HashMap<>();
-			// 일단은 파람에 타겟을 보내볼게
-			votingMap.put("target", targetId);
-//			votingMap.put("role", player.getRole().toString());
-			sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
-		}
+		if (newTargetPlayer == null) targetId = "";	// 타겟 플레이어를 찾지 못한 경우 targetId를 공백 문자열로 저장
+		
+		log.debug("selectTarget : " + player + "의 타겟은 " + newTargetPlayer);
+		// 이전 대상과 현재 대상이 같은 경우 별도 행동 X
+		if ( targetId.equals(player.getTarget()) ) return;
 		
 		// 낮 투표
 		if(gameSession.getPhase().equals(PhaseType.DAY)) {
-			log.debug("낮셀렉트 시작");
-			// 이전에 지목한 타겟이 없을 때
-			if (player.getTarget() == null || "".equals(player.getTarget())) {
+			log.debug("낮 투표 시작");
+			
+			// 지목 대상 투표수 업데이트
+			if (newTargetPlayer != null) {
 				newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
-				player.setTarget(targetId); // 현재 타겟 업데이트
-			} // 기존 타겟과 새로 지목한 타겟이 다르면
-			else if (!player.getTarget().equals(targetId)) {
-				RolePlayer targetedPlayer = (RolePlayer) gameSession.getPlayer(player.getTarget()); // 플레이어의 기존 타겟이었던 플레이어
-				targetedPlayer.setVotedCnt(targetedPlayer.getVotedCnt() - 1); // 기존 타겟이 받은 투표수--
-				if (newTargetPlayer != null) {
-					newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
-				}
-				player.setTarget(targetId); // 현재 타겟 업데이트
 			}
+				
+			// 이전 지목 대상 투표수 업데이트
+			RolePlayer prevTarget = (RolePlayer) gameSession.getPlayer(player.getTarget());
+			if ( prevTarget != null ) {
+				prevTarget.setVotedCnt(prevTarget.getVotedCnt() - 1);
+			}
+			player.setTarget(targetId); // 현재 타겟 업데이트
+
+			// 투표 현황 메시지 전송
 			sendVoteSituationMessage(roomId, mergeTargets(gameSession.getPlayers()));
+		}
+		
+		// 밤 직업 별 투표 
+		// 투표하는 애들은 삵, 의사, 경찰, 심리학자, 냥아치
+		if(gameSession.getPhase().equals(PhaseType.NIGHT)) {
+			log.debug("밤 특수능력 대상 지목");
+			
+			GameRole role = player.getRole();	// 현재 플레이어의 직업
+			List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
+			
+			// 같은 직업을 가진 플레이어들의 타겟을 모두 업데이트
+			List<String> thisPlayers = new ArrayList<>();	// 같은 직업 플레이어ID 저장
+			for(RolePlayer rPlayer : players) {
+				if (!role.equals(rPlayer.getRole())) continue;
+				
+				rPlayer.setTargetConfirmed(false);	// 이미 선택완료한 사람들 있을 수도 있으니까 선택완료false해주기
+				rPlayer.setTarget(targetId); 		// 직업이 일치하는 플레이어들의 타겟 동일하게 설정
+				thisPlayers.add(rPlayer.getPlayerId());
+				
+			}
+			
+			// 투표 현황 메시지 전송
+			HashMap<String, String> votingMap = new HashMap<>();
+			votingMap.put("target", targetId);
+			sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
 		}
 		
 	}
@@ -321,21 +333,26 @@ public class GameManager {
 	public void selectedTarget(String roomId, String playerId) {
 		GameSession gameSession = getGameSession(roomId);
 		RolePlayer rPlayer = (RolePlayer) gameSession.getPlayer(playerId);
-		rPlayer.setTargetConfirmed(true);
+		if (rPlayer == null) {
+			log.debug("selectedTarget - 플레이어ID를 찾을 수 없습니다. playerId : " + playerId);
+			return;
+		}
+		
+		rPlayer.setTargetConfirmed(true);	// 대상 선택 완료
 		
 		String targetId = rPlayer.getTarget();
 		String targetNickname = "";
 		RolePlayer targetPlayer = gameSession.getPlayer(targetId);
-		if (targetPlayer == null) {
-			targetId = "";
-			targetNickname = "";
+		if (targetPlayer != null) {
+			targetNickname = targetPlayer.getNickname();
 		}
+		
 		HashMap<String, String> param = new HashMap<>();
 		param.put("playerId", playerId);
 		param.put("targetId", targetId);
 		param.put("targetNickname", targetNickname);
 		log.debug(param.toString());
-		// 누가 누구 지목했는지 메시지 보내기
+		// 타겟 선택 완료 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
 		
 		// 밤 투표 "경찰" 직업 전체가 투표 완료했을 때 메시지 보내기

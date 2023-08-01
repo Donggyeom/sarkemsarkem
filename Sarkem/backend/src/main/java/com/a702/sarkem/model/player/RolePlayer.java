@@ -22,5 +22,6 @@ public class RolePlayer extends Player {
 	public RolePlayer(String playerId, String nickname, GameRole role) {
 		super(playerId, nickname);
 		this.role = role;
+		this.target = "";
 	}
 }
