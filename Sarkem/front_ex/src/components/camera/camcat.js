@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { memo, useState, useEffect, useRef } from 'react';
 import camcatImage from '../../img/camcat.png';
 import OpenViduVideoComponent from './OvVideo';
 
 const CamCat = (props) => {
-  // const nickName = JSON.parse(streamManager.stream.connection.data).userData;
   console.log(props.props);
   
   return (
