@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -373,19 +374,6 @@ public class GameManager {
 		sendTargetSelectionEndMessage(roomId, playerId, param);
 	}
 	
-//	// 해당 직업의 모든 플레이어의 아이디를 반환하는 함수
-//	public List<String> findRolePlayers(String roomId, GameRole gameRole){
-//		GameSession gameSession = getGameSession(roomId);
-//		List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
-//		List<String> thisPlayers = new ArrayList<>(); // 해당 직업의 플레이어 담을 배열
-//		for(RolePlayer rp : players) {
-//			if(rp.getRole().equals(gameRole)) {
-//				thisPlayers.add(rp.getPlayerId());
-//			}
-//		}
-//		return thisPlayers;
-//	}
-	
 	// 밤투표 경찰 처리
 	private void policeNightActivity(String roomId, RolePlayer target, GameSession gameSession) {
 		List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
@@ -433,6 +421,21 @@ public class GameManager {
 		}
 		// TODO: 추방 투표 현황 전송
 	}
+	
+	/**
+	 * 히든미션 처리
+	 * 
+	 */
+	
+	// 히든미션 있는지 여부 지정
+	public void hiddenMissionOccur(String roomId) {
+		GameSession gameSession = getGameSession(roomId);
+		// 30% 확률로 히든미션 발생
+		Random rnd=new Random();
+		int num = rnd.nextInt(10); // 0<=num<10
+		if(num<3) gameSession.setBHiddenMissionStatus(true);
+	}
+	
 
 	/**
 	 * 시스템 메시지를 대상에게 전송
