@@ -83,6 +83,8 @@ public class GameManager {
 		newGameRoom.setGameId(newGameId);
 		GameSession newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
 		gameSessionMap.put(newGameId, newGame);
+		log.debug("createGameRoom - GameRoom : " + newGameRoom);
+		log.debug("createGameRoom - GameSession : " + newGame);
 
 		// reids topic 생성
 		String strRoomTopic = "GAME_" + roomId;
@@ -240,7 +242,7 @@ public class GameManager {
 		if (room == null || gameSession == null) return false;
 		
 		int playerCount = room.getPlayerCount();
-		int optionRoleCount = gameSession.getTotalRoleCnt();
+		int optionRoleCount = gameSession.getTotalRoleCount();
 		log.debug("플레이어 수 : " + playerCount + "\n 설정된 직업 수 : " + optionRoleCount);
 
 		if (playerCount != optionRoleCount)

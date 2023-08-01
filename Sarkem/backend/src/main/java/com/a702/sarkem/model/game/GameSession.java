@@ -119,14 +119,6 @@ public class GameSession {
 		return roles;
 	}
 
-	// 현재 설정된 전체 역할의 수 총합 반환
-	public int getTotalRoleCnt() {
-		return this.citizenCount + this.sarkCount
-				+ this.policeCount + this.doctorCount
-				+ this.bullyCount + this.policeCount
-				+ this.detectiveCount;
-	}
-
 	public int getMafiaCount() {
 		// TODO: 마피아 수 반환
 		return 0;
