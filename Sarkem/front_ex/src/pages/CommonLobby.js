@@ -1,16 +1,25 @@
 import Background from '../components/backgrounds/BackgroundSunset';
 import styled from 'styled-components';
 import React, { useState, useEffect, useRef } from 'react';
+// img
 import boxImage from '../img/box.png';
 import sc_police from '../img/sc_경찰.png';
+import c_police from '../img/c_경찰.png'
 import sc_vet from '../img/sc_수의사.png';
+import c_vet from '../img/c_수의사.png';
 import sc_sark from '../img/sc_삵.png';
+import c_sark from '../img/c_삵.png';
 import sc_citizen from '../img/sc_시민.png';
+import c_citizen from '../img/c_시민.png';
 import sc_scoop from '../img/sc_탐정.png';
+import c_scoop from '../img/c_탐정.png';
 import sc_psychologist from '../img/sc_심리학자.png';
+import c_psychologist from '../img/c_심리학자.png';
 import sc_nyangachi from '../img/sc_냥아치.png';
+import c_nyangachi from '../img/c_냥아치.png';
 import timesetting from '../img/timesetting.png';
 import settingbuttonImage from '../img/settingbutton.png';
+// 
 import BackButton from '../components/buttons/backButton';
 import CamCat from '../components/camera/camcat';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -18,6 +27,8 @@ import StartButton from '../components/buttons/StartButton';
 import InviteButton from '../components/buttons/InviteButton';
 import { useRoomContext } from '../Context';
 import LobbyCamera from '../components/camera/LobbyCamera';
+import ScPopup from '../components/games/ScPopup';
+
 
 const StyledContent = styled.div`
   display: flex;
@@ -165,8 +176,68 @@ const CommonLobby = ()=>{
     }));
   };
 
+  // popup
+
+  const [showVetPopup, setShowVetPopup] = useState(false);
+  const [showSarkPopup, setShowSarkPopup] = useState(false);
+  const [showPolicePopup, setShowPolicePopup] = useState(false);
+  const [showCitizenPopup, setShowCitizenPopup] = useState(false);
+  const [showScoopPopup, setShowScoopPopup] = useState(false);
+  const [showPsychologistPopup, setShowPsychologistPopup] = useState(false);
+  const [showNyangachiPopup, setShowNyangachiPopup] = useState(false);
+  const handleMouseEnterVet = () => {
+    setShowVetPopup(true);
+  };
+  const handleMouseLeaveVet = () => {
+    setShowVetPopup(false);
+  };
+  const handleMouseEnterSark = () => {
+    setShowSarkPopup(true);
+  };
+  const handleMouseLeaveSark = () => {
+    setShowSarkPopup(false);
+  };
+  const handleMouseEnterPolice = () => {
+    setShowPolicePopup(true);
+  };
+  const handleMouseLeavePolice = () => {
+    setShowPolicePopup(false);
+  };
+  const handleMouseEnterCitizen = () => {
+    setShowCitizenPopup(true);
+  };
+  const handleMouseLeaveCitizen = () => {
+    setShowCitizenPopup(false);
+  };
+  const handleMouseEnterScoop = () => {
+    setShowScoopPopup(true);
+  };
+  const handleMouseLeaveScoop = () => {
+    setShowScoopPopup(false);
+  };
+  const handleMouseEnterPsychologist = () => {
+    setShowPsychologistPopup(true);
+  };
+  const handleMouseLeavePsychologist = () => {
+    setShowPsychologistPopup(false);
+  };
+  const handleMouseEnterNyangachi = () => {
+    setShowNyangachiPopup(true);
+  };
+  const handleMouseLeaveNyangachi = () => {
+    setShowNyangachiPopup(false);
+  };
+
+
   return (
     <Background>
+      {showSarkPopup && <ScPopup src={c_sark} top="20%" left="50%" />}
+      {showVetPopup && <ScPopup src={c_vet} top="40%" left="50%" />}
+      {showPolicePopup && <ScPopup src={c_police} top="40%" left="73%" />}
+      {showCitizenPopup && <ScPopup src={c_citizen} top="20%" left="73%" />}
+      {showScoopPopup && <ScPopup src={c_scoop} top="60%" left="50%" />}
+      {showPsychologistPopup && <ScPopup src={c_psychologist} top="60%" left="73%" />}
+      {showNyangachiPopup && <ScPopup src={c_nyangachi} top="80%" left="50%" />}
       <BackButton/>
       <StyledContent>
          <LobbyCamera camArray={camArray} />
@@ -175,7 +246,7 @@ const CommonLobby = ()=>{
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}/>
           <DivWrapper>
           <LeftPart>
-          <LeftPartWrapper style={{ backgroundImage: `url(${sc_sark})` }} />
+          <LeftPartWrapper style={{ backgroundImage: `url(${sc_sark})` }}  onMouseEnter={handleMouseEnterSark} onMouseLeave={handleMouseLeaveSark} />
               <RightPartWrapper>
                 <button onClick={() => handlePeopleCountChange('sark', peopleCount.sark + 1)}>+</button>
                 <div>{peopleCount.sark}</div>
@@ -183,7 +254,7 @@ const CommonLobby = ()=>{
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
-              <LeftPartWrapper style={{ backgroundImage: `url(${sc_citizen})` }} />
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_citizen})` }} onMouseEnter={handleMouseEnterCitizen} onMouseLeave={handleMouseLeaveCitizen}  />
               <RightPartWrapper>
                 <button onClick={() => handlePeopleCountChange('citizen', peopleCount.citizen + 1)}>+</button>
                 <div>{peopleCount.citizen}</div>
@@ -193,7 +264,7 @@ const CommonLobby = ()=>{
           </DivWrapper>
           <DivWrapper>
             <LeftPart>
-              <LeftPartWrapper style={{ backgroundImage: `url(${sc_vet})` }} />
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_vet})` }} onMouseEnter={handleMouseEnterVet} onMouseLeave={handleMouseLeaveVet} />
               <RightPartWrapper>
                 <button onClick={() => handlePeopleCountChange('vet', peopleCount.vet + 1)}>+</button>
                 <div>{peopleCount.vet}</div>
@@ -201,7 +272,7 @@ const CommonLobby = ()=>{
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
-              <LeftPartWrapper style={{ backgroundImage: `url(${sc_police})` }} />
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_police})` }} onMouseEnter={handleMouseEnterPolice} onMouseLeave={handleMouseLeavePolice} />
               <RightPartWrapper>
                 <button onClick={() => handlePeopleCountChange('police', peopleCount.police + 1)}>+</button>
                 <div>{peopleCount.police}</div>
@@ -211,7 +282,7 @@ const CommonLobby = ()=>{
       </DivWrapper>
       <DivWrapper>
             <LeftPart>
-              <LeftPartWrapper style={{ backgroundImage: `url(${sc_scoop})` }} />
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_scoop})` }} onMouseEnter={handleMouseEnterScoop} onMouseLeave={handleMouseLeaveScoop} />
               <RightPartWrapper>
                 <button onClick={() => handlePeopleCountChange('scoop', peopleCount.scoop + 1)}>+</button>
                 <div>{peopleCount.scoop}</div>
@@ -219,7 +290,7 @@ const CommonLobby = ()=>{
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
-              <LeftPartWrapper style={{ backgroundImage: `url(${sc_psychologist})` }} />
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_psychologist})` }} onMouseEnter={handleMouseEnterPsychologist} onMouseLeave={handleMouseLeavePsychologist} />
               <RightPartWrapper>
                 <button onClick={() => handlePeopleCountChange('psychologist', peopleCount.psychologist + 1)}>+</button>
                 <div>{peopleCount.psychologist}</div>
@@ -229,7 +300,7 @@ const CommonLobby = ()=>{
       </DivWrapper>
       <DivWrapper>
             <LeftPart>
-              <LeftPartWrapper style={{ backgroundImage: `url(${sc_nyangachi})` }} />
+              <LeftPartWrapper style={{ backgroundImage: `url(${sc_nyangachi})` }} onMouseEnter={handleMouseEnterNyangachi} onMouseLeave={handleMouseLeaveNyangachi}  />
               <RightPartWrapper>
                 <button onClick={() => handlePeopleCountChange('nyangachi', peopleCount.nyangachi + 1)}>+</button>
                 <div>{peopleCount.nyangachi}</div>

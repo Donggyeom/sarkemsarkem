@@ -20,7 +20,7 @@ const CamCat = (props) => {
       }}
     >
       {/* 이미지를 위치시킬 div */}
-      <div
+      {/* <div
         style={{
           position: 'absolute',
           top: '-15%',
@@ -32,10 +32,23 @@ const CamCat = (props) => {
         }}
       >
         <img src={camcatImage} alt="CamCat" style={{ width: '100%', height: '100%' }} />
-      </div>
+      </div> */}
 
       <div className="streamcomponent" style={{ flex: 0.2 }}>
         <div style={{ flex: 0.6, justifyContent: 'center' }}>
+          <img
+            src={camcatImage}
+            alt="CamCat"
+            style={{
+              position: 'absolute',
+              top: '-15%',
+              left: '-1%',
+              width: '96%',
+              height: '40%',
+              zIndex: 1,
+              overflow: 'visible', 
+            }}
+          />
           <OpenViduVideoComponent streamManager={props.props} />
         </div>
 
