@@ -11,6 +11,7 @@ const MicButtonImage = styled.img`
   left: 30px;
   top: 220px;
   overflow: visible;
+  z-index: 1;
 `;
 
 const MicButton = ({ alt, onClick, isMicOn }) => {
