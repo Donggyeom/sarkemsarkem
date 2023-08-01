@@ -14,6 +14,7 @@ const StyledSunsetPage = styled.div`
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  align-items: center; /* 가로 방향에서 중앙에 정렬 */
   
 `;
 
@@ -51,6 +52,7 @@ const Title = styled.div`
 `;
 
 const TextAbove = styled.div`
+  // width: 200%
   font-size: 40px;
   color: #333;
   box-sizing: border-box;
@@ -67,22 +69,22 @@ const TextAbove = styled.div`
 `;
 
 const TextAboveWrapper = styled.div`
-  
-  font-size: 40px;
-  color: #333;
+  position: absolute;
+  top: 58%; /* 화면 세로 중앙에 위치 */
+  left: 50%; /* 화면 가로 중앙에 위치 */
+  transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
   box-sizing: border-box;
-  background: #ffffff;
+  background: none;
   border-radius: 30.94px;
-  border-style: solid;
-  border-color: #000000;
+  // border-style: solid;
+  // border-color: #000000;
   border-width: 5.16px;
   padding: 13px;
   display: flex;
-  flex-direction: column; /* 세로로 정렬되도록 변경 */
-  align-items: center;
-  justify-content: flex-start;
-  /* margin-bottom: 10px; Remove margin-bottom to arrange elements horizontally */
-  max-height: 300px;
+  flex-direction: column; /* 세로로 정렬되도록 설정 */
+  align-items: center; /* 내부 컨텐츠를 수평 가운데 정렬 */
+  max-height: 62%;
+  max-width: 80%;
   overflow-x: auto;
   z-index: 1;
 `;
@@ -140,17 +142,17 @@ const ResultPage = () => {
         <TextAboveWrapper>
 
           {/* 실제로 데이터 받을 때는 for문 돌려서 for 0~5 */}
-          <TextAbove>김냥냥 | 삵</TextAbove>
-          <TextAbove>김수한무 | 냥아치</TextAbove>
-          <TextAbove>냥214 | 심리학자</TextAbove>
-          <TextAbove>김민석 | 댄스머신</TextAbove>
-          <TextAbove>김신일 | 원피스</TextAbove>
+          <TextAbove>LOSE | 김냥냥 | 삵</TextAbove>
+          <TextAbove>WIN | 김수한무 | 냥아치</TextAbove>
+          <TextAbove>WIN | 냥214 | 심리학자</TextAbove>
+          <TextAbove>WIN | 김민석 | 댄스머신</TextAbove>
+          <TextAbove>WIN | 김신일 | 원피스</TextAbove>
           {/* 실제로 데이터 받을 때는 for문 돌려서 for 5~N */}
-          <TextAbove>박현철 | 락앤롤</TextAbove>
-          <TextAbove>김동겸 | 사진 다흔들림</TextAbove>
-          <TextAbove>이예슬 | 집가고싶음</TextAbove>
-          <TextAbove>박시원 | 화면 죽이는중</TextAbove>
-          <TextAbove>임혜진 | 캠 죽이는중</TextAbove>
+          <TextAbove>WIN | 박현철 | 락앤롤</TextAbove>
+          <TextAbove>WIN | 김동겸 | 사진 다흔들림</TextAbove>
+          <TextAbove>WIN | 이예슬 | 집가고싶음</TextAbove>
+          <TextAbove>WIN | 박시원 | 화면 죽이는중</TextAbove>
+          <TextAbove>WIN | 임혜진 | 캠 죽이는중</TextAbove>
         </TextAboveWrapper>
       </StyledSunsetPage>
     </Background>
