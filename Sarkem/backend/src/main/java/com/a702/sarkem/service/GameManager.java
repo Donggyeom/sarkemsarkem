@@ -223,7 +223,8 @@ public class GameManager {
 		gameSession.setDetectiveCount(option.getDetectiveCount());
 		gameSession.setPsychologistCount(option.getPsychologistCount());
 		gameSession.setBullyCount(option.getBullyCount());
-		log.debug(gameSession.toString());
+
+		//log.debug(gameSession.toString());
 		sendGameOptionChangedMessage(roomId, option);
 	}
 
@@ -242,8 +243,13 @@ public class GameManager {
 		if (room == null || gameSession == null) return false;
 		
 		int playerCount = room.getPlayerCount();
-		int optionRoleCount = gameSession.getTotalRoleCount();
+		int optionRoleCount = gameSession.getCitizenCount() + gameSession.getSarkCount() + gameSession.getDoctorCount()
+				 + gameSession.getPoliceCount() + gameSession.getBullyCount()
+				+ gameSession.getDetectiveCount() + gameSession.getPsychologistCount();
+
+		// int optionRoleCount = gameSession.getTotalRoleCount();
 		log.debug("플레이어 수 : " + playerCount + "\n 설정된 직업 수 : " + optionRoleCount);
+
 
 		if (playerCount != optionRoleCount)
 			return false;

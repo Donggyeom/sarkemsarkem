@@ -3,8 +3,13 @@ import styled from 'styled-components';
 import startButtonImageSrc from '../../img/startbutton.png';
 
 const StartButtonImage = styled.img`
-  width: 200px;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
+  &:hover {
+    filter: brightness(0.8);
+    
+  }
 `;
 
 const StartButton = ({ src, alt, onClick }) => {

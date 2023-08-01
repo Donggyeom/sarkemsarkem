@@ -1,11 +1,37 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import styled, { keyframes, css } from 'styled-components';
 
 import Background from '../components/backgrounds/BackgroundSunset';
 import StartButton from '../components/buttons/StartButton';
 import Logo from '../components/buttons/Logo';
-import { useNavigate }  from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import createRandomId from '../utils';
+import { useRoomContext } from '../Context';
+
+// 애니메이션 정의 - 등장할 때 페이드 인
+const fadeInAnimation = keyframes`
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+
+// 애니메이션 정의 - 로고가 페이드 인 후 위아래로 흔들리는 효과
+const shakeAnimation = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateY(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateY(5px);
+  }
+`;
 
 const StyledStartPage = styled.div`
   display: flex;
@@ -18,20 +44,45 @@ const StyledStartPage = styled.div`
   overflow: hidden;
 `;
 
-const StartPage = () => {
-  // useNavigate 호출
-  const navigate = useNavigate();
+const LogoWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: ${fadeInAnimation} 2s, ${shakeAnimation} 10s 2 2s; // 애니메이션 적용
+  transform-origin: center center;
+`;
 
-  // 랜덤한 16진수 5자리를 생성하여 URL로 넘겨줍니다.
+const StartButtonContainer = styled.div`
+  width: 15%;
+  height: 10%;
+`;
+
+const StartPage = () => {
+  const { setIsHost } = useRoomContext();
+  const navigate = useNavigate();
+  const [logoVisible, setLogoVisible] = useState(false);
+
+  // 로고가 화면에 나타날 때까지 대기하는 효과를 주기 위해 useEffect 사용
+  useEffect(() => {
+    setLogoVisible(true);
+  }, []);
+
   const goToCreateRoom = () => {
-    navigate(`/${createRandomId()}`, {state: {isHost: true}})
-  }
+    setIsHost(() => true);
+    navigate(`/${createRandomId()}`);
+  };
 
   return (
     <Background>
       <StyledStartPage>
-        <Logo />
-        <StartButton alt="Go to Login" onClick={goToCreateRoom} />
+        {logoVisible && ( // 로고가 화면에 나타날 때만 렌더링
+          <LogoWrapper>
+            <Logo />
+          </LogoWrapper>
+        )}
+        <StartButtonContainer>
+          <StartButton alt="Go to Login" onClick={goToCreateRoom} />
+        </StartButtonContainer>
       </StyledStartPage>
     </Background>
   );

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import logoImage from '../img/logo.png';
-import camcatImage from '../img/camcat.png';
+import camcatImage from '../img/camcat2.png';
 import boxImage from '../img/box.png';
 import Background from '../components/backgrounds/BackgroundSunset';
 import usernicknameImage from '../img/usernickname.png';
@@ -10,7 +11,11 @@ import offImage from '../img/off.png';
 import onImage from '../img/on.png'
 import micImage from '../img/mic.png';
 import camImage from '../img/cam.png';
+import GoroomButton from '../components/buttons/goroomButton';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useRoomContext } from '../Context';
+import ToggleButton from '../components/buttons/ToggleButton';
+
 
 const StyledStartPage = styled.div`
 `;
@@ -31,15 +36,9 @@ const StyledContent = styled.div`
 `;
 
 const LeftSection = styled.div`
-  /* 왼쪽 섹션 스타일 작성 */
-  flex: 4; /* 40% of the available width */
+  flex: 4;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-image: url(${camcatImage});
-  background-size: 85% 85%;
-  background-repeat: no-repeat;
-  background-position: center center;
 `;
 
 const RightSection = styled.div`
@@ -60,6 +59,7 @@ const DivWrapper = styled.div`
   display: flex;
   width : 100%;
   height : 100%;
+  justify-content: center;
 `;
 
 const LeftPart = styled.div`
@@ -83,8 +83,28 @@ const RightPart = styled.div`
   background-size: 15vw;
   background-position: center center;
   background-repeat: no-repeat;
-  padding : 50px 0px 50px 150px;
+  padding: 50px 10px 50px 10px;
+  font-family: "RixInooAriDuri";
+  font-size: 35px;
+
+  /* Input styling */
+  input {
+    width: 300px; /* 원하는 너비로 설정 */
+    height: 50px; /* 원하는 높이로 설정 */
+    padding: 5px;
+    font-size: 35px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    text-align: center; 
+    font-family: "RixInooAriDuri";
+  }
+  span {
+    margin: 0 50px; /* You can adjust the margin as needed */
+  }
 `;
+
+
 
 const Logo = styled.img`
   /* 로고 이미지 스타일 작성 */
@@ -93,32 +113,43 @@ const Logo = styled.img`
   max-height: 100%; /* 세로 크기 100% */
 `;
 
-const CommonStart = ({image, onClick} ) => {
-
+const CommonStart = ({onClick} ) => {
+  const { setRoomId, isHost, nickName, setNickName, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
   const navigate = useNavigate();
   const location = useLocation();
-  const roomId = location.pathname.slice(1);
-  const isHost = location.state.isHost;
-
-  const [userName, setUserName] = useState('이름모를유저' + Math.floor(Math.random() * 100))
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCamOn, setIsCamOn] = useState(true);
   
+  // setRoomId(location.pathname.slice(1));
+  // const isHost = location.state?.isHost;
+
   const videoRef = useRef(null);
   const audioRef = useRef(null);
 
+
   useEffect(()=>{
+    checkRoomId();
+    setRoomId(location.pathname.slice(1));
     getUserCamera();
     getUserAudio();
-    console.log(isCamOn);
-  }, [videoRef])
+    console.log(isHost);
+  }, [videoRef, audioRef])
+
+  const checkRoomId = () => {
+    //// 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
+    if (location.pathname.slice(1) === ""){
+      alert("roomId 정보가 없습니다.")
+      navigate("/");
+    }
+  }
 
   const getUserCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
       setIsCamOn(true);
+
+      videoRef.current.style.transform = 'scaleX(-1)';
     }
+    
     catch (error) {
       console.error("Failed to start video: ", error);
     }
@@ -136,8 +167,8 @@ const CommonStart = ({image, onClick} ) => {
   }
 
   const handleMicToggle = () => {
-    const micOn = !isMicOn;
-    setIsMicOn(micOn)
+    const micOn = !isMicOn
+    setIsMicOn(micOn);
     const tracks = audioRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = micOn;
@@ -145,13 +176,17 @@ const CommonStart = ({image, onClick} ) => {
   };
 
   const handleCamToggle = () => {
-    const camOn = !isCamOn;
+    const camOn = !isCamOn
     setIsCamOn(camOn);
     const tracks = videoRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = camOn;
     });
   };
+
+  const handleNickNameChange = (event) => {
+    setNickName(event.target.value);
+  }
 
   return (
     <Background>
@@ -162,33 +197,69 @@ const CommonStart = ({image, onClick} ) => {
 
         <StyledContent>
           <LeftSection>
-          <video ref={videoRef} autoPlay/>
-          <audio ref={audioRef} autoPlay/>
+          <div style={{ position: 'relative', width: '85%', height: '63%', borderRadius: '10%' }}>
+          <video
+              ref={videoRef}
+              autoPlay
+              style={{
+                marginTop: "25%",
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '10%',
+
+              }}
+            />
+
+            <img
+              src={camcatImage}
+              alt="CamCat"
+              style={{
+                position: 'absolute',
+                top: '35%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)', // Center the image
+                width: '102%', // Adjust the size of the image as needed
+                height: '45%',
+                zIndex: 1, // Ensure the image is above the video (z-index: 0 by default)
+              }}
+            />
+             <audio ref={audioRef} autoPlay />
+          </div>
+          
+          
           </LeftSection>
           <RightSection>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${usernicknameImage})` }}></LeftPart>
               <RightPart style={{ backgroundSize: '85%', backgroundImage: `url(${usernicknameinputImage})` }}>
-              </RightPart>
+            {/* Input field */}
+            <input
+              type="text"
+              value={nickName}
+              onChange={handleNickNameChange}
+              placeholder="닉네임 입력"
+            />
+            </RightPart>
             </DivWrapper>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${camImage})` }}></LeftPart>
-              <RightPart onClick={handleCamToggle} style={{ backgroundImage: `url(${isCamOn ? onImage : offImage})` }}></RightPart>
+              {/* <RightPart onClick={handleCamToggle} style={{ backgroundImage: `url(${isCamOn ? onImage : offImage})` }}></RightPart> */}
+              <RightPart>
+                <span>OFF</span> <ToggleButton checked={true} onChange={handleCamToggle} /> <span>ON</span>
+              </RightPart>
             </DivWrapper>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${micImage})` }}></LeftPart>
-              <RightPart onClick={handleMicToggle} style={{ backgroundImage: `url(${isMicOn ? onImage : offImage})` }}></RightPart>
+              {/* <RightPart onClick={handleMicToggle} style={{ backgroundImage: `url(${isMicOn ? onImage : offImage})` }}></RightPart> */}
+              <RightPart>
+                <span>OFF</span> <ToggleButton checked={true} onChange={handleMicToggle} /> <span>ON</span>
+              </RightPart>
             </DivWrapper>
             <DivWrapper>
-          {/* 이미지에 대한 버튼을 추가하려는 곳 */}
-          {/* 클릭 이벤트를 onClick prop으로 받은 함수로 설정 */}
-          <img
-            src={image}
-            alt="버튼 이미지"
-            style={{ width: '40%', height: '80%', margin: 'auto', cursor: 'pointer' }}
-            onClick={onClick}
-          />
-        </DivWrapper>
+              {/* 조건부 렌더링을 사용하여 버튼 선택 */}
+              <GoroomButton onClick={onClick}/>
+            </DivWrapper>
           </RightSection>
         </StyledContent>
       </StyledStartPage>
