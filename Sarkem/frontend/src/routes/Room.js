@@ -1,16 +1,16 @@
-import { OpenVidu } from "openvidu-browser";
+import { OpenVidu, StreamManager } from "openvidu-browser";
 import axios from "axios";
 import React from "react";
 import UserVideoComponent from "../components/UserVideoComponent";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SockJS from 'sockjs-client';
-import {Stomp} from "@stomp/stompjs";
+import { Stomp } from "@stomp/stompjs";
 
 import "../css/Room.css"
 import Chat from "../components/Chat";
 
-function Room () {
+function Room() {
     let stompCilent = useRef({});
 
     const [mySessionId, setMySessionId] = useState(null);
@@ -33,6 +33,8 @@ function Room () {
     const [psychologistCount, setPsychologistCount] = useState("0");
     const [isConnected, setIsConnected] = useState(false);
     const [selectedTarget, setSelectedTarget] = useState("");
+    const [expulsionTarget, setExpulsionTarget] = useState("");
+    const [isTwilightVote, setIsTwilightVote ] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -54,10 +56,10 @@ function Room () {
         setMyUserName(location.state.userName);
         setVideoEnabled(location.state.videoEnabled);
         setAudioEnabled(location.state.audioEnabled);
-        
+
         // 윈도우 객체에 화면 종료 이벤트 추가
         window.addEventListener('beforeunload', onbeforeunload);
-        
+
         // 세션에 가입
         joinSession();
 
@@ -81,11 +83,11 @@ function Room () {
     // 게임 옵션 변경 시 실행
     useEffect(() => {
         console.log("게임옵션 변경됨")
-        if(stompCilent.current.connected && token !== null) {
-            stompCilent.current.send("/pub/game/action", {}, 
+        if (stompCilent.current.connected && token !== null) {
+            stompCilent.current.send("/pub/game/action", {},
                 JSON.stringify({
-                    code:'OPTION_CHANGE', 
-                    roomId: mySessionId, 
+                    code: 'OPTION_CHANGE',
+                    roomId: mySessionId,
                     playerId: token,
                     param: {
                         meetingTime,
@@ -112,12 +114,12 @@ function Room () {
         let socket = new SockJS("http://localhost:8080/ws-stomp");
         stompCilent.current = Stomp.over(socket);
         await stompCilent.current.connect({}, () => {
-         setTimeout(function() {
-           onSocketConnected();
-            connectGame();
-           console.log(stompCilent.current.connected);
-         }, 500);
-        })
+            setTimeout(function () {
+                onSocketConnected();
+                connectGame();
+                console.log(stompCilent.current.connected);
+            }, 500);
+        });
     }
 
     const onSocketConnected = () => {
@@ -128,7 +130,18 @@ function Room () {
         // 게임방 redis 구독
         console.log('/sub/game/system/' + location.state.sessionId + " redis 구독")
         stompCilent.current.subscribe('/sub/game/system/' + location.state.sessionId, receiveMessage)
-        console.log()
+
+        // 입장 코드 전송
+        console.log("ENTER 코드 전송");
+        console.log("roomId : " + location.state.sessionId);
+        console.log("playerId : " + token);
+        stompCilent.current.send("/pub/game/action", {},
+            JSON.stringify({
+                code: 'ENTER',
+                roomId: location.state.sessionId,
+                playerId: token
+            })
+        );
     }
 
     // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
@@ -141,7 +154,7 @@ function Room () {
         // 세션 연결 종료
         if (session) {
             session.disconnect();
-            deletePlayer(mySessionId,token);
+            deletePlayer(mySessionId, token);
         }
         // 데이터 초기화
         setSession(undefined);
@@ -159,14 +172,14 @@ function Room () {
         setVideoEnabled(enabled);
         publisher.publishVideo(enabled);
     }
-    
+
     // 내 마이크 On/Off
     const toggleAudio = () => {
         const enabled = !audioEnabled;
         setAudioEnabled(enabled);
         publisher.publishAudio(enabled);
     }
-    
+
 
     // 특정 유저가 룸을 떠날 시 subscribers 배열에서 삭제
     const deleteSubscriber = (streamManager) => {
@@ -178,7 +191,7 @@ function Room () {
     const getToken = async () => {
         // 내 세션ID에 해당하는 세션 생성
         let sessionId;
-        if (location.state.isHost){
+        if (location.state.isHost) {
             console.log("방장이므로 세션을 생성합니다.")
             sessionId = await createSession(mySessionId);
         } else {
@@ -190,7 +203,7 @@ function Room () {
 
     //플레이어 나갔을때 확인
     const deletePlayer = async (sessionId, playerId) => {
-        const respose = await axios.delete(`/api/game/`+location.state.sessionId+`/player/`+playerId);
+        const respose = await axios.delete(`/api/game/` + location.state.sessionId + `/player/` + playerId);
         console.log(respose);
         return respose.data;
     }
@@ -198,22 +211,24 @@ function Room () {
 
     //서버에 있는 유저 전부 가져오기
     const getPlayers = async (sessionId) => {
-        const response = await axios.get(`/api/game/`+location.state.sessionId+`/player`);
+        const response = await axios.get(`/api/game/` + location.state.sessionId + `/player`);
         console.log(response);
         return response.data;
     }
-    
+
     // 서버에 요청하여 세션 생성하는 함수
     const createSession = async (sessionId) => {
-        const response = await axios.post('/api/game', { customSessionId: location.state.sessionId, nickName:myUserName }, {
-            headers: { 'Content-Type': 'application/json', },
+        const response = await axios.post('/api/game', { customSessionId: location.state.sessionId, nickName: myUserName }, {
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
         });
         return response.data; // The sessionId
     }
 
     // 서버에 요청하여 토큰 생성하는 함수
     const createToken = async (sessionId) => {
-        const response = await axios.post('/api/game/' + location.state.sessionId + `/player`, myUserName,
+        const response = await axios.post('/api/game/' + location.state.sessionId + `/player`, myUserName, {
+            headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        }
         );
         console.log(response);
         return response.data; // The token
@@ -221,17 +236,17 @@ function Room () {
 
     // 세션 객체 생성 시 실행
     useEffect(() => {
-        if(session) {
+        if (session) {
             // 토큰 생성
             getToken().then(async (response) => {
                 try {
                     // 토큰의 고유 번호만 파싱하여 useState에 저장
                     let playerId = response.split("token=", 2)[1];
                     setToken(playerId);
-                    
+
                     // 생성된 토큰을 통해 세션에 연결 요청
-                    await session.connect(response, {clientData: myUserName, playerId: playerId})
-                    
+                    await session.connect(response, { clientData: myUserName, playerId: playerId })
+
                     // 내 통신정보(퍼블리셔) 객체 생성
                     let publisher = await OV.initPublisherAsync(undefined, {
                         audioSource: undefined,
@@ -252,11 +267,11 @@ function Room () {
                     // 내 디바이스에서 비디오 객체 추출
                     const devices = await OV.getDevices();
                     const videoDevices = devices.filter((device) => device.kind === 'videoinput');
-                   
+
                     // 기본 설정된 캠 정보 추출 (아직 필요한지 모르겠음)
                     const currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].id;
                     // const currentVideoDevice = videoDevices.find((device) => device.deviceId === currentVideoDeviceId);
-                    
+
                     // 화상 채팅 통신 상태 갱신
                     setPublisher(publisher);
                     setMainStreamManager(publisher);
@@ -273,14 +288,14 @@ function Room () {
             });
         }
     }, [session])
-    
+
     // 세션 생성 및 이벤트 정보 등록
     const joinSession = async () => {
-    
+
         // 세션 시작
         const newSession = OV.initSession();
-        
-    
+
+
         // 세션에서 발생하는 구체적인 이벤트 정의
         // stream 생성 이벤트 발생 시
         newSession.on('streamCreated', (event) => {
@@ -305,23 +320,23 @@ function Room () {
     }
 
     const copyGameLink = async () => {
-        await navigator.clipboard.writeText("localhost:3000/"+mySessionId).then(alert("게임 링크가 복사되었습니다."));
+        await navigator.clipboard.writeText("localhost:3000/" + mySessionId).then(alert("게임 링크가 복사되었습니다."));
     }
 
     // 게임시작
     const gameStart = () => {
         console.log("게임시작 클릭")
         console.log(token);
-        stompCilent.current.send("/pub/game/action", {}, 
-        JSON.stringify({
-            code:'GAME_START', 
-            roomId: mySessionId, 
-            playerId: token
-        })
+        stompCilent.current.send("/pub/game/action", {},
+            JSON.stringify({
+                code: 'GAME_START',
+                roomId: mySessionId,
+                playerId: token
+            })
         );
     }
 
-    
+
     const receiveMessage = (message) => {
         // 시스템 메시지 처리
         let sysMessage = JSON.parse(message.body);
@@ -330,41 +345,48 @@ function Room () {
         if (token != sysMessage.playerId) return;
 
         switch (sysMessage.code) {
-        case "NOTICE_MESSAGE":
-            alert(sysMessage.param.message);
+            case "NOTICE_MESSAGE":
+                alert(sysMessage.param.message);
+                break;
+            case "GAME_START":
+                alert('게임시작');
+                break;
+            case "ONLY_HOST_ACTION":
+                console.log(sysMessage);
+                alert('방장만 실행 가능합니다.');
+                break;
+            case "OPTION_CHANGED":
+                setMeetingTime(sysMessage.param.meetingTime);
+                setCitizenCount(sysMessage.param.citizenCount);
+                setSarkCount(sysMessage.param.sarkCount);
+                setPoliceCount(sysMessage.param.policeCount);
+                setDoctorCount(sysMessage.param.doctorCount);
+                setDetectiveCount(sysMessage.param.detectiveCount);
+                setBullyCount(sysMessage.param.bullyCount);
+                setPsychologistCount(sysMessage.param.psychologistCount);
+                break;
+            case "ROLE_ASSIGNED":
+                alert(`당신은 ${sysMessage.param.role} 입니다.`);
+                console.log(`당신은 ${sysMessage.param.role} 입니다.`)
+                break;
+            case "TARGET_SELECTION_END":
+                // 선택 완료
+                alert("선택 완료", sysMessage.param.targetNickname);
+                setSelectedTarget("");
+                break;
+            case "VOTE_SITUATION":
+                console.log(sysMessage.param);
+                break;
+            case "DAY_VOTE_END":
+                alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
+                
+                if (sysMessage.param.targetId == null) break;
+                
+                setExpulsionTarget(sysMessage.param.targetId);
             break;
-        case "GAME_START":   
-            alert('게임시작');
-            break;
-        case "ONLY_HOST_ACTION":
-            console.log(sysMessage);
-            alert('방장만 실행 가능합니다.');
-            break;
-        case "OPTION_CHANGED":
-            setMeetingTime(sysMessage.param.meetingTime);
-            setCitizenCount(sysMessage.param.citizenCount);
-            setSarkCount(sysMessage.param.sarkCount);
-            setPoliceCount(sysMessage.param.policeCount);
-            setDoctorCount(sysMessage.param.doctorCount);
-            setDetectiveCount(sysMessage.param.detectiveCount);
-            setBullyCount(sysMessage.param.bullyCount);
-            setPsychologistCount(sysMessage.param.psychologistCount);
-            break;
-        case "ROLE_ASSIGNED":
-            alert(`당신은 ${sysMessage.param.role} 입니다.`);
-            console.log(`당신은 ${sysMessage.param.role} 입니다.`)
-            break;
-        case "TARGET_SELECTION_END":
-            // 선택 완료
-            alert("선택 완료");
-            setSelectedTarget("");
-            break;
-        case "VOTE_SITUATION":
-            console.log(sysMessage.param);
-            break;
-        case "DAY_VOTE_END":
-            console.log("낮 투표 종료");
-            break;
+        case "TWILIGHT_VOTE":
+            setIsTwilightVote(true);
+                break;
         case "GAME_END":
             alert("게임 종료");
             break;
@@ -382,11 +404,11 @@ function Room () {
         }
 
         console.log("다른 플레이어 선택 ")
-        if(stompCilent.current.connected && token !== null) {
-            stompCilent.current.send("/pub/game/action", {}, 
+        if (stompCilent.current.connected && token !== null) {
+            stompCilent.current.send("/pub/game/action", {},
                 JSON.stringify({
-                    code:'TARGET_SELECT', 
-                    roomId: location.state.sessionId, 
+                    code: 'TARGET_SELECT',
+                    roomId: location.state.sessionId,
                     playerId: token,
                     param: {
                         target: target.playerId
@@ -398,17 +420,49 @@ function Room () {
     // 대상 확정
     const selectConfirm = () => {
         console.log(selectedTarget + " 플레이어 선택 ");
-        if(stompCilent.current.connected && token !== null) {
-            stompCilent.current.send("/pub/game/action", {}, 
+        if (stompCilent.current.connected && token !== null) {
+            stompCilent.current.send("/pub/game/action", {},
                 JSON.stringify({
-                    code:'TARGET_SELECTED',
-                    roomId: mySessionId, 
+                    code: 'TARGET_SELECTED',
+                    roomId: mySessionId,
                     playerId: token,
                     param: {
                         target: selectedTarget
                     }
                 }))
         }
+    }
+
+    const selectPsy = (streamManager) => {
+        console.log(streamManager);
+    }
+
+        // 추방 투표 동의
+    const agreeExpulsion = () => {
+        stompCilent.current.send("/pub/game/action", {}, 
+            JSON.stringify({
+                code:'EXPULSION_VOTE',
+                roomId: mySessionId, 
+                playerId: token,
+                param: {
+                    result: true
+                }
+            })
+        )
+    }
+
+    // 추방 투표 반대
+    const disagreeExpulsion = () => {
+        stompCilent.current.send("/pub/game/action", {}, 
+            JSON.stringify({
+                code:'EXPULSION_VOTE',
+                roomId: mySessionId, 
+                playerId: token,
+                param: {
+                    result: false
+                }
+            })
+        )
     }
 
     // 다른 유저 카메라 on/off 하는 함수
@@ -420,35 +474,35 @@ function Room () {
 
     const deathAndOpenChat = () => {
         setDead(!dead);
-        
+
     }
 
     const changeOption = (event) => {
-        switch(event.target.id) {
+        switch (event.target.id) {
             case "meetingTime":
                 setMeetingTime(event.target.value);
-            break;
+                break;
             case "citizenCount":
                 setCitizenCount(event.target.value);
-            break;
+                break;
             case "sarkCount":
                 setSarkCount(event.target.value);
-            break;
+                break;
             case "doctorCount":
                 setDoctorCount(event.target.value);
-            break;
+                break;
             case "policeCount":
                 setPoliceCount(event.target.value);
-            break;
+                break;
             case "detectiveCount":
                 setDetectiveCount(event.target.value);
-            break;
+                break;
             case "psychologistCount":
                 setPsychologistCount(event.target.value);
-            break;
+                break;
             case "bullyCount":
                 setBullyCount(event.target.value);
-            break;
+                break;
         }
     }
 
@@ -497,8 +551,19 @@ function Room () {
                     id="buttonLeaveSession"
                     onClick={deathAndOpenChat}
                     value={`죽기`}
-                /> 
-                {selectedTarget != "" ? <button onClick={selectConfirm}>대상확정</button> : null}
+                />
+                <input
+                    className="btn btn-large btn-danger"
+                    type="button"
+                    id="buttonLeaveSession"
+                    onClick={()=> console.log(location)}
+                    value={`심리학자`}
+                />
+                {selectedTarget ? <button onClick={selectConfirm}>대상확정</button> : <button onClick={selectConfirm}>투표스킵</button>}
+                {isTwilightVote ? <div>
+                    <button onClick={agreeExpulsion}>찬성</button>
+                    <button onClick={disagreeExpulsion}>반대</button>
+                </div> : null}
             </div>
             {/* {mainStreamManager !== undefined ? (
                 <div id="main-video" className="col-md-6">
@@ -545,11 +610,11 @@ function Room () {
                 <label for='bullyCount'>냥아치</label>
                 <input onChange={changeOption} value={bullyCount} type='number' id='bullyCount' name="bullyCount" min="1" max="10"></input>
             </div>
-            {dead ? <Chat sessionId={mySessionId} userName={myUserName}/> : null}
-            
+            {dead ? <Chat sessionId={mySessionId} userName={myUserName} /> : null}
+
         </div>
     );
-    
+
 }
 
 export default Room;
