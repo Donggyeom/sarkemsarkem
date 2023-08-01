@@ -29,13 +29,13 @@ const StyledContent = styled.div`
 const RightSection = styled.div`
   flex: 45%;
   background-image: url(${boxImage});
-  background-size: 97% 98%;
+  background-size: 98.5% 98%;
   background-repeat: no-repeat;
   background-position: center center;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 15px 0px;
+  padding: 10px 0px;
   /* 원하는 크기로 설정 */
 `;
 
@@ -73,9 +73,10 @@ const LeftPartWrapper = styled.div`
   background-position: center center;
   justify-content: center;
   background-size: contain;
-  height: 120%;
+  height: 110%;
   width : 100%;
   overflow : hidden;
+  margin-left: 5%;
 `;
 const RightPartWrapper = styled.div`
   flex: 0.5;
@@ -84,10 +85,10 @@ const RightPartWrapper = styled.div`
   align-items: center;
   justify-content: center;
   background-position : center;
-  padding: 18px;
+  padding: 11%;
   height: 100%; /* Adjust the height as needed */
   width : 100%;
-  margin-right : 10%;
+  margin-right : 0;
   overflow : hidden;
 
   button {
