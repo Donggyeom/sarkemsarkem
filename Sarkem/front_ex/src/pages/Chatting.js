@@ -6,7 +6,6 @@ import chatsendbuttonImage from '../img/chatsendbutton.png';
 import chatsenderImage from '../img/chatsender.png';
 import chatcloseImage from '../img/closebutton.png'
 
-
 const ChatContainer = styled.div`
   background-image: url(${chatbox});
   background-size: cover;
@@ -88,7 +87,7 @@ const ChatButton = styled.button`
   background-image: url(${chatsendbuttonImage});
   background-size: cover;
   background-repeat: no-repeat;
-  margin-right : 4.5%;
+  margin-right : 5%;
   border: none;
   cursor: pointer;
   height : 100%;
@@ -130,7 +129,6 @@ const Chatting = ({ handleCloseButtonClick, messages, onSendMessage }) => {
     }
   };
 
-  
   const handleInputChange = (e) => {
     setInputMessage(e.target.value);
   };
