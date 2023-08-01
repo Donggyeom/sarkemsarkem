@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import CamCat from '../components/camera/camcat';
+import CamCat from './camcat';
 
 const LeftSectionWrapper = styled.div`
   flex: 55%;
@@ -289,7 +289,7 @@ const CamCatWrapper = styled.div`
   : ''};
 `;
 
-const LeftSection = React.memo(({ camArray }) => {
+const LobbyCamera = React.memo(({ camArray }) => {
   const camCount = camArray.length;
   const gridStyles = calculateGrid(camCount);
 
@@ -306,4 +306,4 @@ const LeftSection = React.memo(({ camArray }) => {
   );
 });
 
-export default LeftSection;
+export default LobbyCamera;

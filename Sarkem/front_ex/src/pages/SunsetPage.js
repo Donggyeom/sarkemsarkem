@@ -580,13 +580,13 @@ const SunsetPage = () => {
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
         
         <CamCatGrid style={gridStyles}>
-            {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
-              <CamCatWrapper key={index} camCount={camCount} index={index}>
-                <CamCat props={camArray[index]} />
-              </CamCatWrapper>
-            ))}
-          </CamCatGrid>
-          <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
+          {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
+            <CamCatWrapper key={index} camCount={camCount} index={index}>
+              <CamCat props={camArray[index]} />
+            </CamCatWrapper>
+          ))}
+        </CamCatGrid>
+        <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
       </StyledContent>
       <ChatButtonAndPopup />
       {/* </CamCatGridContainer> */}

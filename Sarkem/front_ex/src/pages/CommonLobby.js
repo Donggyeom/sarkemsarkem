@@ -17,8 +17,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import StartButton from '../components/buttons/StartButton';
 import InviteButton from '../components/buttons/InviteButton';
 import { useRoomContext } from '../Context';
-import LeftSection from './LobbyLeftSection';
-
+import LobbyCamera from '../components/camera/LobbyCamera';
 
 const StyledContent = styled.div`
   display: flex;
@@ -170,12 +169,11 @@ const CommonLobby = ()=>{
     <Background>
       <BackButton/>
       <StyledContent>
-         <LeftSection camArray={camArray} />
+         <LobbyCamera camArray={camArray} />
         <RightSection>
           <DivWrapper
-            style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}
-          />
-        <DivWrapper>
+            style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}/>
+          <DivWrapper>
           <LeftPart>
           <LeftPartWrapper style={{ backgroundImage: `url(${sc_sark})` }} />
               <RightPartWrapper>
