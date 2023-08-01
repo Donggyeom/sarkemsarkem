@@ -299,7 +299,7 @@ public class GameManager {
 			player.setTarget(targetId); // 현재 타겟 업데이트
 
 			// 투표 현황 메시지 전송
-			sendVoteSituationMessage(roomId, mergeTargets(gameSession.getPlayers()));
+			sendVoteSituationMessage(roomId, mergeTargets(gameSession.getAlivePlayers()));
 		}
 		
 		// 밤 직업 별 투표 
@@ -308,15 +308,12 @@ public class GameManager {
 			log.debug("밤 특수능력 대상 지목");
 			
 			GameRole role = player.getRole();	// 현재 플레이어의 직업
-			List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
 			
 			// 삵인 경우 논의해서 하나만 투표
 			if(role.equals(GameRole.SARK)) {
 				// 같은 직업을 가진 플레이어들의 타겟을 모두 업데이트
 				List<String> thisPlayers = new ArrayList<>();	// 같은 직업 플레이어ID 저장
-				for(RolePlayer rPlayer : players) {
-					if (!role.equals(rPlayer.getRole())) continue;
-					
+				for(RolePlayer rPlayer : gameSession.getRolePlayers(role)) {					
 					rPlayer.setTargetConfirmed(false);	// 이미 선택완료한 사람들 있을 수도 있으니까 선택완료false해주기
 					rPlayer.setTarget(targetId); 		// 직업이 일치하는 플레이어들의 타겟 동일하게 설정
 					thisPlayers.add(rPlayer.getPlayerId());
@@ -370,18 +367,18 @@ public class GameManager {
 		sendTargetSelectionEndMessage(roomId, playerId, param);
 	}
 	
-	// 해당 직업의 모든 플레이어의 아이디를 반환하는 함수
-	public List<String> findRolePlayers(String roomId, GameRole gameRole){
-		GameSession gameSession = getGameSession(roomId);
-		List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
-		List<String> thisPlayers = new ArrayList<>(); // 해당 직업의 플레이어 담을 배열
-		for(RolePlayer rp : players) {
-			if(rp.getRole().equals(gameRole)) {
-				thisPlayers.add(rp.getPlayerId());
-			}
-		}
-		return thisPlayers;
-	}
+//	// 해당 직업의 모든 플레이어의 아이디를 반환하는 함수
+//	public List<String> findRolePlayers(String roomId, GameRole gameRole){
+//		GameSession gameSession = getGameSession(roomId);
+//		List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
+//		List<String> thisPlayers = new ArrayList<>(); // 해당 직업의 플레이어 담을 배열
+//		for(RolePlayer rp : players) {
+//			if(rp.getRole().equals(gameRole)) {
+//				thisPlayers.add(rp.getPlayerId());
+//			}
+//		}
+//		return thisPlayers;
+//	}
 	
 	// 밤투표 경찰 처리
 	private void policeNightActivity(String roomId, RolePlayer target, GameSession gameSession) {
@@ -420,10 +417,10 @@ public class GameManager {
 			gameSession.setExpulsionVoteCnt(gameSession.getExpulsionVoteCnt() + 1);
 		}
 		// 끝날 조건
-		if (gameSession.getExpulsionVoteCnt() == gameSession.getPlayers().size() // 모두가 투표를 했거나
-				|| gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
+		if (gameSession.getExpulsionVoteCnt() == gameSession.getAlivePlayers().size() // 모두가 투표를 했거나
+				|| gameSession.getExpulsionVoteCnt() >= (gameSession.getAlivePlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
 			// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
-			if (gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
+			if (gameSession.getExpulsionVoteCnt() >= (gameSession.getAlivePlayers().size() + 1) / 2) {
 				sendExcludedMessage(roomId, gameSession.getExpulsionTargetId());
 				// 실제로 추방하기
 				RolePlayer expulsionPlayer = gameSession.getPlayer(gameSession.getExpulsionTargetId());
@@ -632,8 +629,8 @@ public class GameManager {
 	}
 
 	// "심리분석 시작" 메시지 전송 *
-	public void sendPsychoStartMessage(String roomId, String playerId) {
-		sendSystemMessage(roomId, playerId, SystemCode.PSYCHOANALYSIS_START, null);
+	public void sendPsychoStartMessage(String roomId, String playerId, Map<String, String> target) {
+		sendSystemMessage(roomId, playerId, SystemCode.PSYCHOANALYSIS_START, target);
 	}
 
 	// "협박당함" 메시지 전송 *
