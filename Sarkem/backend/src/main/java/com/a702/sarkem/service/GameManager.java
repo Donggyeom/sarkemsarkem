@@ -11,6 +11,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import com.a702.sarkem.exception.GameRoomNotFoundException;
+import com.a702.sarkem.model.chat.ChatMessage;
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
@@ -46,11 +47,11 @@ public class GameManager {
 	// topic 관리
 	private Map<String, ChannelTopic> topics = new HashMap<>();
 
-	private ChannelTopic getGameTopic(String roomId) {
+	public ChannelTopic getGameTopic(String roomId) {
 		return topics.get("GAME_" + roomId);
 	}
 
-	private ChannelTopic getChatTopic(String roomId) {
+	public ChannelTopic getChatTopic(String roomId) {
 		return topics.get("CHAT_" + roomId);
 	}
 
@@ -199,6 +200,7 @@ public class GameManager {
 	public void gameOptionChange(String roomId, String playerId, GameOptionDTO option) {
 
 		GameRoom room = gameRoomMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		// 방장과 플레이어 일치 여부 확인
 		if (!room.getHostId().equals(playerId)) {
 			return;
@@ -210,12 +212,11 @@ public class GameManager {
 		// 회의 시간 변경
 		int meetingTime = option.getMeetingTime();
 		if (meetingTime < 15 || meetingTime > 180) {
-			sendNoticeMessageToPlayer(roomId, hostId, "회의 시간은 15s ~ 180s 사이로 설정 가능합니다.");
+			sendNoticeMessageToPlayer(roomId, hostId, "회의 시간은 15s ~ 180s 사이로 설정 가능합니다.", PhaseType.READY);
 			return;
 		}
 
 		// session 변경
-		GameSession gameSession = getGameSession(roomId);
 		gameSession.setMeetingTime(option.getMeetingTime());
 		gameSession.setCitizenCount(option.getCitizenCount());
 		gameSession.setSarkCount(option.getSarkCount());
@@ -291,8 +292,6 @@ public class GameManager {
 		
 		// 낮 투표
 		if(gameSession.getPhase().equals(PhaseType.DAY)) {
-			log.debug("낮 투표 시작");
-			
 			// 지목 대상 투표수 업데이트
 			if (newTargetPlayer != null) {
 				newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
@@ -358,14 +357,19 @@ public class GameManager {
 			return;
 		}
 		
-		rPlayer.setTargetConfirmed(true);	// 대상 선택 완료
-		
 		String targetId = rPlayer.getTarget();
+
+		if (gameSession.getDay() == 1 && !"".equals(targetId)) {
+			sendNoticeMessageToPlayer(roomId, playerId, "1일차 낮에는 추방 투표 대상을 선택할 수 없습니다.", gameSession.getPhase());
+			return;
+		}
+		
 		String targetNickname = "";
 		RolePlayer targetPlayer = gameSession.getPlayer(targetId);
 		if (targetPlayer != null) {
 			targetNickname = targetPlayer.getNickname();
 		}
+		rPlayer.setTargetConfirmed(true);	// 대상 선택 완료
 		
 		HashMap<String, String> param = new HashMap<>();
 		param.put("playerId", playerId);
@@ -374,33 +378,6 @@ public class GameManager {
 		log.debug(param.toString());
 		// 타겟 선택 완료 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
-	}
-	
-	// 밤투표 경찰 처리
-	private void policeNightActivity(String roomId, RolePlayer target, GameSession gameSession) {
-		List<RolePlayer> players = gameSession.getPlayers(); // 전체 플레이어
-		List<String> police = new ArrayList<>();
-		int policeCnt = 0; int endPoliceCnt = 0;
-		for(RolePlayer rp : players) {
-			if(rp.getRole().equals(GameRole.POLICE)) {
-				policeCnt++;
-				if(rp.isTargetConfirmed()) { //경찰인 플레이어가 대상 확정을 했다면
-					endPoliceCnt++;
-					police.add(rp.getPlayerId());
-				}
-			}
-		}
-		// 밤 투표 "경찰" 직업 전체가 투표 완료했을 때
-		// 모든 경찰 플레이어가 대상 확정을 했다면 대상 삵 여부 알려주기
-		if(policeCnt==endPoliceCnt) {
-			String message = "";
-			if(target.getRole().equals(GameRole.SARK)) {
-				message = target.getNickname() +"님은 삵입니다.";
-			}else {
-				message = target.getNickname() +"님은 삵이 아닙니다.";
-			}
-			sendNoticeMessageToPlayers(roomId, police, message);
-		}
 	}
 
 	// 추방 투표 처리
@@ -444,6 +421,20 @@ public class GameManager {
 		sendHiddenMissionSuccessMessage(roomId);
 		gameSession.setBHiddenMissionSuccess(true);
 	}
+	
+	/**
+	 * 채팅 메시지를 전체에게 전송
+	 * 
+	 * @param roomId
+	 * @param target
+	 * @param code
+	 * @param param
+	 */
+	public void sendChattingMessage(ChatMessage message) {
+		ChannelTopic chatTopic = getChatTopic(message.getRoomId());
+		chatPublisher.publish(chatTopic, message);
+	}
+	
 	/**
 	 * 시스템 메시지를 대상에게 전송
 	 * 
@@ -494,9 +485,10 @@ public class GameManager {
 	 * @param playerId
 	 * @param message
 	 */
-	public void sendNoticeMessageToPlayer(String roomId, String playerId, String message) {
+	public void sendNoticeMessageToPlayer(String roomId, String playerId, String message, PhaseType phase) {
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
+		param.put("phase", phase.toString());
 		List<String> targets = new ArrayList<>();
 		targets.add(playerId);
 		sendSystemMessage(roomId, targets, SystemCode.NOTICE_MESSAGE, param);
@@ -508,9 +500,10 @@ public class GameManager {
 	 * @param playersId
 	 * @param message
 	 */
-	public void sendNoticeMessageToPlayers(String roomId, List<String> playersId, String message) {
+	public void sendNoticeMessageToPlayers(String roomId, List<String> playersId, String message, PhaseType phase) {
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
+		param.put("phase", phase.toString());
 		sendSystemMessage(roomId, playersId, SystemCode.NOTICE_MESSAGE, param);
 	}
 
@@ -519,9 +512,10 @@ public class GameManager {
 	 * 
 	 * @param message
 	 */
-	public void sendNoticeMessageToAll(String roomId, String message) {
+	public void sendNoticeMessageToAll(String roomId, String message, PhaseType phase) {
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
+		param.put("phase", phase.toString());
 		sendSystemMessageToAll(roomId, SystemCode.NOTICE_MESSAGE, param);
 	}
 	// 0. 공통기능 끝
