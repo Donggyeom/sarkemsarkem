@@ -28,7 +28,7 @@ const CamCat = (props) => {
             style={{
               position: 'absolute',
               top: '-15%',
-              left: '-1%',
+              left: '-1.5%',
               width: '96%',
               height: '40%',
               overflow: 'visible', 
