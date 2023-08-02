@@ -92,6 +92,16 @@ const DayPage = () => {
       }
   };
 
+  const chatVisible = () =>{
+    if (myRole === 'OBSERVER'){
+      return (
+        <>
+          <ChatButtonAndPopup />
+        </>
+      )
+    }
+  }
+
 
 
   useEffect(() => {
@@ -124,7 +134,7 @@ const DayPage = () => {
           {getMyRole()}
         </StyledDayPage>
         <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
-        <ChatButtonAndPopup />
+          {chatVisible()}
     </Background>
   );
 };
