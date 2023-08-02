@@ -19,6 +19,8 @@ import sc_nyangachi from '../img/sc_냥아치.png';
 import c_nyangachi from '../img/c_냥아치.png';
 import timesetting from '../img/timesetting.png';
 import settingbuttonImage from '../img/settingbutton.png';
+import upbutton from '../img/upbutton.png';
+import downbutton from '../img/downbutton.png';
 // 
 import BackButton from '../components/buttons/backButton';
 import CamCat from '../components/camera/camcat';
@@ -249,6 +251,15 @@ const CommonLobby = ()=>{
     setIsHelpOn((prevIsHelpOn) => !prevIsHelpOn);
   };
 
+  //업다운 버튼
+  const buttonStyle = {
+    border: 'none',
+    background: 'none',
+    padding: '0',
+    cursor: 'pointer',
+    transition: 'filter 0.3s ease', // Adding transition for smooth effect
+    margin: '13px',
+  };
 
   return (
     <Background>
@@ -270,17 +281,41 @@ const CommonLobby = ()=>{
           <LeftPart>
           <LeftPartWrapper style={{ backgroundImage: `url(${sc_sark})` }}  onMouseEnter={handleMouseEnterSark} onMouseLeave={handleMouseLeaveSark} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('sarkCount', peopleCount.sarkCount + 1)}>+</button>
+                <button
+                  style={{ ...buttonStyle }}
+                  onClick={() => handlePeopleCountChange('sarkCount', peopleCount.sarkCount - 1)}
+                  onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                  onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                    <img src={downbutton} alt="Down Button" />
+                </button>
                 <div>{peopleCount.sarkCount}</div>
-                <button onClick={() => handlePeopleCountChange('sarkCount', peopleCount.sarkCount - 1)}>-</button>
+                <button
+                  style={{ ...buttonStyle }}
+                  onClick={() => handlePeopleCountChange('sarkCount', peopleCount.sarkCount + 1)}
+                  onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                  onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                   <img src={upbutton} alt="Up Button" />
+                </button>
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_citizen})` }} onMouseEnter={handleMouseEnterCitizen} onMouseLeave={handleMouseLeaveCitizen}  />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('citizenCount', peopleCount.citizenCount + 1)}>+</button>
+                <button
+                  style={{ ...buttonStyle }}
+                  onClick={() => handlePeopleCountChange('citizenCount', peopleCount.citizenCount - 1)}
+                  onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                  onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                    <img src={downbutton} alt="Down Button" />
+                </button>
                 <div>{peopleCount.citizenCount}</div>
-                <button onClick={() => handlePeopleCountChange('citizenCount', peopleCount.citizenCount - 1)}>-</button>
+                <button
+                  style={{ ...buttonStyle }}
+                  onClick={() => handlePeopleCountChange('citizenCount', peopleCount.citizenCount + 1)}
+                  onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                  onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                   <img src={upbutton} alt="Up Button" />
+                </button>
               </RightPartWrapper>
             </RightPart>
           </DivWrapper>
@@ -288,17 +323,41 @@ const CommonLobby = ()=>{
             <LeftPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_vet})` }} onMouseEnter={handleMouseEnterVet} onMouseLeave={handleMouseLeaveVet} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('doctorCount', peopleCount.doctorCount + 1)}>+</button>
-                <div>{peopleCount.doctorCount}</div>
-                <button onClick={() => handlePeopleCountChange('doctorCount', peopleCount.doctorCount - 1)}>-</button>
+                <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('doctorCount', peopleCount.doctorCount - 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                      <img src={downbutton} alt="Down Button" />
+                  </button>
+                  <div>{peopleCount.doctorCount}</div>
+                  <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('doctorCount', peopleCount.doctorCount + 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                    <img src={upbutton} alt="Up Button" />
+                </button>
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_police})` }} onMouseEnter={handleMouseEnterPolice} onMouseLeave={handleMouseLeavePolice} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('policeCount', peopleCount.policeCount + 1)}>+</button>
-                <div>{peopleCount.policeCount}</div>
-                <button onClick={() => handlePeopleCountChange('policeCount', peopleCount.policeCount - 1)}>-</button>
+                <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('policeCount', peopleCount.policeCount - 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                      <img src={downbutton} alt="Down Button" />
+                  </button>
+                  <div>{peopleCount.policeCount}</div>
+                  <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('policeCount', peopleCount.policeCount + 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                    <img src={upbutton} alt="Up Button" />
+                </button>
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
@@ -306,17 +365,41 @@ const CommonLobby = ()=>{
             <LeftPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_scoop})` }} onMouseEnter={handleMouseEnterScoop} onMouseLeave={handleMouseLeaveScoop} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('detectiveCount', peopleCount.detectiveCount + 1)}>+</button>
-                <div>{peopleCount.detectiveCount}</div>
-                <button onClick={() => handlePeopleCountChange('detectiveCount', peopleCount.detectiveCount - 1)}>-</button>
+                <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('detectiveCount', peopleCount.detectiveCount - 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                      <img src={downbutton} alt="Down Button" />
+                  </button>
+                  <div>{peopleCount.detectiveCount}</div>
+                  <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('detectiveCount', peopleCount.detectiveCount + 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                    <img src={upbutton} alt="Up Button" />
+                </button>
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_psychologist})` }} onMouseEnter={handleMouseEnterPsychologist} onMouseLeave={handleMouseLeavePsychologist} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('psychologistCount', peopleCount.psychologistCount + 1)}>+</button>
-                <div>{peopleCount.psychologistCount}</div>
-                <button onClick={() => handlePeopleCountChange('psychologistCount', peopleCount.psychologistCount - 1)}>-</button>
+                <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('psychologistCount', peopleCount.psychologistCount - 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                      <img src={downbutton} alt="Down Button" />
+                  </button>
+                  <div>{peopleCount.psychologistCount}</div>
+                  <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('psychologistCount', peopleCount.psychologistCount + 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                    <img src={upbutton} alt="Up Button" />
+                </button>
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
@@ -324,17 +407,41 @@ const CommonLobby = ()=>{
             <LeftPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${sc_nyangachi})` }} onMouseEnter={handleMouseEnterNyangachi} onMouseLeave={handleMouseLeaveNyangachi}  />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('bullyCount', peopleCount.bullyCount + 1)}>+</button>
-                <div>{peopleCount.bullyCount}</div>
-                <button onClick={() => handlePeopleCountChange('bullyCount', peopleCount.bullyCount - 1)}>-</button>
+                <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('bullyCount', peopleCount.bullyCount - 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                      <img src={downbutton} alt="Down Button" />
+                  </button>
+                  <div>{peopleCount.bullyCount}</div>
+                  <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('bullyCount', peopleCount.bullyCount + 1)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                    <img src={upbutton} alt="Up Button" />
+                </button>
               </RightPartWrapper>
             </LeftPart>
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${timesetting})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime + 60)}>+</button>
-                <div>{peopleCount.meetingTime}</div>
-                <button onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime - 60)}>-</button>
+               <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime - 15)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                      <img src={downbutton} alt="Down Button" />
+                  </button>
+                  <div>{peopleCount.meetingTime}</div>
+                  <button
+                    style={{ ...buttonStyle }}
+                    onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime + 15)}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'none'}>
+                    <img src={upbutton} alt="Up Button" />
+                </button>
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
