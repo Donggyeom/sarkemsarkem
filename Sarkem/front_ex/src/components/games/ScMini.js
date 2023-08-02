@@ -69,7 +69,7 @@ const PopupImage = styled.img`
 `;
 
 const ScMini = ({ alt, role }) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(true);
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state
 
 
@@ -113,6 +113,7 @@ const ScMini = ({ alt, role }) => {
     buttonImageSrc = scDetectImageSrc;
     popupImageSrc = cDetectImageSrc;
   }
+
 
   return (
     <>

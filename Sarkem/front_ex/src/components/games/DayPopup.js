@@ -91,6 +91,7 @@ const DayPopup = () => {
         </div>
       </div>
 
+      {/* 메세지넣을곳 */}  
       <StyledPopupTitle>닉네임 님이 추방되었습니다.</StyledPopupTitle>
     </StyledPopupContainer>
   );
