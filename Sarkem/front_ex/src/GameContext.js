@@ -75,7 +75,7 @@ const onSocketConnected = () => {
             console.log(sysMessage.param.sarkCount);
             break;
         case "ROLE_ASSIGNED":
-            alert(`당신은 ${sysMessage.param.role} 입니다.`);
+            // alert(`당신은 ${sysMessage.param.role} 입니다.`);
             console.log(`당신은 ${sysMessage.param.role} 입니다.`)
             setMyRole(sysMessage.param.role);
             break;
