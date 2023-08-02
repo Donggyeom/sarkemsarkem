@@ -21,7 +21,7 @@ const GameProvider = ({ children }) => {
         psychologistCount: 0,
         bullyCount: 0
       });
-
+    const [myRole, setMyRole] = useState(null);
     useEffect(() => {
         if (token !== null) connectGameWS();
     }, [token]);
@@ -74,9 +74,10 @@ const onSocketConnected = () => {
             setPeopleCount(sysMessage.param);
             console.log(sysMessage.param.sarkCount);
             break;
-        case "ROLE_ASIGNED":
+        case "ROLE_ASSIGNED":
             alert(`당신은 ${sysMessage.param.role} 입니다.`);
             console.log(`당신은 ${sysMessage.param.role} 입니다.`)
+            setMyRole(sysMessage.param.role);
             break;
     
         }
@@ -98,7 +99,7 @@ const onSocketConnected = () => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, setPeopleCount, handleGamePageClick }}>
+    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick }}>
       {children}
     </GameContext.Provider>
   );

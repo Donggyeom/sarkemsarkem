@@ -5,15 +5,15 @@ import scPoliceImageSrc from '../../img/sc_경찰.png';
 import scNyangImageSrc from '../../img/sc_냥아치.png';
 import scVetImageSrc from '../../img/sc_수의사.png';
 import scCatImageSrc from '../../img/sc_시민.png';
-import scMindImageSrc from '../../img/sc_심리학자.png';
+import scPsychoImageSrc from '../../img/sc_심리학자.png';
 import scDetectImageSrc from '../../img/sc_탐정.png';
 import cSarkImageSrc from '../../img/c_삵.png';
 import cPoliceImageSrc from '../../img/c_경찰.png';
 import cNyangImageSrc from '../../img/c_냥아치.png';
 import cVetImageSrc from '../../img/c_수의사.png';
 import cCatImageSrc from '../../img/c_시민.png';
-import cMindImageSrc from '../../img/c_심리학자.png';
-import cScoopImageSrc from '../../img/c_탐정.png';
+import cPsychoImageSrc from '../../img/c_심리학자.png';
+import cDetectImageSrc from '../../img/c_탐정.png';
 
 // 직업마다 번호 같은 걸 부여받겠지?
 // 부여받은 번호대로 이미지 다르게 뜨게 해야 함. 설정해 줘야 함
@@ -84,14 +84,44 @@ const ScMini = ({ alt, role }) => {
       setIsClosing(false); // 팝업이 완전히 사라지면 팝업 닫는 상태를 false로 변경
     }, 500); // 0.5초(500ms) 후에 팝업을 완전히 닫습니다.
   };
+
+  let buttonImageSrc;
+  let popupImageSrc;
+
+  if (role === 'SARK') {
+    buttonImageSrc = scSarkImageSrc;
+    popupImageSrc = cSarkImageSrc;
+  } else if (role === 'CITIZEN') {
+    buttonImageSrc = scCatImageSrc;
+    popupImageSrc = cCatImageSrc;
+  } else if (role === 'DOCTOR') {
+    buttonImageSrc = scVetImageSrc;
+    popupImageSrc = cVetImageSrc;
+  } else if (role === 'POLICE') {
+    buttonImageSrc = scPoliceImageSrc;
+    popupImageSrc = cPoliceImageSrc;
+  } else if (role === 'OBSERVER') {
+    buttonImageSrc = scNyangImageSrc;
+    popupImageSrc = cNyangImageSrc;
+  } else if (role === 'PSYCHO') {
+    buttonImageSrc = scPsychoImageSrc;
+    popupImageSrc = cPsychoImageSrc;
+  } else if (role === 'BULLY') {
+    buttonImageSrc = scNyangImageSrc;
+    popupImageSrc = cNyangImageSrc;
+  } else if (role === 'DETECTIVE') {
+    buttonImageSrc = scDetectImageSrc;
+    popupImageSrc = cDetectImageSrc;
+  }
+
   return (
     <>
       <ScMiniButton onClick={handleScMiniClick}>
-        <ScButtonImage src={scSarkImageSrc} alt={alt} />
+        <ScButtonImage src={buttonImageSrc} alt={alt} />
       </ScMiniButton>
       {isPopupOpen && (
         <Popup isClosing={isClosing} onClick={handlePopupClose}>
-          <PopupImage src={cSarkImageSrc} alt={alt} />
+          <PopupImage src={popupImageSrc} alt={alt} />
         </Popup>
       )}
     </>
