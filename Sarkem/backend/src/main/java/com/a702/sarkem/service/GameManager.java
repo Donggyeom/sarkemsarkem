@@ -318,6 +318,8 @@ public class GameManager {
 			
 			// 삵인 경우 논의해서 하나만 투표
 			if(role.equals(GameRole.SARK)) {
+				// 히든미션이 발행됐는데 성공 못했으면 바로 리턴
+				if(gameSession.isBHiddenMissionStatus() && !gameSession.isBHiddenMissionSuccess()) return;
 				// 같은 직업을 가진 플레이어들의 타겟을 모두 업데이트
 				List<String> thisPlayers = new ArrayList<>();	// 같은 직업 플레이어ID 저장
 				for(RolePlayer rPlayer : gameSession.getRolePlayers(role)) {					
@@ -417,9 +419,9 @@ public class GameManager {
 		// 추방 투표 찬성수 ++
 		if (voteResult) { 
 			gameSession.addExpulsionVoteCnt();
-
 		}
 		// TODO: 추방 투표 현황 전송
+		sendTwilightSelectionEndMessage(roomId, playerId);
 	}
 	
 	/**
@@ -436,7 +438,12 @@ public class GameManager {
 		if(num<3) gameSession.setBHiddenMissionStatus(true);
 	}
 	
-
+	// 히든 미션 성공 시
+	public void hiddenMissionSuccess(String roomId) {
+		GameSession gameSession = getGameSession(roomId);
+		sendHiddenMissionSuccessMessage(roomId);
+		gameSession.setBHiddenMissionSuccess(true);
+	}
 	/**
 	 * 시스템 메시지를 대상에게 전송
 	 * 
@@ -589,9 +596,9 @@ public class GameManager {
 		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, null);
 	}
 
-	// "저녁 투표 시작" 메시지 전송
-	public void sendTwilightVoteMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE, null);
+	// "저녁(추방) 투표 시작" 메시지 전송
+	public void sendTwilightSelectionMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_SELECTION, null);
 	}
 
 	// "밤 페이즈" 메시지 전송
@@ -604,6 +611,10 @@ public class GameManager {
 		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, param);
 	}
 
+	// "추방 투표 종료(개인)" 메시지 전송
+	public void sendTwilightSelectionEndMessage(String roomId, String playerId) {
+		sendSystemMessage(roomId, playerId, SystemCode.TWILIGHT_SELECTION_END, null);
+	}
 	// "저녁 투표 종료" 메시지 전송
 	public void sendEndTwilightVoteMessage(String roomId, Map<String, String> param) {
 		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE_END, param);
@@ -640,8 +651,8 @@ public class GameManager {
 	}
 
 	// "히든미션 시작" 메시지 전송 **
-	public void sendHiddenMissionStartMessage(String roomId, List<String> sarkPlayers) {
-		sendSystemMessage(roomId, sarkPlayers, SystemCode.MISSION_START, null);
+	public void sendHiddenMissionStartMessage(String roomId, List<String> sarkPlayers, Map<String, Integer> hMissionIdx) {
+		sendSystemMessage(roomId, sarkPlayers, SystemCode.MISSION_START, hMissionIdx);
 	}
 
 	// "히든미션 성공" 메시지 전송
