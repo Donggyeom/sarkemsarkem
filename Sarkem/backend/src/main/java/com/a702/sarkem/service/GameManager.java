@@ -11,6 +11,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import com.a702.sarkem.exception.GameRoomNotFoundException;
+import com.a702.sarkem.model.chat.ChatMessage;
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
@@ -46,11 +47,11 @@ public class GameManager {
 	// topic 관리
 	private Map<String, ChannelTopic> topics = new HashMap<>();
 
-	private ChannelTopic getGameTopic(String roomId) {
+	public ChannelTopic getGameTopic(String roomId) {
 		return topics.get("GAME_" + roomId);
 	}
 
-	private ChannelTopic getChatTopic(String roomId) {
+	public ChannelTopic getChatTopic(String roomId) {
 		return topics.get("CHAT_" + roomId);
 	}
 
@@ -420,6 +421,20 @@ public class GameManager {
 		sendHiddenMissionSuccessMessage(roomId);
 		gameSession.setBHiddenMissionSuccess(true);
 	}
+	
+	/**
+	 * 채팅 메시지를 전체에게 전송
+	 * 
+	 * @param roomId
+	 * @param target
+	 * @param code
+	 * @param param
+	 */
+	public void sendChattingMessage(ChatMessage message) {
+		ChannelTopic chatTopic = getChatTopic(message.getRoomId());
+		chatPublisher.publish(chatTopic, message);
+	}
+	
 	/**
 	 * 시스템 메시지를 대상에게 전송
 	 * 
