@@ -11,9 +11,14 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
 import com.a702.sarkem.model.chat.ChatMessage;
+import com.a702.sarkem.model.chat.ChatMessage.MessageType;
+import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.game.message.ActionMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
+import com.a702.sarkem.model.gameroom.GameRoom;
+import com.a702.sarkem.model.player.GameRole;
+import com.a702.sarkem.model.player.RolePlayer;
 import com.a702.sarkem.service.GameManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class GameController {
 
 	private final GameManager gameManager;
+	private static ObjectMapper mapper = new ObjectMapper();
 	
 	/**
      * websocket "game/action"으로 들어오는 유저 액션 메시지를 처리한다.
@@ -36,7 +42,6 @@ public class GameController {
 		String gameId = actionMessage.getGameId();
 		String playerId = actionMessage.getPlayerId();
 		Object param = actionMessage.getParam();
-		ObjectMapper mapper = new ObjectMapper();
 		
 		switch(actionMessage.getCode()) {
 		case ENTER:
@@ -87,10 +92,14 @@ public class GameController {
 	/**
      * websocket "game/chat"으로 들어오는 채팅 메시지를 처리한다.
      */
-	@MessageMapping("/game/chat")
-	public void message(ChatMessage message) {
-		log.debug(message.toString());
-        
+	@MessageMapping("/chat/room")
+	public void message(ChatMessage chatMessage) {
+		log.debug(chatMessage.toString());
 		
+		if (MessageType.ENTER == chatMessage.getType()) {
+			chatMessage.setContent(chatMessage.getPlayerId() + "님이 입장하셨습니다.");
+        }
+
+		gameManager.sendChattingMessage(chatMessage);
 	}
 }

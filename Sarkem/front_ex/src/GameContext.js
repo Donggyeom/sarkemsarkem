@@ -21,7 +21,10 @@ const GameProvider = ({ children }) => {
         psychologistCount: 0,
         bullyCount: 0
       });
+
     const [myRole, setMyRole] = useState(null);
+    
+
     useEffect(() => {
         if (token !== null) connectGameWS();
     }, [token]);
@@ -44,6 +47,11 @@ const GameProvider = ({ children }) => {
     console.log('/sub/game/system/' + roomId + " redis 구독")
     stompCilent.current.subscribe('/sub/game/system/' + roomId, receiveMessage)
   }
+
+  // const connectChat = () => {
+  //   console.log('/sub/game/system/chat_' + roomId + " redis 구독")
+  //   stompCilent.current.subscribe('/sub/chat/room/' + roomId, receiveMessage)
+  // }
 
 
 const onSocketConnected = () => {
@@ -81,7 +89,22 @@ const onSocketConnected = () => {
             console.log(`당신은 ${sysMessage.param.role} 입니다.`)
             setMyRole(sysMessage.param.role);
             break;
-    
+        // case "PHASE_DAY":
+        //     navigate(`/${roomId}/day`);
+        //     break;
+        // case "PHASE_TWILIGHT":
+        //     navigate(`/${roomId}/sunset`);
+        //     break;
+        // case "PHASE_NIGHT":
+        //     navigate(`/${roomId}/night`);
+        //     break;
+  
+        // case "TARGET_SELECTION_END":
+        //   // 선택 완료
+        //   alert("선택 완료", sysMessage.param.targetNickname);
+        //   setSelectedTarget("");
+        //   break;
+
         }
     }
 
@@ -96,12 +119,14 @@ const onSocketConnected = () => {
         );
     };
 
+  
+
     // 게임 옵션 변경 시 실행
 //   useEffect(() => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick }}>
+    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, }}>
       {children}
     </GameContext.Provider>
   );
