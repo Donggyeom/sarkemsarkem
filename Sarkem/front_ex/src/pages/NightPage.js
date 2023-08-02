@@ -48,7 +48,8 @@ const NightPage = () => {
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
-  const { myRole } = useGameContext();
+  const { myRole, peopleCount } = useGameContext();
+  
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;

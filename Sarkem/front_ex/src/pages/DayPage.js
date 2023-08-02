@@ -50,7 +50,25 @@ const DayPage = () => {
 
   const { roomId, 
     publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext();
-  const {myRole, peopleCount} = useGameContext();
+  const { myRole, peopleCount } = useGameContext();
+  const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
+  
+  
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (meetingTime > 0) {
+        setMeetingTime((prevTime) => prevTime - 1);
+      } else {
+        clearInterval(timer);
+      }
+    }, 1000); // 1초마다 실행
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [meetingTime, roomId]);
+
   const navigate = useNavigate();
   const location = useLocation();
   const [voteCount, setVoteCount] = useState(0);
@@ -93,7 +111,7 @@ const DayPage = () => {
   };
 
   const chatVisible = () =>{
-    if (myRole === 'OBSERVER'){
+    if (myRole === 'OBSERVER' || myRole === 'SARK'){
       return (
         <>
           <ChatButtonAndPopup />
@@ -101,7 +119,6 @@ const DayPage = () => {
       )
     }
   }
-
 
 
   useEffect(() => {
@@ -125,7 +142,7 @@ const DayPage = () => {
       <StyledDayPage>
         {!isLogOn && <Log top="60%" left="26%" />}
         <SunMoon alt="SunMoon"></SunMoon>
-        <TimeSecond>{peopleCount.meetingTime}s</TimeSecond>
+        <TimeSecond>{meetingTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
