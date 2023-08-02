@@ -15,6 +15,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
 import axios from 'axios';
 import { useRoomContext } from '../Context';
+import { useGameContext } from '../GameContext';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import TempButton from '../components/buttons/TempButton';
 import DayNightCamera from '../components/camera/DayNightCamera';
@@ -47,9 +48,27 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
 
-  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
-    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+  const { roomId, 
+    publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext();
+  const { myRole, peopleCount } = useGameContext();
+  const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
+  
+  
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (meetingTime > 0) {
+        setMeetingTime((prevTime) => prevTime - 1);
+      } else {
+        clearInterval(timer);
+      }
+    }, 1000); // 1초마다 실행
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [meetingTime, roomId]);
+
   const navigate = useNavigate();
   const location = useLocation();
   const [voteCount, setVoteCount] = useState(0);
@@ -81,6 +100,26 @@ const DayPage = () => {
       console.log('ScMini clicked!');
   };
 
+  const getMyRole = () => {
+    if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE' ) {
+      return (
+        <>
+          <ScMini alt="ScMini" role={myRole} />
+        </>
+      );
+      }
+  };
+
+  const chatVisible = () =>{
+    if (myRole === 'OBSERVER' || myRole === 'SARK'){
+      return (
+        <>
+          <ChatButtonAndPopup />
+        </>
+      )
+    }
+  }
+
 
   useEffect(() => {
     console.log(roomId);
@@ -103,16 +142,16 @@ const DayPage = () => {
       <StyledDayPage>
         {!isLogOn && <Log top="60%" left="26%" />}
         <SunMoon alt="SunMoon"></SunMoon>
-        <TimeSecond>60s</TimeSecond>
+        <TimeSecond>{meetingTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <DayPopup></DayPopup>
           <DayNightCamera camArray={camArray}/>
-          <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
+          {getMyRole()}
         </StyledDayPage>
         <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
-        <ChatButtonAndPopup />
+          {chatVisible()}
     </Background>
   );
 };

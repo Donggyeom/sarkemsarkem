@@ -16,7 +16,7 @@ const StyledPopupContainer = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%); /* 중앙 정렬 */
-  background: #f3b7bf;
+  background: #cd5e97;
   border-radius: 30.94px;
   border: 5.16px solid #000000;
   padding: 61.87px;
@@ -43,7 +43,7 @@ const StyledPopupTitle = styled.div`
 `;
 
 
-const DayPopup = () => {
+const SunsetPopup = () => {
   const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
@@ -87,14 +87,13 @@ const DayPopup = () => {
             right: '110px',
           }}
         >
-          N일차 낮
+          N일차 저녁
         </div>
       </div>
 
-      {/* 메세지넣을곳 */}  
-      <StyledPopupTitle>닉네임 님이 추방되었습니다.</StyledPopupTitle>
+      <StyledPopupTitle>가장 삵일 것 같은 고양이에게 투표하세요.</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };
 
-export default DayPopup;
+export default SunsetPopup;

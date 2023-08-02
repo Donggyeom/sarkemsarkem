@@ -12,8 +12,11 @@ import NightPopup from '../components/games/NightPopup';
 import TempButton from '../components/buttons/TempButton';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import { useRoomContext } from '../Context';
+import { useGameContext } from '../GameContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DayNightCamera from '../components/camera/DayNightCamera';
+import LogButton from '../components/buttons/LogButton';
+import Log from '../components/games/Log';
 
 
 const StyledNightPage = styled.div`
@@ -47,6 +50,8 @@ const NightPage = () => {
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
+  const { myRole, peopleCount } = useGameContext();
+  
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -56,6 +61,17 @@ const NightPage = () => {
     }
   };
   
+    const getMyRole = () => {
+    if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE' ) {
+      return (
+        <>
+          <ScMini alt="ScMini" role={myRole} />
+        </>
+      );
+    } else {
+      return <ScMini alt="ScMini" role={'CITIZEN'} />
+    }
+  };
 
   const handleMicButtonClick = () => {
     const micOn = !isMicOn;
@@ -63,6 +79,11 @@ const NightPage = () => {
     if (publisher) {
       publisher.publishAudio(micOn);
     }
+  };
+
+  const [isLogOn, setIsLogOn] = useState(true);
+  const handleLogButtonClick = () => {
+    setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
   
   
@@ -84,16 +105,19 @@ const NightPage = () => {
         });
       }, [])
 
+
     return (   
     <Background>
       <StyledNightPage>
+         {!isLogOn && <Log top="60%" left="26%" />}
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <NightPopup></NightPopup>
-        <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
+        {getMyRole()}
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
         <ChatButtonAndPopup />
       </StyledNightPage>
