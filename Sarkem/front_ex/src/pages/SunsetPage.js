@@ -11,6 +11,9 @@ import { useRoomContext } from '../Context';
 import TempButton from '../components/buttons/TempButton';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import { useGameContext } from '../GameContext';
+import LogButton from '../components/buttons/LogButton';
+import Log from '../components/games/Log';
+import SunsetPopup from '../components/games/SunsetPopup';
 
 const StyledContent = styled.div`
   display: flex;
@@ -565,6 +568,11 @@ const SunsetPage = () => {
     }
   };
 
+  const [isLogOn, setIsLogOn] = useState(true);
+  const handleLogButtonClick = () => {
+    setIsLogOn((prevIsLogOn) => !prevIsLogOn);
+  };
+
   
   
     useEffect(() => {
@@ -588,13 +596,17 @@ const SunsetPage = () => {
   const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
   const gridStyles = calculateGrid(camCount);
 
+
   return (
     <Background>
       <StyledContent>
+      {!isLogOn && <Log top="60%" left="26%" />}
       <SunMoon alt="SunMoon"></SunMoon>
       <TimeSecond>60s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+      <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
+      <SunsetPopup></SunsetPopup>
         <CamCatGrid style={gridStyles}>
           {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
             <CamCatWrapper key={index} camCount={camCount} index={index}>
