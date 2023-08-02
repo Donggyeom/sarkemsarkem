@@ -359,7 +359,7 @@ public class GameManager {
 		
 		String targetId = rPlayer.getTarget();
 
-		if (gameSession.getDay() == 1 && !"".equals(targetId)) {
+		if (gameSession.getDay() == 1 && gameSession.getPhase() == PhaseType.DAY && !"".equals(targetId)) {
 			sendNoticeMessageToPlayer(roomId, playerId, "1일차 낮에는 추방 투표 대상을 선택할 수 없습니다.", gameSession.getPhase());
 			return;
 		}

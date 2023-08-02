@@ -35,6 +35,8 @@ function Room() {
     const [selectedTarget, setSelectedTarget] = useState("");
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [isTwilightVote, setIsTwilightVote ] = useState(false);
+    const [myRole, setMyRole] = useState("");
+    const [phase, setPhase] = useState("");
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -366,8 +368,8 @@ function Room() {
                 setPsychologistCount(sysMessage.param.psychologistCount);
                 break;
             case "ROLE_ASSIGNED":
-                alert(`당신은 ${sysMessage.param.role} 입니다.`);
-                console.log(`당신은 ${sysMessage.param.role} 입니다.`)
+                console.log(`당신은 ${sysMessage.param.role} 입니다.`);
+                setMyRole(sysMessage.param.role);
                 break;
             case "TARGET_SELECTION_END":
                 // 선택 완료
@@ -397,6 +399,15 @@ function Room() {
                 break;
             case "GAME_END":
                 alert("게임 종료");
+                break;
+            case "PHASE_DAY":
+                setPhase("낮");
+                break;
+            case "PHASE_TWILIGHT":
+                setPhase("저녁");
+                break;
+            case "PHASE_NIGHT":
+                setPhase("밤");
                 break;
         }
     }
@@ -518,6 +529,8 @@ function Room() {
         <div id="session">
             <div id="session-header">
                 <h1 id="session-title">Room ID: {mySessionId}</h1>
+                <h1 id="session-title">내 직업: {myRole}</h1>
+                <h1 id="session-title">현재 페이즈 {phase}</h1>
                 <input
                     className="btn btn-large btn-danger"
                     type="button"

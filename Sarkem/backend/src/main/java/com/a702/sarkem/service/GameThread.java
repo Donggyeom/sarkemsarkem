@@ -38,7 +38,7 @@ public class GameThread extends Thread {
 		this.gameId = gameRoom.getGameId();
 		this.nightResultNoticeMessage = "";
 		this.meetingTime = gameSession.getMeetingTime() * 1000;
-		this.nightTime = 60 * 1000;
+		this.nightTime = 30 * 1000;
 	}
 
 	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
