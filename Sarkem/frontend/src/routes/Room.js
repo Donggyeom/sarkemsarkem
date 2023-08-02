@@ -384,12 +384,20 @@ function Room() {
                 
                 setExpulsionTarget(sysMessage.param.targetId);
             break;
-        case "TWILIGHT_VOTE":
-            setIsTwilightVote(true);
+            case "TWILIGHT_SELECTION":
+                setIsTwilightVote(true);
                 break;
-        case "GAME_END":
-            alert("게임 종료");
-            break;
+            case "TWILIGHT_SELECTION_END":
+                // 추방 투표 완료(개인)
+                console.log("추방 투표 완료");
+                break;
+            case "TWILIGHT_VOTE_END":
+                // 저녁 투표 완료(전체)
+                alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
+                break;
+            case "GAME_END":
+                alert("게임 종료");
+                break;
         }
     }
 
