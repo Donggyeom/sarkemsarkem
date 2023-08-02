@@ -71,7 +71,9 @@ const onSocketConnected = () => {
         if (token != sysMessage.playerId) return;
 
         switch (sysMessage.code) {
+          // param에 phase, message
         case "NOTICE_MESSAGE":
+            console.log(sysMessage.param);
             alert(sysMessage.param.message);
             break;
         case "GAME_START":   
