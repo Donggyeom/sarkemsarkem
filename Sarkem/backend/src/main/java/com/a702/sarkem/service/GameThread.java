@@ -234,7 +234,7 @@ public class GameThread extends Thread {
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
 		gameManager.sendTwilightPhaseMessage(roomId);
 		// 대상이 있으면 저녁투표 시작
-		gameManager.sendTwilightVoteMessage(roomId);
+		gameManager.sendTwilightSelectionMessage(roomId);
 	}
 
 	// 저녁 투표 결과 종합
