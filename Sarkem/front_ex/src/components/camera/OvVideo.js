@@ -5,11 +5,11 @@ export default class OpenViduVideoComponent extends Component {
     constructor(props) {
         super(props);
         this.videoRef = React.createRef();
-        console.log(this.props.streamManager);
+        // console.log(this.props.streamManager);
     }
     
     componentDidUpdate(props) {
-        console.log(this.props.streamManager);
+        // console.log(this.props.streamManager);
         if (props && !!this.videoRef) {
             this.props.streamManager.addVideoElement(this.videoRef.current);
         }
@@ -17,15 +17,15 @@ export default class OpenViduVideoComponent extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.streamManager);
+        // console.log(this.props.streamManager);
         if (this.props && !!this.videoRef) {
             this.props.streamManager.addVideoElement(this.videoRef.current);
         }
     }
 
     render() {
-        console.log("gdgd");
-        console.log(this.videoRef.current);
+        // console.log("gdgd");
+        // console.log(this.videoRef.current);
         return <video autoPlay={true} ref={this.videoRef} style={{width : '93%', top : '30%', borderRadius : '10%'}} />;
     }
 

@@ -1,11 +1,4 @@
-// import { useRef, useEffect, useState } from 'react'
-
 import * as faceapi from 'face-api.js'
-
-//켜고끄기
-// const [running, setRunning] = useState(false); // running state 추가
-// const [intervalId, setIntervalId] = useState(null); // 변수 추가
-
 
 //faceapi model
 const loadModels = () => {
@@ -20,7 +13,7 @@ const loadModels = () => {
 }
 
 //켜기
-const faceMyDetect = (videoRef, running, setRunning) => {
+const faceMyDetect = (videoRef, setBoxPosition, running, setRunning) => {
     if (!running) {
         const id = setInterval(async () => {
             const detectionsWithExpressions = await faceapi
@@ -28,19 +21,30 @@ const faceMyDetect = (videoRef, running, setRunning) => {
                 .withFaceLandmarks()
                 .withFaceExpressions();
             console.log(detectionsWithExpressions);
-            // console.log(videoRef.current);
+            // console.log("여기");
+            // console.log(detectionsWithExpressions.detection.box);
+            if (detectionsWithExpressions && detectionsWithExpressions.detection) {
+                const { x, y, width, height } = detectionsWithExpressions.detection.box;
+                const containerWidth = videoRef.clientWidth; // Adjust to your container width
+                console.log(containerWidth);
+                const newX = containerWidth - x -width;
+                setBoxPosition({ x: newX, y, width, height });
+                console.log(setBoxPosition.x);
+            } else {
+                setBoxPosition({ x: 0, y: 0, width: 0, height: 0 });
+            }
         }, 1000);
         setRunning(true);
         return id;
     }
 };
 //끄기
-const stopFace = (intervalId, setRunning) => {
+const stopFace = (intervalId, setRunning, setBoxPosition) => {
     if (intervalId) {
         clearInterval(intervalId);
         setRunning(false);
     }
-    
+    setBoxPosition({ x: 0, y: 0, width: 0, height: 0 });
 }
 export { loadModels, faceMyDetect, stopFace };
 
