@@ -25,6 +25,22 @@ const CamCatGrid = styled.div`
   `}
 `;
 
+const ActionButton = styled.button`
+  padding: 8px 16px;
+  border: none;
+  color: white;
+  cursor: pointer;
+`;
+
+const ButtonWrapper = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+`;
+
 const calculateGrid = (camCount) => {
   const positions = [
   ];
@@ -202,20 +218,34 @@ const CamCatWrapper = styled.div`
     const camCount = camArray.length;
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
-
+    const [isConfirmed, setIsConfirmed] = useState(false);
+  
     const handleCamClick = (index) => {
-      setClickedCameras((prevClicked) => {
-        const newClicked = [...prevClicked];
-        if (newClicked.includes(index)) {
-          // Camera was already clicked, remove it from the clickedCameras array
-          const indexToRemove = newClicked.indexOf(index);
-          newClicked.splice(indexToRemove, 1);
-        } else {
-          // Camera was not clicked, add it to the clickedCameras array
-          newClicked.push(index);
+      if (isConfirmed) {
+        return; // Do not allow changing vote after confirming
+      }
+  
+      if (clickedCameras.includes(index)) {
+        // If the camera was already clicked, unclick it
+        setClickedCameras((prevClicked) => prevClicked.filter((clickedIndex) => clickedIndex !== index));
+      } else {
+        // If the camera was not clicked, check if another camera is already clicked
+        if (clickedCameras.length === 0) {
+          setClickedCameras([index]);
         }
-        return newClicked;
-      });
+      }
+    };
+  
+    const handleConfirmClick = () => {
+      if (clickedCameras.length > 0) {
+        setIsConfirmed(true);
+      }
+    };
+  
+    const handleSkipClick = () => {
+      if (!isConfirmed) {
+        setClickedCameras([]); // Reset clicked cameras if skipping before confirming
+      }
     };
   
     return (
@@ -228,8 +258,27 @@ const CamCatWrapper = styled.div`
             )}
           </CamCatWrapper>
         ))}
+        <ButtonWrapper>
+          {!isConfirmed && (
+            <>
+              {clickedCameras.length > 0 ? (
+                <ActionButton onClick={handleConfirmClick}>확정하기</ActionButton>
+              ) : (
+                <ActionButton onClick={handleSkipClick}>스킵하기</ActionButton>
+              )}
+            </>
+          )}
+          {isConfirmed && (
+            <ActionButton disabled>확정됨</ActionButton>
+          )}
+        </ButtonWrapper>
       </CamCatGrid>
     );
   });
-  
   export default DayNightCamera;
+
+  
+  
+  
+  
+  
