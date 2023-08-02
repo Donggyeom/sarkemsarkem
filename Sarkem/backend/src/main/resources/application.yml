@@ -2,9 +2,14 @@ server.port: 8081
 server.ssl.enabled: false
 
 # openvidu setting
-OPENVIDU_URL: "http://localhost:8443/"
+OPENVIDU_URL: "localhost:8443/"
 
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/DB
+    username: USERNAME
+    password: PASSWORD
   data:
     redis:
       host: localhost
