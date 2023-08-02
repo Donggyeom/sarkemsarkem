@@ -220,7 +220,7 @@ const CamCatWrapper = styled.div`
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
     const [isConfirmed, setIsConfirmed] = useState(false);
-    const { selectAction, selectConfirm, setSelectedTarget } = useGameContext();
+    const { selectAction, selectConfirm, setSelectedTarget, myVote } = useGameContext();
   
     const handleCamClick = (index) => {
       if (isConfirmed) {
@@ -270,6 +270,7 @@ const CamCatWrapper = styled.div`
           {!isConfirmed && (
             <>
               {clickedCameras.length > 0 ? (
+                // 확정 안된거는 회색 발바닥
                 <ActionButton onClick={handleConfirmClick}>확정하기</ActionButton>
               ) : (
                 <ActionButton onClick={handleSkipClick}>스킵하기</ActionButton>
@@ -277,6 +278,7 @@ const CamCatWrapper = styled.div`
             </>
           )}
           {isConfirmed && (
+            // 확정된거는 흰색 발바닥
             <ActionButton disabled>확정됨</ActionButton>
           )}
         </ButtonWrapper>

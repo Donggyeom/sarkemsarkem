@@ -24,8 +24,10 @@ const GameProvider = ({ children }) => {
       });
 
     const [myRole, setMyRole] = useState(null);
+    const [myVote, setMyVote] = useState(0);
     const [selectedTarget, setSelectedTarget] = useState("");
     const [expulsionTarget, setExpulsionTarget] = useState("");
+    const [voteSituation, setVotesituation] = useState({});
 
     const location = useLocation();
     
@@ -90,22 +92,13 @@ const onSocketConnected = () => {
             console.log(sysMessage.param.sarkCount);
             break;
         case "ROLE_ASSIGNED":
-            // alert(`당신은 ${sysMessage.param.role} 입니다.`);
             console.log(`당신은 ${sysMessage.param.role} 입니다.`)
             setMyRole(sysMessage.param.role);
             break;
-        // case "PHASE_DAY":
-        //     navigate(`/${roomId}/day`);
-        //     break;
-        // case "PHASE_TWILIGHT":
-        //     navigate(`/${roomId}/sunset`);
-        //     break;
-        // case "PHASE_NIGHT":
-        //     navigate(`/${roomId}/night`);
-        //     break;
         case "VOTE_SITUATION":
-                console.log(sysMessage.param);
-                break;
+              console.log(sysMessage.param);
+              setMyVote(sysMessage.param.votedCnt);
+              break;
         case "DAY_VOTE_END":
             alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
             
@@ -119,6 +112,16 @@ const onSocketConnected = () => {
           alert("선택 완료", sysMessage.param.targetNickname);
           setSelectedTarget("");
           break;
+
+        // case "PHASE_DAY":
+        //     navigate(`/${roomId}/day`);
+        //     break;
+        // case "PHASE_TWILIGHT":
+        //     navigate(`/${roomId}/sunset`);
+        //     break;
+        // case "PHASE_NIGHT":
+        //     navigate(`/${roomId}/night`);
+        //     break;
 
         }
     }
@@ -168,7 +171,7 @@ const onSocketConnected = () => {
                   roomId: roomId,
                   playerId: token,
                   param: {
-                      target: selectedTarget
+                      // target: selectedTarget
                   }
               }))
       }
@@ -181,7 +184,7 @@ const onSocketConnected = () => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, selectAction, selectConfirm, setSelectedTarget }}>
+    <GameContext.Provider value={{ stompCilent, peopleCount, myVote, myRole, setPeopleCount, handleGamePageClick, selectAction, selectConfirm, setSelectedTarget }}>
       {children}
     </GameContext.Provider>
   );
