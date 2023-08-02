@@ -186,12 +186,23 @@ const CommonLobby = ()=>{
   const handlePeopleCountChange = (part, value) => {
     if (!isHost) return;
     if (stompCilent.current.connect === undefined) return;
-    if (value >= 0)
-    setPeopleCount((prevPeopleCount) => ({
-      ...prevPeopleCount,
-      [part]: value,
-    }));
-  };
+  if (part === 'meetingTime') {
+    if (value >= 15 && value <= 180) {
+      setPeopleCount((prevPeopleCount) => ({
+        ...prevPeopleCount,
+        [part]: value,
+      }));
+    }
+  } else {
+    if (stompCilent.current.connect === undefined) return;
+    if (value >= 0) {
+      setPeopleCount((prevPeopleCount) => ({
+        ...prevPeopleCount,
+        [part]: value,
+      }));
+    }
+  }
+};
 
   // popup
 

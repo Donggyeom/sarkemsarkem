@@ -12,7 +12,7 @@ const GameProvider = ({ children }) => {
     let stompCilent = useRef({})
 
     const [peopleCount, setPeopleCount] = useState({
-        meetingTime: 15,
+        meetingTime: 60,
         citizenCount: 0,
         sarkCount: 0,
         doctorCount: 0,

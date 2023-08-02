@@ -50,7 +50,7 @@ const DayPage = () => {
 
   const { roomId, 
     publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext();
-  const {myRole} = useGameContext();
+  const {myRole, peopleCount} = useGameContext();
   const navigate = useNavigate();
   const location = useLocation();
   const [voteCount, setVoteCount] = useState(0);
@@ -117,7 +117,7 @@ const DayPage = () => {
       <StyledDayPage>
         {!isLogOn && <Log top="60%" left="26%" />}
         <SunMoon alt="SunMoon"></SunMoon>
-        <TimeSecond>60s</TimeSecond>
+        <TimeSecond>{peopleCount.meetingTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
