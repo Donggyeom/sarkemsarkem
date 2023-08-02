@@ -89,9 +89,7 @@ const DayPage = () => {
           <ScMini alt="ScMini" role={myRole} />
         </>
       );
-    } else {
-      return <ScMini alt="ScMini" role={'CITIZEN'} />
-    }
+      }
   };
 
 

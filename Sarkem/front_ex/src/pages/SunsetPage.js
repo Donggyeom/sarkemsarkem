@@ -10,6 +10,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import TempButton from '../components/buttons/TempButton';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
+import { useGameContext } from '../GameContext';
 
 const StyledContent = styled.div`
   display: flex;
@@ -530,8 +531,22 @@ const SunsetPage = () => {
   const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+  
+  const { myRole } = useGameContext();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const getMyRole = () => {
+    if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE' ) {
+      return (
+        <>
+          <ScMini alt="ScMini" role={myRole} />
+        </>
+      );
+    } else {
+      return <ScMini alt="ScMini" role={'CITIZEN'} />
+    }
+  };
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -549,6 +564,7 @@ const SunsetPage = () => {
       publisher.publishAudio(micOn);
     }
   };
+
   
   
     useEffect(() => {
@@ -567,6 +583,7 @@ const SunsetPage = () => {
           event.returnValue = '';
         });
       }, [])
+      
 
   const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
   const gridStyles = calculateGrid(camCount);
@@ -578,7 +595,6 @@ const SunsetPage = () => {
       <TimeSecond>60s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
-        
         <CamCatGrid style={gridStyles}>
           {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
             <CamCatWrapper key={index} camCount={camCount} index={index}>
@@ -586,7 +602,7 @@ const SunsetPage = () => {
             </CamCatWrapper>
           ))}
         </CamCatGrid>
-        <ScMini alt="ScMini Button" onClick={handleScMiniClick}></ScMini>
+        {getMyRole()}
       </StyledContent>
       <ChatButtonAndPopup />
       {/* </CamCatGridContainer> */}
