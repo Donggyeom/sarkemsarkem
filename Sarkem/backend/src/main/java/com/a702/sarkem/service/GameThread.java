@@ -74,24 +74,29 @@ public class GameThread extends Thread {
 			if (maxVotedPlayer.getPlayerId().equals("")) {
 				// 대상 없다 노티스메시지 보내기
 				gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.");
-			} else {
+			} 
+			else {
 				// 저녁 페이즈 => 추방투표 시작
 				convertPhaseToTwilight();
-				// 투표타임 타이머
-				Thread twilightVoteThread = new TwilightVoteThread();
-				twilightVoteThread.start();
-				try {
-					twilightVoteThread.join(meetingTime);
-				} catch (InterruptedException e) {
+				
+				// 추방 투표 결과 종합
+				boolean voteResult = twilightVote(maxVotedPlayer);
+				
+				// 추방 투표 결과 전송, 저녁 페이즈 종료
+				expulsionPlayer.put("result", Boolean.toString(voteResult));
+				gameManager.sendEndTwilightVoteMessage(roomId, expulsionPlayer);
+				
+				// 실제로 추방하기
+				if (voteResult) {
+					maxVotedPlayer.setAlive(false);
+					maxVotedPlayer.setRole(GameRole.OBSERVER);
+					// 추방 메시지 보내기
+					gameManager.sendExcludedMessage(roomId, maxVotedPlayer.getPlayerId());
 				}
-
-				// 실제 추방 & 메시지 전송
-				twilightVote(maxVotedPlayer);
 			}
 
 			// 게임종료 검사
-			if (isGameEnd())
-				break;
+			if (isGameEnd()) break;
 
 			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
 			convertPhaseToNight();
@@ -106,8 +111,7 @@ public class GameThread extends Thread {
 			nightVote();
 
 			// 게임종료 검사
-			if (isGameEnd())
-				break;
+			if (isGameEnd()) break;
 		}
 
 		// 게임 종료 메시지 전송
@@ -143,7 +147,12 @@ public class GameThread extends Thread {
 		// 게임 세션 초기화
 		int day = gameSession.nextDay();
 		gameSession.setPhase(PhaseType.DAY);
-
+		for (RolePlayer rp : gameSession.getPlayers()) {
+			rp.setTarget("");
+			rp.setTargetConfirmed(false);
+			rp.setVotedCnt(0);
+		}
+		
 		// "낮 페이즈" 메시지 전송
 		Map<String, Integer> param = new HashMap<>();
 		param.put("day", day);
@@ -220,7 +229,8 @@ public class GameThread extends Thread {
 			if (r.getVotedCnt() > max) {
 				max = r.getVotedCnt();
 				maxVotedPlayer = r;
-			} else if (r.getVotedCnt() == max) {
+			}
+			else if (r.getVotedCnt() == max) {
 				maxVotedPlayer = null;
 			}
 		}
@@ -238,20 +248,22 @@ public class GameThread extends Thread {
 	}
 
 	// 저녁 투표 결과 종합
-	private void twilightVote(RolePlayer target) {
+	private boolean twilightVote(RolePlayer target) {
+		
+		// 투표타임 타이머
+		Thread twilightVoteThread = new TwilightVoteThread();
+		twilightVoteThread.start();
+		try {
+			twilightVoteThread.join(meetingTime);
+		} catch (InterruptedException e) { }
+		
 		// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
 		if (gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
-			// 실제로 추방하기
-			target.setAlive(false);
-			target.setRole(GameRole.OBSERVER);
-			// 추방 메시지 보내기
-			gameManager.sendExcludedMessage(roomId, target.getPlayerId());
+			return true;
+			
 		}
-		// 추방 투표 결과 전송 // 저녁 페이즈 종료
-		HashMap<String, String> result = new HashMap<>();
-		// 추방 당한 사람 아이디를 파람으로 전달
-		result.put("expulsionPlayer", target.getNickname());
-		gameManager.sendEndTwilightVoteMessage(roomId, result);
+		
+		return false;
 	}
 
 	// 밤 페이즈
