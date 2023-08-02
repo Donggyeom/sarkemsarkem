@@ -73,7 +73,7 @@ const onSocketConnected = () => {
             break;
         case "GAME_START":   
             alert('게임시작');
-             navigate(`/${roomId}/day`);
+            navigate(`/${roomId}/day`);
             break;
         case "ONLY_HOST_ACTION":
             console.log(sysMessage);
@@ -119,6 +119,13 @@ const onSocketConnected = () => {
         );
     };
 
+    // noticemessage 처리
+    const [systemMessages, setSystemMessages] = useState([]);
+    const handleSystemMessage = (message) => {
+      const sysMessage = JSON.parse(message.body);
+      setSystemMessages((prevMessages) => [...prevMessages, sysMessage]);
+    };
+  
   
 
     // 게임 옵션 변경 시 실행
@@ -126,7 +133,8 @@ const onSocketConnected = () => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, }}>
+    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, 
+      systemMessages, handleSystemMessage,}}>
       {children}
     </GameContext.Provider>
   );
