@@ -291,8 +291,6 @@ public class GameManager {
 		
 		// 낮 투표
 		if(gameSession.getPhase().equals(PhaseType.DAY)) {
-			log.debug("낮 투표 시작");
-			
 			// 지목 대상 투표수 업데이트
 			if (newTargetPlayer != null) {
 				newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
@@ -358,14 +356,19 @@ public class GameManager {
 			return;
 		}
 		
-		rPlayer.setTargetConfirmed(true);	// 대상 선택 완료
-		
 		String targetId = rPlayer.getTarget();
+
+		if (gameSession.getDay() == 1 && !"".equals(targetId)) {
+			sendNoticeMessageToPlayer(roomId, playerId, "1일차 낮에는 추방 투표 대상을 선택할 수 없습니다.");
+			return;
+		}
+		
 		String targetNickname = "";
 		RolePlayer targetPlayer = gameSession.getPlayer(targetId);
 		if (targetPlayer != null) {
 			targetNickname = targetPlayer.getNickname();
 		}
+		rPlayer.setTargetConfirmed(true);	// 대상 선택 완료
 		
 		HashMap<String, String> param = new HashMap<>();
 		param.put("playerId", playerId);
