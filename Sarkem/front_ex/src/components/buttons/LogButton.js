@@ -8,8 +8,8 @@ const LogButtonImage = styled.img`
   height: 60px;
   cursor: pointer;
   position: absolute;
-  left: 2%;
-  top: 39%;
+  left: 30px;
+  top: 290px;
   overflow: visible;
   z-index: 1;
 `;

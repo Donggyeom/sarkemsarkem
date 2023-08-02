@@ -15,6 +15,8 @@ import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DayNightCamera from '../components/camera/DayNightCamera';
+import LogButton from '../components/buttons/LogButton';
+import Log from '../components/games/Log';
 
 
 const StyledNightPage = styled.div`
@@ -78,6 +80,11 @@ const NightPage = () => {
       publisher.publishAudio(micOn);
     }
   };
+
+  const [isLogOn, setIsLogOn] = useState(true);
+  const handleLogButtonClick = () => {
+    setIsLogOn((prevIsLogOn) => !prevIsLogOn);
+  };
   
   
 
@@ -98,14 +105,17 @@ const NightPage = () => {
         });
       }, [])
 
+
     return (   
     <Background>
       <StyledNightPage>
+         {!isLogOn && <Log top="60%" left="26%" />}
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <NightPopup></NightPopup>
         {getMyRole()}
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
