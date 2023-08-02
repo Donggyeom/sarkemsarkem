@@ -73,7 +73,7 @@ public class GameThread extends Thread {
 			// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로!!!!!!
 			if (maxVotedPlayer.getPlayerId().equals("")) {
 				// 대상 없다 노티스메시지 보내기
-				gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.");
+				gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.", PhaseType.NIGHT);
 			} 
 			else {
 				// 저녁 페이즈 => 추방투표 시작
@@ -160,7 +160,7 @@ public class GameThread extends Thread {
 		// 1일차에는 아래 기능 미실행
 		if (gameSession.getDay() > 1) {
 			// 밤에 누가 죽었는지, 아무도 안죽었는지 전체한테 노티스 메시지 보내기
-			gameManager.sendNoticeMessageToAll(roomId, noticeMessage);
+			gameManager.sendNoticeMessageToAll(roomId, noticeMessage, gameSession.getPhase());
 
 			// 히든미션 발생 여부 정하기
 			gameManager.hiddenMissionOccur(roomId);
@@ -180,10 +180,10 @@ public class GameThread extends Thread {
 				RolePlayer target = gameSession.getPlayer(rp.getTarget());
 				if (target.getRole().equals(GameRole.SARK)) {
 					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(),
-							target.getNickname() + "님은 삵이 맞습니다.");
+							target.getNickname() + "님은 삵이 맞습니다.", gameSession.getPhase());
 				} else {
 					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(),
-							target.getNickname() + "님은 삵이 아닙니다.");
+							target.getNickname() + "님은 삵이 아닙니다.", gameSession.getPhase());
 				}
 			}
 
