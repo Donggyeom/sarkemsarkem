@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
@@ -7,6 +7,7 @@ import { useRoomContext } from './Context';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
+  // roomId : 방번호 , token : 플레이어아이디 
     const {roomId, token, isHost} = useRoomContext();
     const navigate = useNavigate();
     let stompCilent = useRef({})
@@ -23,6 +24,10 @@ const GameProvider = ({ children }) => {
       });
 
     const [myRole, setMyRole] = useState(null);
+    const [selectedTarget, setSelectedTarget] = useState("");
+    const [expulsionTarget, setExpulsionTarget] = useState("");
+
+    const location = useLocation();
     
 
     useEffect(() => {
@@ -96,12 +101,22 @@ const onSocketConnected = () => {
         // case "PHASE_NIGHT":
         //     navigate(`/${roomId}/night`);
         //     break;
+        case "VOTE_SITUATION":
+                console.log(sysMessage.param);
+                break;
+        case "DAY_VOTE_END":
+            alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
+            
+            if (sysMessage.param.targetId == null) break;
+            
+            setExpulsionTarget(sysMessage.param.targetId);
+        break;
   
-        // case "TARGET_SELECTION_END":
-        //   // 선택 완료
-        //   alert("선택 완료", sysMessage.param.targetNickname);
-        //   setSelectedTarget("");
-        //   break;
+        case "TARGET_SELECTION_END":
+          // 선택 완료
+          alert("선택 완료", sysMessage.param.targetNickname);
+          setSelectedTarget("");
+          break;
 
         }
     }
@@ -115,7 +130,47 @@ const onSocketConnected = () => {
             playerId: token
         })
         );
-    };
+
+    }
+
+    const selectAction = ((target) => {
+      if (selectedTarget != "") {
+          setSelectedTarget("");
+          target.playerId = "";
+      }
+      else {
+          setSelectedTarget(target.playerId)
+      }
+
+      console.log("다른 플레이어 선택 ")
+      if (stompCilent.current.connected && token !== null) {
+          stompCilent.current.send("/pub/game/action", {},
+              JSON.stringify({
+                  code: 'TARGET_SELECT',
+                  roomId: roomId,
+                  playerId: token,
+                  param: {
+                      target: target.playerId
+                  }
+              }))
+      }
+  })
+
+  // 대상 확정
+  const selectConfirm = () => {
+      console.log(selectedTarget + " 플레이어 선택 ");
+      if (stompCilent.current.connected && token !== null) {
+          stompCilent.current.send("/pub/game/action", {},
+              JSON.stringify({
+                  code: 'TARGET_SELECTED',
+                  roomId: roomId,
+                  playerId: token,
+                  param: {
+                      target: selectedTarget
+                  }
+              }))
+      }
+  };
 
   
 
@@ -124,7 +179,7 @@ const onSocketConnected = () => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, }}>
+    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, selectAction, selectConfirm, setSelectedTarget }}>
       {children}
     </GameContext.Provider>
   );

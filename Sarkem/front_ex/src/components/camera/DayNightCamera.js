@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
-import voteImage from '../../img/votefoot.png'
+import voteImage from '../../img/votefoot.png';
+import { useGameContext } from '../../GameContext';
 
 
 const Votefoot = styled.img`
@@ -219,6 +220,7 @@ const CamCatWrapper = styled.div`
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
     const [isConfirmed, setIsConfirmed] = useState(false);
+    const { selectAction, selectConfirm, setSelectedTarget } = useGameContext();
   
     const handleCamClick = (index) => {
       if (isConfirmed) {
@@ -226,25 +228,28 @@ const CamCatWrapper = styled.div`
       }
   
       if (clickedCameras.includes(index)) {
-        // If the camera was already clicked, unclick it
         setClickedCameras((prevClicked) => prevClicked.filter((clickedIndex) => clickedIndex !== index));
       } else {
-        // If the camera was not clicked, check if another camera is already clicked
         if (clickedCameras.length === 0) {
           setClickedCameras([index]);
         }
       }
+
+      selectAction({ playerId : camArray[index].playerId });
+
     };
   
     const handleConfirmClick = () => {
       if (clickedCameras.length > 0) {
         setIsConfirmed(true);
+        selectConfirm();
       }
     };
   
     const handleSkipClick = () => {
       if (!isConfirmed) {
-        setClickedCameras([]); // Reset clicked cameras if skipping before confirming
+        setClickedCameras([]);
+        setSelectedTarget("");
       }
     };
   
