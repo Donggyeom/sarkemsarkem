@@ -346,7 +346,7 @@ function Room() {
 
         switch (sysMessage.code) {
             case "NOTICE_MESSAGE":
-                alert(sysMessage.param.message);
+                alert(sysMessage.param.message + "  " + sysMessage.param.phase);
                 break;
             case "GAME_START":
                 alert('게임시작');
