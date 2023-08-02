@@ -184,12 +184,23 @@ const CommonLobby = ()=>{
   const handlePeopleCountChange = (part, value) => {
     if (!isHost) return;
     if (stompCilent.current.connect === undefined) return;
-    if (value >= 0)
-    setPeopleCount((prevPeopleCount) => ({
-      ...prevPeopleCount,
-      [part]: value,
-    }));
-  };
+  if (part === 'meetingTime') {
+    if (value >= 15 && value <= 180) {
+      setPeopleCount((prevPeopleCount) => ({
+        ...prevPeopleCount,
+        [part]: value,
+      }));
+    }
+  } else {
+    if (stompCilent.current.connect === undefined) return;
+    if (value >= 0) {
+      setPeopleCount((prevPeopleCount) => ({
+        ...prevPeopleCount,
+        [part]: value,
+      }));
+    }
+  }
+};
 
   // popup
 
@@ -332,9 +343,9 @@ const CommonLobby = ()=>{
             <RightPart>
               <LeftPartWrapper style={{ backgroundImage: `url(${timesetting})` }} />
               <RightPartWrapper>
-                <button onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime + 60)}>+</button>
+                <button onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime + 15)}>+</button>
                 <div>{peopleCount.meetingTime}</div>
-                <button onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime - 60)}>-</button>
+                <button onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime - 15)}>-</button>
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
