@@ -144,7 +144,7 @@ const onSocketConnected = () => {
           setSelectedTarget(target.playerId)
       }
 
-      console.log("다른 플레이어 선택 ")
+      console.log("다른 플레이어 선택 " + target.playerId);
       if (stompCilent.current.connected && token !== null) {
           stompCilent.current.send("/pub/game/action", {},
               JSON.stringify({

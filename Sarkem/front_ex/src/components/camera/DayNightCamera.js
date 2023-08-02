@@ -234,8 +234,11 @@ const CamCatWrapper = styled.div`
           setClickedCameras([index]);
         }
       }
-
-      selectAction({ playerId : camArray[index].playerId });
+      //
+      // console.log(index, camArray);
+      // console.log(camArray[index]);
+      // console.log(JSON.parse(camArray[index].stream.session.connection.data).token);
+      selectAction({ playerId : JSON.parse(camArray[index].stream.session.connection.data).token });
 
     };
   

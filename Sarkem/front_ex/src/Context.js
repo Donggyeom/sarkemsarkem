@@ -85,7 +85,7 @@ const RoomProvider = ({ children }) => {
           setToken(token);
           console.log(token);
           // 세션에 유저 데이터 입력 후 연결 시도
-          await session.connect(response, {userData: nickName});
+          await session.connect(response, {nickname: nickName, token : token});
 
           // 내 퍼블리셔 객체 생성
           let publisher = await OV.initPublisherAsync(undefined, {
