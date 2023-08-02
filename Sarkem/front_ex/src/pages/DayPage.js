@@ -121,7 +121,7 @@ const DayPage = () => {
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <DayPopup></DayPopup>
           <DayNightCamera camArray={camArray}/>
-          {getMyRole()};
+          {getMyRole()}
         </StyledDayPage>
         <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
         <ChatButtonAndPopup />
