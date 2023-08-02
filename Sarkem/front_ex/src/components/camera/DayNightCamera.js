@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
-import voteImage from '../../img/votefoot.png'
+import voteImage from '../../img/votefoot.png';
+import { useGameContext } from '../../GameContext';
 
 
 const Votefoot = styled.img`
@@ -219,6 +220,7 @@ const CamCatWrapper = styled.div`
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
     const [isConfirmed, setIsConfirmed] = useState(false);
+    const { selectAction, selectConfirm, setSelectedTarget, myVote } = useGameContext();
   
     const handleCamClick = (index) => {
       if (isConfirmed) {
@@ -226,25 +228,31 @@ const CamCatWrapper = styled.div`
       }
   
       if (clickedCameras.includes(index)) {
-        // If the camera was already clicked, unclick it
         setClickedCameras((prevClicked) => prevClicked.filter((clickedIndex) => clickedIndex !== index));
       } else {
-        // If the camera was not clicked, check if another camera is already clicked
         if (clickedCameras.length === 0) {
           setClickedCameras([index]);
         }
       }
+      //
+      // console.log(index, camArray);
+      // console.log(camArray[index]);
+      // console.log(JSON.parse(camArray[index].stream.session.connection.data).token);
+      selectAction({ playerId : JSON.parse(camArray[index].stream.session.connection.data).token });
+
     };
   
     const handleConfirmClick = () => {
       if (clickedCameras.length > 0) {
         setIsConfirmed(true);
+        selectConfirm();
       }
     };
   
     const handleSkipClick = () => {
       if (!isConfirmed) {
-        setClickedCameras([]); // Reset clicked cameras if skipping before confirming
+        setClickedCameras([]);
+        setSelectedTarget("");
       }
     };
   
@@ -262,6 +270,7 @@ const CamCatWrapper = styled.div`
           {!isConfirmed && (
             <>
               {clickedCameras.length > 0 ? (
+                // 확정 안된거는 회색 발바닥
                 <ActionButton onClick={handleConfirmClick}>확정하기</ActionButton>
               ) : (
                 <ActionButton onClick={handleSkipClick}>스킵하기</ActionButton>
@@ -269,6 +278,7 @@ const CamCatWrapper = styled.div`
             </>
           )}
           {isConfirmed && (
+            // 확정된거는 흰색 발바닥
             <ActionButton disabled>확정됨</ActionButton>
           )}
         </ButtonWrapper>
