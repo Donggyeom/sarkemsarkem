@@ -123,6 +123,10 @@ const ButtonContainer = styled.div`
   width: 60%;
   height: 85%;
 `;
+const ButtonContainer2 = styled.div`
+  width: auto;
+  height: 60%;
+`;
 
 
 const CommonLobby = ()=>{
@@ -475,9 +479,9 @@ const CommonLobby = ()=>{
             ) : (
               <>
                 <RightPart>
-                  <ButtonContainer>
+                  <ButtonContainer2>
                     <InviteButton onClick={handleInviteClick} />
-                  </ButtonContainer>
+                  </ButtonContainer2>
                 </RightPart>
               </>
             )}
