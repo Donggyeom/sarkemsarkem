@@ -191,7 +191,7 @@ const CommonLobby = ()=>{
     if (!isHost) return;
     if (stompCilent.current.connect === undefined) return;
   if (part === 'meetingTime') {
-    if (value >= 15 && value <= 180) {
+    if (value >= 60 && value <= 180) {
       setPeopleCount((prevPeopleCount) => ({
         ...prevPeopleCount,
         [part]: value,
