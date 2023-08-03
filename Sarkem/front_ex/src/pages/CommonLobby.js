@@ -33,6 +33,7 @@ import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
 import HelpButton from '../components/buttons/HelpButton';
 import Help from '../components/games/Help';
+import axios from 'axios';
 
 
 const StyledContent = styled.div`
@@ -147,10 +148,9 @@ const CommonLobby = ()=>{
     window.history.pushState(null, "", location.href);
     window.addEventListener("popstate", () => leaveSession());
 
-
     
     // 게임세션 정보
-    const response = axios.post('/api/game' + roomId, {
+    const response = axios.post('/api/game/session/' + roomId, {
         headers: { 'Content-Type': 'application/json', },
     });
 

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.gameroom.GameRoom;
 import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.service.GameManager;
@@ -76,6 +77,33 @@ public class MainController {
 		System.out.println(gameManager.getGameRoom(roomId));
 		log.info("방 획득이 요청되었습니다.");
 		return new ResponseEntity<>(gameManager.getGameRoom(roomId), HttpStatus.OK);
+	}
+	
+	// 게임 세션 생성 createGameSession
+	@PostMapping("/api/game/session/{roomId}")
+	public ResponseEntity<?> createGameSession(@PathVariable("roomId") String roomId) {
+
+		GameRoom gameRoom = gameManager.getGameRoom(roomId);
+		// Game Session
+		if (gameRoom == null || !gameManager.createGameSession(roomId)) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		String gameId = gameRoom.getGameId(); 
+		log.info(gameId + "게임세션이 생성되었습니다.");
+		return new ResponseEntity<>(gameId, HttpStatus.OK);
+	}
+	
+	// 게임세션 획득 retrieveGameSession
+	@GetMapping("/api/game/session/{roomId}")
+	public ResponseEntity<GameSession> retrieveGameSession(@PathVariable("roomId") String roomId,
+			@RequestBody(required = false) Map<String, Object> params) {
+		
+		GameSession gameSession = gameManager.getGameSession(roomId);
+		if (gameSession == null) {
+			log.debug("retrieveGameSession - 게임세션 획득 실패 roomId : " + roomId);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(gameSession, HttpStatus.OK);
 	}
 
 	// 방 접속 connectRoom(@RequestParam String roomId, Player player)

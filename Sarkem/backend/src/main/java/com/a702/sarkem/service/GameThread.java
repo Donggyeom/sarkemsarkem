@@ -105,8 +105,6 @@ public class GameThread extends Thread {
 			// 밤 페이즈 (탐정, 심리학자, 냥아치, 의사, 경찰 대상 지정 / 삵들 대상 지정)
 			convertPhaseToNight();
 			
-			// 밤 사이 죽은 사람 있으면 처리
-			nightVote();
 			
 			// 밤 사이 죽은 사람 있으면 처리
 			List<RolePlayer> deadPlayers = nightVote();

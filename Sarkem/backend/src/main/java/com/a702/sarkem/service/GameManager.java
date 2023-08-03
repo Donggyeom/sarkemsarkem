@@ -81,12 +81,12 @@ public class GameManager {
 		// 게임방, 게임 세션 생성
 		GameRoom newGameRoom = new GameRoom(roomId); // 게임룸 생성
 		gameRoomMap.put(roomId, newGameRoom);
-		String newGameId = gameCodeGenerate(); // 새 게임 코드 획득
-		newGameRoom.setGameId(newGameId);
-		GameSession newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
-		gameSessionMap.put(newGameId, newGame);
 		log.debug("createGameRoom - GameRoom : " + newGameRoom);
-		log.debug("createGameRoom - GameSession : " + newGame);
+		
+		if (!createGameSession(roomId)) {
+			log.debug("게임세션 생성 실패");
+			return;
+		}
 
 		// reids topic 생성
 		String strRoomTopic = "GAME_" + roomId;
@@ -97,6 +97,23 @@ public class GameManager {
 		topics.put(strChatTopic, chatTopic);
 		redisMessageListener.addMessageListener(systemSubscriber, roomTopic);
 		redisMessageListener.addMessageListener(chatSubscriber, chatTopic);
+	}
+	
+	/**
+	 * 게임세션 생성
+	 * 
+	 * @param roomId
+	 */
+	public boolean createGameSession(String roomId) {
+		GameRoom gameRoom = getGameRoom(roomId);
+		if (gameRoom == null) return false;
+		
+		String newGameId = gameCodeGenerate(); // 새 게임 코드 획득
+		GameSession newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
+		gameRoom.setGameId(newGameId);
+		gameSessionMap.put(newGameId, newGame);
+		log.debug("createGameRoom - GameSession : " + newGame);
+		return true;
 	}
 
 	// 플레이어 나가기
