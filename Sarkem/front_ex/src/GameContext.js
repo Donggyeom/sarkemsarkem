@@ -191,7 +191,7 @@ const onSocketConnected = () => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, 
+    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage,}}>
       {children}
     </GameContext.Provider>
