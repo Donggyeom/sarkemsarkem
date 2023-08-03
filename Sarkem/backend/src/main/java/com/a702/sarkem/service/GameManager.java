@@ -319,17 +319,20 @@ public class GameManager {
 			if(role.equals(GameRole.SARK)) {
 				// 히든미션이 발행됐는데 성공 못했으면 바로 리턴
 				if(gameSession.isBHiddenMissionStatus() && !gameSession.isBHiddenMissionSuccess()) return;
-				// 같은 직업을 가진 플레이어들의 타겟을 모두 업데이트
-				List<String> thisPlayers = new ArrayList<>();	// 같은 직업 플레이어ID 저장
-				for(RolePlayer rPlayer : gameSession.getRolePlayers(role)) {					
-					rPlayer.setTargetConfirmed(false);	// 이미 선택완료한 사람들 있을 수도 있으니까 선택완료false해주기
-					rPlayer.setTarget(targetId); 		// 직업이 일치하는 플레이어들의 타겟 동일하게 설정
-					thisPlayers.add(rPlayer.getPlayerId());
+				// 같은 직업(삵)을 가진 플레이어들의 타겟을 모두 업데이트
+				for(RolePlayer sark : gameSession.getRolePlayers(GameRole.SARK)) {	
+					// 이미 투표 완료를 한 삵의 경우 다시 투표완료하라고 메시지 보내줘야함
+					if(sark.isTargetConfirmed()) {
+						sendNoticeMessageToPlayer(roomId, sark.getPlayerId(), "사냥 대상이 변경되었습니다.\n다시 대상 지목을 완료해주세요.", gameSession.getPhase());
+						sark.setTargetConfirmed(false);	// 선택완료false해주기
+					}
+					// 삵들 타겟 동일하게 설정
+					sark.setTarget(targetId); 		
 				}
-				// 투표 현황 메시지 전송
+				// 투표 현황 메시지 전송(삵들한테만)
 				HashMap<String, String> votingMap = new HashMap<>();
 				votingMap.put("target", targetId);
-				sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
+				sendVoteSituationOnlyMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK), votingMap);
 			}else {
 				// 나머지애들은 각자 투표
 				player.setTarget(targetId); // 현재 타겟 업데이트..만 하면 될 듯?
