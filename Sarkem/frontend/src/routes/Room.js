@@ -232,8 +232,9 @@ function Room() {
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
         }
         );
-        console.log(response);
-        return response.data; // The token
+        console.log('createToken');
+        console.log(response.data);
+        return response.data.token; // The token
     }
 
     // 세션 객체 생성 시 실행

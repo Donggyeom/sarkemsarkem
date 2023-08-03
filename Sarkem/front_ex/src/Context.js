@@ -7,6 +7,7 @@ const RoomContext = createContext();
 
 const RoomProvider = ({ children }) => {
     const [roomId, setRoomId] = useState('');
+    const [gameId, setGameId] = useState('');
     const [isHost, setIsHost] = useState(false);
     const [nickName, setNickName] = useState('냥냥' + Math.floor(Math.random() * 100));
     const [publisher, setPublisher] = useState(undefined);
@@ -121,30 +122,36 @@ const RoomProvider = ({ children }) => {
 
   // 토큰 생성하는 함수
 const getToken = async () => {
-  // 내 세션ID에 해당하는 세션 생성
-  if (isHost){
-      console.log("방장이므로 세션을 생성합니다.")
-      await createSession(roomId, nickName);
-  }
-  // 세션에 해당하는 토큰 요청
-  return await createToken(roomId, nickName);
+    // 내 세션ID에 해당하는 세션 생성
+    if (isHost){
+        console.log("방장이므로 세션을 생성합니다.")
+        await createSession(roomId, nickName);
+    }
+    // 세션에 해당하는 토큰 요청
+    return await createToken(roomId, nickName);
   }
   
   // 서버에 요청하여 화상 채팅 세션 생성하는 함수
   const createSession = async () => {
-  console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
-  const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
-      headers: { 'Content-Type': 'application/json', },
-  });
-  return response.data; // The sessionId
+    console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
+    const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
+        headers: { 'Content-Type': 'application/json', },
+    });
+    
+    return response.data; // The sessionId
   }
   
   
   // 서버에 요청하여 토큰 생성하는 함수
   const createToken = async () => {
-  console.log("세션에 연결을 시도합니다.")
-  const response = await axios.post(`/api/game/${roomId}/player`,nickName);
-  return response.data; // The token
+    console.log("세션에 연결을 시도합니다.")
+    const response = await axios.post(`/api/game/${roomId}/player`,nickName);
+    
+    console.log('createToken ' + response.data);
+
+    setGameId(response.data.gameId);
+
+    return response.data.token; // The token
   }
 
   const getPlayer = async (roomId) => {

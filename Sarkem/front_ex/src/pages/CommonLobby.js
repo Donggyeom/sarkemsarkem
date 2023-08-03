@@ -137,6 +137,8 @@ const CommonLobby = ()=>{
   const location = useLocation();
 
   useEffect(() => {
+
+
     if (roomId === ''){
       console.log("세션 정보가 없습니다.")
       navigate("/");
@@ -144,6 +146,16 @@ const CommonLobby = ()=>{
     }
     window.history.pushState(null, "", location.href);
     window.addEventListener("popstate", () => leaveSession());
+
+
+    
+    // 게임세션 정보
+    const response = axios.post('/api/game' + roomId, {
+        headers: { 'Content-Type': 'application/json', },
+    });
+
+    console.log('gamesession');
+    console.log(response.data);
     
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);

@@ -80,7 +80,7 @@ public class MainController {
 
 	// 방 접속 connectRoom(@RequestParam String roomId, Player player)
 	@PostMapping("/api/game/{roomId}/player")
-	public ResponseEntity<String> connectRoom(@PathVariable("roomId") String roomId, @RequestBody String nickName)
+	public ResponseEntity<?> connectRoom(@PathVariable("roomId") String roomId, @RequestBody String nickname)
 			throws OpenViduJavaClientException, OpenViduHttpException {
 		Session session = openvidu.getActiveSession(roomId);
 
@@ -91,7 +91,7 @@ public class MainController {
 		// 토큰 발급
 		String token = getConnectionToken(session, paramMap);
 		String playerId = token.split("token=")[1]; // 토큰 앞부분 삭제
-		Player player = new Player(playerId, nickName);
+		Player player = new Player(playerId, nickname);
 
 		log.debug(player.toString());
 
@@ -102,8 +102,15 @@ public class MainController {
 			// 해당 게임 세션에 host가 없을 시 현재 player를 host로 지정
 			if (gameManager.getHostId(roomId) == null)
 				gameManager.setHostId(roomId, playerId);
-			log.info(nickName + "님이 " + roomId + "에 접속합니다.");
-			return new ResponseEntity<>(token, HttpStatus.OK);
+			
+			log.info(nickname + "님이 " + roomId + "에 접속합니다.");
+			
+			Map<String, String> data = new HashMap<>();
+			data.put("token", token);
+			data.put("playerId", playerId);
+			data.put("nickname", nickname);
+			
+			return new ResponseEntity<>(data, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 		}
