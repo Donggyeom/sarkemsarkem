@@ -45,12 +45,12 @@ const handleScMiniClick = () => {
 };
 
 const NightPage = () => {
-  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
+  const { roomId, gameOption, setRoomId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
-  const { myRole, peopleCount } = useGameContext();
+  const { myRole } = useGameContext();
   
 
   const handleCamButtonClick = () => {

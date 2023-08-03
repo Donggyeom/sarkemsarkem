@@ -50,8 +50,8 @@ const DayPage = () => {
 
   const { roomId, 
     publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext();
-  const { myRole, peopleCount } = useGameContext();
-  const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
+  const { myRole, gameOption } = useGameContext();
+  const [meetingTime, setMeetingTime] = useState(gameOption.meetingTime);
   
   
 
