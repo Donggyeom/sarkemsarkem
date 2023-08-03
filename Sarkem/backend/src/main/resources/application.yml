@@ -1,5 +1,5 @@
 server.port: 8081
-server.ssl.enabled: true
+server.ssl.enabled: false
 
 # openvidu setting
 OPENVIDU_URL: "https://localhost:8443/"
