@@ -377,7 +377,16 @@ public class GameManager {
 		param.put("targetNickname", targetNickname);
 		log.debug(param.toString());
 		// 타겟 선택 완료 메시지 보내기
-		sendTargetSelectionEndMessage(roomId, playerId, param);
+		// 낮, 밤(삵), 밤(나머지) 다르게 처리
+		if(gameSession.getPhase().equals(PhaseType.DAY)) {
+			sendTargetSelectionEndMessageToAll(roomId, param);
+		}else if (gameSession.getPhase().equals(PhaseType.NIGHT)) {
+			if(rPlayer.getRole().equals(GameRole.SARK)) {
+				sendTargetSelectionEndMessages(roomId, gameSession.getRolePlayersId(GameRole.SARK), param);
+			}else {
+				sendTargetSelectionEndMessage(roomId, playerId, param);
+			}
+		}
 	}
 
 	// 추방 투표 처리
@@ -565,7 +574,17 @@ public class GameManager {
 		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION, null);
 	}
 
-	// "대상선택 종료" 메시지 전송
+	// "대상선택 종료" 메시지 전송 (전체-낮투표)
+	public void sendTargetSelectionEndMessageToAll(String roomId, Map<String, String> selected) {
+		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION_END, selected);
+	}
+
+	// "대상선택 종료" 메시지 전송 (삵들-밤투표)
+	public void sendTargetSelectionEndMessages(String roomId, List<String> playerIds, Map<String, String> selected) {
+		sendSystemMessage(roomId, playerIds, SystemCode.TARGET_SELECTION_END, selected);
+	}
+
+	// "대상선택 종료" 메시지 전송 (개인-특수직업들 개인 밤투표)
 	public void sendTargetSelectionEndMessage(String roomId, String playerId, Map<String, String> selected) {
 		sendSystemMessage(roomId, playerId, SystemCode.TARGET_SELECTION_END, selected);
 	}
