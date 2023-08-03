@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useGameContext } from '../../GameContext';
 
 const fadeInOut = keyframes`
   0% {
@@ -7,7 +8,7 @@ const fadeInOut = keyframes`
   }
   100% {
     opacity: 0;
-    display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
+    // display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
   }
 `;
 
@@ -44,15 +45,36 @@ const StyledPopupTitle = styled.div`
 
 
 const DayPopup = () => {
-  const [showPopup, setShowPopup] = useState(true);
+  // const [showPopup, setShowPopup] = useState(true);
+  // 팝업 했는데 최초 1번밖에 안댐.
+  // 팝업 보여주는 함수를 제대로 만들어야 댈 것 같음.
+  // 저거 성공하면 day, night에 따라서 띄우는 것도 바로 할 수 있음!
+  
+  const { systemMessages } = useGameContext();
+  const [sysMessage, setSysMessage] = useState(null);
 
   useEffect(() => {
+    console.log('팝업 sysMessage가 업데이트되었습니다:', sysMessage);
+  }, [sysMessage]);
+  
+  useEffect(() => {
+    const sysMessage = systemMessages.find(
+      (message) => message.code === 'NOTICE_MESSAGE'
+    );
+    console.log('팝업 sysMessage:', sysMessage);
+    setSysMessage(sysMessage);
+  }, [systemMessages]);
+
+
+  const showPopup = !!sysMessage;
+  useEffect(() => {
     const fadeOutTimeout = setTimeout(() => {
-      setShowPopup(false);
+      setSysMessage(null);
     }, 3500);
 
     return () => clearTimeout(fadeOutTimeout);
-  }, []);
+  }, [sysMessage]);
+
 
   return (
     <StyledPopupContainer showPopup={showPopup}>
@@ -92,7 +114,7 @@ const DayPopup = () => {
       </div>
 
       {/* 메세지넣을곳 */}  
-      <StyledPopupTitle>닉네임 님이 추방되었습니다.</StyledPopupTitle>
+      <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };
