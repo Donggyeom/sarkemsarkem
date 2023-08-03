@@ -16,7 +16,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import ToggleButton from '../components/buttons/ToggleButton';
 
-
 const StyledStartPage = styled.div`
 `;
 
