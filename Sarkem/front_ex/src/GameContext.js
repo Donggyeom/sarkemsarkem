@@ -167,8 +167,8 @@ const onSocketConnected = () => {
       }
 
       console.log("다른 플레이어 선택 " + target.playerId);
-      if (stompCilent.current.connected && token !== null) {
-          stompCilent.current.send("/pub/game/action", {},
+      if (stompClient.current.connected && token !== null) {
+          stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECT',
                   roomId: roomId,
@@ -183,8 +183,8 @@ const onSocketConnected = () => {
   // 대상 확정
   const selectConfirm = () => {
     console.log(selectedTarget + " 플레이어 선택 ");
-    if (stompCilent.current.connected && token !== null) {
-        stompCilent.current.send("/pub/game/action", {},
+    if (stompClient.current.connected && token !== null) {
+        stompClient.current.send("/pub/game/action", {},
             JSON.stringify({
                 code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
                 roomId: roomId,
