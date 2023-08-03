@@ -25,6 +25,8 @@ const GameProvider = ({ children }) => {
 
     const [myRole, setMyRole] = useState(null);
     const [myVote, setMyVote] = useState(0);
+    const [dayCount, setDayCount] = useState(0);
+    const [startVote, setStartVote] = useState(false);
     const [selectedTarget, setSelectedTarget] = useState("");
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
@@ -65,7 +67,7 @@ const onSocketConnected = () => {
         console.log("game websocket 연결 완료");
     }
 
-    const receiveMessage = (message) => {
+    const receiveMessage = async (message) => {
         // 시스템 메시지 처리
         let sysMessage = JSON.parse(message.body);
         console.log(sysMessage);
@@ -92,30 +94,47 @@ const onSocketConnected = () => {
             console.log(sysMessage.param.sarkCount);
             break;
         case "ROLE_ASSIGNED":
-            console.log(`당신은 ${sysMessage.param.role} 입니다.`)
+            console.log(`당신은 ${sysMessage.param.role} 입니다.`);
             setMyRole(sysMessage.param.role);
             break;
-        case "VOTE_SITUATION":
-              console.log(sysMessage.param);
-              setMyVote(sysMessage.param.votedCnt);
-              break;
-        case "DAY_VOTE_END":
-            alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
             
-            if (sysMessage.param.targetId == null) break;
-            
-            setExpulsionTarget(sysMessage.param.targetId);
-        break;
-  
-        case "TARGET_SELECTION_END":
-          // 선택 완료
-          alert("선택 완료", sysMessage.param.targetNickname);
-          setSelectedTarget("");
-          break;
+        case "PHASE_DAY":
+            if (sysMessage.param.day === 1) {
+              setDayCount(sysMessage.param.day);
+              navigate(`/${roomId}/day`)
+            } else {
+              setDayCount(sysMessage.param.day);
+              navigate(`/${roomId}/day`);
+            }
+            break;
 
-        // case "PHASE_DAY":
-        //     navigate(`/${roomId}/day`);
-        //     break;
+        case "TARGET_SELECTION":
+              setStartVote(false);
+              alert(`${dayCount}번째 날 투표 시작`);
+              console.log("투표시작");
+            break;
+
+        case "VOTE_SITUATION":
+            console.log(sysMessage.param);
+            setMyVote(sysMessage.param.votedCnt);
+            break;
+
+        case "DAY_VOTE_END":
+            if (dayCount !== 0){
+              alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
+              if (sysMessage.param.targetId == null) break;
+              setExpulsionTarget(sysMessage.param.targetId);
+              console.log("투표종료");
+            }
+              break;
+  
+      case "TARGET_SELECTION_END":
+        alert("선택 완료", sysMessage.param.targetNickname);
+        setSelectedTarget("");
+        break;
+
+
+
         // case "PHASE_TWILIGHT":
         //     navigate(`/${roomId}/sunset`);
         //     break;
@@ -163,19 +182,19 @@ const onSocketConnected = () => {
 
   // 대상 확정
   const selectConfirm = () => {
-      console.log(selectedTarget + " 플레이어 선택 ");
-      if (stompCilent.current.connected && token !== null) {
-          stompCilent.current.send("/pub/game/action", {},
-              JSON.stringify({
-                  code: 'TARGET_SELECTED',
-                  roomId: roomId,
-                  playerId: token,
-                  param: {
-                      // target: selectedTarget
-                  }
-              }))
-      }
-  };
+    console.log(selectedTarget + " 플레이어 선택 ");
+    if (stompCilent.current.connected && token !== null) {
+        stompCilent.current.send("/pub/game/action", {},
+            JSON.stringify({
+                code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
+                roomId: roomId,
+                playerId: token,
+                param: {
+                    // target: selectedTarget
+                }
+            }));
+    }
+};
 
     // noticemessage 처리
     const [systemMessages, setSystemMessages] = useState([]);
@@ -191,8 +210,8 @@ const onSocketConnected = () => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage,}}>
+    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
+      systemMessages, handleSystemMessage, dayCount }}>
       {children}
     </GameContext.Provider>
   );

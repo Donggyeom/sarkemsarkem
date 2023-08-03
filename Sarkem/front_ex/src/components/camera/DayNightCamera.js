@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
 import voteImage from '../../img/votefoot.png';
@@ -220,11 +220,22 @@ const CamCatWrapper = styled.div`
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
     const [isConfirmed, setIsConfirmed] = useState(false);
-    const { selectAction, selectConfirm, setSelectedTarget, myVote } = useGameContext();
+    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount } = useGameContext();
+  
+    useEffect(() => {
+      if (startVote === false) {
+        setIsConfirmed(false);
+        setClickedCameras([]);
+      }
+    }, [startVote]);
   
     const handleCamClick = (index) => {
+      if (startVote===true){
+        return;
+      }
+  
       if (isConfirmed) {
-        return; // Do not allow changing vote after confirming
+        return; // Confirm 후에는 변경 불가능
       }
   
       if (clickedCameras.includes(index)) {
@@ -234,12 +245,8 @@ const CamCatWrapper = styled.div`
           setClickedCameras([index]);
         }
       }
-      //
-      // console.log(index, camArray);
-      // console.log(camArray[index]);
-      // console.log(JSON.parse(camArray[index].stream.session.connection.data).token);
-      selectAction({ playerId : JSON.parse(camArray[index].stream.session.connection.data).token });
-
+  
+      selectAction({ playerId: JSON.parse(camArray[index].stream.session.connection.data).token });
     };
   
     const handleConfirmClick = () => {
@@ -261,33 +268,34 @@ const CamCatWrapper = styled.div`
         {camArray.slice().reverse().map((user, index) => (
           <CamCatWrapper key={index} camCount={camCount} index={index} onClick={() => handleCamClick(index)}>
             <CamCat props={camArray[index]} />
-            {clickedCameras.includes(index) && (
+            {clickedCameras.includes(index) && startVote && (
               <Votefoot src={voteImage} alt="Vote" />
             )}
           </CamCatWrapper>
         ))}
         <ButtonWrapper>
-          {!isConfirmed && (
+          {dayCount === 0 ? (
+            <ActionButton onClick={handleSkipClick} disabled={isConfirmed}>
+              스킵하기
+            </ActionButton>
+          ) : (
             <>
-              {clickedCameras.length > 0 ? (
-                // 확정 안된거는 회색 발바닥
-                <ActionButton onClick={handleConfirmClick}>확정하기</ActionButton>
+              {isConfirmed ? (
+                <ActionButton disabled>확정됨</ActionButton>
               ) : (
-                <ActionButton onClick={handleSkipClick}>스킵하기</ActionButton>
+                <ActionButton onClick={handleConfirmClick} disabled={clickedCameras.length === 0 || !startVote}>
+                  확정하기
+                </ActionButton>
               )}
+              <ActionButton onClick={handleSkipClick}>스킵하기</ActionButton>
             </>
-          )}
-          {isConfirmed && (
-            // 확정된거는 흰색 발바닥
-            <ActionButton disabled>확정됨</ActionButton>
           )}
         </ButtonWrapper>
       </CamCatGrid>
     );
   });
-  export default DayNightCamera;
-
   
+  export default DayNightCamera;
   
   
   
