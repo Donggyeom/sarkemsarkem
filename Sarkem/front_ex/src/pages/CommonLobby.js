@@ -131,7 +131,7 @@ const ButtonContainer2 = styled.div`
 
 
 const CommonLobby = ()=>{
-  const {roomId, gameId, setGameOption, gameOption, isHost, camArray, leaveSession, token} = useRoomContext();
+  const {roomId, gameId, setGameOption, gameOption, isHost, camArray, leaveSession, token, updateGameSession} = useRoomContext();
   const {handleGamePageClick, stompClient} = useGameContext();
 
   const navigate = useNavigate();
@@ -148,6 +148,9 @@ const CommonLobby = ()=>{
     window.history.pushState(null, "", location.href);
     window.addEventListener("popstate", () => leaveSession());
 
+
+    // 게임세션 갱신
+    updateGameSession();
     
     console.log('roomId : ' + roomId);
     

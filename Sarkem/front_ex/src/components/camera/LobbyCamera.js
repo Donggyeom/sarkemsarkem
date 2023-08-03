@@ -296,7 +296,7 @@ const LobbyCamera = React.memo(({ camArray }) => {
     <LeftSectionWrapper>
       <CamCatGrid style={gridStyles}>
         {camArray.slice().reverse().map((user, index) => (
-          <CamCatWrapper key={index} camCount={camCount} index={index}>
+          <CamCatWrapper key={index} camcount={camCount} index={index}>
             <CamCat props={camArray[index]} />
           </CamCatWrapper>
         ))}

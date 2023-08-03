@@ -7,12 +7,15 @@ import { useRoomContext } from './Context';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-    const {roomId, gameId, token, isHost, setGameOption} = useRoomContext();
+    const {roomId, gameId, token, isHost, gameOption, setGameOption} = useRoomContext();
     const navigate = useNavigate();
     let stompClient = useRef({})
 
     const [myRole, setMyRole] = useState(null);
     
+    useEffect(() => {
+      console.log('GameProvider 생성');
+    }, []);
 
     useEffect(() => {
         if (token !== null) connectGameWS();
@@ -59,8 +62,7 @@ const onSocketConnected = () => {
             alert(sysMessage.param.message);
             break;
         case "GAME_START":   
-            alert('게임시작');
-             navigate(`/${roomId}/day`);
+            navigate(`/${roomId}/day`);
             break;
         case "ONLY_HOST_ACTION":
             console.log(sysMessage);
@@ -72,7 +74,6 @@ const onSocketConnected = () => {
             console.log(sysMessage.param.sarkCount);
             break;
         case "ROLE_ASSIGNED":
-            // alert(`당신은 ${sysMessage.param.role} 입니다.`);
             console.log(`당신은 ${sysMessage.param.role} 입니다.`)
             setMyRole(sysMessage.param.role);
             break;

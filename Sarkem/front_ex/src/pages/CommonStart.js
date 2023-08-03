@@ -124,13 +124,14 @@ const CommonStart = ({onClick} ) => {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
 
-
-  useEffect(()=>{
-    checkRoomId();
+  useEffect(() => {
     setRoomId(location.pathname.slice(1));
+    checkRoomId();
     getUserCamera();
     getUserAudio();
-    console.log(isHost);
+  }, []);
+
+  useEffect(()=>{
   }, [videoRef, audioRef])
 
   const checkRoomId = () => {

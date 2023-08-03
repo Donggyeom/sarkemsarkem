@@ -15,13 +15,13 @@ const GoroomButtonImage = styled.img`
 `;
 
 const GoroomButton = () => {
-  const {roomId, isHost, joinSession} = useRoomContext();
+  const {roomId, gameId, isHost, joinSession} = useRoomContext();
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
     // 문자열 연결을 사용하여 URL을 구성하고 state로 필요한 데이터를 전달합니다.
     joinSession();
-    navigate(`/${roomId}/lobby`);
+    navigate('/loading');
   };
 
   return <GoroomButtonImage src={isHost ? makeRoomButtonSrc : goroomButtonSrc} alt={isHost ? "방 만들기" : "입장하기"} onClick={handleButtonClick} />;

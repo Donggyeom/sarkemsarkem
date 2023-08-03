@@ -22,6 +22,12 @@ const RoomProvider = ({ children }) => {
     const OV = new OpenVidu();
     const navigate = useNavigate();
 
+    useEffect(() => {
+      console.log('RoomProvider 생성');
+
+      // openvidu log 제거
+      OV.enableProdMode();
+    }, []);
 
     useEffect(() => {
 
@@ -30,6 +36,21 @@ const RoomProvider = ({ children }) => {
           connectSession();
         }
       }, [session]);
+
+      
+      useEffect(() => {
+        if (token == null) return;
+        
+        updateGameSession();
+      }, [token]);
+
+      
+      useEffect(() => {
+        if (gameId != null && gameId != '') {
+          navigate(`/${roomId}/lobby`);
+        }
+      }, [gameId])
+
 
     // 세션 해제
     const leaveSession = () => {
@@ -117,18 +138,20 @@ const RoomProvider = ({ children }) => {
           navigate("/");
           return;
         }
-      }).then(() => {
-
-        // 게임세션 정보 획득
-        axios.get('/api/game/session/' + roomId, {
-            headers: { 'Content-Type': 'application/json;charset=utf-8', },
-        }).then((response) => {
-          console.log('gamesession');
-          console.log(response);
-          setGameId(response.data.gameId);
-          setGameOption(response.data.gameOption);
-        });
       });
+  }
+
+  const updateGameSession = () => {
+    // 게임세션 정보 획득
+    axios.get('/api/game/session/' + roomId, {
+      headers: { 'Content-Type': 'application/json;charset=utf-8', },
+    }).then((response) => {
+      console.log('gamesession 획득');
+      console.log(response);
+      setGameId(response.data.gameId);
+      setGameOption(response.data.gameOption);
+      return response.data.gameId;
+    });
   }
 
 
@@ -161,7 +184,7 @@ const getToken = async () => {
       headers: { 'Content-Type': 'application/json;charset=utf-8', },
     });
     
-    console.log('createToken ' + response.data);
+    console.log('createToken ' + response.data.playerId);
 
     setGameId(response.data.gameId);
 
@@ -177,7 +200,7 @@ const getToken = async () => {
     <RoomContext.Provider value={{ roomId, setRoomId, gameId, setGameId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
-    , getToken, getPlayer, gameOption, setGameOption}}>
+    , getToken, getPlayer, gameOption, setGameOption, updateGameSession}}>
       {children}
     </RoomContext.Provider>
   );
