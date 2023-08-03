@@ -1,5 +1,8 @@
 server.port: 8081
-server.ssl.enabled: false
+server.ssl.enabled: true
+server.ssl.key-store: /opt/openvidu/certificates/live/i9a702.p.ssafy.io
+server.ssl.key-store-password: sarkem
+server.ssl.keyStoreType: PKCS12
 
 # openvidu setting
 OPENVIDU_URL: "https://localhost:8443/"
