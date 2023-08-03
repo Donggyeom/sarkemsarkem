@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
@@ -214,23 +215,25 @@ const CamCatWrapper = styled.div`
   `
   : ''};
   `;
-  
+
   const DayNightCamera = React.memo(({ camArray }) => {
     const camCount = camArray.length;
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
     const [isConfirmed, setIsConfirmed] = useState(false);
+    const [isSkipped, setIsSkipped] = useState(false);
     const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount } = useGameContext();
   
     useEffect(() => {
-      if (startVote === false) {
+      if (!startVote) {
         setIsConfirmed(false);
         setClickedCameras([]);
+        setIsSkipped(false);
       }
     }, [startVote]);
   
     const handleCamClick = (index) => {
-      if (startVote===true){
+      if (!startVote) {
         return;
       }
   
@@ -257,9 +260,11 @@ const CamCatWrapper = styled.div`
     };
   
     const handleSkipClick = () => {
-      if (!isConfirmed) {
+      if (!isConfirmed && !isSkipped && startVote) {
+        setIsSkipped(true);
         setClickedCameras([]);
         setSelectedTarget("");
+        selectConfirm();
       }
     };
   
@@ -274,20 +279,30 @@ const CamCatWrapper = styled.div`
           </CamCatWrapper>
         ))}
         <ButtonWrapper>
-          {dayCount === 0 ? (
-            <ActionButton onClick={handleSkipClick} disabled={isConfirmed}>
-              스킵하기
-            </ActionButton>
+          {dayCount === 1 ? (
+            <>
+              {startVote && ( // 이 부분 추가
+                <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+                  {isSkipped ? '스킵됨' : '스킵하기'}
+                </ActionButton>
+              )}
+            </>
           ) : (
             <>
               {isConfirmed ? (
                 <ActionButton disabled>확정됨</ActionButton>
               ) : (
-                <ActionButton onClick={handleConfirmClick} disabled={clickedCameras.length === 0 || !startVote}>
-                  확정하기
+                startVote && (
+                  <ActionButton onClick={handleConfirmClick} disabled={clickedCameras.length === 0}>
+                    확정하기
+                  </ActionButton>
+                )
+              )}
+              {startVote && (
+                <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+                  {isSkipped ? '스킵됨' : '스킵하기'}
                 </ActionButton>
               )}
-              <ActionButton onClick={handleSkipClick}>스킵하기</ActionButton>
             </>
           )}
         </ButtonWrapper>
@@ -296,7 +311,3 @@ const CamCatWrapper = styled.div`
   });
   
   export default DayNightCamera;
-  
-  
-  
-  

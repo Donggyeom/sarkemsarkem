@@ -99,19 +99,15 @@ const onSocketConnected = () => {
             break;
             
         case "PHASE_DAY":
-            if (sysMessage.param.day === 1) {
-              setDayCount(sysMessage.param.day);
               navigate(`/${roomId}/day`)
-            } else {
-              setDayCount(sysMessage.param.day);
-              navigate(`/${roomId}/day`);
-            }
             break;
 
         case "TARGET_SELECTION":
-              setStartVote(false);
-              alert(`${dayCount}번째 날 투표 시작`);
-              console.log("투표시작");
+          // if (sysMessage.param.day !== 1){
+            alert('투표가 시작됐습니다');
+            setStartVote(true);
+            setDayCount(sysMessage.param.day);
+          // }
             break;
 
         case "VOTE_SITUATION":
@@ -120,7 +116,8 @@ const onSocketConnected = () => {
             break;
 
         case "DAY_VOTE_END":
-            if (dayCount !== 0){
+            if (dayCount !== 1){
+              setStartVote(false);
               alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
               if (sysMessage.param.targetId == null) break;
               setExpulsionTarget(sysMessage.param.targetId);
