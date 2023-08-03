@@ -23,11 +23,14 @@ const CamCat = (props) => {
     loadModels();
   }, []);
 
+  //faceapi 실행
+  //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
     const id = faceMyDetect(props.props.videos[1].video, setBoxPosition, running, setRunning);
+    console.log(props.props.videos);
     setIntervalId(id);
   };
-
+  //끄는거 
   const stopFaceDetection = () => {
     stopFace(intervalId, setRunning, setBoxPosition);
   };

@@ -46,6 +46,10 @@ const StyledPopupTitle = styled.div`
 
 const DayPopup = () => {
   // const [showPopup, setShowPopup] = useState(true);
+  // 팝업 했는데 최초 1번밖에 안댐.
+  // 팝업 보여주는 함수를 제대로 만들어야 댈 것 같음.
+  // 저거 성공하면 day, night에 따라서 띄우는 것도 바로 할 수 있음!
+  
   const { systemMessages } = useGameContext();
   const [sysMessage, setSysMessage] = useState(null);
 
