@@ -46,8 +46,6 @@ const GameProvider = ({ children }) => {
   const connectGame = () => {
     console.log('/sub/game/system/' + roomId + " redis 구독")
     stompClient.current.subscribe('/sub/game/system/' + roomId, receiveMessage)
-    stompClient.current.
-
   }
 
   // const connectChat = () => {
