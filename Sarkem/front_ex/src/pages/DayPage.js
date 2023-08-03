@@ -56,19 +56,6 @@ const DayPage = () => {
   const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE');
 
 
-  // useEffect(() => {
-  //   console.log('sysMessage가 업데이트되었습니다:', sysMessage);
-  // }, [sysMessage]);
-  
-  // useEffect(() => {
-  //   const sysMessage = systemMessages.find(
-  //     (message) => message.code === 'NOTICE_MESSAGE'
-  //   );
-  //   console.log('sysMessage:', sysMessage);
-  //   setSysMessage(sysMessage);
-  // }, [systemMessages]);
-  
-
   useEffect(() => {
     const timer = setInterval(() => {
       if (meetingTime > 0) {

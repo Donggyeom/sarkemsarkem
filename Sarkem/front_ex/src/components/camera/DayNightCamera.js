@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
@@ -218,10 +217,6 @@ const CamCatWrapper = styled.div`
 
   const DayNightCamera = React.memo(({ camArray }) => {
     const camCount = camArray.length;
-    console.log(`여기도됨? ${camArray[0]}`);
-    if(camCount>1){
-       console.log(camArray[0].videos[0].video);
-    }
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
     const [isConfirmed, setIsConfirmed] = useState(false);
@@ -236,7 +231,9 @@ const CamCatWrapper = styled.div`
       }
     }, [startVote]);
   
-    const handleCamClick = (index) => {
+    const handleCamClick = (user) => {
+      console.log(user.stream.session.connection.data);
+      console.log(JSON.parse(user.stream.session.connection.data));
       if (!startVote) {
         return;
       }
@@ -245,15 +242,10 @@ const CamCatWrapper = styled.div`
         return; // Confirm 후에는 변경 불가능
       }
   
-      if (clickedCameras.includes(index)) {
-        setClickedCameras((prevClicked) => prevClicked.filter((clickedIndex) => clickedIndex !== index));
-      } else {
-        if (clickedCameras.length === 0) {
-          setClickedCameras([index]);
-        }
-      }
-  
-      selectAction({ playerId: JSON.parse(camArray[index].stream.session.connection.data).token });
+      console.log(JSON.parse(user.stream.session.connection.data).token, "1번");
+      selectAction({ playerId: JSON.parse(user.stream.session.connection.data).token });
+      console.log(user);
+
     };
   
     const handleConfirmClick = () => {
@@ -274,8 +266,9 @@ const CamCatWrapper = styled.div`
   
     return (
       <CamCatGrid style={gridStyles}>
-        {camArray.slice().reverse().map((user, index) => (
-          <CamCatWrapper key={index} camCount={camCount} index={index} onClick={() => handleCamClick(index)}>
+        {/* {camArray.slice().reverse().map((user, index) => ( */}
+        {camArray.map((user, index) => (
+          <CamCatWrapper key={index} camCount={camCount} index={index} onClick={() => handleCamClick(user)}>
             <CamCat props={camArray[index]} />
             {clickedCameras.includes(index) && startVote && (
               <Votefoot src={voteImage} alt="Vote" />
