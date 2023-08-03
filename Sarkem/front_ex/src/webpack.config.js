@@ -16,9 +16,10 @@ module.exports = {
     },
     devServer: {
       // ... 다른 옵션들 ...
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+      host: '0.0.0.0',
+      https: false,
+      port: 8081,
+      public: 'http://0.0.0.0:8081'
     },
   
     // ... 다른 설정들 ...
