@@ -229,7 +229,9 @@ public class GameThread extends Thread {
 			rp.setVotedCnt(0);
 		}
 		// "대상 선택" 메시지 전송
-		gameManager.sendTargetSelectionMessage(roomId);
+		param = new HashMap<>();
+		param.put("day", gameSession.getDay());
+		gameManager.sendTargetSelectionMessage(roomId, param);
 	}
 
 	// 낮 투표 결과 종합
