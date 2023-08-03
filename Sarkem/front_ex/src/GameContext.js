@@ -9,7 +9,7 @@ const GameContext = createContext();
 const GameProvider = ({ children }) => {
     const {roomId, token, isHost} = useRoomContext();
     const navigate = useNavigate();
-    let stompCilent = useRef({})
+    let stompClient = useRef({})
 
     const [peopleCount, setPeopleCount] = useState({
         meetingTime: 60,
@@ -32,12 +32,12 @@ const GameProvider = ({ children }) => {
   // WebSocket 연결
   const connectGameWS = async (event) => {
     let socket = new SockJS("http://localhost:8080/ws-stomp");
-    stompCilent.current = Stomp.over(socket);
-    await stompCilent.current.connect({}, () => {
+    stompClient.current = Stomp.over(socket);
+    await stompClient.current.connect({}, () => {
      setTimeout(function() {
        onSocketConnected();
         connectGame();
-       console.log(stompCilent.current.connected);
+       console.log(stompClient.current.connected);
     }, 500);
     })
   }
@@ -45,12 +45,14 @@ const GameProvider = ({ children }) => {
   // 게임룸 redis 구독
   const connectGame = () => {
     console.log('/sub/game/system/' + roomId + " redis 구독")
-    stompCilent.current.subscribe('/sub/game/system/' + roomId, receiveMessage)
+    stompClient.current.subscribe('/sub/game/system/' + roomId, receiveMessage)
+    stompClient.current.
+
   }
 
   // const connectChat = () => {
   //   console.log('/sub/game/system/chat_' + roomId + " redis 구독")
-  //   stompCilent.current.subscribe('/sub/chat/room/' + roomId, receiveMessage)
+  //   stompClient.current.subscribe('/sub/chat/room/' + roomId, receiveMessage)
   // }
 
 
@@ -108,7 +110,7 @@ const onSocketConnected = () => {
 
     const handleGamePageClick = () => {
         console.log(token);
-        stompCilent.current.send("/pub/game/action", {}, 
+        stompClient.current.send("/pub/game/action", {}, 
         JSON.stringify({
             code:'GAME_START', 
             roomId: roomId, 
@@ -124,7 +126,7 @@ const onSocketConnected = () => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, }}>
+    <GameContext.Provider value={{ stompClient, peopleCount, myRole, setPeopleCount, handleGamePageClick, }}>
       {children}
     </GameContext.Provider>
   );

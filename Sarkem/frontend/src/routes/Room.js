@@ -11,7 +11,7 @@ import "../css/Room.css"
 import Chat from "../components/Chat";
 
 function Room() {
-    let stompCilent = useRef({});
+    let stompClient = useRef({});
 
     const [mySessionId, setMySessionId] = useState(null);
     const [myUserName, setMyUserName] = useState('');
@@ -85,8 +85,8 @@ function Room() {
     // 게임 옵션 변경 시 실행
     useEffect(() => {
         console.log("게임옵션 변경됨")
-        if (stompCilent.current.connected && token !== null) {
-            stompCilent.current.send("/pub/game/action", {},
+        if (stompClient.current.connected && token !== null) {
+            stompClient.current.send("/pub/game/action", {},
                 JSON.stringify({
                     code: 'OPTION_CHANGE',
                     roomId: mySessionId,
@@ -114,12 +114,12 @@ function Room() {
 
     const connectGameWS = async (event) => {
         let socket = new SockJS("http://localhost:8080/ws-stomp");
-        stompCilent.current = Stomp.over(socket);
-        await stompCilent.current.connect({}, () => {
+        stompClient.current = Stomp.over(socket);
+        await stompClient.current.connect({}, () => {
             setTimeout(function () {
                 onSocketConnected();
                 connectGame();
-                console.log(stompCilent.current.connected);
+                console.log(stompClient.current.connected);
             }, 500);
         });
     }
@@ -131,13 +131,13 @@ function Room() {
     const connectGame = () => {
         // 게임방 redis 구독
         console.log('/sub/game/system/' + location.state.sessionId + " redis 구독")
-        stompCilent.current.subscribe('/sub/game/system/' + location.state.sessionId, receiveMessage)
+        stompClient.current.subscribe('/sub/game/system/' + location.state.sessionId, receiveMessage)
 
         // 입장 코드 전송
         console.log("ENTER 코드 전송");
         console.log("roomId : " + location.state.sessionId);
         console.log("playerId : " + token);
-        stompCilent.current.send("/pub/game/action", {},
+        stompClient.current.send("/pub/game/action", {},
             JSON.stringify({
                 code: 'ENTER',
                 roomId: location.state.sessionId,
@@ -329,7 +329,7 @@ function Room() {
     const gameStart = () => {
         console.log("게임시작 클릭")
         console.log(token);
-        stompCilent.current.send("/pub/game/action", {},
+        stompClient.current.send("/pub/game/action", {},
             JSON.stringify({
                 code: 'GAME_START',
                 roomId: mySessionId,
@@ -423,8 +423,8 @@ function Room() {
         }
 
         console.log("다른 플레이어 선택 ")
-        if (stompCilent.current.connected && token !== null) {
-            stompCilent.current.send("/pub/game/action", {},
+        if (stompClient.current.connected && token !== null) {
+            stompClient.current.send("/pub/game/action", {},
                 JSON.stringify({
                     code: 'TARGET_SELECT',
                     roomId: location.state.sessionId,
@@ -439,8 +439,8 @@ function Room() {
     // 대상 확정
     const selectConfirm = () => {
         console.log(selectedTarget + " 플레이어 선택 ");
-        if (stompCilent.current.connected && token !== null) {
-            stompCilent.current.send("/pub/game/action", {},
+        if (stompClient.current.connected && token !== null) {
+            stompClient.current.send("/pub/game/action", {},
                 JSON.stringify({
                     code: 'TARGET_SELECTED',
                     roomId: mySessionId,
@@ -458,7 +458,7 @@ function Room() {
 
         // 추방 투표 동의
     const agreeExpulsion = () => {
-        stompCilent.current.send("/pub/game/action", {}, 
+        stompClient.current.send("/pub/game/action", {}, 
             JSON.stringify({
                 code:'EXPULSION_VOTE',
                 roomId: mySessionId, 
@@ -472,7 +472,7 @@ function Room() {
 
     // 추방 투표 반대
     const disagreeExpulsion = () => {
-        stompCilent.current.send("/pub/game/action", {}, 
+        stompClient.current.send("/pub/game/action", {}, 
             JSON.stringify({
                 code:'EXPULSION_VOTE',
                 roomId: mySessionId, 

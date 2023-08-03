@@ -131,7 +131,7 @@ const ButtonContainer2 = styled.div`
 
 const CommonLobby = ()=>{
   const {roomId, isHost, camArray, leaveSession, token} = useRoomContext();
-  const {peopleCount, setPeopleCount, handleGamePageClick, stompCilent} = useGameContext();
+  const {peopleCount, setPeopleCount, handleGamePageClick, stompClient} = useGameContext();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -168,8 +168,8 @@ const CommonLobby = ()=>{
 
   // 변경된 게임 옵션을 redis 토픽에 전달
   const callChangeOption = () => {
-    if(stompCilent.current.connected && token !== null) {
-      stompCilent.current.send("/pub/game/action", {}, 
+    if(stompClient.current.connected && token !== null) {
+      stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
               code:'OPTION_CHANGE', 
               roomId: roomId, 
@@ -189,7 +189,7 @@ const CommonLobby = ()=>{
   // 게임 옵션을 변경처리 하는 함수
   const handlePeopleCountChange = (part, value) => {
     if (!isHost) return;
-    if (stompCilent.current.connect === undefined) return;
+    if (stompClient.current.connect === undefined) return;
   if (part === 'meetingTime') {
     if (value >= 15 && value <= 180) {
       setPeopleCount((prevPeopleCount) => ({
@@ -198,7 +198,7 @@ const CommonLobby = ()=>{
       }));
     }
   } else {
-    if (stompCilent.current.connect === undefined) return;
+    if (stompClient.current.connect === undefined) return;
     if (value >= 0) {
       setPeopleCount((prevPeopleCount) => ({
         ...prevPeopleCount,
