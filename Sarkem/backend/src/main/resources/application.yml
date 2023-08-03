@@ -1,6 +1,6 @@
 server.port: 8081
 server.ssl.enabled: true
-server.ssl.key-store: /opt/openvidu/certificates/live/i9a702.p.ssafy.io/key.p12
+server.ssl.key-store: classpath:ssl/key.p12
 server.ssl.key-store-password: sarkem
 server.ssl.keyStoreType: PKCS12
 
