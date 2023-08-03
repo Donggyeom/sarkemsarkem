@@ -218,6 +218,10 @@ const CamCatWrapper = styled.div`
 
   const DayNightCamera = React.memo(({ camArray }) => {
     const camCount = camArray.length;
+    console.log(`여기도됨? ${camArray[0]}`);
+    if(camCount>1){
+       console.log(camArray[0].videos[0].video);
+    }
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
     const [isConfirmed, setIsConfirmed] = useState(false);

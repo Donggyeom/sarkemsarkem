@@ -291,7 +291,7 @@ const CamCatWrapper = styled.div`
 const LobbyCamera = React.memo(({ camArray }) => {
   const camCount = camArray.length;
   const gridStyles = calculateGrid(camCount);
-
+  console.log(camArray);
   return (
     <LeftSectionWrapper>
       <CamCatGrid style={gridStyles}>

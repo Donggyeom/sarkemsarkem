@@ -138,8 +138,10 @@ const onSocketConnected = () => {
         // case "PHASE_NIGHT":
         //     navigate(`/${roomId}/night`);
         //     break;
+        
 
         }
+        handleSystemMessage(message);
     }
 
     const handleGamePageClick = () => {
@@ -199,8 +201,6 @@ const onSocketConnected = () => {
       const sysMessage = JSON.parse(message.body);
       setSystemMessages((prevMessages) => [...prevMessages, sysMessage]);
     };
-  
-  
 
     // 게임 옵션 변경 시 실행
 //   useEffect(() => {
