@@ -14,6 +14,12 @@ module.exports = {
         },
       ],
     },
+    devServer: {
+      // ... 다른 옵션들 ...
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    },
   
     // ... 다른 설정들 ...
   };
