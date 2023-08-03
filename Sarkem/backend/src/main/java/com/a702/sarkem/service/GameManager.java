@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import com.a702.sarkem.exception.GameRoomNotFoundException;
+import com.a702.sarkem.model.chat.ChatMessage;
 import com.a702.sarkem.model.game.GameSession;
+import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.game.message.SystemMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
@@ -22,7 +25,6 @@ import com.a702.sarkem.redis.ChatPublisher;
 import com.a702.sarkem.redis.ChatSubscriber;
 import com.a702.sarkem.redis.GamePublisher;
 import com.a702.sarkem.redis.SystemSubscriber;
-import com.esotericsoftware.minlog.Log;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,11 +47,11 @@ public class GameManager {
 	// topic 관리
 	private Map<String, ChannelTopic> topics = new HashMap<>();
 
-	private ChannelTopic getGameTopic(String roomId) {
+	public ChannelTopic getGameTopic(String roomId) {
 		return topics.get("GAME_" + roomId);
 	}
 
-	private ChannelTopic getChatTopic(String roomId) {
+	public ChannelTopic getChatTopic(String roomId) {
 		return topics.get("CHAT_" + roomId);
 	}
 
@@ -82,7 +84,9 @@ public class GameManager {
 		String newGameId = gameCodeGenerate(); // 새 게임 코드 획득
 		newGameRoom.setGameId(newGameId);
 		GameSession newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
-		gameSessionMap.put(roomId, newGame);
+		gameSessionMap.put(newGameId, newGame);
+		log.debug("createGameRoom - GameRoom : " + newGameRoom);
+		log.debug("createGameRoom - GameSession : " + newGame);
 
 		// reids topic 생성
 		String strRoomTopic = "GAME_" + roomId;
@@ -133,6 +137,16 @@ public class GameManager {
 	public GameRoom getGameRoom(String roomId) {
 		return gameRoomMap.get(roomId);
 	}
+	
+	/**
+	 * 게임세션 정보 조회
+	 */
+	public GameSession getGameSession(String roomId) {
+		GameRoom room = gameRoomMap.get(roomId);
+		String gameId = room.getGameId();
+		if (gameId == null) return null;
+		return gameSessionMap.get(gameId);
+	}
 
 	/**
 	 * 게임방 방장 여부 확인
@@ -152,13 +166,19 @@ public class GameManager {
 	/**
 	 * 플레이어 게임방 연결
 	 */
-	public void connectPlayer(String roomId, Player player) {
+	public boolean connectPlayer(String roomId, Player player) {
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		List<Player> playerList = gameRoom.getPlayers();
-		playerList.add(player);
-		if (gameRoom.getHostId() == null)
-			gameRoom.setHostId(player.getPlayerId());
+		if (gameRoom.getPlayerCount() < 10) {
+			List<Player> playerList = gameRoom.getPlayers();
+			playerList.add(player);
+			if (gameRoom.getHostId() == null)
+				gameRoom.setHostId(player.getPlayerId());
+			return true;
+		} else {
+			return false;
+		}
 	}
+
 
 	/**
 	 * 게임방 정보 조회
@@ -180,6 +200,7 @@ public class GameManager {
 	public void gameOptionChange(String roomId, String playerId, GameOptionDTO option) {
 
 		GameRoom room = gameRoomMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		// 방장과 플레이어 일치 여부 확인
 		if (!room.getHostId().equals(playerId)) {
 			return;
@@ -191,12 +212,11 @@ public class GameManager {
 		// 회의 시간 변경
 		int meetingTime = option.getMeetingTime();
 		if (meetingTime < 15 || meetingTime > 180) {
-			sendNoticeMessageToPlayer(roomId, hostId, "회의 시간은 15s ~ 180s 사이로 설정 가능합니다.");
+			sendNoticeMessageToPlayer(roomId, hostId, "회의 시간은 15s ~ 180s 사이로 설정 가능합니다.", PhaseType.READY);
 			return;
 		}
 
 		// session 변경
-		GameSession gameSession = gameSessionMap.get(roomId);
 		gameSession.setMeetingTime(option.getMeetingTime());
 		gameSession.setCitizenCount(option.getCitizenCount());
 		gameSession.setSarkCount(option.getSarkCount());
@@ -205,7 +225,8 @@ public class GameManager {
 		gameSession.setDetectiveCount(option.getDetectiveCount());
 		gameSession.setPsychologistCount(option.getPsychologistCount());
 		gameSession.setBullyCount(option.getBullyCount());
-//		Log.debug(gameSession.toString());
+
+		//log.debug(gameSession.toString());
 		sendGameOptionChangedMessage(roomId, option);
 	}
 
@@ -218,12 +239,19 @@ public class GameManager {
 	public boolean checkStartable(String roomId) {
 		// 플레이어 수와 역할 수 일치 여부 확인
 		GameRoom room = gameRoomMap.get(roomId);
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
+		log.debug(room.toString());
+		log.debug(gameSession.toString());
+		if (room == null || gameSession == null) return false;
+		
 		int playerCount = room.getPlayerCount();
-//		int optionRoleCount = gameSession.getTotalRoleCnt(); // DTO에서는 getTotalCnt를 쓸 수가 없답니다
 		int optionRoleCount = gameSession.getCitizenCount() + gameSession.getSarkCount() + gameSession.getDoctorCount()
 				 + gameSession.getPoliceCount() + gameSession.getBullyCount()
 				+ gameSession.getDetectiveCount() + gameSession.getPsychologistCount();
+
+		// int optionRoleCount = gameSession.getTotalRoleCount();
+		log.debug("플레이어 수 : " + playerCount + "\n 설정된 직업 수 : " + optionRoleCount);
+
 
 		if (playerCount != optionRoleCount)
 			return false;
@@ -236,7 +264,7 @@ public class GameManager {
 	public void gameStart(String roomId) {
 		// 게임 러너 생성 및 시작
 		GameRoom gameRoom = gameRoomMap.get(roomId);
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		ChannelTopic gameTopic = topics.get("GAME_" + roomId);
 		ChannelTopic chatTopic = topics.get("CHAT_" + roomId);
 		GameThread gameThread = new GameThread(this, gameRoom, gameSession, gameTopic, chatTopic);
@@ -247,24 +275,66 @@ public class GameManager {
 	 * 대상 선택
 	 */
 	public void selectTarget(String roomId, String playerId, Map<String, String> target) {
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		String targetId = target.get("target");
+		
 		RolePlayer player = (RolePlayer) gameSession.getPlayer(playerId); // 타겟을 지목한 플레이어
 		RolePlayer newTargetPlayer = (RolePlayer) gameSession.getPlayer(targetId); // 플레이어가 새로 지목한 타겟 플레이어
-		// 이전에 지목한 타겟이 없을 때
-		if (player.getTarget() == null || "".equals(player.getTarget())) {
-			newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
-			player.setTarget(targetId); // 현재 타겟 업데이트
-		} // 기존 타겟과 새로 지목한 타겟이 다르면
-		else if (!player.getTarget().equals(targetId)) {
-			RolePlayer targetedPlayer = (RolePlayer) gameSession.getPlayer(player.getTarget()); // 플레이어의 기존 타겟이었던 플레이어
-			targetedPlayer.setVotedCnt(targetedPlayer.getVotedCnt() - 1); // 기존 타겟이 받은 투표수--
+		
+		// 이미 셀렉티드를 했는데 다시 셀렉트 하려고 하면 안됨
+		if(player.isTargetConfirmed()) return;
+		
+		if (newTargetPlayer == null) targetId = "";	// 타겟 플레이어를 찾지 못한 경우 targetId를 공백 문자열로 저장
+		
+		log.debug("selectTarget : " + player + "의 타겟은 " + newTargetPlayer);
+		// 이전 대상과 현재 대상이 같은 경우 별도 행동 X
+		if ( targetId.equals(player.getTarget()) ) return;
+		
+		// 낮 투표
+		if(gameSession.getPhase().equals(PhaseType.DAY)) {
+			// 지목 대상 투표수 업데이트
 			if (newTargetPlayer != null) {
 				newTargetPlayer.setVotedCnt(newTargetPlayer.getVotedCnt() + 1); // 현재 타겟이 받은 투표수++
 			}
+				
+			// 이전 지목 대상 투표수 업데이트
+			RolePlayer prevTarget = (RolePlayer) gameSession.getPlayer(player.getTarget());
+			if ( prevTarget != null ) {
+				prevTarget.setVotedCnt(prevTarget.getVotedCnt() - 1);
+			}
 			player.setTarget(targetId); // 현재 타겟 업데이트
+
+			// 투표 현황 메시지 전송
+			sendVoteSituationMessage(roomId, mergeTargets(gameSession.getAlivePlayers()));
 		}
-		sendVoteSituationMessage(roomId, mergeTargets(gameSession.getPlayers()));
+		
+		// 밤 직업 별 투표 
+		// 투표하는 애들은 삵, 의사, 경찰, 심리학자, 냥아치
+		if(gameSession.getPhase().equals(PhaseType.NIGHT)) {
+			log.debug("밤 특수능력 대상 지목");
+			
+			GameRole role = player.getRole();	// 현재 플레이어의 직업
+			
+			// 삵인 경우 논의해서 하나만 투표
+			if(role.equals(GameRole.SARK)) {
+				// 히든미션이 발행됐는데 성공 못했으면 바로 리턴
+				if(gameSession.isBHiddenMissionStatus() && !gameSession.isBHiddenMissionSuccess()) return;
+				// 같은 직업을 가진 플레이어들의 타겟을 모두 업데이트
+				List<String> thisPlayers = new ArrayList<>();	// 같은 직업 플레이어ID 저장
+				for(RolePlayer rPlayer : gameSession.getRolePlayers(role)) {					
+					rPlayer.setTargetConfirmed(false);	// 이미 선택완료한 사람들 있을 수도 있으니까 선택완료false해주기
+					rPlayer.setTarget(targetId); 		// 직업이 일치하는 플레이어들의 타겟 동일하게 설정
+					thisPlayers.add(rPlayer.getPlayerId());
+				}
+				// 투표 현황 메시지 전송
+				HashMap<String, String> votingMap = new HashMap<>();
+				votingMap.put("target", targetId);
+				sendVoteSituationOnlyMessage(roomId, thisPlayers, votingMap);
+			}else {
+				// 나머지애들은 각자 투표
+				player.setTarget(targetId); // 현재 타겟 업데이트..만 하면 될 듯?
+			}
+		}
 	}
 
 	// 선택된 대상들 Map으로 묶어주는 함수
@@ -280,50 +350,91 @@ public class GameManager {
 	 * 대상 선택 완료
 	 */
 	public void selectedTarget(String roomId, String playerId) {
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		RolePlayer rPlayer = (RolePlayer) gameSession.getPlayer(playerId);
-		RolePlayer targetPlayer = (RolePlayer) gameSession.getPlayer(rPlayer.getTarget());
+		if (rPlayer == null) {
+			log.debug("selectedTarget - 플레이어ID를 찾을 수 없습니다. playerId : " + playerId);
+			return;
+		}
+		
+		String targetId = rPlayer.getTarget();
+
+		if (gameSession.getDay() == 1 && !"".equals(targetId)) {
+			sendNoticeMessageToPlayer(roomId, playerId, "1일차 낮에는 추방 투표 대상을 선택할 수 없습니다.", gameSession.getPhase());
+			return;
+		}
+		
+		String targetNickname = "";
+		RolePlayer targetPlayer = gameSession.getPlayer(targetId);
+		if (targetPlayer != null) {
+			targetNickname = targetPlayer.getNickname();
+		}
+		rPlayer.setTargetConfirmed(true);	// 대상 선택 완료
+		
 		HashMap<String, String> param = new HashMap<>();
-		
-		rPlayer.setTargetConfirmed(true);
-		
 		param.put("playerId", playerId);
-		param.put("targetId", rPlayer.getTarget());
-		param.put("targetNickname", targetPlayer.getNickname());
-		// 누가 누구 지목했는지 메시지 보내기
+		param.put("targetId", targetId);
+		param.put("targetNickname", targetNickname);
+		log.debug(param.toString());
+		// 타겟 선택 완료 메시지 보내기
 		sendTargetSelectionEndMessage(roomId, playerId, param);
 	}
 
-	
 	// 추방 투표 처리
-	public void expulsionVote(String roomId, Map<String, Boolean> voteOX) {
-		GameSession gameSession = gameSessionMap.get(roomId);
+	public void expulsionVote(String roomId, String playerId, Map<String, Boolean> voteOX) {
+		GameSession gameSession = getGameSession(roomId);
 		Boolean voteResult = voteOX.get("result");
-		// 투표자수++
-		gameSession.setExpultionVotePlayerCnt(gameSession.getExpultionVotePlayerCnt() + 1);
-		if (voteResult) { // 추방 투표 찬성수 ++
-			gameSession.setExpultionVoteCnt(gameSession.getExpultionVoteCnt() + 1);
+		
+		RolePlayer player = gameSession.getPlayer(playerId);
+		if (player == null) {
+			log.debug("expulsionVote - playerID를 찾을 수 없습니다. playerId : " + playerId);
+			return;
 		}
-		// 끝날 조건
-		if (gameSession.getExpultionVoteCnt() == gameSession.getPlayers().size() // 모두가 투표를 했거나
-				|| gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) { // 찬성 투표가 과반수 이상일 때
-			// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
-			if (gameSession.getExpultionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
-				sendExcludedMessage(roomId, gameSession.getExpultionTargetId());
-				// 실제로 추방하기
-				RolePlayer expultionPlayer = gameSession.getPlayer(gameSession.getExpultionTargetId());
-				expultionPlayer.setAlive(false);
-				// 채팅방 입장시키기
-				
-			} 
-			// 추방 투표 결과 전송 // 저녁 페이즈 종료
-			HashMap<String, String> result = new HashMap<>();
-			// 추방 당한 사람 아이디를 파람으로 전달
-			result.put("expultionPlayer", gameSession.getExpultionTargetId());
-			sendEndTwilightVoteMessage(roomId, result);
+		
+		// 투표완료
+		player.setTargetConfirmed(true);
+		// 추방 투표 찬성수 ++
+		if (voteResult) { 
+			gameSession.addExpulsionVoteCnt();
 		}
+		// TODO: 추방 투표 현황 전송
+		sendTwilightSelectionEndMessage(roomId, playerId);
 	}
-
+	
+	/**
+	 * 히든미션 처리
+	 * 
+	 */
+	
+	// 히든미션 있는지 여부 지정
+	public void hiddenMissionOccur(String roomId) {
+		GameSession gameSession = getGameSession(roomId);
+		// 30% 확률로 히든미션 발생
+		Random rnd=new Random();
+		int num = rnd.nextInt(10); // 0<=num<10
+		if(num<3) gameSession.setBHiddenMissionStatus(true);
+	}
+	
+	// 히든 미션 성공 시
+	public void hiddenMissionSuccess(String roomId) {
+		GameSession gameSession = getGameSession(roomId);
+		sendHiddenMissionSuccessMessage(roomId);
+		gameSession.setBHiddenMissionSuccess(true);
+	}
+	
+	/**
+	 * 채팅 메시지를 전체에게 전송
+	 * 
+	 * @param roomId
+	 * @param target
+	 * @param code
+	 * @param param
+	 */
+	public void sendChattingMessage(ChatMessage message) {
+		ChannelTopic chatTopic = getChatTopic(message.getRoomId());
+		chatPublisher.publish(chatTopic, message);
+	}
+	
 	/**
 	 * 시스템 메시지를 대상에게 전송
 	 * 
@@ -374,9 +485,10 @@ public class GameManager {
 	 * @param playerId
 	 * @param message
 	 */
-	public void sendNoticeMessageToPlayer(String roomId, String playerId, String message) {
+	public void sendNoticeMessageToPlayer(String roomId, String playerId, String message, PhaseType phase) {
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
+		param.put("phase", phase.toString());
 		List<String> targets = new ArrayList<>();
 		targets.add(playerId);
 		sendSystemMessage(roomId, targets, SystemCode.NOTICE_MESSAGE, param);
@@ -388,14 +500,11 @@ public class GameManager {
 	 * @param playersId
 	 * @param message
 	 */
-	public void sendNoticeMessageToPlayers(String roomId, String[] playersId, String message) {
+	public void sendNoticeMessageToPlayers(String roomId, List<String> playersId, String message, PhaseType phase) {
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
-		List<String> targets = new ArrayList<>();
-		for (int i = 0; i < playersId.length; i++) {
-			targets.add(playersId[i]);
-		}
-		sendSystemMessage(roomId, targets, SystemCode.NOTICE_MESSAGE, param);
+		param.put("phase", phase.toString());
+		sendSystemMessage(roomId, playersId, SystemCode.NOTICE_MESSAGE, param);
 	}
 
 	/**
@@ -403,17 +512,42 @@ public class GameManager {
 	 * 
 	 * @param message
 	 */
-	public void sendNoticeMessageToAll(String roomId, String message) {
+	public void sendNoticeMessageToAll(String roomId, String message, PhaseType phase) {
 		HashMap<String, String> param = new HashMap<>();
 		param.put("message", message);
+		param.put("phase", phase.toString());
 		sendSystemMessageToAll(roomId, SystemCode.NOTICE_MESSAGE, param);
 	}
 	// 0. 공통기능 끝
 
 	// 1. 게임 로비
+	// "게임방 설정" 메시지 전송
+	public void sendGameOptionMessage(String roomId, String playerId) {
+		GameSession gameSession = getGameSession(roomId);
+		GameOptionDTO option = gameSession.getGameOption();
+		
+		sendSystemMessage(roomId, playerId, SystemCode.OPTION_CHANGED, option);
+	}
+
 	// "게임방 설정 변경" 메시지 전송
 	public void sendGameOptionChangedMessage(String roomId, GameOptionDTO option) {
-		sendSystemMessageToAll(roomId, SystemCode.OPTION_CHANGED, option);
+		GameRoom gameRoom = getGameRoom(roomId);
+		String hostId = gameRoom.getHostId();
+		List<Player> players = getGameRoom(roomId).getPlayers();
+		
+		if (hostId == null || hostId.equals("")) {
+			log.debug("방장 정보가 없습니다.");
+			return;
+		}
+		
+		List<String> playersId = new ArrayList<>();
+		for (Player p : players) {
+			String pId = p.getPlayerId();
+			if (hostId.equals(pId)) continue;
+			
+			playersId.add(pId);
+		}
+		sendSystemMessage(roomId, playersId, SystemCode.OPTION_CHANGED, option);
 	}
 
 	// "게임시작" 메시지 전송
@@ -437,7 +571,7 @@ public class GameManager {
 
 	// "역할배정" 메시지 전송
 	public void sendRoleAssignMessage(String roomId) {
-		GameSession gameSession = gameSessionMap.get(roomId);
+		GameSession gameSession = getGameSession(roomId);
 		List<RolePlayer> rPlayers = gameSession.getPlayers();
 		Map<String, GameRole> param = new HashMap<>();
 		for (RolePlayer rp : rPlayers) {
@@ -447,8 +581,8 @@ public class GameManager {
 	}
 
 	// "낮 페이즈" 메시지 전송
-	public void sendDayPhaseMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.PHASE_DAY, null);
+	public void sendDayPhaseMessage(String roomId, Map<String, Integer> param) {
+		sendSystemMessageToAll(roomId, SystemCode.PHASE_DAY, param);
 	}
 
 	// "저녁 페이즈" 메시지 전송
@@ -456,9 +590,9 @@ public class GameManager {
 		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, null);
 	}
 
-	// "저녁 투표 시작" 메시지 전송
-	public void sendTwilightVoteMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE, null);
+	// "저녁(추방) 투표 시작" 메시지 전송
+	public void sendTwilightSelectionMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_SELECTION, null);
 	}
 
 	// "밤 페이즈" 메시지 전송
@@ -471,6 +605,10 @@ public class GameManager {
 		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, param);
 	}
 
+	// "추방 투표 종료(개인)" 메시지 전송
+	public void sendTwilightSelectionEndMessage(String roomId, String playerId) {
+		sendSystemMessage(roomId, playerId, SystemCode.TWILIGHT_SELECTION_END, null);
+	}
 	// "저녁 투표 종료" 메시지 전송
 	public void sendEndTwilightVoteMessage(String roomId, Map<String, String> param) {
 		sendSystemMessageToAll(roomId, SystemCode.TWILIGHT_VOTE_END, param);
@@ -482,18 +620,23 @@ public class GameManager {
 	}
 
 	// "사냥당함" 메시지 전송
-	public void sendHuntedMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.BE_HUNTED, null);
+	public void sendHuntedMessage(String roomId, Map<String, String> deadPlayer) {
+		sendSystemMessageToAll(roomId, SystemCode.BE_HUNTED, deadPlayer);
 	}
 
 	// "투표현황" 메시지 전송
 	public void sendVoteSituationMessage(String roomId, Map<String, Integer> votedSituation) {
 		sendSystemMessageToAll(roomId, SystemCode.VOTE_SITUATION, votedSituation);
 	}
+	
+	// "밤 투표현황" 대상자들(삵들)한테만 메시지 전송 **
+	public void sendVoteSituationOnlyMessage(String roomId, List<String> players, Map<String, String> votingSituation) {
+		sendSystemMessage(roomId, players, SystemCode.VOTE_SITUATION, votingSituation);
+	}
 
 	// "심리분석 시작" 메시지 전송 *
-	public void sendPsychoStartMessage(String roomId, String playerId) {
-		sendSystemMessage(roomId, playerId, SystemCode.PSYCHOANALYSIS_START, null);
+	public void sendPsychoStartMessage(String roomId, String playerId, Map<String, String> target) {
+		sendSystemMessage(roomId, playerId, SystemCode.PSYCHOANALYSIS_START, target);
 	}
 
 	// "협박당함" 메시지 전송 *
@@ -502,12 +645,8 @@ public class GameManager {
 	}
 
 	// "히든미션 시작" 메시지 전송 **
-	public void sendHiddenMissionStartMessage(String roomId, String[] playerId) {
-		List<String> targets = new ArrayList<>();
-		for (int i = 0; i < playerId.length; i++) {
-			targets.add(playerId[i]);
-		}
-		sendSystemMessage(roomId, targets, SystemCode.MISSION_START, null);
+	public void sendHiddenMissionStartMessage(String roomId, List<String> sarkPlayers, Map<String, Integer> hMissionIdx) {
+		sendSystemMessage(roomId, sarkPlayers, SystemCode.MISSION_START, hMissionIdx);
 	}
 
 	// "히든미션 성공" 메시지 전송

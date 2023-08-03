@@ -1,20 +1,22 @@
-server.port: 8080
+server.port: 8081
 server.ssl.enabled: false
+#server.ssl.key-store: classpath:ssl/key.p12
+#server.ssl.key-store-password: sarkem
+#server.ssl.keyStoreType: PKCS12
 
-# openvidu ??
-OPENVIDU_URL: "http://localhost:4443/"
-OPENVIDU_SECRET: "MY_SECRET"
+# openvidu setting
+OPENVIDU_URL: "https://localhost:8443/"
 
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ssafy
-    username: ssafy
-    password: ssafy
+    url: jdbc:mysql://localhost:3306/DB
+    username: USERNAME
+    password: PASSWORD
   data:
     redis:
       host: localhost
-      port: 6379
+      port: 4000
 
 logging:
   level:

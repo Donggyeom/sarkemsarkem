@@ -12,7 +12,7 @@ const GameProvider = ({ children }) => {
     let stompCilent = useRef({})
 
     const [peopleCount, setPeopleCount] = useState({
-        meetingTime: 15,
+        meetingTime: 60,
         citizenCount: 0,
         sarkCount: 0,
         doctorCount: 0,
@@ -22,13 +22,16 @@ const GameProvider = ({ children }) => {
         bullyCount: 0
       });
 
+    const [myRole, setMyRole] = useState(null);
+    
+
     useEffect(() => {
         if (token !== null) connectGameWS();
     }, [token]);
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
-    let socket = new SockJS("http://localhost:8080/ws-stomp");
+    let socket = new SockJS("/ws-stomp");
     stompCilent.current = Stomp.over(socket);
     await stompCilent.current.connect({}, () => {
      setTimeout(function() {
@@ -44,6 +47,11 @@ const GameProvider = ({ children }) => {
     console.log('/sub/game/system/' + roomId + " redis 구독")
     stompCilent.current.subscribe('/sub/game/system/' + roomId, receiveMessage)
   }
+
+  // const connectChat = () => {
+  //   console.log('/sub/game/system/chat_' + roomId + " redis 구독")
+  //   stompCilent.current.subscribe('/sub/chat/room/' + roomId, receiveMessage)
+  // }
 
 
 const onSocketConnected = () => {
@@ -74,11 +82,27 @@ const onSocketConnected = () => {
             setPeopleCount(sysMessage.param);
             console.log(sysMessage.param.sarkCount);
             break;
-        case "ROLE_ASIGNED":
-            alert(`당신은 ${sysMessage.param.role} 입니다.`);
+        case "ROLE_ASSIGNED":
+            // alert(`당신은 ${sysMessage.param.role} 입니다.`);
             console.log(`당신은 ${sysMessage.param.role} 입니다.`)
+            setMyRole(sysMessage.param.role);
             break;
-    
+        // case "PHASE_DAY":
+        //     navigate(`/${roomId}/day`);
+        //     break;
+        // case "PHASE_TWILIGHT":
+        //     navigate(`/${roomId}/sunset`);
+        //     break;
+        // case "PHASE_NIGHT":
+        //     navigate(`/${roomId}/night`);
+        //     break;
+  
+        // case "TARGET_SELECTION_END":
+        //   // 선택 완료
+        //   alert("선택 완료", sysMessage.param.targetNickname);
+        //   setSelectedTarget("");
+        //   break;
+
         }
     }
 
@@ -93,12 +117,14 @@ const onSocketConnected = () => {
         );
     };
 
+  
+
     // 게임 옵션 변경 시 실행
 //   useEffect(() => {
     
 // }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompCilent, peopleCount, setPeopleCount, handleGamePageClick }}>
+    <GameContext.Provider value={{ stompCilent, peopleCount, myRole, setPeopleCount, handleGamePageClick, }}>
       {children}
     </GameContext.Provider>
   );
