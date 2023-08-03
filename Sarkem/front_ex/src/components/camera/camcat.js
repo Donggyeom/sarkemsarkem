@@ -80,10 +80,10 @@ const CamCat = (props) => {
         </div>
 
         <div style={{ flex: 0.4, textAlign: 'center', width: '95%' }}>
-          {JSON.parse(props.props.stream.connection.data).userData}
+          {JSON.parse(props.props.stream.connection.data).nickname}
         </div>
-        <button onClick={startFaceDetection}>심리학자 시작</button>
-        <button onClick={stopFaceDetection}>심리학자 종료</button>
+        {/* <button onClick={startFaceDetection}>심리학자 시작</button>
+        <button onClick={stopFaceDetection}>심리학자 종료</button> */}
       </div>
     </div>
   );
