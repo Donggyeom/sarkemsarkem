@@ -74,7 +74,10 @@ const DayPage = () => {
   const [voteCount, setVoteCount] = useState(0);
 
   const handleVoteClick = () => {
-    setVoteCount((prevCount) => prevCount + 1);
+    if (hasVoted) return;
+
+    setVoteCount((preventCount) => prevCount + 1);
+    setHasVoted(true);
   };
 
   const handleCamButtonClick = () => {

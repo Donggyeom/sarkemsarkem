@@ -56,8 +56,10 @@ const RightSection = styled.div`
 
 
 const DivWrapper = styled.div`
+
   display: flex;
   // justify-content : space-around;
+  
 `;
 
 const LeftPart = styled.div`
