@@ -420,6 +420,7 @@ public class GameManager {
 		GameSession gameSession = getGameSession(roomId);
 		sendHiddenMissionSuccessMessage(roomId);
 		gameSession.setBHiddenMissionSuccess(true);
+		gameSession.setHiddenMissionSuccessCnt(gameSession.getHiddenMissionSuccessCnt()+1);
 	}
 	
 	/**

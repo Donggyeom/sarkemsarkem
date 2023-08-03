@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GameThread extends Thread {
 	private static GameManager gameManager;
+	private DBService dbService;
 	private GameRoom gameRoom;
 	private GameSession gameSession;
 	private String roomId;
@@ -133,6 +134,8 @@ public class GameThread extends Thread {
 		// 게임 종료 메시지 전송
 		gameManager.sendGameEndMessage(roomId);
 		// 게임 결과 DB저장
+		dbService.InsertGameResult(gameSession);
+		
 	}
 
 	// 역할배정
@@ -218,6 +221,7 @@ public class GameThread extends Thread {
 				hMissionIdx.put("missionIdx", num);
 				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK),
 						hMissionIdx);
+				gameSession.setHiddenMissionCnt(gameSession.getHiddenMissionCnt()+1);
 			}
 
 		}

@@ -50,6 +50,8 @@ public class GameSession {
 	private LocalDateTime finishedTime;
 	private boolean bHiddenMissionStatus;
 	private boolean bHiddenMissionSuccess;
+	private int hiddenMissionSuccessCnt;
+	private int hiddenMissionCnt;
 	private int expulsionVoteCnt; // 추방 투표 수
 	private int winTeam; // 0: 진행 중 , 1: 삵 승리 , 2: 시민 승리
 
