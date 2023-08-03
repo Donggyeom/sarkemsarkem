@@ -91,7 +91,7 @@ const SunsetPopup = () => {
         </div>
       </div>
 
-      <StyledPopupTitle>가장 삵일 것 같은 고양이에게 투표하세요.</StyledPopupTitle>
+      <StyledPopupTitle>얘를 살려 말어?</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };

@@ -60,15 +60,18 @@ const RoomProvider = ({ children }) => {
     newSession.on('streamCreated', (event) => {
       const subscriber = newSession.subscribe(event.stream, undefined);
       setCamArray((camArray) => [...camArray, subscriber]);
+      console.log(subscriber);
+      console.log(camArray);
       setSubscribers((subscribers) => [...subscribers, subscriber]);
+      console.log(subscribers)
       
-      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).userData, "님이 접속했습니다.");
+      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickname, "님이 접속했습니다.");
     });
 
     // stream 종료 이벤트 발생 시
     newSession.on('streamDestroyed', (event) => {
       deleteSubscriber(event.stream.streamManager);
-      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).userData, "님이 접속을 종료했습니다.")
+      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickname, "님이 접속을 종료했습니다.")
     });
 
     // stream 예외 이벤트 발생 시 에러 출력
@@ -85,7 +88,7 @@ const RoomProvider = ({ children }) => {
           setToken(token);
           console.log(token);
           // 세션에 유저 데이터 입력 후 연결 시도
-          await session.connect(response, {userData: nickName});
+          await session.connect(response, {nickname: nickName, token : token});
 
           // 내 퍼블리셔 객체 생성
           let publisher = await OV.initPublisherAsync(undefined, {
@@ -108,6 +111,7 @@ const RoomProvider = ({ children }) => {
           setPublisher(publisher);
           setCamArray((camArray) => [...camArray, publisher]);
           console.log(publisher)
+          console.log(camArray);
         }
         catch (error) {
           console.error(error);

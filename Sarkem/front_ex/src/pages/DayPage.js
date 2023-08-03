@@ -50,9 +50,23 @@ const DayPage = () => {
 
   const { roomId, 
     publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext();
-  const { myRole, peopleCount } = useGameContext();
+  const { myRole, peopleCount, systemMessages  } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
+  // const [sysMessage, setSysMessage] = useState(null);
+  const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE');
+
+
+  // useEffect(() => {
+  //   console.log('sysMessage가 업데이트되었습니다:', sysMessage);
+  // }, [sysMessage]);
   
+  // useEffect(() => {
+  //   const sysMessage = systemMessages.find(
+  //     (message) => message.code === 'NOTICE_MESSAGE'
+  //   );
+  //   console.log('sysMessage:', sysMessage);
+  //   setSysMessage(sysMessage);
+  // }, [systemMessages]);
   
 
   useEffect(() => {
@@ -74,7 +88,10 @@ const DayPage = () => {
   const [voteCount, setVoteCount] = useState(0);
 
   const handleVoteClick = () => {
-    setVoteCount((prevCount) => prevCount + 1);
+    if (hasVoted) return;
+
+    setVoteCount((preventCount) => prevCount + 1);
+    setHasVoted(true);
   };
 
   const handleCamButtonClick = () => {
@@ -146,7 +163,7 @@ const DayPage = () => {
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
-          <DayPopup></DayPopup>
+        {sysMessage && <DayPopup />}
           <DayNightCamera camArray={camArray}/>
           {getMyRole()}
         </StyledDayPage>
