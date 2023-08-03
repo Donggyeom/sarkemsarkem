@@ -133,7 +133,7 @@ const getToken = async () => {
   // 서버에 요청하여 화상 채팅 세션 생성하는 함수
   const createSession = async () => {
   console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
-  const response = await axios.post('https://localhost:8080/api/game', { customSessionId: roomId, nickName: nickName }, {
+  const response = await axios.post('https://localhost:8081/api/game', { customSessionId: roomId, nickName: nickName }, {
       headers: { 'Content-Type': 'application/json', },
   });
   return response.data; // The sessionId
@@ -143,12 +143,12 @@ const getToken = async () => {
   // 서버에 요청하여 토큰 생성하는 함수
   const createToken = async () => {
   console.log("세션에 연결을 시도합니다.")
-  const response = await axios.post(`https://localhost:8080/api/game/${roomId}/player`,nickName);
+  const response = await axios.post(`https://localhost:8081/api/game/${roomId}/player`,nickName);
   return response.data; // The token
   }
 
   const getPlayer = async (roomId) => {
-    const response = await axios.get(`https://localhost:8080/api/game/${roomId}/player`);
+    const response = await axios.get(`https://localhost:8081/api/game/${roomId}/player`);
     return response.data;
   }
 
