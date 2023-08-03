@@ -95,7 +95,7 @@ public class MainController {
 	
 	// 게임세션 획득 retrieveGameSession
 	@GetMapping("/api/game/session/{roomId}")
-	public ResponseEntity<GameSession> retrieveGameSession(@PathVariable("roomId") String roomId,
+	public ResponseEntity<?> retrieveGameSession(@PathVariable("roomId") String roomId,
 			@RequestBody(required = false) Map<String, Object> params) {
 		
 		GameSession gameSession = gameManager.getGameSession(roomId);
@@ -103,7 +103,13 @@ public class MainController {
 			log.debug("retrieveGameSession - 게임세션 획득 실패 roomId : " + roomId);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		return new ResponseEntity<>(gameSession, HttpStatus.OK);
+		
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("roomId", roomId);
+		data.put("gameId", gameSession.getGameId());
+		data.put("gameOption", gameSession.getGameOption());
+		
+		return new ResponseEntity<>(data, HttpStatus.OK);
 	}
 
 	// 방 접속 connectRoom(@RequestParam String roomId, Player player)

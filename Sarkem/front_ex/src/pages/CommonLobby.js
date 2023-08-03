@@ -131,8 +131,8 @@ const ButtonContainer2 = styled.div`
 
 
 const CommonLobby = ()=>{
-  const {roomId, isHost, camArray, leaveSession, token} = useRoomContext();
-  const {peopleCount, setPeopleCount, handleGamePageClick, stompClient} = useGameContext();
+  const {roomId, gameId, setGameOption, gameOption, isHost, camArray, leaveSession, token} = useRoomContext();
+  const {handleGamePageClick, stompClient} = useGameContext();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -149,13 +149,7 @@ const CommonLobby = ()=>{
     window.addEventListener("popstate", () => leaveSession());
 
     
-    // 게임세션 정보
-    const response = axios.post('/api/game/session/' + roomId, {
-        headers: { 'Content-Type': 'application/json', },
-    });
-
-    console.log('gamesession');
-    console.log(response.data);
+    console.log('roomId : ' + roomId);
     
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
@@ -186,9 +180,9 @@ const CommonLobby = ()=>{
               code:'OPTION_CHANGE', 
               roomId: roomId, 
               playerId: token,
-              param: peopleCount
+              param: gameOption
           }))
-          console.log(peopleCount)
+          console.log(gameOption)
   }
   }
 
@@ -196,24 +190,24 @@ const CommonLobby = ()=>{
   useEffect(()=> {
    if(!isHost) return;
    callChangeOption();
-  }, [peopleCount]);
+  }, [gameOption]);
 
   // 게임 옵션을 변경처리 하는 함수
-  const handlePeopleCountChange = (part, value) => {
+  const handleGameOptionChange = (part, value) => {
     if (!isHost) return;
     if (stompClient.current.connect === undefined) return;
   if (part === 'meetingTime') {
     if (value >= 15 && value <= 180) {
-      setPeopleCount((prevPeopleCount) => ({
-        ...prevPeopleCount,
+      setGameOption((prevGameOption) => ({
+        ...prevGameOption,
         [part]: value,
       }));
     }
   } else {
     if (stompClient.current.connect === undefined) return;
     if (value >= 0) {
-      setPeopleCount((prevPeopleCount) => ({
-        ...prevPeopleCount,
+      setGameOption((prevGameOption) => ({
+        ...prevGameOption,
         [part]: value,
       }));
     }
@@ -310,15 +304,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                   style={{ ...buttonStyle }}
-                  onClick={() => handlePeopleCountChange('sarkCount', peopleCount.sarkCount - 1)}
+                  onClick={() => handleGameOptionChange('sarkCount', gameOption.sarkCount - 1)}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                   onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={downbutton} alt="Down Button" />
                 </button>
-                <div>{peopleCount.sarkCount}</div>
+                <div>{gameOption.sarkCount}</div>
                 <button
                   style={{ ...buttonStyle }}
-                  onClick={() => handlePeopleCountChange('sarkCount', peopleCount.sarkCount + 1)}
+                  onClick={() => handleGameOptionChange('sarkCount', gameOption.sarkCount + 1)}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                   onMouseLeave={(e) => e.target.style.filter = 'none'}>
                    <img src={upbutton} alt="Up Button" />
@@ -330,15 +324,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                   style={{ ...buttonStyle }}
-                  onClick={() => handlePeopleCountChange('citizenCount', peopleCount.citizenCount - 1)}
+                  onClick={() => handleGameOptionChange('citizenCount', gameOption.citizenCount - 1)}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                   onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={downbutton} alt="Down Button" />
                 </button>
-                <div>{peopleCount.citizenCount}</div>
+                <div>{gameOption.citizenCount}</div>
                 <button
                   style={{ ...buttonStyle }}
-                  onClick={() => handlePeopleCountChange('citizenCount', peopleCount.citizenCount + 1)}
+                  onClick={() => handleGameOptionChange('citizenCount', gameOption.citizenCount + 1)}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                   onMouseLeave={(e) => e.target.style.filter = 'none'}>
                    <img src={upbutton} alt="Up Button" />
@@ -352,15 +346,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('doctorCount', peopleCount.doctorCount - 1)}
+                    onClick={() => handleGameOptionChange('doctorCount', gameOption.doctorCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{peopleCount.doctorCount}</div>
+                  <div>{gameOption.doctorCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('doctorCount', peopleCount.doctorCount + 1)}
+                    onClick={() => handleGameOptionChange('doctorCount', gameOption.doctorCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -372,15 +366,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('policeCount', peopleCount.policeCount - 1)}
+                    onClick={() => handleGameOptionChange('policeCount', gameOption.policeCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{peopleCount.policeCount}</div>
+                  <div>{gameOption.policeCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('policeCount', peopleCount.policeCount + 1)}
+                    onClick={() => handleGameOptionChange('policeCount', gameOption.policeCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -394,15 +388,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('detectiveCount', peopleCount.detectiveCount - 1)}
+                    onClick={() => handleGameOptionChange('detectiveCount', gameOption.detectiveCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{peopleCount.detectiveCount}</div>
+                  <div>{gameOption.detectiveCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('detectiveCount', peopleCount.detectiveCount + 1)}
+                    onClick={() => handleGameOptionChange('detectiveCount', gameOption.detectiveCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -414,15 +408,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('psychologistCount', peopleCount.psychologistCount - 1)}
+                    onClick={() => handleGameOptionChange('psychologistCount', gameOption.psychologistCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{peopleCount.psychologistCount}</div>
+                  <div>{gameOption.psychologistCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('psychologistCount', peopleCount.psychologistCount + 1)}
+                    onClick={() => handleGameOptionChange('psychologistCount', gameOption.psychologistCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -436,15 +430,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('bullyCount', peopleCount.bullyCount - 1)}
+                    onClick={() => handleGameOptionChange('bullyCount', gameOption.bullyCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{peopleCount.bullyCount}</div>
+                  <div>{gameOption.bullyCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('bullyCount', peopleCount.bullyCount + 1)}
+                    onClick={() => handleGameOptionChange('bullyCount', gameOption.bullyCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -456,15 +450,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime - 15)}
+                    onClick={() => handleGameOptionChange('meetingTime', gameOption.meetingTime - 15)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{peopleCount.meetingTime}</div>
+                  <div>{gameOption.meetingTime}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handlePeopleCountChange('meetingTime', peopleCount.meetingTime + 15)}
+                    onClick={() => handleGameOptionChange('meetingTime', gameOption.meetingTime + 15)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />

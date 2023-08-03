@@ -17,6 +17,7 @@ const RoomProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [isMicOn, setIsMicOn] = useState(true);
     const [isCamOn, setIsCamOn] = useState(true);
+    const [gameOption, setGameOption] = useState({});
 
     const OV = new OpenVidu();
     const navigate = useNavigate();
@@ -116,7 +117,18 @@ const RoomProvider = ({ children }) => {
           navigate("/");
           return;
         }
-      })
+      }).then(() => {
+
+        // 게임세션 정보 획득
+        axios.get('/api/game/session/' + roomId, {
+            headers: { 'Content-Type': 'application/json', },
+        }).then((response) => {
+          console.log('gamesession');
+          console.log(response);
+          setGameId(response.data.gameId);
+          setGameOption(response.data.gameOption);
+        });
+      });
   }
 
 
@@ -160,10 +172,10 @@ const getToken = async () => {
   }
 
   return (
-    <RoomContext.Provider value={{ roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
+    <RoomContext.Provider value={{ roomId, setRoomId, gameId, setGameId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
-    , getToken, getPlayer}}>
+    , getToken, getPlayer, gameOption, setGameOption}}>
       {children}
     </RoomContext.Provider>
   );

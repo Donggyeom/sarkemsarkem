@@ -7,20 +7,9 @@ import { useRoomContext } from './Context';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-    const {roomId, token, isHost} = useRoomContext();
+    const {roomId, gameId, token, isHost, setGameOption} = useRoomContext();
     const navigate = useNavigate();
     let stompClient = useRef({})
-
-    const [peopleCount, setPeopleCount] = useState({
-        meetingTime: 60,
-        citizenCount: 0,
-        sarkCount: 0,
-        doctorCount: 0,
-        policeCount: 0,
-        detectiveCount: 0,
-        psychologistCount: 0,
-        bullyCount: 0
-      });
 
     const [myRole, setMyRole] = useState(null);
     
@@ -79,7 +68,7 @@ const onSocketConnected = () => {
             break;
         case "OPTION_CHANGED":
             if(isHost) return;
-            setPeopleCount(sysMessage.param);
+            setGameOption(sysMessage.param);
             console.log(sysMessage.param.sarkCount);
             break;
         case "ROLE_ASSIGNED":
@@ -117,14 +106,8 @@ const onSocketConnected = () => {
         );
     };
 
-  
-
-    // 게임 옵션 변경 시 실행
-//   useEffect(() => {
-    
-// }, [peopleCount])
   return (
-    <GameContext.Provider value={{ stompClient, peopleCount, myRole, setPeopleCount, handleGamePageClick, }}>
+    <GameContext.Provider value={{ stompClient, myRole, handleGamePageClick, }}>
       {children}
     </GameContext.Provider>
   );
