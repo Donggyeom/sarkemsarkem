@@ -8,7 +8,7 @@ import Message from './Message';
 
 export default function Chat({sessionId, userName}) {
 
-    let stompCilent = useRef({});
+    let stompClient = useRef({});
 
     const [message, setMessage] = useState("");
     const [chatMessages, setChatMessages] = useState([]);
@@ -18,25 +18,25 @@ export default function Chat({sessionId, userName}) {
     }, [])
 
     useEffect(() => {
-      if(stompCilent.current.connected) enterChatRoom();
-    }, [stompCilent.current.connected])
+      if(stompClient.current.connected) enterChatRoom();
+    }, [stompClient.current.connected])
 
     const connect = (event) => {
         let socket = new SockJS("http://localhost:8080/ws-stomp");
-        stompCilent.current = Stomp.over(socket);
-        stompCilent.current.connect({}, () => {
+        stompClient.current = Stomp.over(socket);
+        stompClient.current.connect({}, () => {
          setTimeout(function() {
            onConnected();
          }, 500);
         })
-        console.log(stompCilent.current.connected);
+        console.log(stompClient.current.connected);
         setIsConnected(true);
         console.log(isConnected);
        }
      
        function onConnected() {
          // user 개인 구독
-         stompCilent.current.subscribe(`/sub/chat/room/CHAT_${sessionId}`, function(message){
+         stompClient.current.subscribe(`/sub/chat/room/CHAT_${sessionId}`, function(message){
            setChatMessages((messages) => [...messages, message.body]);
   
            console.log(message.body);
@@ -47,7 +47,7 @@ export default function Chat({sessionId, userName}) {
        const sendMessage = async (e) => {
         e.preventDefault();
         if (message === '') return;
-        await stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'TALK', roomId:"CHAT_"+sessionId, sender:userName, message: message}))
+        await stompClient.current.send("/pub/chat/message", {}, JSON.stringify({type:'TALK', roomId:"CHAT_"+sessionId, sender:userName, message: message}))
         setMessage("");
       }
        const ChangeMessages = (event) => {
@@ -66,7 +66,7 @@ export default function Chat({sessionId, userName}) {
         .then(res => {
           console.log(res);
         })
-        stompCilent.current.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomId:"CHAT_"+sessionId, sender:userName}));
+        stompClient.current.send("/pub/chat/message", {}, JSON.stringify({type:'ENTER', roomId:"CHAT_"+sessionId, sender:userName}));
         document.getElementById("messageInput").disabled = false;
       }
 

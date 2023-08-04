@@ -16,6 +16,7 @@ const RoomProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [isMicOn, setIsMicOn] = useState(true);
     const [isCamOn, setIsCamOn] = useState(true);
+    const [showImage, setShowImage] = useState(false);
 
     const OV = new OpenVidu();
     const navigate = useNavigate();
@@ -60,15 +61,18 @@ const RoomProvider = ({ children }) => {
     newSession.on('streamCreated', (event) => {
       const subscriber = newSession.subscribe(event.stream, undefined);
       setCamArray((camArray) => [...camArray, subscriber]);
+      console.log(subscriber);
+      console.log(camArray);
       setSubscribers((subscribers) => [...subscribers, subscriber]);
+      console.log(subscribers)
       
-      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).userData, "님이 접속했습니다.");
+      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickname, "님이 접속했습니다.");
     });
 
     // stream 종료 이벤트 발생 시
     newSession.on('streamDestroyed', (event) => {
       deleteSubscriber(event.stream.streamManager);
-      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).userData, "님이 접속을 종료했습니다.")
+      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickname, "님이 접속을 종료했습니다.")
     });
 
     // stream 예외 이벤트 발생 시 에러 출력
@@ -85,7 +89,7 @@ const RoomProvider = ({ children }) => {
           setToken(token);
           console.log(token);
           // 세션에 유저 데이터 입력 후 연결 시도
-          await session.connect(response, {userData: nickName});
+          await session.connect(response, {nickname: nickName, token : token});
 
           // 내 퍼블리셔 객체 생성
           let publisher = await OV.initPublisherAsync(undefined, {
@@ -108,6 +112,7 @@ const RoomProvider = ({ children }) => {
           setPublisher(publisher);
           setCamArray((camArray) => [...camArray, publisher]);
           console.log(publisher)
+          console.log(camArray);
         }
         catch (error) {
           console.error(error);
@@ -117,6 +122,13 @@ const RoomProvider = ({ children }) => {
         }
       })
   }
+   useEffect(() => {
+        if (!isCamOn) {
+            setShowImage(true);
+        } else {
+            setShowImage(false);
+        }
+    }, [isCamOn]);
 
 
   // 토큰 생성하는 함수
@@ -134,7 +146,7 @@ const getToken = async () => {
   const createSession = async () => {
   console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
   const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
-      headers: { 'Content-Type': 'application/json', },
+      headers: { 'Content-Type': 'application/json;charset=utf-8', },
   });
   return response.data; // The sessionId
   }
@@ -143,12 +155,16 @@ const getToken = async () => {
   // 서버에 요청하여 토큰 생성하는 함수
   const createToken = async () => {
   console.log("세션에 연결을 시도합니다.")
-  const response = await axios.post(`/api/game/${roomId}/player`,nickName);
+  const response = await axios.post(`/api/game/${roomId}/player`,nickName, {
+    headers: { 'Content-Type': 'application/json;charset=utf-8', },
+  });
   return response.data; // The token
   }
 
   const getPlayer = async (roomId) => {
-    const response = await axios.get(`/api/game/${roomId}/player`);
+    const response = await axios.get(`/api/game/${roomId}/player`,  {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
+    });
     return response.data;
   }
 
@@ -156,7 +172,7 @@ const getToken = async () => {
     <RoomContext.Provider value={{ roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
-    , getToken, getPlayer}}>
+    , getToken, getPlayer,   showImage, setShowImage }}>
       {children}
     </RoomContext.Provider>
   );

@@ -6,6 +6,8 @@ COPY package.json .
 
 RUN npm install
 
+RUN npm install face-api.js
+
 COPY . .
 
 EXPOSE 3000

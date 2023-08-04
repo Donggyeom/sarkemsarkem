@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GameThread extends Thread {
 	private static GameManager gameManager;
+	private DBService dbService;
 	private GameRoom gameRoom;
 	private GameSession gameSession;
 	private String roomId;
@@ -38,7 +39,7 @@ public class GameThread extends Thread {
 		this.gameId = gameRoom.getGameId();
 		this.nightResultNoticeMessage = "";
 		this.meetingTime = gameSession.getMeetingTime() * 1000;
-		this.nightTime = 60 * 1000;
+		this.nightTime = 30 * 1000;
 	}
 
 	// CITIZEN, SARK, DOCTOR, POLICE, OBSERVER, PSYCHO, ACHI, DETECTIVE
@@ -74,11 +75,7 @@ public class GameThread extends Thread {
 			gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
 
 			// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로!!!!!!
-			if (maxVotedPlayer.getPlayerId().equals("")) {
-				// 대상 없다 노티스메시지 보내기
-				gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.", PhaseType.NIGHT);
-			} 
-			else {
+			if (!maxVotedPlayer.getPlayerId().equals("")) {
 				// 저녁 페이즈 => 추방투표 시작
 				convertPhaseToTwilight();
 				
@@ -105,13 +102,10 @@ public class GameThread extends Thread {
 			convertPhaseToNight();
 			
 			// 밤 사이 죽은 사람 있으면 처리
-			nightVote();
-			
-			// 밤 사이 죽은 사람 있으면 처리
 			List<RolePlayer> deadPlayers = nightVote();
 			// 사망 대상이 없으면 
 			if (deadPlayers.isEmpty()) {
-				nightResultNoticeMessage = "밤 사이 삵이 사냥에 실패했습니다.";
+				nightResultNoticeMessage = "밤사이 삵이 사냥에 실패했습니다.";
 			}
 			// 사망 대상이 있으면
 			else {
@@ -122,7 +116,7 @@ public class GameThread extends Thread {
 					deadPlayerMap.put("deadPlayerNickname", target.getNickname());
 					gameManager.sendHuntedMessage(roomId, deadPlayerMap);
 					
-					nightResultNoticeMessage = "밤 사이에 " + target.getNickname() + "님이 삵에게 사냥 당했습니다.";
+					nightResultNoticeMessage = "밤사이에 " + target.getNickname() + "님이 삵에게 사냥당했습니다.";
 				}
 			}
 
@@ -133,6 +127,8 @@ public class GameThread extends Thread {
 		// 게임 종료 메시지 전송
 		gameManager.sendGameEndMessage(roomId);
 		// 게임 결과 DB저장
+		dbService.InsertGameResult(gameSession);
+		
 	}
 
 	// 역할배정
@@ -218,6 +214,7 @@ public class GameThread extends Thread {
 				hMissionIdx.put("missionIdx", num);
 				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK),
 						hMissionIdx);
+				gameSession.setHiddenMissionCnt(gameSession.getHiddenMissionCnt()+1);
 			}
 
 		}
@@ -229,7 +226,9 @@ public class GameThread extends Thread {
 			rp.setVotedCnt(0);
 		}
 		// "대상 선택" 메시지 전송
-		gameManager.sendTargetSelectionMessage(roomId);
+		param = new HashMap<>();
+		param.put("day", gameSession.getDay());
+		gameManager.sendTargetSelectionMessage(roomId, param);
 	}
 
 	// 낮 투표 결과 종합
@@ -299,6 +298,8 @@ public class GameThread extends Thread {
 	private void convertPhaseToNight() {
 		// 밤 페이즈로 변경
 		gameSession.setPhase(PhaseType.NIGHT);
+		// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로온거라, 노티스메시지 보내주기
+		gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.", gameSession.getPhase());
 		// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택, 받은 투표수 초기화
 		for (RolePlayer rp : gameSession.getPlayers()) {
 			rp.setTarget("");

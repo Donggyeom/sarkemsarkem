@@ -1,6 +1,6 @@
 import Background from '../components/backgrounds/BackgroundSunset';
 import styled from 'styled-components';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 // img
 import boxImage from '../img/box.png';
 import sc_police from '../img/sc_경찰.png';
@@ -23,7 +23,6 @@ import upbutton from '../img/upbutton.png';
 import downbutton from '../img/downbutton.png';
 // 
 import BackButton from '../components/buttons/backButton';
-import CamCat from '../components/camera/camcat';
 import { useLocation, useNavigate } from 'react-router-dom';
 import StartButton from '../components/buttons/StartButton';
 import InviteButton from '../components/buttons/InviteButton';
@@ -33,7 +32,6 @@ import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
 import HelpButton from '../components/buttons/HelpButton';
 import Help from '../components/games/Help';
-
 
 const StyledContent = styled.div`
   display: flex;
@@ -56,8 +54,18 @@ const RightSection = styled.div`
 
 
 const DivWrapper = styled.div`
+
   display: flex;
   // justify-content : space-around;
+  
+`;
+
+const DivWrapper2 = styled.div`
+
+  display: flex;
+  height: 15%;
+  justify-content: space-around;
+  
 `;
 
 const LeftPart = styled.div`
@@ -70,6 +78,16 @@ const LeftPart = styled.div`
 `;
 
 const RightPart = styled.div`
+  /* Right part of each RightDiv */
+  flex: 2.75;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-position: center center;
+  background-repeat: no-repeat;
+`;
+
+const MiddlePart = styled.div`
   /* Right part of each RightDiv */
   flex: 2.75;
   display: flex;
@@ -125,13 +143,13 @@ const ButtonContainer = styled.div`
 `;
 const ButtonContainer2 = styled.div`
   width: auto;
-  height: 60%;
+  height: 80%;
 `;
 
 
 const CommonLobby = ()=>{
   const {roomId, isHost, camArray, leaveSession, token} = useRoomContext();
-  const {peopleCount, setPeopleCount, handleGamePageClick, stompCilent} = useGameContext();
+  const {peopleCount, setPeopleCount, handleGamePageClick, stompClient} = useGameContext();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -168,8 +186,8 @@ const CommonLobby = ()=>{
 
   // 변경된 게임 옵션을 redis 토픽에 전달
   const callChangeOption = () => {
-    if(stompCilent.current.connected && token !== null) {
-      stompCilent.current.send("/pub/game/action", {}, 
+    if(stompClient.current.connected && token !== null) {
+      stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
               code:'OPTION_CHANGE', 
               roomId: roomId, 
@@ -189,7 +207,7 @@ const CommonLobby = ()=>{
   // 게임 옵션을 변경처리 하는 함수
   const handlePeopleCountChange = (part, value) => {
     if (!isHost) return;
-    if (stompCilent.current.connect === undefined) return;
+    if (stompClient.current.connect === undefined) return;
   if (part === 'meetingTime') {
     if (value >= 15 && value <= 180) {
       setPeopleCount((prevPeopleCount) => ({
@@ -198,7 +216,7 @@ const CommonLobby = ()=>{
       }));
     }
   } else {
-    if (stompCilent.current.connect === undefined) return;
+    if (stompClient.current.connect === undefined) return;
     if (value >= 0) {
       setPeopleCount((prevPeopleCount) => ({
         ...prevPeopleCount,
@@ -460,33 +478,39 @@ const CommonLobby = ()=>{
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
-          <DivWrapper>
+          
           
             {isHost ? (
               <>
+              <DivWrapper>
                 <LeftPart>
-                <ButtonContainer>
-
-                <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
-                </ButtonContainer>
-                </LeftPart>
-                <RightPart>
                   <ButtonContainer>
-                    <InviteButton onClick={handleInviteClick} />
+
+                  <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
                   </ButtonContainer>
+                  </LeftPart>
+                  <RightPart>
+                    <ButtonContainer>
+                      <InviteButton onClick={handleInviteClick} />
+                    </ButtonContainer>
                 </RightPart>
-                
+              </DivWrapper>
+               
               </>
             ) : (
               <>
-                <RightPart>
+                <DivWrapper2>
+                  <MiddlePart>
                   <ButtonContainer2>
                     <InviteButton onClick={handleInviteClick} />
                   </ButtonContainer2>
-                </RightPart>
+
+                  </MiddlePart>
+                  
+
+                </DivWrapper2>
               </>
             )}
-          </DivWrapper>
         
         </RightSection>
         <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />

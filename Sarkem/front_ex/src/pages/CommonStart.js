@@ -16,7 +16,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import ToggleButton from '../components/buttons/ToggleButton';
 
-
 const StyledStartPage = styled.div`
 `;
 
@@ -182,6 +181,7 @@ const CommonStart = ({onClick} ) => {
     tracks.forEach((track) => {
       track.enabled = camOn;
     });
+
   };
 
   const handleNickNameChange = (event) => {

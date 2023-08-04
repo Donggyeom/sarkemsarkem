@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
-import voteImage from '../../img/votefoot.png'
+import voteImage from '../../img/votefoot.png';
+import { useGameContext } from '../../GameContext';
 
 
 const Votefoot = styled.img`
@@ -23,6 +24,39 @@ const CamCatGrid = styled.div`
       left : ${style.left};
 
   `}
+`;
+
+const ActionButton = styled.button`
+  padding: 8px 16px;
+  border: none;
+  color: white;
+  cursor: pointer;
+`;
+
+const ButtonWrapper = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+
+`;
+
+const VotefootWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: ${({ show }) => (show ? 'block' : 'none')};
+`;
+
+const VotefootImage = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const calculateGrid = (camCount) => {
@@ -197,37 +231,109 @@ const CamCatWrapper = styled.div`
   `
   : ''};
   `;
-  
+
   const DayNightCamera = React.memo(({ camArray }) => {
     const camCount = camArray.length;
     const gridStyles = calculateGrid(camCount);
-    const [clickedCameras, setClickedCameras] = useState([]);
-
-    const handleCamClick = (index) => {
-      setClickedCameras((prevClicked) => {
-        const newClicked = [...prevClicked];
-        if (newClicked.includes(index)) {
-          // Camera was already clicked, remove it from the clickedCameras array
-          const indexToRemove = newClicked.indexOf(index);
-          newClicked.splice(indexToRemove, 1);
-        } else {
-          // Camera was not clicked, add it to the clickedCameras array
-          newClicked.push(index);
-        }
-        return newClicked;
-      });
+    const [clickedCamera, setClickedCamera] = useState(null);
+    const [isConfirmed, setIsConfirmed] = useState(false);
+    const [isSkipped, setIsSkipped] = useState(false);
+    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture } = useGameContext();
+  
+    useEffect(() => {
+      setIsConfirmed(false);
+      setClickedCamera(null);
+      setIsSkipped(false);
+    }, [startVote]);
+  
+    const handleCamClick = (user) => {
+      if (!startVote || dayCount === 0 || isConfirmed || isSkipped) {
+        return;
+      }
+  
+      if (clickedCamera === user) {
+        setClickedCamera(null);
+      } else {
+        selectAction({ playerId: JSON.parse(user.stream.connection.data).token });
+        setClickedCamera(user);
+      }
     };
   
+    const handleConfirmClick = () => {
+      if (clickedCamera && !isConfirmed) {
+        setIsConfirmed(true);
+        selectConfirm();
+      }
+    };
+  
+    const handleSkipClick = () => {
+      if (!isConfirmed && !isSkipped && startVote) {
+        setIsSkipped(true);
+        setClickedCamera(null);
+        setSelectedTarget("");
+        selectAction({ playerId: null });
+        selectConfirm();
+      }
+    };
+  
+    const startHiddenMission = () => {
+      predictWebcam();
+    }
+    const stopHiddenMission = () => {
+      stopPredicting();
+    }
+
     return (
       <CamCatGrid style={gridStyles}>
-        {camArray.slice().reverse().map((user, index) => (
-          <CamCatWrapper key={index} camCount={camCount} index={index} onClick={() => handleCamClick(index)}>
-            <CamCat props={camArray[index]} />
-            {clickedCameras.includes(index) && (
-              <Votefoot src={voteImage} alt="Vote" />
-            )}
+        {camArray.map((user, index) => (
+          <CamCatWrapper
+            key={index}
+            camCount={camCount}
+            user={user}
+            index={index}
+            onClick={() => handleCamClick(user)}
+          >
+            <CamCat props={camArray[index]} user={user} />
+            <VotefootWrapper show={clickedCamera === user && startVote}>
+              <VotefootImage src={voteImage} alt="Vote" />
+            </VotefootWrapper>
           </CamCatWrapper>
         ))}
+        <ButtonWrapper>
+          {dayCount === 1 ? (
+            <>
+              {startVote && (
+                <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+                  {isSkipped ? '스킵됨' : '스킵하기'}
+                </ActionButton>
+              )}
+            </>
+          ) : (
+            <>
+              {isConfirmed ? (
+                <ActionButton disabled>확정됨</ActionButton>
+              ) : (
+                startVote && (
+                  <ActionButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
+                    {clickedCamera ? '확정하기' : '투표할 사람을 선택하세요'}
+                  </ActionButton>
+                )
+              )}
+              {startVote && (
+                <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+                  {isSkipped ? '스킵됨' : '스킵하기'}
+                </ActionButton>
+              )}
+            </>
+          )}
+          <ActionButton onClick={startHiddenMission}>
+            히든미션
+          </ActionButton>
+          <ActionButton onClick={stopHiddenMission}>
+            미션 종료
+          </ActionButton>
+          <p>Detected Gesture: {detectedGesture}</p>
+        </ButtonWrapper>
       </CamCatGrid>
     );
   });

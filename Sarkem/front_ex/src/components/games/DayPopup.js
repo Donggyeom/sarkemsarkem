@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useGameContext } from '../../GameContext';
 
 const fadeInOut = keyframes`
   0% {
@@ -7,7 +8,6 @@ const fadeInOut = keyframes`
   }
   100% {
     opacity: 0;
-    display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
   }
 `;
 
@@ -15,7 +15,7 @@ const StyledPopupContainer = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* 중앙 정렬 */
+  transform: translate(-50%, -50%);
   background: #f3b7bf;
   border-radius: 30.94px;
   border: 5.16px solid #000000;
@@ -37,26 +37,28 @@ const StyledPopupTitle = styled.div`
   font-family: "RixInooAriDuri", sans-serif;
   text-align: center;
   text-shadow: 1px 1px black;
-  -webkit-text-stroke: 1px black; /* For webkit-based browsers like Chrome, Safari */
-  text-stroke: 1px black; /* Standard property for future compatibility */
-  padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
+  -webkit-text-stroke: 1px black;
+  text-stroke: 1px black;
+  padding: 10px;
 `;
 
-
-const DayPopup = () => {
-  const [showPopup, setShowPopup] = useState(true);
+const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수정
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    const fadeOutTimeout = setTimeout(() => {
-      setShowPopup(false);
-    }, 3500);
+    if (sysMessage) {
+      setShowPopup(true);
 
-    return () => clearTimeout(fadeOutTimeout);
-  }, []);
+      const fadeOutTimeout = setTimeout(() => {
+        setShowPopup(false);
+      }, 3500);
+
+      return () => clearTimeout(fadeOutTimeout);
+    }
+  }, [sysMessage]);
 
   return (
     <StyledPopupContainer showPopup={showPopup}>
-      {/* Your popup content */}
       <div
         style={{
           flexShrink: '0',
@@ -64,7 +66,6 @@ const DayPopup = () => {
           height: '0.01px',
           position: 'relative',
           transformOrigin: '0 0',
-          // transform: 'rotate(0deg) scale(1, -1)',
         }}
       >
         <div
@@ -79,7 +80,7 @@ const DayPopup = () => {
             flexDirection: 'row',
             gap: '12.89px',
             alignItems: 'center',
-            justifyContent: 'center', // Center the content horizontally
+            justifyContent: 'center',
             width: '229.44px',
             height: '45px',
             position: 'relative',
@@ -90,9 +91,7 @@ const DayPopup = () => {
           N일차 낮
         </div>
       </div>
-
-      {/* 메세지넣을곳 */}  
-      <StyledPopupTitle>닉네임 님이 추방되었습니다.</StyledPopupTitle>
+      <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };
