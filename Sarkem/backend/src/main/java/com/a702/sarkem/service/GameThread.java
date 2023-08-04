@@ -72,12 +72,12 @@ public class GameThread extends Thread {
 			expulsionPlayer.put("targetId", maxVotedPlayer.getPlayerId());
 			expulsionPlayer.put("targetNickname", maxVotedPlayer.getNickname());
 			// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
-			gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
+			gameManager.sendEndDayVoteMessage(roomId);
 
 			// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로!!!!!!
 			if (!maxVotedPlayer.getPlayerId().equals("")) {
-				// 저녁 페이즈 => 추방투표 시작
-				convertPhaseToTwilight();
+				// 저녁 페이즈 => 추방투표 시작 / 추방 투표에 투표 대상자 보냄
+				convertPhaseToTwilight(expulsionPlayer);
 				
 				// 추방 투표 결과 종합
 				boolean voteResult = twilightVote(maxVotedPlayer);
@@ -260,7 +260,7 @@ public class GameThread extends Thread {
 	}
 
 	// 저녁 페이즈
-	private void convertPhaseToTwilight() {
+	private void convertPhaseToTwilight(HashMap<String, String> expulsionPlayer) {
 		// 저녁 페이즈로 변경
 		gameSession.setPhase(PhaseType.TWILIGHT);
 		// 투표 현황 초기화
@@ -270,7 +270,7 @@ public class GameThread extends Thread {
 			rp.setVotedCnt(0);
 		}
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
-		gameManager.sendTwilightPhaseMessage(roomId);
+		gameManager.sendTwilightPhaseMessage(roomId, expulsionPlayer);
 		// 대상이 있으면 저녁투표 시작
 		gameManager.sendTwilightSelectionMessage(roomId);
 	}

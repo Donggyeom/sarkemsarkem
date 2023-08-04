@@ -55,6 +55,7 @@ const CamCat = (props) => {
         <div style={{ flex: 0.6, justifyContent: 'center' }}>
 
           <OpenViduVideoComponent streamManager={props.props} />
+          {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
           <img
             src={camcatImage}
             alt="CamCat"

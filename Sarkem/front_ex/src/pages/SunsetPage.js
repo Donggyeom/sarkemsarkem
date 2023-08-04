@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef }  from 'react';
+import '../index.css';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
 import CamButton from '../components/buttons/CamButton';
@@ -14,6 +15,7 @@ import { useGameContext } from '../GameContext';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
+
 
 const StyledContent = styled.div`
   display: flex;

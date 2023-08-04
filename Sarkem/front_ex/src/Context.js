@@ -16,6 +16,7 @@ const RoomProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [isMicOn, setIsMicOn] = useState(true);
     const [isCamOn, setIsCamOn] = useState(true);
+    const [showImage, setShowImage] = useState(false);
 
     const OV = new OpenVidu();
     const navigate = useNavigate();
@@ -121,6 +122,13 @@ const RoomProvider = ({ children }) => {
         }
       })
   }
+   useEffect(() => {
+        if (!isCamOn) {
+            setShowImage(true);
+        } else {
+            setShowImage(false);
+        }
+    }, [isCamOn]);
 
 
   // 토큰 생성하는 함수
@@ -164,7 +172,7 @@ const getToken = async () => {
     <RoomContext.Provider value={{ roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
-    , getToken, getPlayer}}>
+    , getToken, getPlayer,   showImage, setShowImage }}>
       {children}
     </RoomContext.Provider>
   );

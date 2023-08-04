@@ -82,7 +82,7 @@ const ScMini = ({ alt, role }) => {
     setTimeout(() => {
       setIsPopupOpen(false);
       setIsClosing(false); // 팝업이 완전히 사라지면 팝업 닫는 상태를 false로 변경
-    }, 500); // 0.5초(500ms) 후에 팝업을 완전히 닫습니다.
+    }, 450); // 0.5초(500ms) 후에 팝업을 완전히 닫습니다.
   };
 
   let buttonImageSrc;

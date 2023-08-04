@@ -3,12 +3,13 @@ import { useNavigate, useLocation } from 'react-router';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
+import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
   // roomId : 방번호 , token : 플레이어아이디 
-    const {roomId, token, isHost} = useRoomContext();
+    const {roomId, token, isHost, isMicOn, setIsMicOn, publisher} = useRoomContext();
     const navigate = useNavigate();
     let stompClient = useRef({})
 
@@ -30,12 +31,18 @@ const GameProvider = ({ children }) => {
     const [selectedTarget, setSelectedTarget] = useState("");
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
+    const [threatedTarget, setThreatedTarget] = useState("");
 
+    const [gestureRecognizer, setGestureRecognizer] = useState(null);
+    const [detectedGesture, setDetectedGesture] = useState('');
+    const [animationFrameId, setAnimationFrameId] = useState(null);
     const location = useLocation();
-    
 
     useEffect(() => {
-        if (token !== null) connectGameWS();
+        if (token !== null) {
+          connectGameWS();
+          loadGestureRecognizer();
+        }
     }, [token]);
 
   // WebSocket 연결
@@ -100,6 +107,13 @@ const onSocketConnected = () => {
         case "PHASE_DAY":
               navigate(`/${roomId}/day`)
             break;
+        case "PHASE_TWILIGHT":
+            // navigate(`/${roomId}/twilight`)
+            setThreatedTarget(); // 저녁 되면 협박 풀림
+            break;
+        case "PHASE_NIGHT":
+            // navigate(`/${roomId}/night`)
+            break;
 
         case "TARGET_SELECTION":
             alert('투표가 시작됐습니다');
@@ -121,7 +135,7 @@ const onSocketConnected = () => {
               setExpulsionTarget(sysMessage.param.targetId);
               console.log("투표종료");
             }
-              break;
+            break;
   
         case "TARGET_SELECTION_END":
             alert("선택 완료", sysMessage.param.targetNickname);
@@ -150,6 +164,10 @@ const onSocketConnected = () => {
 
         case "BE_EXCLUDED":
 
+        case "BE_THREATENED":
+            alert("냥아치 협박 시작!", sysMessage.playerId);
+            setThreatedTarget(sysMessage.playerId);
+            setIsMicOn(false);
             break;
 
 
@@ -251,14 +269,46 @@ const onSocketConnected = () => {
       const sysMessage = JSON.parse(message.body);
       setSystemMessages((prevMessages) => [...prevMessages, sysMessage]);
     };
+  
+    // 제스처 인식기 생성
+    const loadGestureRecognizer = async () => {
+      const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm');
+      const recognizer = await GestureRecognizer.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task',
+          delegate: 'GPU',
+          numHands: 2
+        },
+        runningMode: 'VIDEO',
+      });
+      setGestureRecognizer(recognizer);
+    };
 
-    // 게임 옵션 변경 시 실행
-//   useEffect(() => {
-    
-// }, [peopleCount])
+    // 
+    const predictWebcam = async () => {
+      if (gestureRecognizer) {
+        const videoElement = publisher.videos[1].video;
+        const nowInMs = Date.now();
+        const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
+  
+        if (results.gestures.length > 0) {
+          const detectedGestureName = results.gestures[0][0].categoryName;
+          setDetectedGesture(detectedGestureName);
+        } else {
+          setDetectedGesture('');
+        }
+        // Continue predicting frames from webcam
+        setAnimationFrameId(requestAnimationFrame(predictWebcam));
+      }
+    };
+    const stopPredicting = () => {
+      cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
+      setAnimationFrameId(null);
+    };
+
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion }}>
+      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture }}>
       {children}
     </GameContext.Provider>
   );
@@ -274,4 +324,4 @@ const useGameContext = () => {
 
 
 
-export { GameProvider, useGameContext,  };
+export { GameProvider, useGameContext };
