@@ -232,11 +232,9 @@ const onSocketConnected = () => {
         if (results.gestures.length > 0) {
           const detectedGestureName = results.gestures[0][0].categoryName;
           setDetectedGesture(detectedGestureName);
-          console.log(detectedGestureName)
         } else {
           setDetectedGesture('');
         }
-        // console.log(detectedGesture);
         // Continue predicting frames from webcam
         setAnimationFrameId(requestAnimationFrame(predictWebcam));
       }

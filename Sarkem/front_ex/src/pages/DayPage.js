@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundDay';
 
@@ -10,10 +10,7 @@ import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
 
-import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
-import axios from 'axios';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
@@ -50,7 +47,7 @@ const DayPage = () => {
 
   const { roomId, 
     publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext();
-  const { myRole, peopleCount, predictWebcam, stopPredicting } = useGameContext();
+  const { myRole, peopleCount } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
   
   
@@ -139,11 +136,6 @@ const DayPage = () => {
   const handleLogButtonClick = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
-   
-  const startHiddenMission = () => {
-    // videoSrc.addEventListener('loadeddata', predictWebcam);
-    predictWebcam();
-  }
 
     return (
     <Background>
@@ -152,14 +144,14 @@ const DayPage = () => {
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{meetingTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
-        <MicButton alt="Mic Button" onClick={stopPredicting} isMicOn={isMicOn}/>
-        <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
-          <DayPopup></DayPopup>
-          <DayNightCamera camArray={camArray}/>
-          {getMyRole()}
-        </StyledDayPage>
-        <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
-          {chatVisible()}
+        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}/>
+        <DayPopup></DayPopup>
+        <DayNightCamera camArray={camArray}/>
+        {getMyRole()}
+      </StyledDayPage>
+      <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
+      {chatVisible()}
     </Background>
   );
 };
