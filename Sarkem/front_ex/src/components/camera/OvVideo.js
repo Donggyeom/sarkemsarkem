@@ -26,6 +26,7 @@ export default class OpenViduVideoComponent extends Component {
 }
 
 // 아래 코드처럼 했는데... iscamon이 전체 어레이라서 여기에서 하면 안되고 publisher의 cam만 off할수있도록 해야함... 근데 ㄹㅇ array진짜열받네......
+// !! openvidu에서 지원하지 않는 기능!!!!!!!!!!!!!!!!!!!!!!!! 그냥 그 위에 css 추가해서 이미지 보이게 하는 수밖에 없음!!!!!!!!!!!!!!
 // import React, { useEffect, useRef } from 'react';
 // import { useRoomContext } from '../../Context';
 // import Tempcat from '../../img/tempcat.png';
