@@ -15,6 +15,8 @@ import { useGameContext } from '../GameContext';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
+import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
+
 
 
 const StyledContent = styled.div`
@@ -626,8 +628,10 @@ const SunsetPage = () => {
             </CamCatWrapper>
           ))}
         </CamCatGrid>
-        <button onClick={startVote ? agreeExpulsion : null} disabled={!startVote}>찬성</button>
-        <button onClick={startVote ? disagreeExpulsion : null} disabled={!startVote}>반대</button>
+        <div>
+          <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
+          <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
+        </div>
         {getMyRole()}
       </StyledContent>
       {/* </CamCatGridContainer> */}

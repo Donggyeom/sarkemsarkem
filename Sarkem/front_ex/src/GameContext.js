@@ -130,13 +130,13 @@ const onSocketConnected = () => {
             break;
 
         case "DAY_VOTE_END":
-            if (dayCount !== 1){
-              setStartVote(false);
-              alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
-              if (sysMessage.param.targetId == null) break;
-              setExpulsionTarget(sysMessage.param.targetId);
-              console.log("투표종료");
-            }
+            // if (dayCount !== 1){
+            //   setStartVote(false);
+            //   if (sysMessage.param.targetId == null) break;
+            //   setExpulsionTarget(sysMessage.param.targetId);
+            //   console.log("투표종료");
+            // }
+                setStartVote(false);
             break;
   
         case "TARGET_SELECTION_END":
