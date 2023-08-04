@@ -238,7 +238,7 @@ const CamCatWrapper = styled.div`
     const [clickedCamera, setClickedCamera] = useState(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
-    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount } = useGameContext();
+    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture } = useGameContext();
   
     useEffect(() => {
       setIsConfirmed(false);
@@ -276,6 +276,13 @@ const CamCatWrapper = styled.div`
       }
     };
   
+    const startHiddenMission = () => {
+      predictWebcam();
+    }
+    const stopHiddenMission = () => {
+      stopPredicting();
+    }
+
     return (
       <CamCatGrid style={gridStyles}>
         {camArray.map((user, index) => (
@@ -319,6 +326,13 @@ const CamCatWrapper = styled.div`
               )}
             </>
           )}
+          <ActionButton onClick={startHiddenMission}>
+            히든미션
+          </ActionButton>
+          <ActionButton onClick={stopHiddenMission}>
+            미션 종료
+          </ActionButton>
+          <p>Detected Gesture: {detectedGesture}</p>
         </ButtonWrapper>
       </CamCatGrid>
     );

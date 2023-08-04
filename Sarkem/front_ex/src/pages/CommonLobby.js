@@ -1,7 +1,7 @@
 import Background from '../components/backgrounds/BackgroundSunset';
 import '../index.css';
 import styled from 'styled-components';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 // img
 import boxImage from '../img/box.png';
 import sc_police from '../img/sc_경찰.png';
@@ -24,7 +24,6 @@ import upbutton from '../img/upbutton.png';
 import downbutton from '../img/downbutton.png';
 // 
 import BackButton from '../components/buttons/backButton';
-import CamCat from '../components/camera/camcat';
 import { useLocation, useNavigate } from 'react-router-dom';
 import StartButton from '../components/buttons/StartButton';
 import InviteButton from '../components/buttons/InviteButton';
@@ -34,7 +33,6 @@ import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
 import HelpButton from '../components/buttons/HelpButton';
 import Help from '../components/games/Help';
-
 
 const StyledContent = styled.div`
   display: flex;
