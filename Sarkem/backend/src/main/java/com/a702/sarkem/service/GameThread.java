@@ -89,7 +89,7 @@ public class GameThread extends Thread {
 				// 실제로 추방하기
 				if (voteResult) {
 					maxVotedPlayer.setAlive(false);
-					maxVotedPlayer.setRole(GameRole.OBSERVER);
+//					maxVotedPlayer.setRole(GameRole.OBSERVER);
 					// 추방 메시지 보내기
 					gameManager.sendExcludedMessage(roomId, maxVotedPlayer.getPlayerId());
 				}
@@ -124,8 +124,11 @@ public class GameThread extends Thread {
 			if (isGameEnd()) break;
 		}
 
+		// 직업 정보 전송
+		gameManager.sendJobDiscloseMessage(roomId, gameSession.getPlayersJob());
 		// 게임 종료 메시지 전송
 		gameManager.sendGameEndMessage(roomId);
+		
 		// 게임 결과 DB저장
 		dbService.InsertGameResult(gameSession);
 		
@@ -336,7 +339,7 @@ public class GameThread extends Thread {
 		// 사냥 대상 사망 처리
 		for (RolePlayer target : sarkTarget) {
 			target.setAlive(false);
-			target.setRole(GameRole.OBSERVER);
+//			target.setRole(GameRole.OBSERVER);
 		}
 		
 		return sarkTarget;
@@ -388,6 +391,7 @@ public class GameThread extends Thread {
 		log.debug("삵 수: " + aliveSark + " / 시민 수: " + aliveCitizen);
 		// 마피아수>=시민수 => 마피아 win
 		if (aliveSark >= aliveCitizen) {
+			
 			gameSession.setWinTeam(1);
 			return true;
 		}

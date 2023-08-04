@@ -679,6 +679,10 @@ public class GameManager {
 	// 2. 게임 진행 끝
 
 	// 3. 게임 종료
+	// "직업공개" 메시지 전송
+	public void sendJobDiscloseMessage(String roomId, Map<String, String> job) {
+		sendSystemMessageToAll(roomId, SystemCode.JOB_DISCLOSE, job);
+	}
 	// "게임종료" 메시지 전송
 	public void sendGameEndMessage(String roomId) {
 		sendSystemMessageToAll(roomId, SystemCode.GAME_END, null);
