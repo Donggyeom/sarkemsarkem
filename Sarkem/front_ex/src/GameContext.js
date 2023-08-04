@@ -8,7 +8,7 @@ const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
   // roomId : 방번호 , token : 플레이어아이디 
-    const {roomId, token, isHost} = useRoomContext();
+    const {roomId, token, isHost, isMicOn, setIsMicOn} = useRoomContext();
     const navigate = useNavigate();
     let stompClient = useRef({})
 
@@ -30,6 +30,7 @@ const GameProvider = ({ children }) => {
     const [selectedTarget, setSelectedTarget] = useState("");
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
+    const [threatedTarget, setThreatedTarget] = useState("");
 
     const location = useLocation();
     
@@ -101,6 +102,13 @@ const onSocketConnected = () => {
         case "PHASE_DAY":
               navigate(`/${roomId}/day`)
             break;
+        case "PHASE_TWILIGHT":
+            // navigate(`/${roomId}/twilight`)
+            setThreatedTarget(); // 저녁 되면 협박 풀림
+            break;
+        case "PHASE_NIGHT":
+            // navigate(`/${roomId}/night`)
+            break;
 
         case "TARGET_SELECTION":
           // if (sysMessage.param.day !== 1){
@@ -123,12 +131,18 @@ const onSocketConnected = () => {
               setExpulsionTarget(sysMessage.param.targetId);
               console.log("투표종료");
             }
-              break;
+            break;
   
-      case "TARGET_SELECTION_END":
-        alert("선택 완료", sysMessage.param.targetNickname);
-        setSelectedTarget("");
-        break;
+        case "TARGET_SELECTION_END":
+            alert("선택 완료", sysMessage.param.targetNickname);
+            setSelectedTarget("");
+            break;
+
+        case "BE_THREATENED":
+            alert("냥아치 협박 시작!", sysMessage.playerId);
+            setThreatedTarget(sysMessage.playerId);
+            setIsMicOn(false);
+            break;
 
 
 
