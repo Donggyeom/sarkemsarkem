@@ -73,6 +73,16 @@ const NightPage = () => {
     }
   };
 
+  const chatVisible = () =>{
+    if (myRole === 'OBSERVER'){
+      return (
+        <>
+          <ChatButtonAndPopup />
+        </>
+      )
+    }
+  }
+
   const handleMicButtonClick = () => {
     const micOn = !isMicOn;
     setIsMicOn(micOn);
@@ -119,7 +129,7 @@ const NightPage = () => {
           <NightPopup></NightPopup>
         {getMyRole()}
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
-        <ChatButtonAndPopup />
+        {chatVisible()}
       </StyledNightPage>
         
     </Background>

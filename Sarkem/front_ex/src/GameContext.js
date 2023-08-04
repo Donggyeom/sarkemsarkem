@@ -81,7 +81,6 @@ const onSocketConnected = () => {
             alert(sysMessage.param.message);
             break;
         case "GAME_START":   
-            alert('게임시작');
             navigate(`/${roomId}/day`);
             break;
         case "ONLY_HOST_ACTION":
@@ -97,22 +96,21 @@ const onSocketConnected = () => {
             console.log(`당신은 ${sysMessage.param.role} 입니다.`);
             setMyRole(sysMessage.param.role);
             break;
-            
+
         case "PHASE_DAY":
               navigate(`/${roomId}/day`)
             break;
 
         case "TARGET_SELECTION":
-          // if (sysMessage.param.day !== 1){
             alert('투표가 시작됐습니다');
             setStartVote(true);
             setDayCount(sysMessage.param.day);
-          // }
             break;
 
         case "VOTE_SITUATION":
             console.log(sysMessage.param);
-            setMyVote(sysMessage.param.votedCnt);
+            setVotesituation(sysMessage.param);
+            alert(voteSituation , "투표결과");
             break;
 
         case "DAY_VOTE_END":
@@ -125,19 +123,42 @@ const onSocketConnected = () => {
             }
               break;
   
-      case "TARGET_SELECTION_END":
-        alert("선택 완료", sysMessage.param.targetNickname);
-        setSelectedTarget("");
-        break;
+        case "TARGET_SELECTION_END":
+            alert("선택 완료", sysMessage.param.targetNickname);
+            setSelectedTarget("");
+            break;
+
+        case "PHASE_TWILIGHT":
+            navigate(`/${roomId}/sunset`);
+            
+            break;
+
+        case "TWILIGHT_SELECTION":
+            alert("죽일지 살릴지 선택해주세요");
+            setStartVote(true);
+            break;
+
+        case "TWILIGHT_SELECTION_END":
+            // 추방 투표 완료(개인)
+            console.log("추방 투표 완료");
+            break;
+
+        case "TWILIGHT_VOTE_END":
+            setStartVote(false);
+            alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
+            break;
+
+        case "BE_EXCLUDED":
+
+            break;
 
 
 
-        // case "PHASE_TWILIGHT":
-        //     navigate(`/${roomId}/sunset`);
-        //     break;
-        // case "PHASE_NIGHT":
-        //     navigate(`/${roomId}/night`);
-        //     break;
+
+
+        case "PHASE_NIGHT":
+            navigate(`/${roomId}/night`);
+            break;
         
 
         }
@@ -145,18 +166,18 @@ const onSocketConnected = () => {
     }
 
     const handleGamePageClick = () => {
-        console.log(token);
-        stompClient.current.send("/pub/game/action", {}, 
-        JSON.stringify({
-            code:'GAME_START', 
-            roomId: roomId, 
-            playerId: token
-        })
-        );
-
-    }
-
-    const selectAction = ((target) => {
+      console.log(token);
+      stompClient.current.send("/pub/game/action", {}, 
+      JSON.stringify({
+          code: 'GAME_START', 
+          roomId: roomId, 
+          playerId: token
+      })
+      );
+  
+  }
+  
+  const selectAction = ((target) => {
       console.log(target, "2번");
       if (selectedTarget != "") {
           setSelectedTarget("");
@@ -177,24 +198,52 @@ const onSocketConnected = () => {
                   }
               }))
       }
-  })
-
+  });
+  
   // 대상 확정
   const selectConfirm = () => {
-    console.log(selectedTarget + " 플레이어 선택 ");
-    console.log(selectedTarget.nickname + "3번");
-    if (stompClient.current.connected && token !== null) {
-        stompClient.current.send("/pub/game/action", {},
-            JSON.stringify({
-                code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
-                roomId: roomId,
-                playerId: token,
-                param: {
-                    // target: selectedTarget
-                }
-            }));
-    }
-};
+      console.log(selectedTarget + " 플레이어 선택 ");
+      console.log(selectedTarget.nickname)
+      if (stompClient.current.connected && token !== null) {
+          stompClient.current.send("/pub/game/action", {},
+              JSON.stringify({
+                  code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
+                  roomId: roomId,
+                  playerId: token,
+                  param: {
+                      // target: selectedTarget
+                  }
+              }));
+      }
+  };
+  
+  // 추방 투표 동의
+  const agreeExpulsion = () => {
+      stompClient.current.send("/pub/game/action", {}, 
+          JSON.stringify({
+              code: 'EXPULSION_VOTE',
+              roomId: roomId, 
+              playerId: token,
+              param: {
+                  result: true
+              }
+          })
+      );
+  };
+  
+  // 추방 투표 반대
+  const disagreeExpulsion = () => {
+      stompClient.current.send("/pub/game/action", {}, 
+          JSON.stringify({
+              code: 'EXPULSION_VOTE',
+              roomId: roomId, 
+              playerId: token,
+              param: {
+                  result: false
+              }
+          })
+      );
+  };
 
     // noticemessage 처리
     const [systemMessages, setSystemMessages] = useState([]);
@@ -209,7 +258,7 @@ const onSocketConnected = () => {
 // }, [peopleCount])
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage, dayCount }}>
+      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion }}>
       {children}
     </GameContext.Provider>
   );

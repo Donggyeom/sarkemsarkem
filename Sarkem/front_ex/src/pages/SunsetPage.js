@@ -535,7 +535,7 @@ const SunsetPage = () => {
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   
-  const { myRole } = useGameContext();
+  const { myRole, startVote, agreeExpulsion, disagreeExpulsion } = useGameContext();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -550,6 +550,16 @@ const SunsetPage = () => {
       return <ScMini alt="ScMini" role={'CITIZEN'} />
     }
   };
+
+  const chatVisible = () =>{
+  if (myRole === 'OBSERVER'){
+    return (
+      <>
+        <ChatButtonAndPopup />
+      </>
+    )
+  }
+}
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -614,12 +624,14 @@ const SunsetPage = () => {
             </CamCatWrapper>
           ))}
         </CamCatGrid>
+        <button onClick={startVote ? agreeExpulsion : null} disabled={!startVote}>찬성</button>
+        <button onClick={startVote ? disagreeExpulsion : null} disabled={!startVote}>반대</button>
         {getMyRole()}
       </StyledContent>
-      <ChatButtonAndPopup />
       {/* </CamCatGridContainer> */}
 
       <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomId}/night`)}/>
+      {chatVisible()}
       </Background>
   );
 };

@@ -115,7 +115,7 @@ const DayPage = () => {
   };
 
   const chatVisible = () =>{
-    if (myRole === 'OBSERVER' || myRole === 'SARK'){
+    if (myRole === 'OBSERVER'){
       return (
         <>
           <ChatButtonAndPopup />

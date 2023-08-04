@@ -13,7 +13,6 @@ const Votefoot = styled.img`
 const CamCatGrid = styled.div`
     position : absolute;
     display: grid;
-    // grid-gap: 10px;
     align-items: center;
     justify-items: center;
     ${({ style }) =>
@@ -239,7 +238,8 @@ const CamCatWrapper = styled.div`
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
     const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount } = useGameContext();
-  
+
+ 
     useEffect(() => {
       setIsConfirmed(false);
       setClickedCamera(null);
