@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
 import CamButton from '../components/buttons/CamButton';
@@ -14,6 +14,9 @@ import { useGameContext } from '../GameContext';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
+import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
+
+
 
 const StyledContent = styled.div`
   display: flex;
@@ -525,17 +528,11 @@ const CamCatWrapper = styled.div`
   top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
 
-const handleScMiniClick = () => {
-  console.log('ScMini clicked!');
-};
-
 const SunsetPage = () => {
    
-  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
-    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+  const { roomId, publisher, camArray, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   
-  const { myRole } = useGameContext();
+  const { myRole, startVote, agreeExpulsion, disagreeExpulsion } = useGameContext();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -550,6 +547,16 @@ const SunsetPage = () => {
       return <ScMini alt="ScMini" role={'CITIZEN'} />
     }
   };
+
+  const chatVisible = () =>{
+  if (myRole === 'OBSERVER'){
+    return (
+      <>
+        <ChatButtonAndPopup />
+      </>
+    )
+  }
+}
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -614,12 +621,16 @@ const SunsetPage = () => {
             </CamCatWrapper>
           ))}
         </CamCatGrid>
+        <div>
+          <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
+          <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
+        </div>
         {getMyRole()}
       </StyledContent>
-      <ChatButtonAndPopup />
       {/* </CamCatGridContainer> */}
 
       <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomId}/night`)}/>
+      {chatVisible()}
       </Background>
   );
 };

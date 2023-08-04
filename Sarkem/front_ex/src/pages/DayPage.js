@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../index.css';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundDay';
 
@@ -8,10 +9,7 @@ import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
 
-import CamCat from '../components/camera/camcat';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
@@ -63,15 +61,8 @@ const DayPage = () => {
   }, [meetingTime, roomId]);
 
   const navigate = useNavigate();
-  const location = useLocation();
   const [voteCount, setVoteCount] = useState(0);
 
-  // const handleVoteClick = () => {
-  //   if (hasVoted) return;
-
-  //   setVoteCount((prevCount) => prevCount + 1);
-  //   setHasVoted(true);
-  // };
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -106,8 +97,8 @@ const DayPage = () => {
     }
   };
 
-  const chatVisible = () => {
-    if (myRole === 'OBSERVER' || myRole === 'SARK') {
+  const chatVisible = () =>{
+    if (myRole === 'OBSERVER'){
       return (
         <>
           <ChatButtonAndPopup />

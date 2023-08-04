@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import React, { useState, useEffect, useRef } from 'react';
+import '../index.css';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundNight';
 /* Code generated with AutoHTML Plugin for Figma */
@@ -73,6 +74,16 @@ const NightPage = () => {
     }
   };
 
+  const chatVisible = () =>{
+    if (myRole === 'OBSERVER'){
+      return (
+        <>
+          <ChatButtonAndPopup />
+        </>
+      )
+    }
+  }
+
   const handleMicButtonClick = () => {
     const micOn = !isMicOn;
     setIsMicOn(micOn);
@@ -119,7 +130,7 @@ const NightPage = () => {
           <NightPopup></NightPopup>
         {getMyRole()}
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
-        <ChatButtonAndPopup />
+        {chatVisible()}
       </StyledNightPage>
         
     </Background>

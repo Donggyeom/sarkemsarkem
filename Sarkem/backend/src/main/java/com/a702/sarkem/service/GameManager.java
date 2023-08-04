@@ -596,9 +596,16 @@ public class GameManager {
 	public void sendRoleAssignMessage(String roomId) {
 		GameSession gameSession = getGameSession(roomId);
 		List<RolePlayer> rPlayers = gameSession.getPlayers();
-		Map<String, GameRole> param = new HashMap<>();
+		Map<String, Object> param = new HashMap<>();
+		// 마피아 리스트 만들기
+		// 직업 확인 했을 때 마피아면 롤+마피아리스트 같이 보내기
+		List<String> sarkList = gameSession.getRolePlayersId(GameRole.SARK);
 		for (RolePlayer rp : rPlayers) {
 			param.put("role", rp.getRole());
+			if(rp.getRole().equals(GameRole.SARK)) {
+				param.put("sark", sarkList);
+//				log.debug("삵 리스트" + param.toString());
+			}
 			sendSystemMessage(roomId, rp.getPlayerId(), SystemCode.ROLE_ASSIGNED, param);
 		}
 	}

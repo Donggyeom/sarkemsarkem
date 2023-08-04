@@ -3,12 +3,13 @@ import { useNavigate, useLocation } from 'react-router';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
+import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
   // roomId : 방번호 , token : 플레이어아이디 
-    const {roomId, token, isHost, isMicOn, setIsMicOn} = useRoomContext();
+    const {roomId, token, isHost, isMicOn, setIsMicOn, publisher} = useRoomContext();
     const navigate = useNavigate();
     let stompClient = useRef({})
 
@@ -32,11 +33,16 @@ const GameProvider = ({ children }) => {
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState("");
 
+    const [gestureRecognizer, setGestureRecognizer] = useState(null);
+    const [detectedGesture, setDetectedGesture] = useState('');
+    const [animationFrameId, setAnimationFrameId] = useState(null);
     const location = useLocation();
-    
 
     useEffect(() => {
-        if (token !== null) connectGameWS();
+        if (token !== null) {
+          connectGameWS();
+          loadGestureRecognizer();
+        }
     }, [token]);
 
   // WebSocket 연결
@@ -82,7 +88,6 @@ const onSocketConnected = () => {
             alert(sysMessage.param.message);
             break;
         case "GAME_START":   
-            alert('게임시작');
             navigate(`/${roomId}/day`);
             break;
         case "ONLY_HOST_ACTION":
@@ -94,43 +99,44 @@ const onSocketConnected = () => {
             setPeopleCount(sysMessage.param);
             console.log(sysMessage.param.sarkCount);
             break;
+
         case "ROLE_ASSIGNED":
             console.log(`당신은 ${sysMessage.param.role} 입니다.`);
             setMyRole(sysMessage.param.role);
             break;
-            
+
         case "PHASE_DAY":
               navigate(`/${roomId}/day`)
             break;
+
         case "PHASE_TWILIGHT":
-            // navigate(`/${roomId}/twilight`)
+            navigate(`/${roomId}/sunset`)
             setThreatedTarget(); // 저녁 되면 협박 풀림
             break;
         case "PHASE_NIGHT":
-            // navigate(`/${roomId}/night`)
+            navigate(`/${roomId}/night`)
             break;
 
         case "TARGET_SELECTION":
-          // if (sysMessage.param.day !== 1){
             alert('투표가 시작됐습니다');
             setStartVote(true);
             setDayCount(sysMessage.param.day);
-          // }
             break;
 
         case "VOTE_SITUATION":
             console.log(sysMessage.param);
-            setMyVote(sysMessage.param.votedCnt);
+            setVotesituation(sysMessage.param);
+            alert(voteSituation , "투표결과");
             break;
 
         case "DAY_VOTE_END":
-            if (dayCount !== 1){
-              setStartVote(false);
-              alert("낮 투표 종료 \n 추방 대상 : " + sysMessage.param.targetNickname);
-              if (sysMessage.param.targetId == null) break;
-              setExpulsionTarget(sysMessage.param.targetId);
-              console.log("투표종료");
-            }
+            // if (dayCount !== 1){
+            //   setStartVote(false);
+            //   if (sysMessage.param.targetId == null) break;
+            //   setExpulsionTarget(sysMessage.param.targetId);
+            //   console.log("투표종료");
+            // }
+                setStartVote(false);
             break;
   
         case "TARGET_SELECTION_END":
@@ -138,20 +144,42 @@ const onSocketConnected = () => {
             setSelectedTarget("");
             break;
 
-        case "BE_THREATENED":
-            alert("냥아치 협박 시작!", sysMessage.playerId);
-            setThreatedTarget(sysMessage.playerId);
-            setIsMicOn(false);
+        case "PHASE_TWILIGHT":
+            navigate(`/${roomId}/sunset`);
             break;
 
+        case "TWILIGHT_SELECTION":
+            alert("죽일지 살릴지 선택해주세요");
+            setStartVote(true);
+            break;
+
+        case "TWILIGHT_SELECTION_END":
+            // 추방 투표 완료(개인)
+            console.log("추방 투표 완료");
+            break;
+
+        case "TWILIGHT_VOTE_END":
+            setStartVote(false);
+            alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
+            break;
+
+        case "BE_EXCLUDED":
+            setMyRole("OBSERVER");
+            break;
+
+        // case "BE_THREATENED":
+        //     alert("냥아치 협박 시작!", sysMessage.playerId);
+        //     setThreatedTarget(sysMessage.playerId);
+        //     setIsMicOn(false);
+        //     break;
 
 
-        // case "PHASE_TWILIGHT":
-        //     navigate(`/${roomId}/sunset`);
-        //     break;
-        // case "PHASE_NIGHT":
-        //     navigate(`/${roomId}/night`);
-        //     break;
+
+
+
+        case "PHASE_NIGHT":
+            navigate(`/${roomId}/night`);
+            break;
         
 
         }
@@ -159,18 +187,18 @@ const onSocketConnected = () => {
     }
 
     const handleGamePageClick = () => {
-        console.log(token);
-        stompClient.current.send("/pub/game/action", {}, 
-        JSON.stringify({
-            code:'GAME_START', 
-            roomId: roomId, 
-            playerId: token
-        })
-        );
-
-    }
-
-    const selectAction = ((target) => {
+      console.log(token);
+      stompClient.current.send("/pub/game/action", {}, 
+      JSON.stringify({
+          code: 'GAME_START', 
+          roomId: roomId, 
+          playerId: token
+      })
+      );
+  
+  }
+  
+  const selectAction = ((target) => {
       console.log(target, "2번");
       if (selectedTarget != "") {
           setSelectedTarget("");
@@ -191,24 +219,52 @@ const onSocketConnected = () => {
                   }
               }))
       }
-  })
-
+  });
+  
   // 대상 확정
   const selectConfirm = () => {
-    console.log(selectedTarget + " 플레이어 선택 ");
-    console.log(selectedTarget.nickname + "3번");
-    if (stompClient.current.connected && token !== null) {
-        stompClient.current.send("/pub/game/action", {},
-            JSON.stringify({
-                code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
-                roomId: roomId,
-                playerId: token,
-                param: {
-                    // target: selectedTarget
-                }
-            }));
-    }
-};
+      console.log(selectedTarget + " 플레이어 선택 ");
+      console.log(selectedTarget.nickname)
+      if (stompClient.current.connected && token !== null) {
+          stompClient.current.send("/pub/game/action", {},
+              JSON.stringify({
+                  code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
+                  roomId: roomId,
+                  playerId: token,
+                  param: {
+                      // target: selectedTarget
+                  }
+              }));
+      }
+  };
+  
+  // 추방 투표 동의
+  const agreeExpulsion = () => {
+      stompClient.current.send("/pub/game/action", {}, 
+          JSON.stringify({
+              code: 'EXPULSION_VOTE',
+              roomId: roomId, 
+              playerId: token,
+              param: {
+                  result: true
+              }
+          })
+      );
+  };
+  
+  // 추방 투표 반대
+  const disagreeExpulsion = () => {
+      stompClient.current.send("/pub/game/action", {}, 
+          JSON.stringify({
+              code: 'EXPULSION_VOTE',
+              roomId: roomId, 
+              playerId: token,
+              param: {
+                  result: false
+              }
+          })
+      );
+  };
 
     // noticemessage 처리
     const [systemMessages, setSystemMessages] = useState([]);
@@ -216,14 +272,46 @@ const onSocketConnected = () => {
       const sysMessage = JSON.parse(message.body);
       setSystemMessages((prevMessages) => [...prevMessages, sysMessage]);
     };
+  
+    // 제스처 인식기 생성
+    const loadGestureRecognizer = async () => {
+      const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm');
+      const recognizer = await GestureRecognizer.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task',
+          delegate: 'GPU',
+          numHands: 2
+        },
+        runningMode: 'VIDEO',
+      });
+      setGestureRecognizer(recognizer);
+    };
 
-    // 게임 옵션 변경 시 실행
-//   useEffect(() => {
-    
-// }, [peopleCount])
+    // 
+    const predictWebcam = async () => {
+      if (gestureRecognizer) {
+        const videoElement = publisher.videos[1].video;
+        const nowInMs = Date.now();
+        const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
+  
+        if (results.gestures.length > 0) {
+          const detectedGestureName = results.gestures[0][0].categoryName;
+          setDetectedGesture(detectedGestureName);
+        } else {
+          setDetectedGesture('');
+        }
+        // Continue predicting frames from webcam
+        setAnimationFrameId(requestAnimationFrame(predictWebcam));
+      }
+    };
+    const stopPredicting = () => {
+      cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
+      setAnimationFrameId(null);
+    };
+
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage, dayCount }}>
+      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture }}>
       {children}
     </GameContext.Provider>
   );
@@ -239,4 +327,4 @@ const useGameContext = () => {
 
 
 
-export { GameProvider, useGameContext,  };
+export { GameProvider, useGameContext };

@@ -51,7 +51,7 @@ const CamCat = (props) => {
       }}
     >
 
-      <div className="streamcomponent" style={{ flex: 0.2 }}>
+      <div className="streamcomponent" style={{ flex: 'auto' }}>
         <div style={{ flex: 0.6, justifyContent: 'center' }}>
 
           <OpenViduVideoComponent streamManager={props.props} />
