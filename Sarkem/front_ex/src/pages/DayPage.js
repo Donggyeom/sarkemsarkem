@@ -45,7 +45,7 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
   const { roomId, publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
-  const { myRole, peopleCount, systemMessages } = useGameContext();
+  const { myRole, peopleCount, systemMessages, threatedTarget  } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
 
   useEffect(() => {
@@ -84,11 +84,14 @@ const DayPage = () => {
   const handleMicButtonClick = () => {
     const micOn = !isMicOn;
     setIsMicOn(micOn);
-    if (publisher) {
+    // 버튼 클릭 이벤트를 threatedTarget이 못하게
+    console.log('냥아치 협박 대상인가?');
+    if (publisher !== threatedTarget) {
       publisher.publishAudio(micOn);
+      console.log('냥아치 협박 대상 아님! 마이크 버튼 클릭!');
     }
   };
-
+  
   const handleScMiniClick = () => {
     console.log('ScMini clicked!');
   };
