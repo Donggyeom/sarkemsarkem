@@ -99,6 +99,7 @@ const onSocketConnected = () => {
             setPeopleCount(sysMessage.param);
             console.log(sysMessage.param.sarkCount);
             break;
+
         case "ROLE_ASSIGNED":
             console.log(`당신은 ${sysMessage.param.role} 입니다.`);
             setMyRole(sysMessage.param.role);
@@ -107,12 +108,13 @@ const onSocketConnected = () => {
         case "PHASE_DAY":
               navigate(`/${roomId}/day`)
             break;
+
         case "PHASE_TWILIGHT":
-            // navigate(`/${roomId}/twilight`)
+            navigate(`/${roomId}/sunset`)
             setThreatedTarget(); // 저녁 되면 협박 풀림
             break;
         case "PHASE_NIGHT":
-            // navigate(`/${roomId}/night`)
+            navigate(`/${roomId}/night`)
             break;
 
         case "TARGET_SELECTION":
@@ -144,7 +146,6 @@ const onSocketConnected = () => {
 
         case "PHASE_TWILIGHT":
             navigate(`/${roomId}/sunset`);
-            
             break;
 
         case "TWILIGHT_SELECTION":
@@ -163,12 +164,14 @@ const onSocketConnected = () => {
             break;
 
         case "BE_EXCLUDED":
-
-        case "BE_THREATENED":
-            alert("냥아치 협박 시작!", sysMessage.playerId);
-            setThreatedTarget(sysMessage.playerId);
-            setIsMicOn(false);
+            setMyRole("OBSERVER");
             break;
+
+        // case "BE_THREATENED":
+        //     alert("냥아치 협박 시작!", sysMessage.playerId);
+        //     setThreatedTarget(sysMessage.playerId);
+        //     setIsMicOn(false);
+        //     break;
 
 
 

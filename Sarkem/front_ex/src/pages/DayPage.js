@@ -64,12 +64,6 @@ const DayPage = () => {
   const location = useLocation();
   const [voteCount, setVoteCount] = useState(0);
 
-  // const handleVoteClick = () => {
-  //   if (hasVoted) return;
-
-  //   setVoteCount((prevCount) => prevCount + 1);
-  //   setHasVoted(true);
-  // };
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;

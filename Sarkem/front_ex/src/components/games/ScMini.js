@@ -7,6 +7,7 @@ import scVetImageSrc from '../../img/sc_수의사.png';
 import scCatImageSrc from '../../img/sc_시민.png';
 import scPsychoImageSrc from '../../img/sc_심리학자.png';
 import scDetectImageSrc from '../../img/sc_탐정.png';
+import scObserverImageSrc from '../../img/observing.png';
 import cSarkImageSrc from '../../img/c_삵.png';
 import cPoliceImageSrc from '../../img/c_경찰.png';
 import cNyangImageSrc from '../../img/c_냥아치.png';
@@ -14,6 +15,7 @@ import cVetImageSrc from '../../img/c_수의사.png';
 import cCatImageSrc from '../../img/c_시민.png';
 import cPsychoImageSrc from '../../img/c_심리학자.png';
 import cDetectImageSrc from '../../img/c_탐정.png';
+
 
 // 직업마다 번호 같은 걸 부여받겠지?
 // 부여받은 번호대로 이미지 다르게 뜨게 해야 함. 설정해 줘야 함
@@ -74,7 +76,9 @@ const ScMini = ({ alt, role }) => {
 
 
   const handleScMiniClick = () => {
+    
     setIsPopupOpen(true);
+
   };
 
   const handlePopupClose = () => {
@@ -101,8 +105,7 @@ const ScMini = ({ alt, role }) => {
     buttonImageSrc = scPoliceImageSrc;
     popupImageSrc = cPoliceImageSrc;
   } else if (role === 'OBSERVER') {
-    buttonImageSrc = scNyangImageSrc;
-    popupImageSrc = cNyangImageSrc;
+    buttonImageSrc = scObserverImageSrc;
   } else if (role === 'PSYCHO') {
     buttonImageSrc = scPsychoImageSrc;
     popupImageSrc = cPsychoImageSrc;
@@ -120,7 +123,7 @@ const ScMini = ({ alt, role }) => {
       <ScMiniButton onClick={handleScMiniClick}>
         <ScButtonImage src={buttonImageSrc} alt={alt} />
       </ScMiniButton>
-      {isPopupOpen && (
+      {role !== 'OBSERVER' && isPopupOpen && (
         <Popup isClosing={isClosing} onClick={handlePopupClose}>
           <PopupImage src={popupImageSrc} alt={alt} />
         </Popup>
@@ -130,3 +133,8 @@ const ScMini = ({ alt, role }) => {
 };
 
 export default ScMini;
+
+
+
+
+
