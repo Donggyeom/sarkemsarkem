@@ -157,6 +157,7 @@ const onSocketConnected = () => {
     }
 
     const selectAction = ((target) => {
+      console.log(target, "2번");
       if (selectedTarget != "") {
           setSelectedTarget("");
           target.playerId = "";
@@ -164,7 +165,6 @@ const onSocketConnected = () => {
       else {
           setSelectedTarget(target.playerId)
       }
-
       console.log("다른 플레이어 선택 " + target.playerId);
       if (stompClient.current.connected && token !== null) {
           stompClient.current.send("/pub/game/action", {},
@@ -182,6 +182,7 @@ const onSocketConnected = () => {
   // 대상 확정
   const selectConfirm = () => {
     console.log(selectedTarget + " 플레이어 선택 ");
+    console.log(selectedTarget.nickname + "3번");
     if (stompClient.current.connected && token !== null) {
         stompClient.current.send("/pub/game/action", {},
             JSON.stringify({
