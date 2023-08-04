@@ -609,8 +609,8 @@ public class GameManager {
 	}
 
 	// "저녁 페이즈" 메시지 전송
-	public void sendTwilightPhaseMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, null);
+	public void sendTwilightPhaseMessage(String roomId, HashMap<String, String> expulsionPlayer) {
+		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, expulsionPlayer);
 	}
 
 	// "저녁(추방) 투표 시작" 메시지 전송
@@ -624,8 +624,8 @@ public class GameManager {
 	}
 
 	// "낮 투표 종료" 메시지 전송
-	public void sendEndDayVoteMessage(String roomId, Map<String, String> param) {
-		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, param);
+	public void sendEndDayVoteMessage(String roomId) {
+		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, null);
 	}
 
 	// "추방 투표 종료(개인)" 메시지 전송
