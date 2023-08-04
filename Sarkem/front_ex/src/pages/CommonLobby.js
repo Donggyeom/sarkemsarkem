@@ -62,6 +62,14 @@ const DivWrapper = styled.div`
   
 `;
 
+const DivWrapper2 = styled.div`
+
+  display: flex;
+  height: 15%;
+  justify-content: space-around;
+  
+`;
+
 const LeftPart = styled.div`
   flex: 2.75;
   display: flex;
@@ -72,6 +80,16 @@ const LeftPart = styled.div`
 `;
 
 const RightPart = styled.div`
+  /* Right part of each RightDiv */
+  flex: 2.75;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-position: center center;
+  background-repeat: no-repeat;
+`;
+
+const MiddlePart = styled.div`
   /* Right part of each RightDiv */
   flex: 2.75;
   display: flex;
@@ -127,7 +145,7 @@ const ButtonContainer = styled.div`
 `;
 const ButtonContainer2 = styled.div`
   width: auto;
-  height: 60%;
+  height: 80%;
 `;
 
 
@@ -462,33 +480,39 @@ const CommonLobby = ()=>{
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
-          <DivWrapper>
+          
           
             {isHost ? (
               <>
+              <DivWrapper>
                 <LeftPart>
-                <ButtonContainer>
-
-                <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
-                </ButtonContainer>
-                </LeftPart>
-                <RightPart>
                   <ButtonContainer>
-                    <InviteButton onClick={handleInviteClick} />
+
+                  <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
                   </ButtonContainer>
+                  </LeftPart>
+                  <RightPart>
+                    <ButtonContainer>
+                      <InviteButton onClick={handleInviteClick} />
+                    </ButtonContainer>
                 </RightPart>
-                
+              </DivWrapper>
+               
               </>
             ) : (
               <>
-                <RightPart>
+                <DivWrapper2>
+                  <MiddlePart>
                   <ButtonContainer2>
                     <InviteButton onClick={handleInviteClick} />
                   </ButtonContainer2>
-                </RightPart>
+
+                  </MiddlePart>
+                  
+
+                </DivWrapper2>
               </>
             )}
-          </DivWrapper>
         
         </RightSection>
         <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />

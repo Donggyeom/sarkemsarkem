@@ -8,7 +8,6 @@ const fadeInOut = keyframes`
   }
   100% {
     opacity: 0;
-    // display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
   }
 `;
 
@@ -16,7 +15,7 @@ const StyledPopupContainer = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* 중앙 정렬 */
+  transform: translate(-50%, -50%);
   background: #f3b7bf;
   border-radius: 30.94px;
   border: 5.16px solid #000000;
@@ -38,47 +37,28 @@ const StyledPopupTitle = styled.div`
   font-family: "RixInooAriDuri", sans-serif;
   text-align: center;
   text-shadow: 1px 1px black;
-  -webkit-text-stroke: 1px black; /* For webkit-based browsers like Chrome, Safari */
-  text-stroke: 1px black; /* Standard property for future compatibility */
-  padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
+  -webkit-text-stroke: 1px black;
+  text-stroke: 1px black;
+  padding: 10px;
 `;
 
-
-const DayPopup = () => {
-  // const [showPopup, setShowPopup] = useState(true);
-  // 팝업 했는데 최초 1번밖에 안댐.
-  // 팝업 보여주는 함수를 제대로 만들어야 댈 것 같음.
-  // 저거 성공하면 day, night에 따라서 띄우는 것도 바로 할 수 있음!
-  
-  const { systemMessages } = useGameContext();
-  const [sysMessage, setSysMessage] = useState(null);
+const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수정
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    console.log('팝업 sysMessage가 업데이트되었습니다:', sysMessage);
+    if (sysMessage) {
+      setShowPopup(true);
+
+      const fadeOutTimeout = setTimeout(() => {
+        setShowPopup(false);
+      }, 3500);
+
+      return () => clearTimeout(fadeOutTimeout);
+    }
   }, [sysMessage]);
-  
-  useEffect(() => {
-    const sysMessage = systemMessages.find(
-      (message) => message.code === 'NOTICE_MESSAGE'
-    );
-    console.log('팝업 sysMessage:', sysMessage);
-    setSysMessage(sysMessage);
-  }, [systemMessages]);
-
-
-  const showPopup = !!sysMessage;
-  useEffect(() => {
-    const fadeOutTimeout = setTimeout(() => {
-      setSysMessage(null);
-    }, 3500);
-
-    return () => clearTimeout(fadeOutTimeout);
-  }, [sysMessage]);
-
 
   return (
     <StyledPopupContainer showPopup={showPopup}>
-      {/* Your popup content */}
       <div
         style={{
           flexShrink: '0',
@@ -86,7 +66,6 @@ const DayPopup = () => {
           height: '0.01px',
           position: 'relative',
           transformOrigin: '0 0',
-          // transform: 'rotate(0deg) scale(1, -1)',
         }}
       >
         <div
@@ -101,7 +80,7 @@ const DayPopup = () => {
             flexDirection: 'row',
             gap: '12.89px',
             alignItems: 'center',
-            justifyContent: 'center', // Center the content horizontally
+            justifyContent: 'center',
             width: '229.44px',
             height: '45px',
             position: 'relative',
@@ -112,8 +91,6 @@ const DayPopup = () => {
           N일차 낮
         </div>
       </div>
-
-      {/* 메세지넣을곳 */}  
       <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>
     </StyledPopupContainer>
   );

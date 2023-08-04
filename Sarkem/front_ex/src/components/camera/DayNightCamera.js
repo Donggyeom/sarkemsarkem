@@ -40,6 +40,23 @@ const ButtonWrapper = styled.div`
   transform: translateX(-50%);
   display: flex;
   gap: 10px;
+
+`;
+
+const VotefootWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: ${({ show }) => (show ? 'block' : 'none')};
+`;
+
+const VotefootImage = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const calculateGrid = (camCount) => {
@@ -218,38 +235,32 @@ const CamCatWrapper = styled.div`
   const DayNightCamera = React.memo(({ camArray }) => {
     const camCount = camArray.length;
     const gridStyles = calculateGrid(camCount);
-    const [clickedCameras, setClickedCameras] = useState([]);
+    const [clickedCamera, setClickedCamera] = useState(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
     const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount } = useGameContext();
   
     useEffect(() => {
-      if (!startVote) {
-        setIsConfirmed(false);
-        setClickedCameras([]);
-        setIsSkipped(false);
-      }
+      setIsConfirmed(false);
+      setClickedCamera(null);
+      setIsSkipped(false);
     }, [startVote]);
   
     const handleCamClick = (user) => {
-      console.log(user.stream.session.connection.data);
-      console.log(JSON.parse(user.stream.session.connection.data));
-      if (!startVote) {
+      if (!startVote || dayCount === 0 || isConfirmed || isSkipped) {
         return;
       }
   
-      if (isConfirmed) {
-        return; // Confirm 후에는 변경 불가능
+      if (clickedCamera === user) {
+        setClickedCamera(null);
+      } else {
+        selectAction({ playerId: JSON.parse(user.stream.connection.data).token });
+        setClickedCamera(user);
       }
-  
-      console.log(JSON.parse(user.stream.session.connection.data).token, "1번");
-      selectAction({ playerId: JSON.parse(user.stream.session.connection.data).token });
-      console.log(user);
-
     };
   
     const handleConfirmClick = () => {
-      if (clickedCameras.length > 0) {
+      if (clickedCamera && !isConfirmed) {
         setIsConfirmed(true);
         selectConfirm();
       }
@@ -258,27 +269,33 @@ const CamCatWrapper = styled.div`
     const handleSkipClick = () => {
       if (!isConfirmed && !isSkipped && startVote) {
         setIsSkipped(true);
-        setClickedCameras([]);
+        setClickedCamera(null);
         setSelectedTarget("");
+        selectAction({ playerId: null });
         selectConfirm();
       }
     };
   
     return (
       <CamCatGrid style={gridStyles}>
-        {/* {camArray.slice().reverse().map((user, index) => ( */}
         {camArray.map((user, index) => (
-          <CamCatWrapper key={index} camCount={camCount} index={index} onClick={() => handleCamClick(user)}>
-            <CamCat props={camArray[index]} />
-            {clickedCameras.includes(index) && startVote && (
-              <Votefoot src={voteImage} alt="Vote" />
-            )}
+          <CamCatWrapper
+            key={index}
+            camCount={camCount}
+            user={user}
+            index={index}
+            onClick={() => handleCamClick(user)}
+          >
+            <CamCat props={camArray[index]} user={user} />
+            <VotefootWrapper show={clickedCamera === user && startVote}>
+              <VotefootImage src={voteImage} alt="Vote" />
+            </VotefootWrapper>
           </CamCatWrapper>
         ))}
         <ButtonWrapper>
           {dayCount === 1 ? (
             <>
-              {startVote && ( // 이 부분 추가
+              {startVote && (
                 <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
                   {isSkipped ? '스킵됨' : '스킵하기'}
                 </ActionButton>
@@ -290,8 +307,8 @@ const CamCatWrapper = styled.div`
                 <ActionButton disabled>확정됨</ActionButton>
               ) : (
                 startVote && (
-                  <ActionButton onClick={handleConfirmClick} disabled={clickedCameras.length === 0}>
-                    확정하기
+                  <ActionButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
+                    {clickedCamera ? '확정하기' : '투표할 사람을 선택하세요'}
                   </ActionButton>
                 )
               )}
