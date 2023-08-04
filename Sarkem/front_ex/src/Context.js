@@ -138,7 +138,7 @@ const getToken = async () => {
   const createSession = async () => {
   console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
   const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
-      headers: { 'Content-Type': 'application/json', },
+      headers: { 'Content-Type': 'application/json;charset=utf-8', },
   });
   return response.data; // The sessionId
   }
@@ -147,12 +147,16 @@ const getToken = async () => {
   // 서버에 요청하여 토큰 생성하는 함수
   const createToken = async () => {
   console.log("세션에 연결을 시도합니다.")
-  const response = await axios.post(`/api/game/${roomId}/player`,nickName);
+  const response = await axios.post(`/api/game/${roomId}/player`,nickName, {
+    headers: { 'Content-Type': 'application/json;charset=utf-8', },
+  });
   return response.data; // The token
   }
 
   const getPlayer = async (roomId) => {
-    const response = await axios.get(`/api/game/${roomId}/player`);
+    const response = await axios.get(`/api/game/${roomId}/player`,  {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
+    });
     return response.data;
   }
 
