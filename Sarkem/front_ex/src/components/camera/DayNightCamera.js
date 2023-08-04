@@ -13,7 +13,6 @@ const Votefoot = styled.img`
 const CamCatGrid = styled.div`
     position : absolute;
     display: grid;
-    // grid-gap: 10px;
     align-items: center;
     justify-items: center;
     ${({ style }) =>
