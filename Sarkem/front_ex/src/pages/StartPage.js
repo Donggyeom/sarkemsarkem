@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import styled, { keyframes, css } from 'styled-components';
-import '../index.css';
+import styled, { keyframes } from 'styled-components';
+
 import Background from '../components/backgrounds/BackgroundSunset';
 import StartButton from '../components/buttons/StartButton';
 import Logo from '../components/buttons/Logo';
