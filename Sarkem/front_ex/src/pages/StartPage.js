@@ -7,7 +7,6 @@ import Logo from '../components/buttons/Logo';
 import { useNavigate } from 'react-router-dom';
 import createRandomId from '../utils';
 import { useRoomContext } from '../Context';
-import GestureRecognition from '../GestureRecognition';
 
 // 애니메이션 정의 - 등장할 때 페이드 인
 const fadeInAnimation = keyframes`
@@ -75,8 +74,7 @@ const StartPage = () => {
 
   return (
     <Background>
-      <GestureRecognition/>
-      {/* <StyledStartPage>
+      <StyledStartPage>
         {logoVisible && ( // 로고가 화면에 나타날 때만 렌더링
           <LogoWrapper>
             <Logo />
@@ -85,7 +83,7 @@ const StartPage = () => {
         <StartButtonContainer>
           <StartButton alt="Go to Login" onClick={goToCreateRoom} />
         </StartButtonContainer>
-      </StyledStartPage> */}
+      </StyledStartPage>
     </Background>
   );
 };

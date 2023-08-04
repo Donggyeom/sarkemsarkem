@@ -50,7 +50,7 @@ const DayPage = () => {
 
   const { roomId, 
     publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext();
-  const { myRole, peopleCount } = useGameContext();
+  const { myRole, peopleCount, predictWebcam, stopPredicting } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
   
   
@@ -140,6 +140,11 @@ const DayPage = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
    
+  const startHiddenMission = () => {
+    // videoSrc.addEventListener('loadeddata', predictWebcam);
+    predictWebcam();
+  }
+
     return (
     <Background>
       <StyledDayPage>
@@ -147,7 +152,7 @@ const DayPage = () => {
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{meetingTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <MicButton alt="Mic Button" onClick={stopPredicting} isMicOn={isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <DayPopup></DayPopup>
           <DayNightCamera camArray={camArray}/>

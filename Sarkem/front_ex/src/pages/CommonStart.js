@@ -181,6 +181,7 @@ const CommonStart = ({onClick} ) => {
     tracks.forEach((track) => {
       track.enabled = camOn;
     });
+
   };
 
   const handleNickNameChange = (event) => {
