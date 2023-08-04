@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../index.css';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundDay';
 

@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import React, { useState, useEffect, useRef } from 'react';
+import '../index.css';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundNight';
 /* Code generated with AutoHTML Plugin for Figma */

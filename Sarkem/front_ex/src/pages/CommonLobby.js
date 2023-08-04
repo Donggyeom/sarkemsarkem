@@ -1,4 +1,5 @@
 import Background from '../components/backgrounds/BackgroundSunset';
+import '../index.css';
 import styled from 'styled-components';
 import React, { useState, useEffect, useRef } from 'react';
 // img

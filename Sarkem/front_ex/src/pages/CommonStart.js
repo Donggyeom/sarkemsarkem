@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
+import '../index.css';
 import styled from 'styled-components';
 import logoImage from '../img/logo.png';
 import camcatImage from '../img/camcat2.png';

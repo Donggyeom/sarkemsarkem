@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
+import '../index.css';
 
 const CamCatGrid = styled.div`
   flex: 1;
