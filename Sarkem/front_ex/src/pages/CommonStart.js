@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import logoImage from '../img/logo.png';
 import camcatImage from '../img/camcat2.png';
@@ -114,7 +114,8 @@ const Logo = styled.img`
 `;
 
 const CommonStart = ({onClick} ) => {
-  const { setRoomId, isHost, nickName, setNickName, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
+  const { player, setPlayer, setRoomSession, isHost, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
+  const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -125,14 +126,25 @@ const CommonStart = ({onClick} ) => {
   const audioRef = useRef(null);
 
   useEffect(() => {
-    setRoomId(location.pathname.slice(1));
     checkRoomId();
+    setRoomSession((prev) => {
+      return ({
+        ...prev,
+        roomId: location.pathname.slice(1),
+      });
+    });
     getUserCamera();
     getUserAudio();
   }, []);
 
-  useEffect(()=>{
-  }, [videoRef, audioRef])
+  useEffect(() => {
+    setPlayer((prevState => {
+      return {
+        ...prevState,
+        nickName: nickName
+      };
+    }));
+  }, [nickName]);
 
   const checkRoomId = () => {
     //// 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
@@ -149,6 +161,11 @@ const CommonStart = ({onClick} ) => {
       setIsCamOn(true);
 
       videoRef.current.style.transform = 'scaleX(-1)';
+      setPlayer((prevState) => {
+        return {...prevState,
+          video: videoRef.current.srcObject,
+        };
+      });
     }
     
     catch (error) {
@@ -161,6 +178,11 @@ const CommonStart = ({onClick} ) => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioRef.current.srcObject = stream;
       setIsMicOn(true);
+      setPlayer((prevState) => {
+        return {...prevState,
+          audio: audioRef.current.srcObject,
+        };
+      });
     }
     catch (error) {
       console.error("Failed to start audio: ", error);

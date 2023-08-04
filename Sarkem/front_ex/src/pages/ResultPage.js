@@ -91,9 +91,9 @@ const TextAboveWrapper = styled.div`
 
 
 const ResultPage = () => {
-  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
+  const { roomSession, roomId, setRoomId, isHost, setIsHost, 
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn} = useRoomContext(); 
+    token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -101,10 +101,10 @@ const ResultPage = () => {
 
     console.log("세션 해제중입니다.....")
     // 세션 연결 종료
-    if (session) session.disconnect();
+    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
     
     // 데이터 초기화
-    setSession(undefined);
+    // setSession(undefined);
     setSubscribers([]);
     setPublisher(undefined);
     setCamArray([]);
@@ -115,10 +115,10 @@ const ResultPage = () => {
   const handleExitButtonClick = () => {
     console.log("세션 해제중입니다.....")
     // 세션 연결 종료
-    if (session) session.disconnect();
+    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
     
     // 데이터 초기화
-    setSession(undefined);
+    // setSession(undefined);
     setSubscribers([]);
     setPublisher(undefined);
     setCamArray([]);

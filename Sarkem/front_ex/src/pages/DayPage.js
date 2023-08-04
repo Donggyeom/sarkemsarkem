@@ -12,7 +12,6 @@ import DayPopup from '../components/games/DayPopup';
 
 import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { OpenVidu, Session, Subscriber } from 'openvidu-browser';
 import axios from 'axios';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';

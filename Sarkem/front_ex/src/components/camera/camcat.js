@@ -37,7 +37,7 @@ const CamCat = (props) => {
         </div>
 
         <div style={{ flex: 0.4, textAlign: 'center', width: '95%' }}>
-          {JSON.parse(props.props.stream.connection.data).userData}
+          {JSON.parse(props.props.stream.connection.data).nickName}
         </div>
       </div>
     </div>

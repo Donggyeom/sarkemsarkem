@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { OpenVidu } from 'openvidu-browser';
@@ -6,14 +6,15 @@ import { OpenVidu } from 'openvidu-browser';
 const RoomContext = createContext();
 
 const RoomProvider = ({ children }) => {
+    const [roomSession, setRoomSession] = useState({});
+    const [player, setPlayer] = useState({});
+    const [players, setPlayers] = useState(new Map());
     const [roomId, setRoomId] = useState('');
     const [gameId, setGameId] = useState('');
     const [isHost, setIsHost] = useState(false);
-    const [nickName, setNickName] = useState('냥냥' + Math.floor(Math.random() * 100));
     const [publisher, setPublisher] = useState(undefined);
     const [subscribers, setSubscribers] = useState([]);
     const [camArray, setCamArray] = useState([]);
-    const [session, setSession] = useState(undefined);
     const [token, setToken] = useState(null);
     const [isMicOn, setIsMicOn] = useState(true);
     const [isCamOn, setIsCamOn] = useState(true);
@@ -30,36 +31,110 @@ const RoomProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
+      console.log('roomSession 변경');
+      console.log(roomSession);
+      if (roomSession.roomId != undefined) {
+        navigate(`/${roomSession.roomId}/lobby`);
+      } 
+    }, [roomSession]);
 
-        if (session) {
-          // 토큰 발급
-          connectSession();
-        }
-      }, [session]);
+    useEffect(() => {
+      if (roomSession.gameId == undefined) return;
+
+      console.log('roomSession gameId 변경');
+      console.log(roomSession);
+      updateGameSession().then((res) => {
+        navigate(`/${roomSession.roomId}/lobby`);
+      });
+      
+    }, [roomSession.gameId]);
+
+    useEffect(() => {
+      console.log('player 변경');
+      console.log(player);
+      console.log(players);
+      if (player.playerId != undefined) {
+        setPlayers((prev) => {
+          return new Map([...prev, [player.playerId, player]]);
+        });
+      }
+    }, [player]);
+
+    useEffect(() => {
+      console.log('players 변경');
+      console.log(players);
+    }, [players]);
+
+    // useEffect(() => {
+
+    //     if (session) {
+    //       // 토큰 발급
+    //       connectSession();
+    //     }
+    // }, [session]);
 
       
-      useEffect(() => {
-        if (token == null) return;
-        
-        updateGameSession();
-      }, [token]);
-
+    // useEffect(() => {
+    //   if (token == null) return;
       
-      useEffect(() => {
-        if (gameId != null && gameId != '') {
-          navigate(`/${roomId}/lobby`);
+    //   updateGameSession();
+    // }, [token]);
+
+    
+    // useEffect(() => {
+    //   console.log('gameId 변경');
+    //   console.log(gameId);
+    //   if (gameId != null && gameId != '') {
+    //     console.log("updateGameSession 호출");
+    //     // 게임세션 갱신
+    //     updateGameSession().then(() => {
+    //       navigate(`/${roomId}/lobby`);
+    //     });  
+    //   }
+    // }, [gameId]);
+
+
+    const getGameRoom = async () => {
+      // 게임방 정보 획득
+      axios.get('/api/game/' + roomSession.roomId, {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
+      }).then((response) => {
+        if (response.status == '204') {
+          createSession();
         }
-      }, [gameId])
+        else {
+          console.log('게임방 정보 획득');
+          console.log(response);
+          let gameRoom = response.data;
+          console.log(gameRoom);
+
+          setRoomId(gameRoom.roomId);
+          setGameId(gameRoom.gameId);
+          setRoomSession((prev) => {
+            return ({
+              ...prev,
+              roomId: gameRoom.roomId,
+              gameId: gameRoom.gameId,
+            });
+          });
+          return response.data.gameId;
+        }
+      }).catch(err => {
+        alert('게임방 세션 획득 실패');
+        console.log(err);
+        return false;
+      });
+    }
 
 
     // 세션 해제
     const leaveSession = () => {
         console.log("세션 해제중입니다.....")
         // 세션 연결 종료
-        if (session) session.disconnect();
+        if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
         
         // 데이터 초기화
-        setSession(undefined);
+        // setSession(undefined);
         setSubscribers([]);
         setPublisher(undefined);
         setCamArray([]);
@@ -85,65 +160,74 @@ const RoomProvider = ({ children }) => {
       setCamArray((camArray) => [...camArray, subscriber]);
       setSubscribers((subscribers) => [...subscribers, subscriber]);
       
-      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).userData, "님이 접속했습니다.");
+      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickName, "님이 접속했습니다.");
     });
 
     // stream 종료 이벤트 발생 시
     newSession.on('streamDestroyed', (event) => {
       deleteSubscriber(event.stream.streamManager);
-      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).userData, "님이 접속을 종료했습니다.")
+      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickName, "님이 접속을 종료했습니다.")
     });
 
     // stream 예외 이벤트 발생 시 에러 출력
     newSession.on('exception', (e) => console.warn(e));
 
     // 설정한 세션 useState 갱신
-    setSession(newSession);
+    setRoomSession((prev) => {
+      return ({
+        ...prev,
+        openviduSession: newSession,
+      });
+    });
   }
 
   const connectSession = () => {
-    getToken(roomId, nickName, isHost).then(async (response) => {
-        try{
-          const token = response.split("token=")[1];
-          setToken(token);
-          console.log(token);
-          // 세션에 유저 데이터 입력 후 연결 시도
-          await session.connect(response, {userData: nickName});
 
-          // 내 퍼블리셔 객체 생성
-          let publisher = await OV.initPublisherAsync(undefined, {
-            audioSource: undefined,
-              videoSource: undefined,
-              publishAudio: isMicOn,
-              publishVideo: isCamOn,
-              resolution: '640x480',
-              frameRate: 30,
-              insertMode: 'APPEND',
-              mirror: true,
+    getToken().then(async (response) => {
+      try {
+        let session = roomSession.openviduSession;
+        await session.connect(response, {nickName: player.nickName, playerId: player.playerId});
+
+        // 내 퍼블리셔 객체 생성
+        let publisher = await OV.initPublisherAsync(undefined, {
+          audioSource: undefined,
+          videoSource: undefined,
+          publishAudio: isMicOn,
+          publishVideo: isCamOn,
+          resolution: '640x480',
+          frameRate: 30,
+          insertMode: 'APPEND',
+          mirror: true,
+        });
+        // 세션에 내 정보 게시
+        session.publish(publisher);
+
+        // 내 디바이스 on/off 상태 게시
+        publisher.publishVideo(isCamOn);
+        publisher.publishAudio(isMicOn);
+        // 퍼블리셔 useState 갱신
+        setPublisher(publisher);
+        setPlayer((prevState) => {
+          return ({
+            ...prevState,
+            publisher: publisher,
           });
-          // 세션에 내 정보 게시
-          session.publish(publisher);
-
-          // 내 디바이스 on/off 상태 게시
-          publisher.publishVideo(isCamOn);
-          publisher.publishAudio(isMicOn);
-          // 퍼블리셔 useState 갱신
-          setPublisher(publisher);
-          setCamArray((camArray) => [...camArray, publisher]);
-          console.log(publisher)
-        }
-        catch (error) {
-          console.error(error);
-          alert("세션 연결 오류");
-          navigate("/");
-          return;
-        }
-      });
+        });
+        setCamArray((camArray) => [...camArray, publisher]);
+        console.log(publisher)
+      }
+      catch (error) {
+        console.error(error);
+        alert("세션 연결 오류");
+        navigate("/");
+        return;
+      }
+    });
   }
 
-  const updateGameSession = () => {
+  const updateGameSession = async () => {
     // 게임세션 정보 획득
-    axios.get('/api/game/session/' + roomId, {
+    axios.get('/api/game/session/' + roomSession.roomId, {
       headers: { 'Content-Type': 'application/json;charset=utf-8', },
     }).then((response) => {
       console.log('gamesession 획득');
@@ -155,38 +239,54 @@ const RoomProvider = ({ children }) => {
   }
 
 
-  // 토큰 생성하는 함수
-const getToken = async () => {
-    // 내 세션ID에 해당하는 세션 생성
-    if (isHost){
-        console.log("방장이므로 세션을 생성합니다.")
-        await createSession(roomId, nickName);
-    }
-    // 세션에 해당하는 토큰 요청
-    return await createToken(roomId, nickName);
-  }
+//   // 토큰 생성하는 함수
+// const getToken = async () => {
+//     // 내 세션ID에 해당하는 세션 생성
+//     if (isHost){
+//         console.log("방장이므로 세션을 생성합니다.")
+//         await createSession(roomId, player.nickName);
+//     }
+//     // 세션에 해당하는 토큰 요청
+//     return await createToken(roomId, player.nickName);
+//   }
   
   // 서버에 요청하여 화상 채팅 세션 생성하는 함수
   const createSession = async () => {
-    console.log(`${roomId} 세션에 대한 토큰을 발급 받습니다.`);
-    const response = await axios.post('/api/game', { customSessionId: roomId, nickName: nickName }, {
+    console.log(`${roomSession.roomId} 세션을 생성합니다.`);
+    const response = await axios.post('/api/game', { customSessionId: roomSession.roomId, nickName: player.nickName }, {
         headers: { 'Content-Type': 'application/json;charset=utf-8', },
+    }).then((response) => {
+      console.log('세션 생성됨');
+      console.log(response);
+      setRoomSession((prev) => {
+        return ({
+          ...prev,
+          roomId: response.data,
+        });
+      });
+      return response.data; // The sessionId
     });
-    
-    return response.data; // The sessionId
   }
   
   
   // 서버에 요청하여 토큰 생성하는 함수
-  const createToken = async () => {
+  const getToken = async () => {
     console.log("세션에 연결을 시도합니다.")
-    const response = await axios.post(`/api/game/${roomId}/player`,nickName, {
+    console.log(player.nickName);
+    const response = await axios.post(`/api/game/${roomSession.roomId}/player`, player.nickName, {
       headers: { 'Content-Type': 'application/json;charset=utf-8', },
     });
     
     console.log('createToken ' + response.data.playerId);
+    setPlayer((prevState => {
+      return ({
+        ...prevState,
+        playerId: response.data.playerId,
+        nickName: response.data.nickName,
+      });
+    }));
 
-    setGameId(response.data.gameId);
+    // setGameId(response.data.gameId);
 
     return response.data.token; // The token
   }
@@ -197,10 +297,10 @@ const getToken = async () => {
   }
 
   return (
-    <RoomContext.Provider value={{ roomId, setRoomId, gameId, setGameId, isHost, setIsHost, nickName, setNickName,
+    <RoomContext.Provider value={{ roomSession, setRoomSession, createSession, getGameRoom, roomId, setRoomId, gameId, setGameId, isHost, setIsHost,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
-    , getToken, getPlayer, gameOption, setGameOption, updateGameSession}}>
+    OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
+    , getToken, getPlayer, gameOption, setGameOption, updateGameSession, player, setPlayer}}>
       {children}
     </RoomContext.Provider>
   );

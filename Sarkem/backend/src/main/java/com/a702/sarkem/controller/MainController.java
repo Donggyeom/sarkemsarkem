@@ -70,12 +70,15 @@ public class MainController {
 	public ResponseEntity<GameRoom> retrieveGameRoom(@PathVariable("roomId") String roomId,
 			@RequestBody(required = false) Map<String, Object> params)
 			throws OpenViduJavaClientException, OpenViduHttpException {
-		Session session = openvidu.getActiveSession(roomId);
-		if (session == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//		Session session = openvidu.getActiveSession(roomId);
+//		if (session == null) {
+//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//		}
+		log.debug("방 획득이 요청되었습니다.");
+		GameRoom room = gameManager.getGameRoom(roomId);
+		if (room == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		System.out.println(gameManager.getGameRoom(roomId));
-		log.info("방 획득이 요청되었습니다.");
 		return new ResponseEntity<>(gameManager.getGameRoom(roomId), HttpStatus.OK);
 	}
 	
@@ -114,7 +117,7 @@ public class MainController {
 
 	// 방 접속 connectRoom(@RequestParam String roomId, Player player)
 	@PostMapping("/api/game/{roomId}/player")
-	public ResponseEntity<?> connectRoom(@PathVariable("roomId") String roomId, @RequestBody String nickname)
+	public ResponseEntity<?> connectRoom(@PathVariable("roomId") String roomId, @RequestBody String nickName)
 			throws OpenViduJavaClientException, OpenViduHttpException {
 		Session session = openvidu.getActiveSession(roomId);
 
@@ -125,7 +128,7 @@ public class MainController {
 		// 토큰 발급
 		String token = getConnectionToken(session, paramMap);
 		String playerId = token.split("token=")[1]; // 토큰 앞부분 삭제
-		Player player = new Player(playerId, nickname);
+		Player player = new Player(playerId, nickName);
 
 		log.debug(player.toString());
 
@@ -137,12 +140,12 @@ public class MainController {
 			if (gameManager.getHostId(roomId) == null)
 				gameManager.setHostId(roomId, playerId);
 			
-			log.info(nickname + "님이 " + roomId + "에 접속합니다.");
+			log.info(nickName + "님이 " + roomId + "에 접속합니다.");
 			
 			Map<String, String> data = new HashMap<>();
 			data.put("token", token);
 			data.put("playerId", playerId);
-			data.put("nickname", nickname);
+			data.put("nickName", nickName);
 			
 			return new ResponseEntity<>(data, HttpStatus.OK);
 		} else {

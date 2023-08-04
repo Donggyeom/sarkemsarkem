@@ -131,7 +131,9 @@ const ButtonContainer2 = styled.div`
 
 
 const CommonLobby = ()=>{
-  const {roomId, gameId, setGameOption, gameOption, isHost, camArray, leaveSession, token, updateGameSession} = useRoomContext();
+  const {roomSession, setRoomSession, getGameRoom, player, setPlayer, roomId, gameId, 
+    setGameOption, gameOption, isHost, camArray, leaveSession, token, updateGameSession,
+    createSession, connectSession} = useRoomContext();
   const {handleGamePageClick, stompClient} = useGameContext();
 
   const navigate = useNavigate();
@@ -139,18 +141,42 @@ const CommonLobby = ()=>{
 
   useEffect(() => {
 
-
-    if (roomId === ''){
-      console.log("세션 정보가 없습니다.")
-      navigate("/");
-      return;
-    }
     window.history.pushState(null, "", location.href);
     window.addEventListener("popstate", () => leaveSession());
 
 
-    // 게임세션 갱신
-    updateGameSession();
+    if (location.pathname.slice(1) === ""){
+      console.log("게임방 정보가 없습니다.")
+      navigate("/");
+      return;
+    }
+
+    if (roomSession.roomId == undefined) {
+      if (getGameRoom() != false) {
+        console.log('roomSession == null');
+        navigate("/loading");
+        createSession().then((res) => {
+          setRoomSession((prev) => {
+            return ({
+              ...prev,
+              roomId: res,
+            });
+          });
+        });
+      }
+    }
+    else if (roomSession.gameId == undefined) {
+      console.log('roomSession.gameId == null');
+      getGameRoom();
+    }
+    else if (roomSession.openviduSession == undefined) {
+      connectSession();
+    }
+    else {
+      console.log('roomSession');
+      console.log(roomSession);
+      navigate(`/${roomSession.roomId}/lobby`);
+    }
     
     console.log('roomId : ' + roomId);
     
