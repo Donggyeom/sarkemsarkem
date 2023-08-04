@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef }  from 'react';
-import '../index.css';
+import React, { useState, useEffect }  from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
 import CamButton from '../components/buttons/CamButton';
@@ -527,15 +526,9 @@ const CamCatWrapper = styled.div`
   top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
 
-const handleScMiniClick = () => {
-  console.log('ScMini clicked!');
-};
-
 const SunsetPage = () => {
    
-  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
-    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+  const { roomId, publisher, camArray, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   
   const { myRole, startVote, agreeExpulsion, disagreeExpulsion } = useGameContext();
   const navigate = useNavigate();

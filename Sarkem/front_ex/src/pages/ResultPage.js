@@ -5,7 +5,7 @@ import Background from '../components/backgrounds/BackgroundSunset';
 import ReButton from '../components/buttons/reButton';
 import ResultBox from '../components/games/ResultBox';
 import logoImage from '../img/logo.png';
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import createRandomId from '../utils';
 
@@ -92,11 +92,8 @@ const TextAboveWrapper = styled.div`
 
 
 const ResultPage = () => {
-  const { roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
-    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn} = useRoomContext(); 
+  const { setPublisher, setSubscribers, setCamArray, session, setSession} = useRoomContext(); 
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleAgainButtonClick = () => {
 

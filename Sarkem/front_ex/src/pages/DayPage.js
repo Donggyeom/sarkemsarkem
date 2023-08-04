@@ -9,7 +9,7 @@ import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
 
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
@@ -61,7 +61,6 @@ const DayPage = () => {
   }, [meetingTime, roomId]);
 
   const navigate = useNavigate();
-  const location = useLocation();
   const [voteCount, setVoteCount] = useState(0);
 
 
