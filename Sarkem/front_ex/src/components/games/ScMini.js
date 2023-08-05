@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled,  { keyframes }  from 'styled-components';
 import scSarkImageSrc from '../../img/sc_삵.png';
 import scPoliceImageSrc from '../../img/sc_경찰.png';
@@ -70,8 +70,9 @@ const PopupImage = styled.img`
   width: 300px;
 `;
 
-const ScMini = ({ alt, role }) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(true);
+const ScMini = ({ alt, role, dayCount }) => {
+
+  const [isPopupOpen, setIsPopupOpen] = useState(dayCount === 1);
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state
 
 
@@ -88,6 +89,12 @@ const ScMini = ({ alt, role }) => {
       setIsClosing(false); // 팝업이 완전히 사라지면 팝업 닫는 상태를 false로 변경
     }, 450); // 0.5초(500ms) 후에 팝업을 완전히 닫습니다.
   };
+
+  useEffect(() => {
+    if (dayCount === 0) {
+      setIsPopupOpen(true);
+    }
+  }, [dayCount]);
 
   let buttonImageSrc;
   let popupImageSrc;
