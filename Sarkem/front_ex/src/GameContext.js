@@ -33,13 +33,7 @@ const GameProvider = ({ children }) => {
 
     // 삵만 추리려고 넣은거
     const [playersRoles, setPlayersRoles] = useState({
-      SARK: [],
-      CITIZEN: [],
-      DOCTOR: [],
-      POLICE: [],
-      DETECTIVE: [],
-      PSYCHOLOGIST: [],
-      BULLY: [],
+
     });
 
     const [myRole, setMyRole] = useState(null);
@@ -140,8 +134,11 @@ const onSocketConnected = () => {
         let sysMessage = JSON.parse(message.body);
         console.log(sysMessage);
         console.log(token, sysMessage.playerId);
-        console.log(token, "확인용");
-        if (token != sysMessage.playerId) return;
+
+
+
+        // if (token != sysMessage.playerId) return;
+        if (token === sysMessage.playerId) {
 
         switch (sysMessage.code) {
           // param에 phase, message
@@ -162,20 +159,17 @@ const onSocketConnected = () => {
             console.log(sysMessage.param.sarkCount);
             break;
 
-        // 삵 들끼리만 알아볼 수 있도록 추가했음
+        // 역할 저장을 위해 넣었음 //
         case "ROLE_ASSIGNED":
           console.log(`당신은 ${sysMessage.param.role} 입니다.`);
           setMyRole(sysMessage.param.role);
         
-          if (sysMessage.param.role === "SARK") {
-            const sarkIds = sysMessage.param.sark;
-        
-            setPlayersRoles((prevRoles) => ({
-              ...prevRoles,
-              [sysMessage.param.role]: [...prevRoles[sysMessage.param.role], ...sarkIds]
-            }));
-          }
-            break;
+          setPlayersRoles((prevRoles) => ({
+            ...prevRoles,
+            [sysMessage.playerId]: sysMessage.param.role
+        }));
+        break;
+
 
 
         case "PHASE_DAY":
@@ -246,17 +240,28 @@ const onSocketConnected = () => {
         //     setIsMicOn(false);
         //     break;
 
-
-
-
-
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`);
             break;
         
+        }
+      }
+
+      else{
+        
+        // 역할 저장을 위해 넣었음 //
+        switch (sysMessage.code) {
+          case "ROLE_ASSIGNED":
+             
+              setPlayersRoles((prevRoles) => ({
+                  ...prevRoles,
+                  [sysMessage.playerId]: sysMessage.param.role
+              }));
+              break;
 
         }
-        handleSystemMessage(message);
+      }
+      handleSystemMessage(message);
     }
 
     const handleGamePageClick = () => {
