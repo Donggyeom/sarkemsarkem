@@ -5,13 +5,19 @@ import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 
+
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
   // roomId : 방번호 , token : 플레이어아이디 
     const {roomId, token, isHost, isMicOn, setIsMicOn, publisher} = useRoomContext();
     const navigate = useNavigate();
+    
     let stompClient = useRef({})
+
+    const [chatMessages, setChatMessages] = useState([]); 
+    const [chatConnected, setChatConnected] = useState(false);
+
 
     const [peopleCount, setPeopleCount] = useState({
         meetingTime: 60,
@@ -24,6 +30,18 @@ const GameProvider = ({ children }) => {
         bullyCount: 0
       });
 
+
+    // 삵만 추리려고 넣은거
+    const [playersRoles, setPlayersRoles] = useState({
+      SARK: [],
+      CITIZEN: [],
+      DOCTOR: [],
+      POLICE: [],
+      DETECTIVE: [],
+      PSYCHOLOGIST: [],
+      BULLY: [],
+    });
+
     const [myRole, setMyRole] = useState(null);
     const [myVote, setMyVote] = useState(0);
     const [dayCount, setDayCount] = useState(0);
@@ -33,10 +51,12 @@ const GameProvider = ({ children }) => {
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState("");
 
+    
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
     const [detectedGesture, setDetectedGesture] = useState('');
     const [animationFrameId, setAnimationFrameId] = useState(null);
     const location = useLocation();
+
 
     useEffect(() => {
         if (token !== null) {
@@ -53,6 +73,7 @@ const GameProvider = ({ children }) => {
      setTimeout(function() {
        onSocketConnected();
         connectGame();
+        connectChat();
        console.log(stompClient.current.connected);
     }, 500);
     })
@@ -64,10 +85,50 @@ const GameProvider = ({ children }) => {
     stompClient.current.subscribe('/sub/game/system/' + roomId, receiveMessage)
   }
 
-  // const connectChat = () => {
-  //   console.log('/sub/game/system/chat_' + roomId + " redis 구독")
-  //   stompClient.current.subscribe('/sub/chat/room/' + roomId, receiveMessage)
+  // 채팅 연결할 때 //
+  const connectChat = () => {
+    console.log('/sub/chat/room/' + roomId + " redis 구독")
+    stompClient.current.subscribe('/sub/chat/room/' + roomId, receiveChatMessage);
+  };
+
+  const receiveChatMessage = (message) => {
+
+    const chatMessage = JSON.parse(message.body);
+    console.log(chatMessage, "메세지 수신"); // 메시지 수신 여부 확인을 위한 로그
+    setChatMessages((prevMessages) => [...prevMessages, chatMessage]);
+  };
+  
+  const sendChatMessage = (message) => {
+    if (stompClient.current.connected && token !== null) {
+      stompClient.current.send('/pub/chat/room/' + roomId, {}, JSON.stringify({
+        roomId: roomId,
+        message: message
+      }));
+    }
+  };
+
+
+
+
+  // 게임 끝나거나 비활성화 할때 //
+  const unconnectChat = () => {
+    console.log('/sub/chat/room/' + roomId + " redis 구독")
+    stompClient.current.unsubscribe('/sub/chat/room/' + roomId, receiveMessage)
+  };
+
+  
+  // const onSendMessage = (message) => {
+  //   if (stompClient.current.connected && token !== null) {
+  //     stompClient.current.send('/pub/chat/room/' + roomId, {}, JSON.stringify({ message }));
+  //   }
   // }
+
+  // const receiveChatMessage = (message) => {
+  //   const chatMessage = JSON.parse(message.body);
+  //   setChatMessages((prevMessages) => [...prevMessages, chatMessage]);
+  // }
+
+
 
 
 const onSocketConnected = () => {
@@ -79,6 +140,7 @@ const onSocketConnected = () => {
         let sysMessage = JSON.parse(message.body);
         console.log(sysMessage);
         console.log(token, sysMessage.playerId);
+        console.log(token, "확인용");
         if (token != sysMessage.playerId) return;
 
         switch (sysMessage.code) {
@@ -100,10 +162,21 @@ const onSocketConnected = () => {
             console.log(sysMessage.param.sarkCount);
             break;
 
+        // 삵 들끼리만 알아볼 수 있도록 추가했음
         case "ROLE_ASSIGNED":
-            console.log(`당신은 ${sysMessage.param.role} 입니다.`);
-            setMyRole(sysMessage.param.role);
+          console.log(`당신은 ${sysMessage.param.role} 입니다.`);
+          setMyRole(sysMessage.param.role);
+        
+          if (sysMessage.param.role === "SARK") {
+            const sarkIds = sysMessage.param.sark;
+        
+            setPlayersRoles((prevRoles) => ({
+              ...prevRoles,
+              [sysMessage.param.role]: [...prevRoles[sysMessage.param.role], ...sarkIds]
+            }));
+          }
             break;
+
 
         case "PHASE_DAY":
               navigate(`/${roomId}/day`)
@@ -311,7 +384,7 @@ const onSocketConnected = () => {
 
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture }}>
+      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendChatMessage, receiveChatMessage, playersRoles }}>
       {children}
     </GameContext.Provider>
   );

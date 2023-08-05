@@ -4,7 +4,12 @@ import chatbox from '../img/chatbox.png';
 import chatinputboxImage from '../img/chatinputbox.png';
 import chatsendbuttonImage from '../img/chatsendbutton.png';
 import chatsenderImage from '../img/chatsender.png';
-import chatcloseImage from '../img/closebutton.png'
+import chatcloseImage from '../img/closebutton.png';
+import { useGameContext } from '../GameContext';
+import axios from 'axios';
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 
 const ChatContainer = styled.div`
   background-image: url(${chatbox});
@@ -108,62 +113,65 @@ const ChatCloseButton = styled.button`
   z-index: 1;
 `;
 
-const Chatting = ({ handleCloseButtonClick, messages, onSendMessage }) => {
-  const [inputMessage, setInputMessage] = useState('');
-  const chatMessagesRef =useRef();
+  const Chatting = ({ handleCloseButtonClick }) => {
+    const { chatMessages, sendChatMessage, receiveChatMessage } = useGameContext();
+    const [inputMessage, setInputMessage] = useState('');
+    const chatMessagesRef = useRef();
   
+    const scrollToBottom = () => {
+      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+    };
+  
+    useEffect(() => {
+      scrollToBottom();
+    }, [chatMessages]);
 
-  const scrollToBottom = () =>{
-    chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
-  };
-
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSendMessage = () => {
-    if (inputMessage.trim() !== '') {
-      onSendMessage(inputMessage); // Send the message to the parent component
+  
+    const handleSendMessage = () => {
+      console.log("메세지보내는중");
+      sendChatMessage(inputMessage);
+      console.log(inputMessage);
+      console.log(chatMessages);
       setInputMessage('');
-    }
-  };
+    };
+  
+    const handleInputChange = (e) => {
+      setInputMessage(e.target.value);
+    };
+  
+    const handleInputKeyPress = (e) => {
+      if (e.key === 'Enter') {
+        handleSendMessage();
+      }
+    };
 
-  const handleInputChange = (e) => {
-    setInputMessage(e.target.value);
-  };
-
-  const handleInputKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
-    }
-  };
-
-  return (
-    <ChatContainer>
-      <headerWrapper>
-      <ChatCloseButton onClick={handleCloseButtonClick}></ChatCloseButton>
-      </headerWrapper>
-      <ChatWrapper>
-        <ChatMessages ref={chatMessagesRef}>
-          {messages.map((message, index) => (
-            <ChatMessage key={index}>{message}</ChatMessage>
-          ))}
-        </ChatMessages>
-      </ChatWrapper>
-      <ChatInputWrapper>
-        <ChatInput
-          type="text"
-          img={chatinputboxImage}
-          value={inputMessage}
-          onChange={handleInputChange}
-          onKeyPress={handleInputKeyPress}
-          placeholder="메세지를 입력하세요..."
-        />
-        <ChatButton onClick={handleSendMessage}></ChatButton>
-      </ChatInputWrapper>
-    </ChatContainer>
-  );
+    return (
+      <ChatContainer>
+        <headerWrapper>
+          <ChatCloseButton onClick={handleCloseButtonClick}></ChatCloseButton>
+        </headerWrapper>
+        <ChatWrapper>
+          <ChatMessages ref={chatMessagesRef}>
+            {chatMessages.map((message, index) => (
+              <ChatMessage key={index}>
+                {message.text} {/* 수정: message.text 표시 */}
+              </ChatMessage>
+            ))}
+          </ChatMessages>
+        </ChatWrapper>
+        <ChatInputWrapper>
+          <ChatInput
+            type="text"
+            img={chatinputboxImage}
+            value={inputMessage}
+            onChange={handleInputChange}
+            onKeyPress={handleInputKeyPress}
+            placeholder="메세지를 입력하세요..."
+          />
+          <ChatButton onClick={handleSendMessage}>send message</ChatButton>
+        </ChatInputWrapper>
+      </ChatContainer>
+    );
 };
 
 export default Chatting;

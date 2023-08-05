@@ -42,8 +42,8 @@ const TimeSecond = styled.text`
 `;
 
 const DayPage = () => {
-  const { roomId, publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
-  const { myRole, peopleCount, systemMessages, threatedTarget  } = useGameContext();
+  const { roomId, publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn, } = useRoomContext();
+  const { myRole, peopleCount, systemMessages, threatedTarget, playersRoles  } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
 
   useEffect(() => {
@@ -98,10 +98,10 @@ const DayPage = () => {
   };
 
   const chatVisible = () =>{
-    if (myRole === 'OBSERVER'){
+    if (myRole === 'OBSERVER' || myRole === 'CITIZEN'){
       return (
         <>
-          <ChatButtonAndPopup />
+          <ChatButtonAndPopup roomId={roomId}/>;
         </>
       );
     }
@@ -124,6 +124,7 @@ const DayPage = () => {
   };
 
   const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가
+  console.log(playersRoles, "확인");
 
   return (
     <Background>
