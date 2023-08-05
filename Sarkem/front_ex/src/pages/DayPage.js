@@ -46,8 +46,6 @@ const DayPage = () => {
   const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount  } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
 
-  console.log(voteSituation, "투표 결과 확인합니다");
-
   useEffect(() => {
     const timer = setInterval(() => {
       if (meetingTime > 0) {

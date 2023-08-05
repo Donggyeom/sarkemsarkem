@@ -86,7 +86,6 @@ const GameProvider = ({ children }) => {
   };
 
   const receiveChatMessage = (message) => {
-
     const chatMessage = JSON.parse(message.body);
     console.log(chatMessage, "메세지 수신"); // 메시지 수신 여부 확인을 위한 로그
     setChatMessages((prevMessages) => [...prevMessages, chatMessage]);
@@ -128,6 +127,8 @@ const GameProvider = ({ children }) => {
 const onSocketConnected = () => {
         console.log("game websocket 연결 완료");
     }
+
+
 
     const receiveMessage = async (message) => {
         // 시스템 메시지 처리
@@ -191,7 +192,7 @@ const onSocketConnected = () => {
             break;
 
         case "VOTE_SITUATION":
-            console.log(sysMessage.param);
+            console.log(sysMessage.param, "얘일걸");
             setVotesituation(sysMessage.param);
             alert(voteSituation , "투표결과");
             break;
@@ -261,6 +262,7 @@ const onSocketConnected = () => {
 
         }
       }
+
       handleSystemMessage(message);
     }
 
