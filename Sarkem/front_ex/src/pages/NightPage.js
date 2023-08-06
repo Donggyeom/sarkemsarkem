@@ -51,8 +51,8 @@ const NightPage = () => {
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
-  const { myRole, peopleCount, currentSysMessage } = useGameContext();
-  
+  const { myRole, peopleCount, currentSysMessage, playersRoles } = useGameContext();
+  const mafiaButton = true;
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -73,6 +73,17 @@ const NightPage = () => {
       return <ScMini alt="ScMini" role={'CITIZEN'} />
     }
   };
+
+  const nightstatus = () =>{
+    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO'){
+      console.log("꺼졌니?")
+      publisher.publishVideo(false);
+      publisher.publishAudio(false);
+      mafiaButton=false;
+    }
+  };
+
+
 
   const chatVisible = () =>{
     if (myRole === 'OBSERVER'){
@@ -101,6 +112,7 @@ const NightPage = () => {
 
     useEffect(() => {
         console.log(roomId);
+        nightstatus();
         if (roomId === undefined){
           console.log("세션 정보가 없습니다.")
           navigate("/");
@@ -124,8 +136,8 @@ const NightPage = () => {
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
-        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
+        {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           {/* <NightPopup></NightPopup> */}
           {currentSysMessage && <NightPopup sysMessage={currentSysMessage} />}
