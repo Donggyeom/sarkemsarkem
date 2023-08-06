@@ -132,8 +132,8 @@ const ButtonContainer2 = styled.div`
 
 const CommonLobby = ()=>{
   const {roomSession, setRoomSession, getGameRoom, player, setPlayer, roomId, gameId, 
-    setGameOption, gameOption, isHost, camArray, leaveSession, token, updateGameSession,
-    createSession, connectSession} = useRoomContext();
+    setGameOption, gameOption, isHost, camArray, leaveSession, token,
+    createGameRoom, connectSession} = useRoomContext();
   const {handleGamePageClick, stompClient} = useGameContext();
 
   const navigate = useNavigate();
@@ -151,35 +151,13 @@ const CommonLobby = ()=>{
       return;
     }
 
-    if (roomSession.roomId == undefined) {
-      if (getGameRoom() != false) {
-        console.log('roomSession == null');
-        navigate("/loading");
-        createSession().then((res) => {
-          setRoomSession((prev) => {
-            return ({
-              ...prev,
-              roomId: res,
-            });
-          });
-        });
-      }
-    }
-    else if (roomSession.gameId == undefined) {
-      console.log('roomSession.gameId == null');
-      getGameRoom();
-    }
-    else if (roomSession.openviduSession == undefined) {
-      connectSession();
-    }
-    else {
-      console.log('roomSession');
-      console.log(roomSession);
-      navigate(`/${roomSession.roomId}/lobby`);
-    }
-    
-    console.log('roomId : ' + roomId);
-    
+    // if (roomSession.gameId == undefined) {
+    //   console.log('roomSession.gameId == null');
+    //   navigate("/loading");
+    //   getGameRoom();
+    // }
+    getGameRoom();
+
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
     return () => {
@@ -195,7 +173,7 @@ const CommonLobby = ()=>{
   
   // Function to handle the click event when the user wants to invite others
   const handleInviteClick = async () => {
-    await navigator.clipboard.writeText("localhost:3000/"+roomId).then(alert("게임 링크가 복사되었습니다."));
+    await navigator.clipboard.writeText("localhost:3000/"+roomSession.roomId).then(alert("게임 링크가 복사되었습니다."));
     console.log('Invite functionality for hosts');
   };
 

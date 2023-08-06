@@ -114,25 +114,26 @@ const Logo = styled.img`
 `;
 
 const CommonStart = ({onClick} ) => {
-  const { player, setPlayer, setRoomSession, isHost, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
+  const { player, setPlayer, roomSession, setRoomSession, isHost, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
   const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // setRoomId(location.pathname.slice(1));
-  // const isHost = location.state?.isHost;
 
   const videoRef = useRef(null);
   const audioRef = useRef(null);
 
   useEffect(() => {
     checkRoomId();
-    setRoomSession((prev) => {
-      return ({
-        ...prev,
-        roomId: location.pathname.slice(1),
+    if (roomSession.roomId == undefined) {
+      setRoomSession((prev) => {
+        console.log(`setRoomSession - roomId : ${location.pathname.slice(1)}`);
+        return ({
+          ...prev,
+          roomId: location.pathname.slice(1),
+        });
       });
-    });
+      return;
+    }
     getUserCamera();
     getUserAudio();
   }, []);
@@ -147,6 +148,7 @@ const CommonStart = ({onClick} ) => {
   }, [nickName]);
 
   const checkRoomId = () => {
+    console.log('checkRoomId : ' + location.pathname.slice(1));
     //// 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
     if (location.pathname.slice(1) === ""){
       alert("roomId 정보가 없습니다.")

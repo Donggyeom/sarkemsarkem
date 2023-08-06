@@ -533,7 +533,7 @@ const SunsetPage = () => {
    
   const { roomSession, roomId, setRoomId, isHost, setIsHost, 
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+    OV, initSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   
   const { myRole } = useGameContext();
   const navigate = useNavigate();
