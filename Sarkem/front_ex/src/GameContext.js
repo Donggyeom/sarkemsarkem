@@ -238,6 +238,10 @@ const onSocketConnected = () => {
             setMyRole("OBSERVER");
             break;
 
+        case "BE_HUNTED":
+            setMyRole("OBSERVER");
+            break;
+
         // case "BE_THREATENED":
         //     alert("냥아치 협박 시작!", sysMessage.playerId);
         //     setThreatedTarget(sysMessage.playerId);
