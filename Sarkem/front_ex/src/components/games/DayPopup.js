@@ -44,7 +44,7 @@ const StyledPopupTitle = styled.div`
 
 const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수정
   const [showPopup, setShowPopup] = useState(false);
-
+  // console.log(sysMessage);
   useEffect(() => {
     if (sysMessage) {
       setShowPopup(true);
@@ -56,7 +56,7 @@ const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수
       return () => clearTimeout(fadeOutTimeout);
     }
   }, [sysMessage]);
-
+  console.log(sysMessage);
   return (
     <StyledPopupContainer showPopup={showPopup}>
       <div

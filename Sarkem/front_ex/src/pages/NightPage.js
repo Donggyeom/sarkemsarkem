@@ -51,7 +51,7 @@ const NightPage = () => {
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
-  const { myRole, peopleCount } = useGameContext();
+  const { myRole, peopleCount, currentSysMessage } = useGameContext();
   
 
   const handleCamButtonClick = () => {
@@ -127,7 +127,8 @@ const NightPage = () => {
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
-          <NightPopup></NightPopup>
+          {/* <NightPopup></NightPopup> */}
+          {currentSysMessage && <NightPopup sysMessage={currentSysMessage} />}
         {getMyRole()}
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
         {chatVisible()}

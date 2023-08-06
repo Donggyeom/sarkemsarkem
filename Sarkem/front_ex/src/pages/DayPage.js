@@ -43,7 +43,7 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
   const { roomId, publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn, } = useRoomContext();
-  const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount  } = useGameContext();
+  const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount, currentSysMessage  } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
 
   useEffect(() => {
@@ -123,8 +123,10 @@ const DayPage = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
 
-  const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가
 
+
+  // const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가
+  console.log(currentSysMessage);
   return (
     <Background>
       <StyledDayPage>
@@ -134,7 +136,7 @@ const DayPage = () => {
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn} />
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
-        {sysMessage && <DayPopup sysMessage={sysMessage} />} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
+        {currentSysMessage && <DayPopup sysMessage={currentSysMessage} />} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         <DayNightCamera camArray={camArray} />
         {getMyRole(dayCount)}
       </StyledDayPage>

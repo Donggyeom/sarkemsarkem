@@ -42,16 +42,20 @@ const StyledPopupTitle = styled.div`
   padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
 `;
 
-const NightPopup = () => {
+const NightPopup = (sysMessage) => {
   const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
+    if (sysMessage) {
+      setShowPopup(true);
+    
     const fadeOutTimeout = setTimeout(() => {
       setShowPopup(false);
     }, 3500);
 
     return () => clearTimeout(fadeOutTimeout);
-  }, []);
+  }
+  }, [sysMessage]);
 
   return (
     <StyledPopupContainer showPopup={showPopup}>
@@ -90,7 +94,7 @@ const NightPopup = () => {
         </div>
       </div>
 
-      <StyledPopupTitle>잡아먹을 고양이를 지목하세요.</StyledPopupTitle>
+      <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };

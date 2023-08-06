@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
+import DayPopup from './components/games/DayPopup';
 
 
 const GameContext = createContext();
@@ -12,7 +13,8 @@ const GameProvider = ({ children }) => {
   // roomId : 방번호 , token : 플레이어아이디 
     const {roomId, token, isHost, isMicOn, setIsMicOn, publisher} = useRoomContext();
     const navigate = useNavigate();
-    
+      // 현재 시스템 메시지를 저장할 상태 추가
+    const [currentSysMessage, setCurrentSysMessage] = useState(null);
     let stompClient = useRef({})
 
     const [chatMessages, setChatMessages] = useState([]); 
@@ -145,7 +147,8 @@ const onSocketConnected = () => {
           // param에 phase, message
         case "NOTICE_MESSAGE":
             console.log(sysMessage.param);
-            alert(sysMessage.param.message);
+            setCurrentSysMessage(()=>sysMessage);
+            console.log(currentSysMessage);
             break;
         case "GAME_START":   
             navigate(`/${roomId}/day`);
@@ -392,7 +395,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendChatMessage, receiveChatMessage, playersRoles,
-      voteSituation }}>
+      voteSituation, currentSysMessage }}>
       {children}
     </GameContext.Provider>
   );
