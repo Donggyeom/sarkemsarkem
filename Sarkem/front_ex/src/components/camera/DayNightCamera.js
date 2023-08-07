@@ -239,7 +239,7 @@ const CamCatWrapper = styled.div`
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
     const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture } = useGameContext();
-    const [mafias, setMafias] = useState([]);
+    
 
     useEffect(() => {
       setIsConfirmed(false);
@@ -289,73 +289,51 @@ const CamCatWrapper = styled.div`
       const mafia = user.stream.mediaStream;
       setMafias((mafias) => [...mafias, mafia]);
       console.log(mafias);
-      // console.log(user.stream.mediaStream.getAudioTracks());
-      // audioRef.current = user.stream.mediaStream;
-      // if (!isRunning) setIsRunning(true);
-      // else setIsRunning(false);
-      // console.log(isRunning);
+
     }
     const changeVoice = () => {
       mixedMediaStreamRef.current = getMixedMediaStream();
     }
-  const audioRef = useRef(null);
-  const jungleRef = useRef(null);
-  const [isRunning, setIsRunning] = useState(false);
-  const [pitchOffset, setPitchOffset] = useState(parseFloat(1));
+
+  const [mafias, setMafias] = useState([]);
   const mixedMediaStreamRef = useRef(null);
+  const jungleRefs = useRef([]);
+  const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
 
+  // 삵들에 대해 음성변조 시작
   const getMixedMediaStream = () => {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext);
-
+    console.log("음성 변조 시작...")
     const mixedMediaStream = new MediaStream();
-
     mafias.forEach((mediaStream) => {
       const audioTrack = mediaStream.getAudioTracks()[0];
       const source = audioContext.createMediaStreamSource(new MediaStream([audioTrack]));
-
       const jungle = new Jungle(audioContext);
-      jungle.setPitchOffset(Math.random() < 0.5 ? -1 : 1);
+      const randomPitch = Math.random() < 0.5 ? -1 : 1;
+      jungle.setPitchOffset(1);
       source.connect(jungle.input);
       jungle.output.connect(audioContext.destination);
-
       const audioTrackWithEffects = audioContext.createMediaStreamDestination();
       jungle.output.connect(audioTrackWithEffects);
       mixedMediaStream.addTrack(audioTrackWithEffects.stream.getAudioTracks()[0]);
+      jungle.isConnected = true;
+      jungleRefs.current.push(jungle);
     })
   }
 
-  useEffect(() => {
-    let context;
-    let jungle = jungleRef.current;
-    if (isRunning) {
-      if (!jungle) {
-        context = new (window.AudioContext || window.webkitAudioContext)();
-        jungle = new Jungle(context);
-        jungleRef.current = jungle;
-      }
-      const mediaStreamSource = context.createMediaStreamSource(audioRef.current);
-      mediaStreamSource.connect(jungle.input);
-      jungle.output.connect(context.destination);
-      jungle.isConnected = true;
-      jungleRef.current.setPitchOffset(pitchOffset);
-    } else {
+  // 음성 변조 중지
+  const stopVoiceChange = () => {
+    console.log("음성 변조 중지")
+    jungleRefs.current.forEach((jungle) => {
       if (jungle && jungle.isConnected) {
-        context = jungle.context;
-        jungle.output.disconnect(context.destination);
+        console.log(jungle, "음성 변조 중지 중...");
+        jungle.output.disconnect(audioContext.destination);
         jungle.isConnected = false;
-        jungleRef.current = null;
       }
-    }
-
-    return () => {
-      if (jungle && jungle.isConnected) {
-        context = jungle.context;
-        jungle.output.disconnect(context.destination);
-        jungle.isConnected = false;
-        jungleRef.current = null;
-      }
-    };
-  }, [isRunning]);
+    });
+    setMafias([]);
+    jungleRefs.current = [];
+    mixedMediaStreamRef.current = null;
+  };
 
     return (
       <CamCatGrid style={gridStyles}>
@@ -365,7 +343,7 @@ const CamCatWrapper = styled.div`
             camCount={camCount}
             user={user}
             index={index}
-            onClick={() => addMafia(user)}
+            onClick={() => handleCamClick(user)}
           >
             <CamCat props={camArray[index]} user={user} />
             <VotefootWrapper show={clickedCamera === user && startVote}>
@@ -402,6 +380,9 @@ const CamCatWrapper = styled.div`
           )}
           <ActionButton onClick={changeVoice}>
             음성변조
+          </ActionButton>
+          <ActionButton onClick={stopVoiceChange}>
+            변조
           </ActionButton>
           <ActionButton onClick={startHiddenMission}>
             히든미션
