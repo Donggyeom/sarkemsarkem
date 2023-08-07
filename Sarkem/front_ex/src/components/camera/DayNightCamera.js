@@ -304,8 +304,9 @@ const CamCatWrapper = styled.div`
     const nightCamAudio =() =>{
       if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
         for(let i = 0; i<camCount; i++){
-          console.log(camArray[i] instanceof Subscriber);
-          if(camArray[i] instanceof Subscriber){
+          console.log(JSON.parse(camArray[i].stream.connection.data).token);
+          const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === 'sark');
+          if(camArray[i] instanceof Subscriber&&!(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token))){
           camArray[i].subscribeToVideo(false);
           camArray[i].subscribeToAudio(false);
           }
