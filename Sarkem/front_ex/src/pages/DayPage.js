@@ -136,7 +136,7 @@ const DayPage = () => {
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn} />
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
-        {currentSysMessage && <DayPopup sysMessage={currentSysMessage} />} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
+        {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         <DayNightCamera camArray={camArray} />
         {getMyRole(dayCount)}
       </StyledDayPage>

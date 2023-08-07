@@ -42,7 +42,7 @@ const StyledPopupTitle = styled.div`
   padding: 10px;
 `;
 
-const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수정
+const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받도록 수정
   const [showPopup, setShowPopup] = useState(false);
   // console.log(sysMessage);
   useEffect(() => {
@@ -88,7 +88,7 @@ const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수
             right: '110px',
           }}
         >
-          N일차 낮
+          {dayCount}일차 낮
         </div>
       </div>
       <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>

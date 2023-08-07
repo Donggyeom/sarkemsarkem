@@ -48,9 +48,13 @@ const ScButtonImage = styled.img`
   position: absolute;
   top: 3%;
   right: 2%;
+  &:hover {
+    filter: brightness(0.8);
+  }
 `;
 
 const ScMiniButton = styled.div`
+
 `;
 
 const Popup = styled.div`
