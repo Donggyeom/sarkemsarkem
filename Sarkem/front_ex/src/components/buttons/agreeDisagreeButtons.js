@@ -9,6 +9,9 @@ const SmallButton = styled.button`
   background: none;
   cursor: pointer;
   border: none;
+  &:hover {
+    filter: brightness(0.8);
+  }
 `;
 
 const AgreeButton = ({ onClick, disabled }) => (

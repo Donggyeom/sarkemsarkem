@@ -52,7 +52,7 @@ const NightPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { myRole, peopleCount, currentSysMessage, playersRoles } = useGameContext();
-  const mafiaButton = true;
+  // const mafiaButton = true;
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -79,7 +79,7 @@ const NightPage = () => {
       console.log("꺼졌니?")
       publisher.publishVideo(false);
       publisher.publishAudio(false);
-      mafiaButton=false;
+      // mafiaButton=false;
     }
   };
 
@@ -136,8 +136,10 @@ const NightPage = () => {
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
-        {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
-        {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
+        {/* {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />} */}
+        {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
+        {/* {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>} */}
+        {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           {/* <NightPopup></NightPopup> */}
           {currentSysMessage && <NightPopup sysMessage={currentSysMessage} />}

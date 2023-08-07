@@ -14,7 +14,7 @@ import { useGameContext } from '../GameContext';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
-import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
+import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons';
 
 
 
