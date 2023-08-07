@@ -42,7 +42,7 @@ const StyledPopupTitle = styled.div`
   padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
 `;
 
-const NightPopup = (sysMessage) => {
+const NightPopup = ({sysMessage}) => {
   const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const NightPopup = (sysMessage) => {
     return () => clearTimeout(fadeOutTimeout);
   }
   }, [sysMessage]);
-
+  console.log(sysMessage);
   return (
     <StyledPopupContainer showPopup={showPopup}>
       {/* Your popup content */}

@@ -126,7 +126,7 @@ const DayPage = () => {
 
 
   // const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가
-  console.log(currentSysMessage);
+  // console.log(currentSysMessage);
   return (
     <Background>
       <StyledDayPage>

@@ -5,6 +5,7 @@ import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 import DayPopup from './components/games/DayPopup';
+import { Message } from '@stomp/stompjs';
 
 
 const GameContext = createContext();
@@ -19,6 +20,7 @@ const GameProvider = ({ children }) => {
 
     const [chatMessages, setChatMessages] = useState([]); 
     const [chatConnected, setChatConnected] = useState(false);
+    const [message, setMessage] = useState("");
 
 
     const [peopleCount, setPeopleCount] = useState({
@@ -149,7 +151,7 @@ const onSocketConnected = () => {
         case "NOTICE_MESSAGE":
             console.log(sysMessage.param);
             setCurrentSysMessage(()=>sysMessage);
-            console.log(currentSysMessage);
+            // console.log(currentSysMessage);
             break;
         case "GAME_START":   
             navigate(`/${roomId}/day`);
@@ -189,7 +191,7 @@ const onSocketConnected = () => {
             break;
 
         case "TARGET_SELECTION":
-            alert('투표가 시작됐습니다');
+            // alert('투표가 시작됐습니다');
             setStartVote(true);
             setDayCount(sysMessage.param.day);
             break;
@@ -213,7 +215,7 @@ const onSocketConnected = () => {
             break;
   
         case "TARGET_SELECTION_END":
-            alert("선택 완료", sysMessage.param.targetNickname);
+            // alert("선택 완료", sysMessage.param.targetNickname);
             setSelectedTarget("");
             break;
 
