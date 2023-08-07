@@ -32,7 +32,6 @@ const ScrollableText = styled.div`
 
 const Log = ({ top, left }) => {
   const { currentSysMessagesArray } = useGameContext();
-  console.log('으앵');
   console.log(currentSysMessagesArray);
   return (
     <ChatContainer top={top} left={left}>
