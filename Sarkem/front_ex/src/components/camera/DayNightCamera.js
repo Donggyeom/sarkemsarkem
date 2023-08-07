@@ -295,6 +295,7 @@ const CamCatWrapper = styled.div`
       mixedMediaStreamRef.current = getMixedMediaStream();
     }
 
+  // 삵들의 객체 정보를 담을 배열
   const [mafias, setMafias] = useState([]);
   const mixedMediaStreamRef = useRef(null);
   const jungleRefs = useRef([]);
