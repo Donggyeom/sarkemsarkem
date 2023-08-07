@@ -16,5 +16,5 @@ public class ChatMessage {
     private String roomId; // 방번호
     private String gameId; // 게임번호
     private String playerId; // 메시지 보낸사람
-    private String content; // 메시지
+    private String message; // 메시지
 }
