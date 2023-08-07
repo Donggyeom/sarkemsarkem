@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  font-family: "RixInooAriDuri";
+  font-family: "RixInooAriDuriR";
 }
 
 .App-logo {
@@ -38,6 +38,4 @@
   }
 }
 
-@font-face{
-  font-family: "RixInooAriDuri";
-  src: url("./font/RixInooAriDuri.ttf")}
+

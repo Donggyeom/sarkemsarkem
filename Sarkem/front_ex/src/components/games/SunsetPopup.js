@@ -34,7 +34,7 @@ const StyledPopupContainer = styled.div`
 const StyledPopupTitle = styled.div`
   color: #ffffff;
   font-size: 42px;
-  font-family: "RixInooAriDuri", sans-serif;
+  font-family: "RixInooAriDuriR", sans-serif;
   text-align: center;
   text-shadow: 1px 1px black;
   -webkit-text-stroke: 1px black; /* For webkit-based browsers like Chrome, Safari */
