@@ -156,6 +156,15 @@ const CommonLobby = ()=>{
     //   navigate("/loading");
     //   getGameRoom();
     // }
+    if (roomSession == undefined || roomSession.roomId == undefined) {
+      console.log(`roomSession`);
+      console.log(roomSession);
+      console.log(`roomSession roomId`);
+      console.log(roomSession.roomId);
+      console.log(location.pathname);
+      navigate(`/${location.pathname.split("/")[1]}`);
+      return;
+    }
     getGameSession();
 
     // 윈도우 객체에 화면 종료 이벤트 추가

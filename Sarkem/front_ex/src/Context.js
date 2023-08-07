@@ -123,6 +123,8 @@ const RoomProvider = ({ children }) => {
       const subscriber = newSession.subscribe(event.stream, undefined);
       const nickName = JSON.parse(event.stream.streamManager.stream.connection.data).nickName;
       const playerId = JSON.parse(event.stream.streamManager.stream.connection.data).playerId;
+      const isMicOn = JSON.parse(event.stream.streamManager.stream.connection.data).isMicOn;
+      const isCamOn = JSON.parse(event.stream.streamManager.stream.connection.data).isCamOn;
       setCamArray((camArray) => [...camArray, subscriber]);
       setSubscribers((subscribers) => [...subscribers, subscriber]);
       console.log(`streamCreated subscriber`);
@@ -131,6 +133,8 @@ const RoomProvider = ({ children }) => {
         playerId: playerId,
         nickName: nickName,
         stream: subscriber,
+        isMicOn: isMicOn,
+        isCamOn: isCamOn,
       };
       setPlayers((prev) => {
         return new Map(prev).set(playerId, newPlayer);
@@ -165,7 +169,12 @@ const RoomProvider = ({ children }) => {
     try {
       const session = response;
       const data = await getToken();
-      await session.connect(data.token, {nickName: data.nickName, playerId: data.playerId});
+      await session.connect(data.token, {
+        nickName: data.nickName, 
+        playerId: data.playerId,
+        isMicOn: player.isMicOn,
+        isCamOn: player.isCamOn,
+      });
 
       // 내 퍼블리셔 객체 생성
       let publisher = await OV.initPublisherAsync(undefined, {
