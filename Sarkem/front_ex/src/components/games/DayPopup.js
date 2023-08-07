@@ -34,7 +34,7 @@ const StyledPopupContainer = styled.div`
 const StyledPopupTitle = styled.div`
   color: #ffffff;
   font-size: 42px;
-  font-family: "RixInooAriDuri", sans-serif;
+  font-family: "RixInooAriDuriR";
   text-align: center;
   text-shadow: 1px 1px black;
   -webkit-text-stroke: 1px black;
@@ -42,7 +42,7 @@ const StyledPopupTitle = styled.div`
   padding: 10px;
 `;
 
-const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수정
+const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받도록 수정
   const [showPopup, setShowPopup] = useState(false);
   // console.log(sysMessage);
   useEffect(() => {
@@ -56,7 +56,7 @@ const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수
       return () => clearTimeout(fadeOutTimeout);
     }
   }, [sysMessage]);
-  console.log(sysMessage);
+  // console.log(sysMessage);
   return (
     <StyledPopupContainer showPopup={showPopup}>
       <div
@@ -88,7 +88,7 @@ const DayPopup = ({ sysMessage }) => { // sysMessage를 prop으로 받도록 수
             right: '110px',
           }}
         >
-          N일차 낮
+          {dayCount}일차 낮
         </div>
       </div>
       <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>

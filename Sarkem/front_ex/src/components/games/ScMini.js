@@ -1,3 +1,5 @@
+/* eslint-disable */
+console.error = (message) => {};
 import React, { useState, useEffect } from 'react';
 import styled,  { keyframes }  from 'styled-components';
 import scSarkImageSrc from '../../img/sc_삵.png';
@@ -48,22 +50,25 @@ const ScButtonImage = styled.img`
   position: absolute;
   top: 3%;
   right: 2%;
+  &:hover {
+    filter: brightness(0.8);
+  }
 `;
 
 const ScMiniButton = styled.div`
+
 `;
 
-const Popup = styled.div`
+const StyledPopup = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  // background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: ${({ isClosing }) => (isClosing ? slideOut : slideIn)} 0.5s ease; /* 팝업이 사라질 때 애니메이션 적용 */
+  animation: ${({ isClosing }) => (isClosing ? slideOut : slideIn)} 0.5s ease;
 `;
 
 const PopupImage = styled.img`
@@ -131,9 +136,9 @@ const ScMini = ({ alt, role, dayCount }) => {
         <ScButtonImage src={buttonImageSrc} alt={alt} />
       </ScMiniButton>
       {role !== 'OBSERVER' && isPopupOpen && (
-        <Popup isClosing={isClosing} onClick={handlePopupClose}>
+        <StyledPopup isClosing={isClosing} onClick={handlePopupClose}>
           <PopupImage src={popupImageSrc} alt={alt} />
-        </Popup>
+        </StyledPopup>
       )}
     </>
   );

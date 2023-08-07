@@ -126,7 +126,7 @@ const calculateGrid = (camCount) => {
       backgroundColor: 'white', // Set your default background color here for other camCounts
     };
   }
-};
+};``
 
 const TimeSecond = styled.text`
   /* Your style content here */
