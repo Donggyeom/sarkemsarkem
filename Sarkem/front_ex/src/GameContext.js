@@ -96,8 +96,8 @@ const GameProvider = ({ children }) => {
   };
 
   const receiveChatMessage = async (message) => {
-    const chatMessage = JSON.parse(message.body);
-    console.log(chatMessage, "메세지 수신"); // 메시지 수신 여부 확인을 위한 로그
+    const chatMessage = JSON.parse(message.body).message;
+    console.log(chatMessage, "메세지 수신2"); // 메시지 수신 여부 확인을 위한 로그
     setChatMessages((prevMessages) => [...prevMessages, chatMessage]);
   };
   

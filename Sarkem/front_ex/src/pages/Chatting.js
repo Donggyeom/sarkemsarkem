@@ -153,13 +153,13 @@ const ChatCloseButton = styled.button`
           <ChatCloseButton onClick={handleCloseButtonClick}></ChatCloseButton>
         </headerWrapper>
         <ChatWrapper>
-          <ChatMessages ref={chatMessagesRef}>
-            {chatMessages.map((message, index) => (
-              <ChatMessage key={index}>
-                {message.text} {/* 수정: message.text 표시 */}
-              </ChatMessage>
-            ))}
-          </ChatMessages>
+        <ChatMessages ref={chatMessagesRef}>
+          {chatMessages.map((message, index) => (
+            <ChatMessage key={index}>
+              {message} {/* 메시지 내용 표시 */}
+            </ChatMessage>
+          ))}
+        </ChatMessages>
         </ChatWrapper>
         <ChatInputWrapper>
           <ChatInput
