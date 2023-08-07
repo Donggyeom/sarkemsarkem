@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
 import voteImage from '../../img/votefoot.png';
 import { useGameContext } from '../../GameContext';
 
-
+import Jungle from '../../Jungle.js';
 const Votefoot = styled.img`
   position: absolute;
   transform: translateX(-50%);
@@ -239,7 +239,8 @@ const CamCatWrapper = styled.div`
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
     const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture } = useGameContext();
-  
+    const [mafias, setMafias] = useState([]);
+
     useEffect(() => {
       setIsConfirmed(false);
       setClickedCamera(null);
@@ -283,6 +284,79 @@ const CamCatWrapper = styled.div`
       stopPredicting();
     }
 
+    const addMafia = (user) => {
+      console.log(user.stream.mediaStream);
+      const mafia = user.stream.mediaStream;
+      setMafias((mafias) => [...mafias, mafia]);
+      console.log(mafias);
+      // console.log(user.stream.mediaStream.getAudioTracks());
+      // audioRef.current = user.stream.mediaStream;
+      // if (!isRunning) setIsRunning(true);
+      // else setIsRunning(false);
+      // console.log(isRunning);
+    }
+    const changeVoice = () => {
+      mixedMediaStreamRef.current = getMixedMediaStream();
+    }
+  const audioRef = useRef(null);
+  const jungleRef = useRef(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [pitchOffset, setPitchOffset] = useState(parseFloat(1));
+  const mixedMediaStreamRef = useRef(null);
+
+  const getMixedMediaStream = () => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext);
+
+    const mixedMediaStream = new MediaStream();
+
+    mafias.forEach((mediaStream) => {
+      const audioTrack = mediaStream.getAudioTracks()[0];
+      const source = audioContext.createMediaStreamSource(new MediaStream([audioTrack]));
+
+      const jungle = new Jungle(audioContext);
+      jungle.setPitchOffset(Math.random() < 0.5 ? -1 : 1);
+      source.connect(jungle.input);
+      jungle.output.connect(audioContext.destination);
+
+      const audioTrackWithEffects = audioContext.createMediaStreamDestination();
+      jungle.output.connect(audioTrackWithEffects);
+      mixedMediaStream.addTrack(audioTrackWithEffects.stream.getAudioTracks()[0]);
+    })
+  }
+
+  useEffect(() => {
+    let context;
+    let jungle = jungleRef.current;
+    if (isRunning) {
+      if (!jungle) {
+        context = new (window.AudioContext || window.webkitAudioContext)();
+        jungle = new Jungle(context);
+        jungleRef.current = jungle;
+      }
+      const mediaStreamSource = context.createMediaStreamSource(audioRef.current);
+      mediaStreamSource.connect(jungle.input);
+      jungle.output.connect(context.destination);
+      jungle.isConnected = true;
+      jungleRef.current.setPitchOffset(pitchOffset);
+    } else {
+      if (jungle && jungle.isConnected) {
+        context = jungle.context;
+        jungle.output.disconnect(context.destination);
+        jungle.isConnected = false;
+        jungleRef.current = null;
+      }
+    }
+
+    return () => {
+      if (jungle && jungle.isConnected) {
+        context = jungle.context;
+        jungle.output.disconnect(context.destination);
+        jungle.isConnected = false;
+        jungleRef.current = null;
+      }
+    };
+  }, [isRunning]);
+
     return (
       <CamCatGrid style={gridStyles}>
         {camArray.map((user, index) => (
@@ -291,7 +365,7 @@ const CamCatWrapper = styled.div`
             camCount={camCount}
             user={user}
             index={index}
-            onClick={() => handleCamClick(user)}
+            onClick={() => addMafia(user)}
           >
             <CamCat props={camArray[index]} user={user} />
             <VotefootWrapper show={clickedCamera === user && startVote}>
@@ -326,6 +400,9 @@ const CamCatWrapper = styled.div`
               )}
             </>
           )}
+          <ActionButton onClick={changeVoice}>
+            음성변조
+          </ActionButton>
           <ActionButton onClick={startHiddenMission}>
             히든미션
           </ActionButton>

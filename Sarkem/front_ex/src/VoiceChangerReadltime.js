@@ -5,34 +5,37 @@ const VoiceChanger = () => {
   const audioRef = useRef(null);
   const jungleRef = useRef(null);
   const [isRunning, setIsRunning] = useState(false);
-  const [pitchOffset, setPitchOffset] = useState(0);
+  const [pitchOffset, setPitchOffset] = useState(1);
 
   useEffect(() => {
+    let context;
+    let jungle = jungleRef.current;
+
     if (isRunning) {
-      const context = new (window.AudioContext || window.webkitAudioContext)();
-      const jungle = new Jungle(context);
-      jungleRef.current = jungle;
+      if (!jungle) {
+        context = new (window.AudioContext || window.webkitAudioContext)();
+        jungle = new Jungle(context);
+        jungleRef.current = jungle;
+      }
 
       const mediaStreamSource = context.createMediaStreamSource(audioRef.current.srcObject);
+      console.log(audioRef.current.srcObject);
       mediaStreamSource.connect(jungle.input);
       jungle.output.connect(context.destination);
+      jungle.isConnected = true;
     } else {
-      if (jungleRef.current) {
-        const context = jungleRef.current.context;
-        const mediaStreamSource = context.createMediaStreamSource(audioRef.current.srcObject);
-        mediaStreamSource.disconnect(jungleRef.current.input);
-        jungleRef.current.output.disconnect(context.destination);
-        jungleRef.current = null;
+      if (jungle && jungle.isConnected) {
+        context = jungle.context;
+        jungle.output.disconnect(context.destination);
+        jungle.isConnected = false;
       }
     }
 
     return () => {
-      if (jungleRef.current) {
-        const context = jungleRef.current.context;
-        const mediaStreamSource = context.createMediaStreamSource(audioRef.current.srcObject);
-        mediaStreamSource.disconnect(jungleRef.current.input);
-        jungleRef.current.output.disconnect(context.destination);
-        jungleRef.current = null;
+      if (jungle && jungle.isConnected) {
+        context = jungle.context;
+        jungle.output.disconnect(context.destination);
+        jungle.isConnected = false;
       }
     };
   }, [isRunning]);
@@ -54,24 +57,23 @@ const VoiceChanger = () => {
   };
 
   const handleStopRecording = () => {
-    const tracks = audioRef.current.srcObject.getTracks();
-    tracks.forEach((track) => track.stop());
-    setIsRunning(false);
+    setIsRunning(false); 
   };
 
   const handlePitchChange = (event) => {
     setPitchOffset(parseFloat(event.target.value));
+    console.log(pitchOffset);
   };
 
   return (
     <div>
-      <h1>Voice Changer</h1>
-      <p>Click the button below to start voice changer</p>
-      <button onClick={handleStartRecording}>Start</button>
-      <button onClick={handleStopRecording}>Stop</button>
+      <h1>음성 변조기</h1>
+      <p>음성 변조를 시작하려면 아래 버튼을 클릭하세요.</p>
+      <button onClick={handleStartRecording}>시작</button>
+      <button onClick={handleStopRecording}>중지</button>
       <br />
       <label>
-        Pitch Change:
+        음 높이 변경:
         <input type="range" min="-1" max="1" step="0.1" defaultValue="0" onChange={handlePitchChange} />
       </label>
       <audio ref={audioRef} controls />
