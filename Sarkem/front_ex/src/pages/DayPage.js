@@ -35,7 +35,7 @@ const StyledDayPage = styled.div`
 const TimeSecond = styled.text`
   color: #000000;
   text-align: left;
-  font: 400 42px "ONE Mobile POP", sans-serif;
+  font: 400 42px "RixInooAriDuriR", sans-serif;
   position: absolute;
   left: 22px;
   top: 90px;
