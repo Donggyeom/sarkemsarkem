@@ -56,7 +56,7 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
       return () => clearTimeout(fadeOutTimeout);
     }
   }, [sysMessage]);
-  console.log(sysMessage);
+  // console.log(sysMessage);
   return (
     <StyledPopupContainer showPopup={showPopup}>
       <div

@@ -54,7 +54,7 @@ const DayPage = () => {
         clearInterval(timer);
       }
     }, 1000); // 1초마다 실행
-
+    daystatus();
     return () => {
       clearInterval(timer);
     };
@@ -123,7 +123,12 @@ const DayPage = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
 
-
+  const daystatus = () =>{
+    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
+      publisher.publishVideo(true);
+      publisher.publishAudio(true);
+    }
+  };
 
   // const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가
   // console.log(currentSysMessage);

@@ -6,7 +6,7 @@ import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 import DayPopup from './components/games/DayPopup';
 import { Message } from '@stomp/stompjs';
-
+import nightCamAudio from './components/camera/DayNightCamera';
 
 const GameContext = createContext();
 
@@ -49,7 +49,7 @@ const GameProvider = ({ children }) => {
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState("");
 
-    
+    const [phase, setphase] = useState("");
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
     const [detectedGesture, setDetectedGesture] = useState('');
     const [animationFrameId, setAnimationFrameId] = useState(null);
@@ -179,6 +179,7 @@ const onSocketConnected = () => {
 
 
         case "PHASE_DAY":
+              setphase("day");
               navigate(`/${roomId}/day`)
             break;
 
@@ -187,6 +188,8 @@ const onSocketConnected = () => {
             setThreatedTarget(); // 저녁 되면 협박 풀림
             break;
         case "PHASE_NIGHT":
+            setphase("night");
+            console.log(phase);
             navigate(`/${roomId}/night`)
             break;
 
@@ -401,7 +404,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendChatMessage, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage }}>
+      voteSituation, currentSysMessage, phase }}>
       {children}
     </GameContext.Provider>
   );

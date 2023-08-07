@@ -75,7 +75,7 @@ const NightPage = () => {
   };
   
   const nightstatus = () =>{
-    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO'){
+    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
       console.log("꺼졌니?")
       publisher.publishVideo(false);
       publisher.publishAudio(false);
