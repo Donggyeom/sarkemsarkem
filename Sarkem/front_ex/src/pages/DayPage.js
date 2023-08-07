@@ -47,8 +47,8 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
 
-  const { roomId, gameOption, 
-    publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext();
+  const { roomSession, player, gameSession, players, roomId, gameOption, 
+    publisher, camArray, leaveSession } = useRoomContext();
   const { myRole } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(gameOption.meetingTime);
   
@@ -77,19 +77,19 @@ const DayPage = () => {
   };
 
   const handleCamButtonClick = () => {
-    const camOn = !isCamOn;
+    const camOn = !player.isCamOn;
     setIsCamOn(camOn);
-    if (publisher) {
-      publisher.publishVideo(camOn);
+    if (player.stream) {
+      player.stream.publishVideo(camOn);
     }
   };
   
   
   const handleMicButtonClick = () => {
-    const micOn = !isMicOn;
+    const micOn = !player.isMicOn;
     setIsMicOn(micOn);
-    if (publisher) {
-      publisher.publishAudio(micOn);
+    if (player.stream) {
+      player.stream.publishAudio(micOn);
     }
   };
   
@@ -121,8 +121,8 @@ const DayPage = () => {
 
 
   useEffect(() => {
-    console.log(roomId);
-    if (roomId === ''){
+    console.log(roomSession.roomId);
+    if (roomSession.roomId === ''){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
@@ -142,8 +142,8 @@ const DayPage = () => {
         {!isLogOn && <Log top="60%" left="26%" />}
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{meetingTime}s</TimeSecond>
-        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
+        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <DayPopup></DayPopup>
           <DayNightCamera camArray={camArray}/>

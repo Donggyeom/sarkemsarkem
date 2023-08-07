@@ -15,21 +15,12 @@ const GoroomButtonImage = styled.img`
 `;
 
 const GoroomButton = () => {
-  const {roomSession, setRoomSession, isHost, initSession, getGameSession} = useRoomContext();
+  const {roomSession, setRoomSession, isHost, initSession, connectSession, getGameSession} = useRoomContext();
   const navigate = useNavigate();
 
   const handleButtonClick = async () => {
-    const response = await getGameSession();
-    console.log(response);
-    
-    initSession();
-    setRoomSession((prev) => {
-      return ({
-        ...prev,
-        gameId: response,
-      });
-    });
-
+    const session = await initSession();
+    connectSession(session);
     navigate(`/${roomSession.roomId}/lobby`);
   };
 

@@ -29,22 +29,22 @@ const RoomProvider = ({ children }) => {
       OV.enableProdMode();
     }, []);
 
-    useEffect(() => {
-      if (roomSession.roomId == undefined) return;
+    // useEffect(() => {
+    //   if (roomSession.roomId == undefined) return;
 
-      console.log(`roomSession roomId 변경 - roomId : ${roomSession.roomId}`);
+    //   console.log(`roomSession roomId 변경 - roomId : ${roomSession.roomId}`);
 
-      navigate(`/loading`);
-      getGameRoom();
+    //   navigate(`/loading`);
+    //   getGameRoom();
       
-    }, [roomSession.roomId]);
+    // }, [roomSession.roomId]);
 
-    useEffect(() => {
-      if (roomSession.gameId == undefined) return;
+    // useEffect(() => {
+    //   if (roomSession.gameId == undefined) return;
 
-      console.log('roomSession gameId 변경');
-      console.log(roomSession);
-    }, [roomSession.gameId]);
+    //   console.log('roomSession gameId 변경');
+    //   console.log(roomSession);
+    // }, [roomSession.gameId]);
 
     useEffect(() => {
       if (player.playerId == undefined) return;
@@ -52,8 +52,7 @@ const RoomProvider = ({ children }) => {
       console.log('player 변경');
       console.log(player);
       setPlayers((prev) => {
-        prev.set(player.playerId, player);
-        return prev;
+        return new Map(prev).set(player.playerId, player);
       });
       console.log(players);
     }, [player]);
@@ -63,47 +62,31 @@ const RoomProvider = ({ children }) => {
       console.log(players);
     }, [players]);
 
-    const getGameRoom = async () => {
+    const getGameRoom = async (roomId) => {
       // 게임방 정보 획득
       console.log(`getGameRoom`);
-      axios.get('/api/game/' + roomSession.roomId, {
+      const response = await axios.get('/api/game/' + roomId, {
         headers: { 'Content-Type': 'application/json;charset=utf-8', },
-      }).then((response) => {
-        if (response.status == '204') {
-          createGameRoom().then(() => {
-            navigate(`/${roomSession.roomId}`);
-          });
-        }
-        else {
-          console.log('게임방 정보 획득');
-          let gameRoom = response.data;
-          console.log(gameRoom);
-
-          let players = new Map();
-          gameRoom.players.forEach(element => {
-            var p = roomSession.players.get(element.playerId);
-            if (p == null) {
-              players.set(element.playerId, {
-                playerId: element.playerId,
-                nickName: element.nickname
-              });
-            }
-          });
-          setPlayers(players);
-
-          setRoomSession((prev) => {
-            return ({
-              ...prev,
-              roomId: gameRoom.roomId,
-            });
-          });
-          return response.data.gameId;
-        }
-      }).catch(err => {
-        alert('게임방 세션 획득 실패');
-        console.log(err);
-        return false;
       });
+      
+      if (response.status == '204') {
+        // createGameRoom().then(() => {
+        //   navigate(`/${roomSession.roomId}`);
+        // });
+        console.log('gameRoom null');
+        return null;
+      }
+      else if (response.status == '200') {
+        console.log('게임방 정보 획득');
+        const gameRoom = response.data;
+        console.log(gameRoom);
+        return gameRoom;
+      }
+      else {
+        alert('게임방 세션 획득 실패');
+        console.log(response.data);
+        return null;
+      };
     }
 
 
@@ -138,16 +121,22 @@ const RoomProvider = ({ children }) => {
     // stream 생성 이벤트 발생 시 subscribers 배열에 추가
     newSession.on('streamCreated', (event) => {
       const subscriber = newSession.subscribe(event.stream, undefined);
+      const nickName = JSON.parse(event.stream.streamManager.stream.connection.data).nickName;
+      const playerId = JSON.parse(event.stream.streamManager.stream.connection.data).playerId;
       setCamArray((camArray) => [...camArray, subscriber]);
       setSubscribers((subscribers) => [...subscribers, subscriber]);
+      console.log(`streamCreated subscriber`);
+      console.log(subscriber);
+      const newPlayer = {
+        playerId: playerId,
+        nickName: nickName,
+        stream: subscriber,
+      };
       setPlayers((prev) => {
-        return ([
-          ...prev,
-
-        ]);
+        return new Map(prev).set(playerId, newPlayer);
       });
       
-      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickName, "님이 접속했습니다.");
+      console.log(nickName, "님이 접속했습니다.");
     });
 
     // stream 종료 이벤트 발생 시
@@ -168,20 +157,22 @@ const RoomProvider = ({ children }) => {
         openviduSession: newSession,
       });
     });
+    return newSession;
   }
 
   const connectSession = async (response) => {
     console.log(`connectSession`);
     try {
-      let session = roomSession.openviduSession;
-      await session.connect(response, {nickName: player.nickName, playerId: player.playerId});
+      const session = response;
+      const data = await getToken();
+      await session.connect(data.token, {nickName: data.nickName, playerId: data.playerId});
 
       // 내 퍼블리셔 객체 생성
       let publisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
-        publishAudio: isMicOn,
-        publishVideo: isCamOn,
+        publishAudio: player.isMicOn,
+        publishVideo: player.isCamOn,
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
@@ -191,8 +182,8 @@ const RoomProvider = ({ children }) => {
       session.publish(publisher);
 
       // 내 디바이스 on/off 상태 게시
-      publisher.publishVideo(isCamOn);
-      publisher.publishAudio(isMicOn);
+      publisher.publishVideo(player.isCamOn);
+      publisher.publishAudio(player.isMicOn);
       // 퍼블리셔 useState 갱신
       setPublisher(publisher);
       setPlayer((prevState) => {
@@ -238,15 +229,15 @@ const RoomProvider = ({ children }) => {
 //   }
   
   // 서버에 요청하여 화상 채팅 세션 생성하는 함수
-  const createGameRoom = async () => {
+  const createGameRoom = async (roomId) => {
     console.log(`${roomSession.roomId} 세션을 생성합니다.`);
-    const response = await axios.post('/api/game', { customSessionId: roomSession.roomId, nickName: player.nickName }, {
+    const response = await axios.post('/api/game', { customSessionId: roomId, nickName: player.nickName }, {
         headers: { 'Content-Type': 'application/json;charset=utf-8', },
-    }).then((response) => {
-      console.log('세션 생성됨');
-      console.log(response);
-      return response.data; // The sessionId
     });
+    
+    console.log('세션 생성됨');
+    console.log(response);
+    return response.data; // The sessionId
   }
   
   
@@ -254,6 +245,7 @@ const RoomProvider = ({ children }) => {
   const getToken = async () => {
     console.log("세션에 연결을 시도합니다.")
     console.log(player.nickName);
+    console.log()
     const response = await axios.post(`/api/game/${roomSession.roomId}/player`, player.nickName, {
       headers: { 'Content-Type': 'application/json;charset=utf-8', },
     });
@@ -269,7 +261,7 @@ const RoomProvider = ({ children }) => {
 
     // setGameId(response.data.gameId);
 
-    return response.data.token; // The token
+    return response.data; // The token
   }
 
   const getPlayer = async (roomId) => {
@@ -278,11 +270,12 @@ const RoomProvider = ({ children }) => {
   }
 
   return (
-    <RoomContext.Provider value={{ roomSession, setRoomSession, createGameRoom, getGameRoom, roomId, setRoomId, gameId, setGameId, isHost, setIsHost,
-    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    OV, initSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
-    , getToken, getPlayer, gameOption, setGameOption, player, setPlayer, players, setPlayers
-    , getGameSession}}>
+    <RoomContext.Provider value={{ roomSession, setRoomSession, createGameRoom, getGameRoom, 
+      roomId, setRoomId, gameId, setGameId, isHost, setIsHost,
+      publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
+      OV, initSession, connectSession, leaveSession, getToken, getPlayer, gameOption, 
+      setGameOption, player, setPlayer, players, setPlayers,
+      getGameSession}}>
       {children}
     </RoomContext.Provider>
   );

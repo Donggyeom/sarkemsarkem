@@ -114,7 +114,8 @@ const Logo = styled.img`
 `;
 
 const CommonStart = ({onClick} ) => {
-  const { player, setPlayer, roomSession, setRoomSession, isHost, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
+  const { player, setPlayer, setPlayers, roomSession, setRoomSession, isHost, 
+    createGameRoom, getGameRoom } = useRoomContext();
   const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
   const navigate = useNavigate();
   const location = useLocation();
@@ -123,17 +124,9 @@ const CommonStart = ({onClick} ) => {
   const audioRef = useRef(null);
 
   useEffect(() => {
-    checkRoomId();
-    if (roomSession.roomId == undefined) {
-      setRoomSession((prev) => {
-        console.log(`setRoomSession - roomId : ${location.pathname.slice(1)}`);
-        return ({
-          ...prev,
-          roomId: location.pathname.slice(1),
-        });
-      });
-      return;
-    }
+    checkPath();
+    if (roomSession.roomId == undefined) commonStartInit();
+    
     getUserCamera();
     getUserAudio();
   }, []);
@@ -147,53 +140,93 @@ const CommonStart = ({onClick} ) => {
     }));
   }, [nickName]);
 
-  const checkRoomId = () => {
-    console.log('checkRoomId : ' + location.pathname.slice(1));
-    //// 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
+  const commonStartInit = async () => {
+    console.log('commonStartInit');
+    const roomId = location.pathname.slice(1);
+    var gameRoom = await getGameRoom(roomId);
+    if (gameRoom == null) {
+      // 게임방 생성
+      await createGameRoom(roomId);
+      
+      gameRoom = await getGameRoom(roomId);
+      console.log(gameRoom);
+    }
+    
+    // 게임방ID 설정
+    setRoomSession((prev) => {
+      console.log(`setRoomSession`);
+      console.log(gameRoom);
+      return ({
+        ...prev,
+        roomId: gameRoom.roomId,
+        gameId: gameRoom.gameId,
+      });
+    });
+    
+    let players = new Map();
+    gameRoom.players.forEach(element => {
+      var p = players.get(element.playerId);
+      if (p == null) {
+        players.set(element.playerId, {
+          playerId: element.playerId,
+          nickName: element.nickname
+        });
+      }
+    });
+    setPlayers(players);
+  };
+
+  const checkPath = () => {
+    console.log('checkPath : ' + location.pathname.slice(1));
+    // 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
     if (location.pathname.slice(1) === ""){
-      alert("roomId 정보가 없습니다.")
+      alert("roomId 정보가 없습니다.");
       navigate("/");
     }
-  }
+  };
 
   const getUserCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
-      setIsCamOn(true);
 
       videoRef.current.style.transform = 'scaleX(-1)';
       setPlayer((prevState) => {
+        console.log(`setPlayer - isCamOn true`);
         return {...prevState,
-          video: videoRef.current.srcObject,
+          isCamOn: true,
         };
       });
     }
-    
     catch (error) {
       console.error("Failed to start video: ", error);
     }
-  }
+  };
 
   const getUserAudio = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioRef.current.srcObject = stream;
-      setIsMicOn(true);
       setPlayer((prevState) => {
+        console.log(`setPlayer - isMicOn true`);
         return {...prevState,
-          audio: audioRef.current.srcObject,
+          isMicOn: true,
         };
       });
     }
     catch (error) {
       console.error("Failed to start audio: ", error);
     }
-  }
+  };
 
   const handleMicToggle = () => {
-    const micOn = !isMicOn
-    setIsMicOn(micOn);
+    const micOn = !player.isMicOn;
+    // setIsMicOn(micOn);
+    setPlayer((prevState) => {
+      return {...prevState,
+        isMicOn: micOn,
+      };
+    });
     const tracks = audioRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = micOn;
@@ -201,8 +234,12 @@ const CommonStart = ({onClick} ) => {
   };
 
   const handleCamToggle = () => {
-    const camOn = !isCamOn
-    setIsCamOn(camOn);
+    const camOn = !player.isCamOn;
+    setPlayer((prevState) => {
+      return {...prevState,
+        isCamOn: camOn,
+      };
+    });
     const tracks = videoRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = camOn;
@@ -211,7 +248,7 @@ const CommonStart = ({onClick} ) => {
 
   const handleNickNameChange = (event) => {
     setNickName(event.target.value);
-  }
+  };
 
   return (
     <Background>

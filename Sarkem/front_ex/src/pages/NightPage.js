@@ -45,19 +45,23 @@ const handleScMiniClick = () => {
 };
 
 const NightPage = () => {
-  const { roomId, gameOption, setRoomId, isHost, setIsHost, 
-    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    OV, initSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+  const { player, setPlayer, roomSession, roomId, gameOption, setRoomId, isHost, setIsHost, 
+    subscribers, setSubscribers, camArray, setCamArray,
+    OV, initSession, connectSession, leaveSession } = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
   const { myRole } = useGameContext();
   
 
   const handleCamButtonClick = () => {
-    const camOn = !isCamOn;
-    setIsCamOn(camOn);
-    if (publisher) {
-      publisher.publishVideo(camOn);
+    const camOn = !player.isCamOn;
+    setPlayer((prevState) => {
+      return {...prevState,
+        isCamOn: camOn,
+      };
+    });
+    if (player.stream) {
+      player.stream.publishVideo(camOn);
     }
   };
   
@@ -74,10 +78,14 @@ const NightPage = () => {
   };
 
   const handleMicButtonClick = () => {
-    const micOn = !isMicOn;
-    setIsMicOn(micOn);
-    if (publisher) {
-      publisher.publishAudio(micOn);
+    const micOn = !player.isMicOn;
+    setPlayer((prevState) => {
+      return {...prevState,
+        isMicOn: micOn,
+      };
+    });
+    if (player.stream) {
+      player.stream.publishAudio(micOn);
     }
   };
 
@@ -113,8 +121,8 @@ const NightPage = () => {
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
-        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
+        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <NightPopup></NightPopup>
         {getMyRole()}

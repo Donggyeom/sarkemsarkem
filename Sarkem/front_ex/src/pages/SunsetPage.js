@@ -531,9 +531,9 @@ const handleScMiniClick = () => {
 
 const SunsetPage = () => {
    
-  const { roomSession, roomId, setRoomId, isHost, setIsHost, 
+  const { roomSession, player, setPlayer, isHost, setIsHost, 
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    OV, initSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
+    OV, initSession, connectSession, leaveSession } = useRoomContext(); 
   
   const { myRole } = useGameContext();
   const navigate = useNavigate();
@@ -552,19 +552,27 @@ const SunsetPage = () => {
   };
 
   const handleCamButtonClick = () => {
-    const camOn = !isCamOn;
-    setIsCamOn(camOn);
-    if (publisher) {
-      publisher.publishVideo(camOn);
+    const camOn = !player.isCamOn;
+    setPlayer((prevState) => {
+      return {...prevState,
+        isCamOn: camOn,
+      };
+    });
+    if (player.stream) {
+      player.stream.publishVideo(camOn);
     }
   };
   
   
   const handleMicButtonClick = () => {
-    const micOn = !isMicOn;
-    setIsMicOn(micOn);
-    if (publisher) {
-      publisher.publishAudio(micOn);
+    const micOn = !player.isMicOn;
+    setPlayer((prevState) => {
+      return {...prevState,
+        isMicOn: micOn,
+      };
+    });
+    if (player.stream) {
+      player.stream.publishAudio(micOn);
     }
   };
 
@@ -576,8 +584,8 @@ const SunsetPage = () => {
   
   
     useEffect(() => {
-        console.log(roomId);
-        if (roomId === undefined){
+        console.log(roomSession.roomId);
+        if (roomSession.roomId === undefined){
           console.log("세션 정보가 없습니다.")
           navigate("/");
           return;
@@ -603,8 +611,8 @@ const SunsetPage = () => {
       {!isLogOn && <Log top="60%" left="26%" />}
       <SunMoon alt="SunMoon"></SunMoon>
       <TimeSecond>60s</TimeSecond>
-      <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
-      <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
+      <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
+      <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
       <SunsetPopup></SunsetPopup>
         <CamCatGrid style={gridStyles}>
@@ -619,7 +627,7 @@ const SunsetPage = () => {
       <ChatButtonAndPopup />
       {/* </CamCatGridContainer> */}
 
-      <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomId}/night`)}/>
+      <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
       </Background>
   );
 };

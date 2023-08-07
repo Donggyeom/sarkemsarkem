@@ -131,7 +131,7 @@ const ButtonContainer2 = styled.div`
 
 
 const CommonLobby = ()=>{
-  const {roomSession, setRoomSession, getGameRoom, player, setPlayer, roomId, gameId, 
+  const {roomSession, setRoomSession, getGameSession, player, setPlayer, roomId, gameId, 
     setGameOption, gameOption, isHost, camArray, leaveSession, token,
     createGameRoom, connectSession} = useRoomContext();
   const {handleGamePageClick, stompClient} = useGameContext();
@@ -156,7 +156,7 @@ const CommonLobby = ()=>{
     //   navigate("/loading");
     //   getGameRoom();
     // }
-    getGameRoom();
+    getGameSession();
 
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
@@ -185,13 +185,13 @@ const CommonLobby = ()=>{
       stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
               code:'OPTION_CHANGE', 
-              roomId: roomId, 
-              playerId: token,
+              roomId: roomSession.roomId,
+              playerId: player.playerId,
               param: gameOption
-          }))
-          console.log(gameOption)
-  }
-  }
+      }));
+      console.log(gameOption);
+    }
+  };
 
   // 게임 옵션이 변경되면, callChangeOption 호출
   useEffect(()=> {
