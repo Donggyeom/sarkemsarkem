@@ -531,9 +531,7 @@ const handleScMiniClick = () => {
 
 const SunsetPage = () => {
    
-  const { roomSession, player, setPlayer, publisher, setPublisher, 
-    subscribers, setSubscribers, camArray, setCamArray,
-    OV, initSession, connectSession, leaveSession } = useRoomContext(); 
+  const { roomSession, player, setPlayer, camArray } = useRoomContext(); 
   
   const { myRole } = useGameContext();
   const navigate = useNavigate();

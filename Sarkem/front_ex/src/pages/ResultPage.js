@@ -91,8 +91,7 @@ const TextAboveWrapper = styled.div`
 
 
 const ResultPage = () => {
-  const { roomSession, roomId, setRoomId, publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
-    token, setToken, OV, initSession, connectSession, leaveSession } = useRoomContext(); 
+  const { roomSession, setPublisher, setSubscribers, setCamArray } = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
 

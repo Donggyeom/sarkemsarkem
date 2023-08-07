@@ -163,11 +163,12 @@ const RoomProvider = ({ children }) => {
     return newSession;
   }
 
-  const connectSession = async (response) => {
+  const connectSession = async (response, roomId) => {
     console.log(`connectSession`);
     try {
       const session = response;
-      const data = await getToken();
+      // 오픈비두 토큰 발급
+      const data = await getToken(roomId);
       await session.connect(data.token, {
         nickName: data.nickName, 
         playerId: data.playerId,
@@ -226,7 +227,7 @@ const RoomProvider = ({ children }) => {
   
   // 서버에 요청하여 화상 채팅 세션 생성하는 함수
   const createGameRoom = async (roomId) => {
-    console.log(`${roomSession.roomId} 세션을 생성합니다.`);
+    console.log(`${roomId} 세션을 생성합니다.`);
     const response = await axios.post('/api/game', { 
       customSessionId: roomId, 
       nickName: player.nickName,
@@ -237,16 +238,15 @@ const RoomProvider = ({ children }) => {
     
     console.log('세션 생성됨');
     console.log(response);
-    return response.data; // The sessionId
+    return response; // The sessionId
   }
   
   
   // 서버에 요청하여 토큰 생성하는 함수
-  const getToken = async () => {
+  const getToken = async (roomId) => {
     console.log("세션에 연결을 시도합니다.")
     console.log(player.nickName);
-    console.log()
-    const response = await axios.post(`/api/game/${roomSession.roomId}/player`, player.nickName, {
+    const response = await axios.post(`/api/game/${roomId}/player`, player.nickName, {
       headers: { 'Content-Type': 'application/json;charset=utf-8', },
     });
     

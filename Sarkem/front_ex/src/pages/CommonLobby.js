@@ -131,9 +131,8 @@ const ButtonContainer2 = styled.div`
 
 
 const CommonLobby = ()=>{
-  const {roomSession, setRoomSession, getGameSession, player, setPlayer, roomId, gameId, 
-    setGameOption, gameOption, camArray, leaveSession, token,
-    createGameRoom, connectSession} = useRoomContext();
+  const {roomSession, getGameSession, player, setGameOption, gameOption, 
+    camArray, leaveSession, token } = useRoomContext();
   const {handleGamePageClick, stompClient} = useGameContext();
 
   const navigate = useNavigate();

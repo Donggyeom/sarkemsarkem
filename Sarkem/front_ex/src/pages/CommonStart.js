@@ -7,8 +7,8 @@ import boxImage from '../img/box.png';
 import Background from '../components/backgrounds/BackgroundSunset';
 import usernicknameImage from '../img/usernickname.png';
 import usernicknameinputImage from '../img/usernicknameinput.png';
-import offImage from '../img/off.png';
-import onImage from '../img/on.png'
+// import offImage from '../img/off.png';
+// import onImage from '../img/on.png'
 import micImage from '../img/mic.png';
 import camImage from '../img/cam.png';
 import GoroomButton from '../components/buttons/goroomButton';
@@ -114,7 +114,8 @@ const Logo = styled.img`
 `;
 
 const CommonStart = ({onClick} ) => {
-  const { player, setPlayer, setPlayers, roomSession, setRoomSession, createGameRoom, getGameRoom } = useRoomContext();
+  const { player, setPlayer, getGameRoom } = useRoomContext();
+  const [ roomId, setRoomId ] = useState("");
   const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
   const navigate = useNavigate();
   const location = useLocation();
@@ -122,26 +123,48 @@ const CommonStart = ({onClick} ) => {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
 
+
+  ////////////   CommonStart Effect   ////////////
+
+
   useEffect(() => {
-    checkPath();
-    if (roomSession.roomId == undefined) commonStartInit();
+
+    // 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
+    let roomId = location.pathname.split("/")[1];
+    setRoomId(roomId);
+    if (roomId === ""){
+      alert("roomId 정보가 없습니다.");
+      navigate("/");
+      return;
+    }
+
+    // 게임방 존재 여부 확인
+    checkGameRoom(roomId);
     
+    // 카메라 세팅
     getUserCamera();
+
+    // 마이크 세팅
     getUserAudio();
+
   }, []);
 
   useEffect(() => {
+
+    // 플레이어 닉네임 설정
     setPlayer((prevState => {
       return {
         ...prevState,
         nickName: nickName
       };
     }));
+
   }, [nickName]);
 
-  const commonStartInit = async () => {
-    console.log('commonStartInit');
-    const roomId = location.pathname.slice(1);
+  ////////////  CommonStart 함수  ////////////
+
+  const checkGameRoom = async (roomId) => {
+    console.log('checkGameRoom');
     var gameRoom = await getGameRoom(roomId);
     if (gameRoom == null) {
       // 방을 생성할 경우, 방장으로 설정
@@ -151,43 +174,6 @@ const CommonStart = ({onClick} ) => {
           isHost: true,
         });
       });
-      // 게임방 생성
-      await createGameRoom(roomId);
-      
-      gameRoom = await getGameRoom(roomId);
-      console.log(gameRoom);
-    }
-    
-    // 게임방ID 설정
-    setRoomSession((prev) => {
-      console.log(`setRoomSession`);
-      console.log(gameRoom);
-      return ({
-        ...prev,
-        roomId: gameRoom.roomId,
-        gameId: gameRoom.gameId,
-      });
-    });
-    
-    let players = new Map();
-    gameRoom.players.forEach(element => {
-      var p = players.get(element.playerId);
-      if (p == null) {
-        players.set(element.playerId, {
-          playerId: element.playerId,
-          nickName: element.nickname
-        });
-      }
-    });
-    setPlayers(players);
-  };
-
-  const checkPath = () => {
-    console.log('checkPath : ' + location.pathname.slice(1));
-    // 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
-    if (location.pathname.slice(1) === ""){
-      alert("roomId 정보가 없습니다.");
-      navigate("/");
     }
   };
 
@@ -264,6 +250,7 @@ const CommonStart = ({onClick} ) => {
         </StyledHeader>
 
         <StyledContent>
+
           <LeftSection>
           <div style={{ position: 'relative', width: '85%', height: '63%', borderRadius: '10%' }}>
           <video
@@ -294,9 +281,8 @@ const CommonStart = ({onClick} ) => {
             />
              <audio ref={audioRef} autoPlay />
           </div>
-          
-          
           </LeftSection>
+
           <RightSection>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${usernicknameImage})` }}></LeftPart>
@@ -326,7 +312,7 @@ const CommonStart = ({onClick} ) => {
             </DivWrapper>
             <DivWrapper>
               {/* 조건부 렌더링을 사용하여 버튼 선택 */}
-              <GoroomButton onClick={onClick}/>
+              <GoroomButton onClick={onClick} roomId={roomId} />
             </DivWrapper>
           </RightSection>
         </StyledContent>
