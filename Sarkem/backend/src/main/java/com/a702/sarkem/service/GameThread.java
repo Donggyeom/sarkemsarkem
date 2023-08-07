@@ -72,7 +72,7 @@ public class GameThread extends Thread {
 			expulsionPlayer.put("targetId", maxVotedPlayer.getPlayerId());
 			expulsionPlayer.put("targetNickname", maxVotedPlayer.getNickname());
 			// 투표 결과 종합해서 낮 투표 종료 메시지 보내기
-			gameManager.sendEndDayVoteMessage(roomId);
+			gameManager.sendEndDayVoteMessage(roomId, expulsionPlayer);
 
 			// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로!!!!!!
 			if (!maxVotedPlayer.getPlayerId().equals("")) {

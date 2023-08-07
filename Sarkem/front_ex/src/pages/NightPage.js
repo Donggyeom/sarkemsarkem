@@ -52,7 +52,7 @@ const NightPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { myRole, peopleCount, currentSysMessage, playersRoles } = useGameContext();
-  // const mafiaButton = true;
+  const [ mafiaButton, setMafiaButton ] = useState(true);
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
@@ -73,18 +73,18 @@ const NightPage = () => {
       return <ScMini alt="ScMini" role={'CITIZEN'} />
     }
   };
-
+  
   const nightstatus = () =>{
     if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO'){
       console.log("꺼졌니?")
       publisher.publishVideo(false);
       publisher.publishAudio(false);
-      // mafiaButton=false;
+      setMafiaButton(false);
     }
   };
-
-
-
+  
+  
+  
   const chatVisible = () =>{
     if (myRole === 'OBSERVER'){
       return (
@@ -94,7 +94,7 @@ const NightPage = () => {
       )
     }
   }
-
+  
   const handleMicButtonClick = () => {
     const micOn = !isMicOn;
     setIsMicOn(micOn);
@@ -102,17 +102,17 @@ const NightPage = () => {
       publisher.publishAudio(micOn);
     }
   };
-
+  
   const [isLogOn, setIsLogOn] = useState(true);
   const handleLogButtonClick = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
   
   
-
-    useEffect(() => {
-        console.log(roomId);
-        nightstatus();
+  
+  useEffect(() => {
+    console.log(roomId);
+    nightstatus();
         if (roomId === undefined){
           console.log("세션 정보가 없습니다.")
           navigate("/");
@@ -127,7 +127,7 @@ const NightPage = () => {
           event.returnValue = '';
         });
       }, [])
-
+      console.log(currentSysMessage);
 
     return (   
     <Background>

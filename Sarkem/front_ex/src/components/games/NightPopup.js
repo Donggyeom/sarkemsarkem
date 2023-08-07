@@ -57,7 +57,7 @@ const NightPopup = ({sysMessage}) => {
     return () => clearTimeout(fadeOutTimeout);
   }
   }, [sysMessage]);
-
+  console.log(sysMessage);
   return (
     <StyledPopupContainer showPopup={showPopup}>
       {/* Your popup content */}
