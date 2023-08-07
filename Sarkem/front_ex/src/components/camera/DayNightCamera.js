@@ -252,7 +252,6 @@ const CamCatWrapper = styled.div`
       return `${userToken}: 0표`;
     };
 
-    
   
     const handleCamClick = (user) => {
       console.log(voteSituation, "투표 결과 확인합니다");

@@ -46,6 +46,7 @@ const GameProvider = ({ children }) => {
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState("");
+    const [targetId, setTargetId] = useState("");
 
     
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
@@ -155,7 +156,7 @@ const onSocketConnected = () => {
             break;
         case "ONLY_HOST_ACTION":
             console.log(sysMessage);
-            alert('방장만 실행 가능합니다.');
+            // alert('방장만 실행 가능합니다.');
             break;
         case "OPTION_CHANGED":
             if(isHost) return;
@@ -167,13 +168,11 @@ const onSocketConnected = () => {
         case "ROLE_ASSIGNED":
           console.log(`당신은 ${sysMessage.param.role} 입니다.`);
           setMyRole(sysMessage.param.role);
-        
           setPlayersRoles((prevRoles) => ({
             ...prevRoles,
             [sysMessage.playerId]: sysMessage.param.role
         }));
         break;
-
 
 
         case "PHASE_DAY":
@@ -184,6 +183,7 @@ const onSocketConnected = () => {
             navigate(`/${roomId}/sunset`)
             setThreatedTarget(); // 저녁 되면 협박 풀림
             break;
+
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`)
             break;
@@ -201,22 +201,20 @@ const onSocketConnected = () => {
             break;
 
         case "DAY_VOTE_END":
-            // if (dayCount !== 1){
-            //   setStartVote(false);
-            //   if (sysMessage.param.targetId == null) break;
-            //   setExpulsionTarget(sysMessage.param.targetId);
-            //   console.log("투표종료");
-            // }
-                setStartVote(false);
+            setStartVote(false);
+
+            // 1번 :여기서 타겟 설정하자 (SETTARGETID)
+            setTargetId(sysMessage.param.targetId);
+            console.log(sysMessage.param.targetId);
+            console.log(targetId, "이놈확인해라");
+            
+            // 2번 -> sunsetpage로 넘겨서 사용해라
+
             break;
   
         case "TARGET_SELECTION_END":
             alert("선택 완료", sysMessage.param.targetNickname);
             setSelectedTarget("");
-            break;
-
-        case "PHASE_TWILIGHT":
-            navigate(`/${roomId}/sunset`);
             break;
 
         case "TWILIGHT_SELECTION":
@@ -399,7 +397,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendChatMessage, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage }}>
+      voteSituation, currentSysMessage, targetId }}>
       {children}
     </GameContext.Provider>
   );
