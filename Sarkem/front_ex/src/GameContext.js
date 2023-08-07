@@ -205,9 +205,8 @@ const onSocketConnected = () => {
         case "DAY_VOTE_END":
             setStartVote(false);
 
-            // 1번 :여기서 타겟 설정하자 (SETTARGETID)
             setTargetId(sysMessage.param.targetId);
-            console.log(sysMessage.param.targetId);
+            console.log(sysMessage.param.targetId, "이거");
             console.log(targetId, "이놈확인해라");
             
             // 2번 -> sunsetpage로 넘겨서 사용해라
