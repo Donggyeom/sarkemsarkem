@@ -51,6 +51,7 @@ const GameProvider = ({ children }) => {
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState("");
     const [targetId, setTargetId] = useState("");
+    const [roleAssignedArray, setRoleAssignedArray] = useState([]);
 
     const [phase, setphase] = useState("");
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
@@ -187,7 +188,11 @@ const onSocketConnected = () => {
           setPlayersRoles((prevRoles) => ({
             ...prevRoles,
             [sysMessage.playerId]: sysMessage.param.role
-          }));
+        }));
+          setRoleAssignedArray((prevArray) => [
+            ...prevArray,
+            { playerId: sysMessage.playerId, role: sysMessage.param.role },
+          ]);
 
         break;
 
@@ -414,8 +419,8 @@ const onSocketConnected = () => {
 
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendMessage, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId}}>
+      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendChatMessage, receiveChatMessage, playersRoles,
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray}}>
       {children}
     </GameContext.Provider>
   );

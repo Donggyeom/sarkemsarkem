@@ -1,5 +1,9 @@
 /* eslint-disable */
 console.error = (message) => {};
+// 아무리 생각해도 문제없어서 냅다 이거 박아버림
+// 여긴 건드릴 일 없으니 우선 괜찮을 거라 믿어요
+
+
 import React, { useState, useEffect } from 'react';
 import styled,  { keyframes }  from 'styled-components';
 import scSarkImageSrc from '../../img/sc_삵.png';
