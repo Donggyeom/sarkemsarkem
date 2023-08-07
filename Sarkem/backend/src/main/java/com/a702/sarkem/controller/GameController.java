@@ -99,7 +99,7 @@ public class GameController {
 		log.debug(chatMessage.toString());
 		
 		if (MessageType.ENTER == chatMessage.getType()) {
-			chatMessage.setContent(chatMessage.getPlayerId() + "님이 입장하셨습니다.");
+			chatMessage.setContent(chatMessage.getPlayerId() + "님이 채팅방에 입장하셨습니다.");
         }
 
 		gameManager.sendChattingMessage(chatMessage);

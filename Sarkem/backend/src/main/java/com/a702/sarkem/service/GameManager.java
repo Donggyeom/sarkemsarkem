@@ -631,8 +631,8 @@ public class GameManager {
 	}
 
 	// "낮 투표 종료" 메시지 전송
-	public void sendEndDayVoteMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, null);
+	public void sendEndDayVoteMessage(String roomId, HashMap<String, String> expulsionPlayer) {
+		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, expulsionPlayer);
 	}
 
 	// "추방 투표 종료(개인)" 메시지 전송
