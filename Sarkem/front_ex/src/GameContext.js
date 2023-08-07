@@ -96,9 +96,12 @@ const GameProvider = ({ children }) => {
   };
 
   const receiveChatMessage = async (message) => {
-    const chatMessage = JSON.parse(message.body).message;
+    const parsedMessage = JSON.parse(message.body);
+    const chatMessage = parsedMessage.message;
+    const playerId = parsedMessage.playerId;
+    
     console.log(chatMessage, "메세지 수신2"); // 메시지 수신 여부 확인을 위한 로그
-    setChatMessages((prevMessages) => [...prevMessages, chatMessage]);
+    setChatMessages((prevMessages) => [...prevMessages, { message: chatMessage, playerId }]);
   };
   
   const sendChatPubMessage = (message) => {
