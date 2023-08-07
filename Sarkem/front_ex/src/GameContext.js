@@ -9,7 +9,7 @@ const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
   // roomId : 방번호 , token : 플레이어아이디 
-    const {roomId, token, isHost, isMicOn, setIsMicOn, publisher} = useRoomContext();
+    const {roomId, token, isHost, isMicOn, setIsMicOn, publisher, isConnected} = useRoomContext();
     const navigate = useNavigate();
     let stompClient = useRef({})
 
@@ -44,6 +44,17 @@ const GameProvider = ({ children }) => {
           loadGestureRecognizer();
         }
     }, [token]);
+
+    const leaveGame = () => {
+      if (stompClient.current.connected && token !== null) {
+        stompClient.current.send("/pub/game/action", {},
+          JSON.stringify({
+              code: 'LEAVE_GAME', // 스킵했을 때도 얘도 보내달라
+              roomId: roomId,
+              playerId: token,
+          }));
+    }
+    }
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
@@ -149,7 +160,8 @@ const onSocketConnected = () => {
             setThreatedTarget(sysMessage.playerId);
             setIsMicOn(false);
             break;
-
+        case "LEAVE_PLAYER":
+            console.log(sysMessage.playerId, "님이 퇴장하셨습니다.");
 
 
         // case "PHASE_TWILIGHT":
@@ -261,7 +273,7 @@ const onSocketConnected = () => {
 
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage, dayCount, predictWebcam, stopPredicting, detectedGesture }}>
+      systemMessages, handleSystemMessage, dayCount, predictWebcam, stopPredicting, detectedGesture, leaveGame }}>
       {children}
     </GameContext.Provider>
   );

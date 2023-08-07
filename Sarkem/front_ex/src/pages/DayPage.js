@@ -42,8 +42,32 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
   const { roomId, publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn } = useRoomContext();
-  const { myRole, peopleCount, systemMessages, threatedTarget  } = useGameContext();
+  const { myRole, peopleCount, systemMessages, threatedTarget, leaveGame } = useGameContext();
   const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
+
+  useEffect(() => {
+    if (roomId === ''){
+      console.log("세션 정보가 없습니다.")
+      leaveGame();
+      leaveSession();
+      navigate("/");
+      return;
+    }
+    window.addEventListener("popstate", () => leaveSession());
+    
+    // 윈도우 객체에 화면 종료 이벤트 추가
+    window.addEventListener('beforeunload', onbeforeunload);
+    return () => {
+        window.removeEventListener('beforeunload', onbeforeunload);
+    }
+  }, [])
+
+  // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
+  const onbeforeunload = (event) => {
+    leaveGame();
+    leaveSession();
+    navigate("/");
+  }
 
   useEffect(() => {
     const timer = setInterval(() => {

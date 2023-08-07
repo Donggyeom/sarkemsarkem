@@ -149,7 +149,7 @@ const ButtonContainer2 = styled.div`
 
 const CommonLobby = ()=>{
   const {roomId, isHost, camArray, leaveSession, token} = useRoomContext();
-  const {peopleCount, setPeopleCount, handleGamePageClick, stompClient} = useGameContext();
+  const {peopleCount, setPeopleCount, handleGamePageClick, stompClient, leaveGame} = useGameContext();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -157,6 +157,8 @@ const CommonLobby = ()=>{
   useEffect(() => {
     if (roomId === ''){
       console.log("세션 정보가 없습니다.")
+      leaveGame();
+      leaveSession();
       navigate("/");
       return;
     }
@@ -172,7 +174,9 @@ const CommonLobby = ()=>{
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
+    leaveGame();
     leaveSession();
+    navigate("/");
   }
 
   

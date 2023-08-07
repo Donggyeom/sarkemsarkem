@@ -17,6 +17,7 @@ const RoomProvider = ({ children }) => {
     const [isMicOn, setIsMicOn] = useState(true);
     const [isCamOn, setIsCamOn] = useState(true);
     const [showImage, setShowImage] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
 
     const OV = new OpenVidu();
     const navigate = useNavigate();
@@ -41,7 +42,7 @@ const RoomProvider = ({ children }) => {
         setSubscribers([]);
         setPublisher(undefined);
         setCamArray([]);
-        navigate(`/${roomId}`)
+        // navigate(`/${roomId}`)
     }
 
     // 특정 유저가 룸을 떠날 시 subscribers 배열에서 삭제
@@ -113,6 +114,7 @@ const RoomProvider = ({ children }) => {
           setCamArray((camArray) => [...camArray, publisher]);
           console.log(publisher)
           console.log(camArray);
+          setIsConnected(true);
         }
         catch (error) {
           console.error(error);
@@ -172,7 +174,7 @@ const getToken = async () => {
     <RoomContext.Provider value={{ roomId, setRoomId, isHost, setIsHost, nickName, setNickName,
     publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn
-    , getToken, getPlayer,   showImage, setShowImage }}>
+    , getToken, getPlayer,   showImage, setShowImage, isConnected }}>
       {children}
     </RoomContext.Provider>
   );
