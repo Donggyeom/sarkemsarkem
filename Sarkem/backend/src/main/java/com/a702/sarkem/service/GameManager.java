@@ -444,6 +444,7 @@ public class GameManager {
 	 * @param param
 	 */
 	public void sendChattingMessage(ChatMessage message) {
+		log.debug("채팅 : " + message.getMessage());
 		ChannelTopic chatTopic = getChatTopic(message.getRoomId());
 		chatPublisher.publish(chatTopic, message);
 	}

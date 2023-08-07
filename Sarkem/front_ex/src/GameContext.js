@@ -6,6 +6,7 @@ import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 import DayPopup from './components/games/DayPopup';
 import { Message } from '@stomp/stompjs';
+import axios from "axios";
 
 
 const GameContext = createContext();
@@ -63,6 +64,7 @@ const GameProvider = ({ children }) => {
         }
     }, [token]);
 
+
   // WebSocket 연결
   const connectGameWS = async (event) => {
     let socket = new SockJS("http://localhost:8080/ws-stomp");
@@ -72,6 +74,8 @@ const GameProvider = ({ children }) => {
        onSocketConnected();
         connectGame();
         connectChat();
+        sendChatPubMessage();
+        // onConnected();
        console.log(stompClient.current.connected);
     }, 500);
     })
@@ -89,22 +93,44 @@ const GameProvider = ({ children }) => {
     stompClient.current.subscribe('/sub/chat/room/' + roomId, receiveChatMessage);
   };
 
-  const receiveChatMessage = (message) => {
+  const receiveChatMessage = async (message) => {
     const chatMessage = JSON.parse(message.body);
     console.log(chatMessage, "메세지 수신"); // 메시지 수신 여부 확인을 위한 로그
     setChatMessages((prevMessages) => [...prevMessages, chatMessage]);
   };
   
-  const sendChatMessage = (message) => {
+  const sendChatPubMessage = (message) => {
+    console.log("chat publish 들어감"); 
     if (stompClient.current.connected && token !== null) {
-      stompClient.current.send('/pub/chat/room/' + roomId, {}, JSON.stringify({
+      console.log("stompclient 연결됨"); 
+      stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
+        type:'ENTER',
+        playerId:token, 
         roomId: roomId,
         message: message
       }));
     }
   };
 
+  const sendMessage = (message) => {
+    if (stompClient.current.connected && token !== null) {
+      console.log("Talk 타입 메시지 들간다"); 
+      console.log("메시지: ", message); 
+      stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
+        type:'TALK', 
+        roomId: roomId,
+        playerId:token,
+        message: message
+      }));
+    }
+  }
 
+//   const sendMessage = async (e) => {
+//    console.log("메시지 보낸다");
+//    if (message === '') return;
+//    await stompClient.current.send('/pub/chat/room', {}, JSON.stringify({type:'TALK', roomId:roomId, playerId:token, message: message}))
+//    setMessage('');
+//  }
 
 
   // 게임 끝나거나 비활성화 할때 //
@@ -113,26 +139,10 @@ const GameProvider = ({ children }) => {
     stompClient.current.unsubscribe('/sub/chat/room/' + roomId, receiveMessage)
   };
 
-  
-  // const onSendMessage = (message) => {
-  //   if (stompClient.current.connected && token !== null) {
-  //     stompClient.current.send('/pub/chat/room/' + roomId, {}, JSON.stringify({ message }));
-  //   }
-  // }
-
-  // const receiveChatMessage = (message) => {
-  //   const chatMessage = JSON.parse(message.body);
-  //   setChatMessages((prevMessages) => [...prevMessages, chatMessage]);
-  // }
-
-
-
 
 const onSocketConnected = () => {
         console.log("game websocket 연결 완료");
     }
-
-
 
     const receiveMessage = async (message) => {
         // 시스템 메시지 처리
@@ -284,12 +294,11 @@ const onSocketConnected = () => {
           playerId: token
       })
       );
-  
   }
   
   const selectAction = ((target) => {
       console.log(target, "2번");
-      if (selectedTarget != "") {
+      if (selectedTarget !== "") {
           setSelectedTarget("");
           target.playerId = "";
       }
@@ -400,7 +409,7 @@ const onSocketConnected = () => {
 
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendChatMessage, receiveChatMessage, playersRoles,
+      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendMessage, receiveChatMessage, playersRoles,
       voteSituation, currentSysMessage }}>
       {children}
     </GameContext.Provider>

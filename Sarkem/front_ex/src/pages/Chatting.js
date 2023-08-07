@@ -114,7 +114,7 @@ const ChatCloseButton = styled.button`
 `;
 
   const Chatting = ({ handleCloseButtonClick }) => {
-    const { chatMessages, sendChatMessage, receiveChatMessage } = useGameContext();
+    const { chatMessages, sendMessage } = useGameContext();
     const [inputMessage, setInputMessage] = useState('');
     const chatMessagesRef = useRef();
   
@@ -129,7 +129,7 @@ const ChatCloseButton = styled.button`
   
     const handleSendMessage = () => {
       console.log("메세지보내는중");
-      sendChatMessage(inputMessage);
+      sendMessage(inputMessage);
       console.log(inputMessage);
       console.log(chatMessages);
       setInputMessage('');
@@ -140,7 +140,9 @@ const ChatCloseButton = styled.button`
     };
   
     const handleInputKeyPress = (e) => {
-      if (e.key === 'Enter') {
+      console.log('handleInputKeyPress');
+      console.log(e);
+      if (e.key === 'TALK') {
         handleSendMessage();
       }
     };
