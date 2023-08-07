@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect, useRef } from 'react';
 import camcatImage from '../../img/camcat2.png';
 import OpenViduVideoComponent from './OvVideo';
-import { loadModels, faceMyDetect, stopFace } from '../job/psychologist';
+import { loadModels, faceMyDetect, stopFace } from '../job/Psychologist';
 import styled from 'styled-components';
 
 const Box = styled.div

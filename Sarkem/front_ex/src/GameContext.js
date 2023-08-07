@@ -12,13 +12,13 @@ const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
   // roomId : 방번호 , token : 플레이어아이디 
-    const {roomId, token, isHost, isMicOn, setIsMicOn, publisher} = useRoomContext();
+    const {roomId, token, isHost, isMicOn, setIsMicOn, publisher, camArray} = useRoomContext();
     const navigate = useNavigate();
       // 현재 시스템 메시지를 저장할 상태 추가
     const [currentSysMessage, setCurrentSysMessage] = useState(null);
     const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
     let stompClient = useRef({})
-
+    const [mafias, setMafias] = useState([]);
     const [chatMessages, setChatMessages] = useState([]); 
     const [chatConnected, setChatConnected] = useState(false);
     const [message, setMessage] = useState("");
@@ -157,6 +157,7 @@ const onSocketConnected = () => {
             break;
         case "GAME_START":   
             navigate(`/${roomId}/day`);
+            console.log(camArray);
             break;
         case "ONLY_HOST_ACTION":
             console.log(sysMessage);
@@ -172,11 +173,12 @@ const onSocketConnected = () => {
         case "ROLE_ASSIGNED":
           console.log(`당신은 ${sysMessage.param.role} 입니다.`);
           setMyRole(sysMessage.param.role);
-        
+          
           setPlayersRoles((prevRoles) => ({
             ...prevRoles,
             [sysMessage.playerId]: sysMessage.param.role
-        }));
+          }));
+
         break;
 
 
