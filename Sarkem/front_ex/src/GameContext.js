@@ -5,6 +5,7 @@ import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 import DayPopup from './components/games/DayPopup';
+import { Message } from '@stomp/stompjs';
 
 
 const GameContext = createContext();
@@ -19,6 +20,7 @@ const GameProvider = ({ children }) => {
 
     const [chatMessages, setChatMessages] = useState([]); 
     const [chatConnected, setChatConnected] = useState(false);
+    const [message, setMessage] = useState("");
 
 
     const [peopleCount, setPeopleCount] = useState({
