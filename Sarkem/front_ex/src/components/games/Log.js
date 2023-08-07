@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import chatbox from '../../img/helpbox2.png';
+import { useGameContext } from '../../GameContext';
 
 const ChatContainer = styled.div`
   background-image: url(${chatbox});
@@ -26,44 +27,34 @@ const ChatContainer = styled.div`
 const ScrollableText = styled.div`
   max-height: 75%;
   overflow: auto;
+  line-height: 1.5; /* Adjust the value as needed */
 `;
 
 const Log = ({ top, left }) => {
+  const { currentSysMessagesArray } = useGameContext();
+  console.log(currentSysMessagesArray);
+
+  const scrollableRef = useRef(null); // Ref for the scrollable container
+
+  // Scroll to the bottom on update
+  useEffect(() => {
+    if (scrollableRef.current) {
+      scrollableRef.current.scrollTop = scrollableRef.current.scrollHeight;
+    }
+  }, [currentSysMessagesArray]);
+
   return (
     <ChatContainer top={top} left={left}>
-      <span> —̳͟͞💗  —̳͟͞💗 ˚우리의 로그여요 —̳͟͞💗  —̳͟͞💗 ˚</span>
-      <ScrollableText>
-      .　  　∧,,∧<br/>
-    .　　(`･ω･´)　 ｎ__<br/>
-    .　η ＞　 ⌒＼/ ､∃<br/>
-    .(∃)/ ∧　　＼/<br/>
-    .   　＼/　＼　　丶<br/>
-    .　　　　／ y　 ﾉ<br/>
-    .　　　／ ／　／<br/>
-    .　　 (　(　〈<br/>
-    .　 　　＼ ＼　＼ <br/>
-    .　　 　(＿(＿＿)
-    .　  　∧,,∧<br/>
-    .　　(`･ω･´)　 ｎ__<br/>
-    .　η ＞　 ⌒＼/ ､∃<br/>
-    .(∃)/ ∧　　＼/<br/>
-    .   　＼/　＼　　丶<br/>
-    .　　　　／ y　 ﾉ<br/>
-    .　　　／ ／　／<br/>
-    .　　 (　(　〈<br/>
-    .　 　　＼ ＼　＼ <br/>
-    .　　 　(＿(＿＿)
-    .　  　∧,,∧<br/>
-    .　　(`･ω･´)　 ｎ__<br/>
-    .　η ＞　 ⌒＼/ ､∃<br/>
-    .(∃)/ ∧　　＼/<br/>
-    .   　＼/　＼　　丶<br/>
-    .　　　　／ y　 ﾉ<br/>
-    .　　　／ ／　／<br/>
-    .　　 (　(　〈<br/>
-    .　 　　＼ ＼　＼ <br/>
-    .　　 　(＿(＿＿) <br/>
-    . 으아아으아아으아아으아아으아아으아아d으에에
+      <h3> —̳͟͞💗  —̳͟͞💗 ˚ GAME LOG —̳͟͞💗  —̳͟͞💗 ˚</h3>
+      <hr></hr>
+      <ScrollableText ref={scrollableRef}>
+      {currentSysMessagesArray.map((sysMessage, index) => (
+        <div key={index}>
+          {/* {sysMessage.param.day} 일차 {sysMessage.param.phase}: {sysMessage.param.message} */}
+          {/* n일차 인식을 못함 */}
+          {sysMessage.param.phase}: {sysMessage.param.message} 
+        </div>
+      ))}
       </ScrollableText>
     </ChatContainer>
   );

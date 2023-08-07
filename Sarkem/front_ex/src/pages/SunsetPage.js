@@ -14,7 +14,7 @@ import { useGameContext } from '../GameContext';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
-import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
+import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons';
 
 
 
@@ -522,7 +522,7 @@ const CamCatWrapper = styled.div`
   const TimeSecond = styled.text`
   color: #FFFFFF;
   text-align: left;
-  font: 400 42px "ONE Mobile POP", sans-serif;
+  font: 400 42px "RixInooAriDuriR", sans-serif;
   position: absolute; /* position을 absolute로 설정합니다. */
   left: 22px; /* 원하는 위치 값을 지정합니다. */
   top: 90px; /* 원하는 위치 값을 지정합니다. */

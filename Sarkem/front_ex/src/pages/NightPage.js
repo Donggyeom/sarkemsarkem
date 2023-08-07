@@ -34,7 +34,7 @@ const StyledNightPage = styled.div`
 const TimeSecond = styled.text`
     color: #FFFFFF;
     text-align: left;
-    font: 400 42px "ONE Mobile POP", sans-serif;
+    font: 400 42px "RixInooAriDuriR", sans-serif;
     position: absolute; /* position을 absolute로 설정합니다. */
     left: 22px; /* 원하는 위치 값을 지정합니다. */
     top: 90px; /* 원하는 위치 값을 지정합니다. */
@@ -51,7 +51,7 @@ const NightPage = () => {
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
-  const { myRole, peopleCount, currentSysMessage, playersRoles } = useGameContext();
+  const { myRole, peopleCount, currentSysMessage, playersRoles , dayCount} = useGameContext();
   const [ mafiaButton, setMafiaButton ] = useState(true);
 
   const handleCamButtonClick = () => {
@@ -75,7 +75,7 @@ const NightPage = () => {
   };
   
   const nightstatus = () =>{
-    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO'){
+    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
       console.log("꺼졌니?")
       publisher.publishVideo(false);
       publisher.publishAudio(false);
@@ -136,11 +136,13 @@ const NightPage = () => {
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
-        {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
-        {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
+        {/* {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />} */}
+        {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
+        {/* {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>} */}
+        {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           {/* <NightPopup></NightPopup> */}
-          {currentSysMessage && <NightPopup sysMessage={currentSysMessage} />}
+          {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={dayCount}/>}
         {getMyRole()}
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
         {chatVisible()}

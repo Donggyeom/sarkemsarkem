@@ -7,7 +7,7 @@ import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 import DayPopup from './components/games/DayPopup';
 import { Message } from '@stomp/stompjs';
 import axios from "axios";
-
+import nightCamAudio from './components/camera/DayNightCamera';
 
 const GameContext = createContext();
 
@@ -17,6 +17,7 @@ const GameProvider = ({ children }) => {
     const navigate = useNavigate();
       // 현재 시스템 메시지를 저장할 상태 추가
     const [currentSysMessage, setCurrentSysMessage] = useState(null);
+    const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
     let stompClient = useRef({})
 
     const [chatMessages, setChatMessages] = useState([]); 
@@ -50,7 +51,7 @@ const GameProvider = ({ children }) => {
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState("");
 
-    
+    const [phase, setphase] = useState("");
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
     const [detectedGesture, setDetectedGesture] = useState('');
     const [animationFrameId, setAnimationFrameId] = useState(null);
@@ -63,7 +64,6 @@ const GameProvider = ({ children }) => {
           loadGestureRecognizer();
         }
     }, [token]);
-
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
@@ -160,6 +160,8 @@ const onSocketConnected = () => {
         case "NOTICE_MESSAGE":
             console.log(sysMessage.param);
             setCurrentSysMessage(()=>sysMessage);
+            setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
+              { ...sysMessage, dayCount: sysMessage.param.day }]);
             // console.log(currentSysMessage);
             break;
         case "GAME_START":   
@@ -189,6 +191,7 @@ const onSocketConnected = () => {
 
 
         case "PHASE_DAY":
+              setphase("day");
               navigate(`/${roomId}/day`)
             break;
 
@@ -197,6 +200,8 @@ const onSocketConnected = () => {
             setThreatedTarget(); // 저녁 되면 협박 풀림
             break;
         case "PHASE_NIGHT":
+            setphase("night");
+            console.log(phase);
             navigate(`/${roomId}/night`)
             break;
 
@@ -410,7 +415,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendMessage, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage }}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase}}>
       {children}
     </GameContext.Provider>
   );

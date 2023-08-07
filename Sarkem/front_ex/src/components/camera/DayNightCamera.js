@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import CamCat from './camcat';
 import voteImage from '../../img/votefoot.png';
 import { useGameContext } from '../../GameContext';
+import { Publisher, Subscriber } from 'openvidu-browser';
 
 
 const Votefoot = styled.img`
@@ -237,13 +238,20 @@ const CamCatWrapper = styled.div`
     const [clickedCamera, setClickedCamera] = useState(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
-    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation } = useGameContext();
+    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase } = useGameContext();
   
     useEffect(() => {
       setIsConfirmed(false);
       setClickedCamera(null);
       setIsSkipped(false);
-    }, [startVote]);
+      console.log(phase);
+      if(phase==="night"){
+        nightCamAudio();
+      }else if(phase==="day"){
+        dayCamAudio();
+      }
+
+    }, [startVote,phase]);
 
     const getVoteResultForUser = (userToken) => {
       if (voteSituation && voteSituation[userToken] !== undefined) {
@@ -293,6 +301,34 @@ const CamCatWrapper = styled.div`
       stopPredicting();
     }
 
+    const nightCamAudio =() =>{
+      if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
+        for(let i = 0; i<camCount; i++){
+          console.log(JSON.parse(camArray[i].stream.connection.data).token);
+          const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === 'sark');
+          if(camArray[i] instanceof Subscriber&&!(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token))){
+          camArray[i].subscribeToVideo(false);
+          camArray[i].subscribeToAudio(false);
+          }
+        }
+      }
+    }
+    const dayCamAudio =() =>{
+      if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
+        for(let i = 0; i<camCount; i++){
+          console.log(camArray[i] instanceof Subscriber);
+          if(camArray[i] instanceof Subscriber){
+          camArray[i].subscribeToVideo(true);
+          camArray[i].subscribeToAudio(true);
+          }
+        }
+      }
+    }
+
+    // console.log(camArray[1]);
+    
+    // console.log(camArray.length);
+    // console.log(playersRoles);
     return (
       <CamCatGrid style={gridStyles}>
         {camArray.map((user, index) => (
