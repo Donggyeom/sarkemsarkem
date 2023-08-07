@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import chatbox from '../../img/helpbox2.png';
+import { useGameContext } from '../../GameContext';
 
 const ChatContainer = styled.div`
   background-image: url(${chatbox});
@@ -26,44 +27,24 @@ const ChatContainer = styled.div`
 const ScrollableText = styled.div`
   max-height: 75%;
   overflow: auto;
+  line-height: 1.5; /* Adjust the value as needed */
 `;
 
 const Log = ({ top, left }) => {
+  const { currentSysMessagesArray } = useGameContext();
+  console.log('으앵');
+  console.log(currentSysMessagesArray);
   return (
     <ChatContainer top={top} left={left}>
-      <span> —̳͟͞💗  —̳͟͞💗 ˚우리의 로그여요 —̳͟͞💗  —̳͟͞💗 ˚</span>
+      <h3> —̳͟͞💗  —̳͟͞💗 ˚ GAME LOG —̳͟͞💗  —̳͟͞💗 ˚</h3>
+      <hr></hr>
       <ScrollableText>
-      .　  　∧,,∧<br/>
-    .　　(`･ω･´)　 ｎ__<br/>
-    .　η ＞　 ⌒＼/ ､∃<br/>
-    .(∃)/ ∧　　＼/<br/>
-    .   　＼/　＼　　丶<br/>
-    .　　　　／ y　 ﾉ<br/>
-    .　　　／ ／　／<br/>
-    .　　 (　(　〈<br/>
-    .　 　　＼ ＼　＼ <br/>
-    .　　 　(＿(＿＿)
-    .　  　∧,,∧<br/>
-    .　　(`･ω･´)　 ｎ__<br/>
-    .　η ＞　 ⌒＼/ ､∃<br/>
-    .(∃)/ ∧　　＼/<br/>
-    .   　＼/　＼　　丶<br/>
-    .　　　　／ y　 ﾉ<br/>
-    .　　　／ ／　／<br/>
-    .　　 (　(　〈<br/>
-    .　 　　＼ ＼　＼ <br/>
-    .　　 　(＿(＿＿)
-    .　  　∧,,∧<br/>
-    .　　(`･ω･´)　 ｎ__<br/>
-    .　η ＞　 ⌒＼/ ､∃<br/>
-    .(∃)/ ∧　　＼/<br/>
-    .   　＼/　＼　　丶<br/>
-    .　　　　／ y　 ﾉ<br/>
-    .　　　／ ／　／<br/>
-    .　　 (　(　〈<br/>
-    .　 　　＼ ＼　＼ <br/>
-    .　　 　(＿(＿＿) <br/>
-    . 으아아으아아으아아으아아으아아으아아d으에에
+      {currentSysMessagesArray.map((sysMessage, index) => (
+        <div key={index}>
+          {/* {sysMessage.param.day} 일차 {sysMessage.param.phase}: {sysMessage.param.message} */}
+          {sysMessage.param.phase}: {sysMessage.param.message} 
+        </div>
+      ))}
       </ScrollableText>
     </ChatContainer>
   );

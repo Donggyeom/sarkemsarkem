@@ -16,6 +16,7 @@ const GameProvider = ({ children }) => {
     const navigate = useNavigate();
       // 현재 시스템 메시지를 저장할 상태 추가
     const [currentSysMessage, setCurrentSysMessage] = useState(null);
+    const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
     let stompClient = useRef({})
 
     const [chatMessages, setChatMessages] = useState([]); 
@@ -150,6 +151,8 @@ const onSocketConnected = () => {
         case "NOTICE_MESSAGE":
             console.log(sysMessage.param);
             setCurrentSysMessage(()=>sysMessage);
+            setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
+              { ...sysMessage, dayCount: sysMessage.param.day }]);
             // console.log(currentSysMessage);
             break;
         case "GAME_START":   
@@ -401,7 +404,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, sendChatMessage, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage }}>
+      voteSituation, currentSysMessage, currentSysMessagesArray }}>
       {children}
     </GameContext.Provider>
   );
