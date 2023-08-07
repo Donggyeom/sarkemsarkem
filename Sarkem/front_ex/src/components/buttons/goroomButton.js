@@ -15,7 +15,7 @@ const GoroomButtonImage = styled.img`
 `;
 
 const GoroomButton = () => {
-  const {roomSession, setRoomSession, isHost, initSession, connectSession, getGameSession} = useRoomContext();
+  const {roomSession, player, initSession, connectSession } = useRoomContext();
   const navigate = useNavigate();
 
   const handleButtonClick = async () => {
@@ -24,7 +24,7 @@ const GoroomButton = () => {
     navigate(`/${roomSession.roomId}/lobby`);
   };
 
-  return <GoroomButtonImage src={isHost ? makeRoomButtonSrc : goroomButtonSrc} alt={isHost ? "방 만들기" : "입장하기"} onClick={handleButtonClick} />;
+  return <GoroomButtonImage src={player.isHost ? makeRoomButtonSrc : goroomButtonSrc} alt={player.isHost ? "방 만들기" : "입장하기"} onClick={handleButtonClick} />;
 };
 
 

@@ -7,7 +7,7 @@ import { useRoomContext } from './Context';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-    const {roomSession, player, setPlayers, gameId, isHost, gameOption, setGameOption} = useRoomContext();
+    const {roomSession, player, setPlayers, gameId, gameOption, setGameOption} = useRoomContext();
     const navigate = useNavigate();
     let stompClient = useRef({})
 
@@ -75,7 +75,7 @@ const GameProvider = ({ children }) => {
           alert('방장만 실행 가능합니다.');
           break;
       case "OPTION_CHANGED":
-          if(isHost) return;
+          if(player.isHost) return;
           setGameOption(sysMessage.param);
           console.log(sysMessage.param.sarkCount);
           break;

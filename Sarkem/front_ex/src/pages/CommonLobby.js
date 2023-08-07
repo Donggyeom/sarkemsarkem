@@ -132,7 +132,7 @@ const ButtonContainer2 = styled.div`
 
 const CommonLobby = ()=>{
   const {roomSession, setRoomSession, getGameSession, player, setPlayer, roomId, gameId, 
-    setGameOption, gameOption, isHost, camArray, leaveSession, token,
+    setGameOption, gameOption, camArray, leaveSession, token,
     createGameRoom, connectSession} = useRoomContext();
   const {handleGamePageClick, stompClient} = useGameContext();
 
@@ -204,13 +204,13 @@ const CommonLobby = ()=>{
 
   // 게임 옵션이 변경되면, callChangeOption 호출
   useEffect(()=> {
-   if(!isHost) return;
+   if(!player.isHost) return;
    callChangeOption();
   }, [gameOption]);
 
   // 게임 옵션을 변경처리 하는 함수
   const handleGameOptionChange = (part, value) => {
-    if (!isHost) return;
+    if (!player.isHost) return;
     if (stompClient.current.connect === undefined) return;
   if (part === 'meetingTime') {
     if (value >= 15 && value <= 180) {
@@ -484,7 +484,7 @@ const CommonLobby = ()=>{
       </DivWrapper>
           <DivWrapper>
           
-            {isHost ? (
+            {player.isHost ? (
               <>
                 <LeftPart>
                 <ButtonContainer>

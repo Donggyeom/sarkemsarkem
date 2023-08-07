@@ -114,8 +114,7 @@ const Logo = styled.img`
 `;
 
 const CommonStart = ({onClick} ) => {
-  const { player, setPlayer, setPlayers, roomSession, setRoomSession, isHost, 
-    createGameRoom, getGameRoom } = useRoomContext();
+  const { player, setPlayer, setPlayers, roomSession, setRoomSession, createGameRoom, getGameRoom } = useRoomContext();
   const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
   const navigate = useNavigate();
   const location = useLocation();
@@ -145,6 +144,13 @@ const CommonStart = ({onClick} ) => {
     const roomId = location.pathname.slice(1);
     var gameRoom = await getGameRoom(roomId);
     if (gameRoom == null) {
+      // 방을 생성할 경우, 방장으로 설정
+      setPlayer((prev) => {
+        return ({
+          ...prev,
+          isHost: true,
+        });
+      });
       // 게임방 생성
       await createGameRoom(roomId);
       

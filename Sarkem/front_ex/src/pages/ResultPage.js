@@ -91,8 +91,7 @@ const TextAboveWrapper = styled.div`
 
 
 const ResultPage = () => {
-  const { roomSession, roomId, setRoomId, isHost, setIsHost, 
-    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
+  const { roomSession, roomId, setRoomId, publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
     token, setToken, OV, initSession, connectSession, leaveSession } = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
@@ -109,7 +108,7 @@ const ResultPage = () => {
     setPublisher(undefined);
     setCamArray([]);
     console.log("새로운 방 만들기")
-    navigate(`/${createRandomId()}`, { state: { isHost: true } });
+    navigate(`/${createRandomId()}`);
   };
 
   const handleExitButtonClick = () => {

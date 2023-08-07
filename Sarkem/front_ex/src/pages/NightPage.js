@@ -45,7 +45,7 @@ const handleScMiniClick = () => {
 };
 
 const NightPage = () => {
-  const { player, setPlayer, roomSession, roomId, gameOption, setRoomId, isHost, setIsHost, 
+  const { player, setPlayer, roomSession, roomId, gameOption, setRoomId, 
     subscribers, setSubscribers, camArray, setCamArray,
     OV, initSession, connectSession, leaveSession } = useRoomContext(); 
   const navigate = useNavigate();

@@ -531,8 +531,8 @@ const handleScMiniClick = () => {
 
 const SunsetPage = () => {
    
-  const { roomSession, player, setPlayer, isHost, setIsHost, 
-    publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
+  const { roomSession, player, setPlayer, publisher, setPublisher, 
+    subscribers, setSubscribers, camArray, setCamArray,
     OV, initSession, connectSession, leaveSession } = useRoomContext(); 
   
   const { myRole } = useGameContext();

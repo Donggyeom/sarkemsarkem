@@ -7,7 +7,6 @@ const StartHost = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const roomId = location.pathname.slice(1);
-  const isHost = location.state.isHost;
 
   const [userName, setUserName] = useState('' + Math.floor(Math.random() * 100))
   const [videoEnabled, setVideoEnabled] = useState(true);

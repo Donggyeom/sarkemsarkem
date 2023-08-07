@@ -58,7 +58,6 @@ const StartButtonContainer = styled.div`
 `;
 
 const StartPage = () => {
-  const { setIsHost } = useRoomContext();
   const navigate = useNavigate();
   const [logoVisible, setLogoVisible] = useState(false);
 
@@ -68,7 +67,6 @@ const StartPage = () => {
   }, []);
 
   const goToCreateRoom = () => {
-    setIsHost(() => true);
     navigate(`/${createRandomId()}`);
   };
 
