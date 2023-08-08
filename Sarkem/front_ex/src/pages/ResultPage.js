@@ -181,7 +181,6 @@ const ResultPage = () => {
                 <TableCell>{playerRole.job}</TableCell>
               </TableRow>
             ))}
-            <hr></hr>
             {nonSarkPlayers.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0}>
                 <TableCell>{playerRole.nickname}</TableCell>
