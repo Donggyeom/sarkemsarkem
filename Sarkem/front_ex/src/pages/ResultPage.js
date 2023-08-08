@@ -91,7 +91,7 @@ const TextAboveWrapper = styled.div`
 
 
 const ResultPage = () => {
-  const { roomSession, setPlayer, setPlayers, setCamArray } = useRoomContext(); 
+  const { roomSession, setPlayer, setPlayers } = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -104,7 +104,6 @@ const ResultPage = () => {
     // 데이터 초기화
     setPlayer({});
     setPlayers(new Map());
-    setCamArray([]);
     console.log("새로운 방 만들기")
     navigate(`/${createRandomId()}`);
   };
@@ -118,7 +117,6 @@ const ResultPage = () => {
     // setSession(undefined);
     setPlayer({});
     setPlayers(new Map());
-    setCamArray([]);
     console.log("홈으로 나가기")
     navigate('/');
   };
