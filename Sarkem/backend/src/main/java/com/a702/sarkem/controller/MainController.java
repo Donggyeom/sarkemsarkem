@@ -106,12 +106,16 @@ public class MainController {
 			log.debug("retrieveGameSession - 게임세션 획득 실패 roomId : " + roomId);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		
+
+		if (gameSession.getPhase() != GameSession.PhaseType.READY) {
+			log.debug("이미 게임이 실행 중입니다 roomId : " + roomId);
+			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+		}
+
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("roomId", roomId);
 		data.put("gameId", gameSession.getGameId());
 		data.put("gameOption", gameSession.getGameOption());
-		
 		return new ResponseEntity<>(data, HttpStatus.OK);
 	}
 

@@ -49,7 +49,7 @@ const DayPage = () => {
 
   const { roomSession, player, players, roomId, camArray, leaveSession } = useRoomContext();
   const { gameSession, myRole } = useGameContext();
-  const [ meetingTime, setMeetingTime ] = useState(gameSession.gameOption.meetingTime);
+  const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   
   
 

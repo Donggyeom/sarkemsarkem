@@ -4,7 +4,7 @@ import goroomButtonSrc from '../../img/gobutton.png';
 import makeRoomButtonSrc from '../../img/makebutton.png'
 import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../../Context';
-
+import { useGameContext } from '../../GameContext';
 const GoroomButtonImage = styled.img`
   width: 28%;
   height : 76%;
@@ -17,6 +17,7 @@ const GoroomButtonImage = styled.img`
 const GoroomButton = (props) => {
   const { createGameRoom, roomSession, setRoomSession, getGameRoom, 
     player, setPlayer, players, setPlayers, initSession, connectSession } = useRoomContext();
+  const {getGameSession} = useGameContext();
   const navigate = useNavigate();
 
   const handleButtonClick = async () => {
@@ -69,6 +70,14 @@ const GoroomButton = (props) => {
     });
     setPlayers(players);
 
+    // 게임 세션 갱신
+    const isEnterable = await getGameSession(roomId);
+    if (!isEnterable) {
+      alert("이미 게임 중인 방입니다.");
+      navigate("/");
+      return;
+    }
+    console.log(isEnterable)
     const session = await initSession();
     connectSession(session, gameRoom.roomId);
     navigate(`/${roomId}/lobby`);

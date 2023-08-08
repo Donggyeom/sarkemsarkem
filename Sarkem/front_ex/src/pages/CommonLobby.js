@@ -159,9 +159,6 @@ const CommonLobby = ()=>{
       navigate(`/${location.pathname.split("/")[1]}`);
       return;
     }
-    
-    // 게임 세션 갱신
-    getGameSession();
 
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
