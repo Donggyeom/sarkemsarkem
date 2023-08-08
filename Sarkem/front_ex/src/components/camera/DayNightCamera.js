@@ -237,8 +237,8 @@ const CamCatWrapper = styled.div`
     const [clickedCamera, setClickedCamera] = useState(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
-    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias } = useGameContext();
-    const jungleRefs = useRef([]);
+    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext} = useGameContext();
+    // const jungleRefs = useRef([]);
 
 
   useEffect(() => {
@@ -344,10 +344,9 @@ const CamCatWrapper = styled.div`
     mixedMediaStreamRef.current = getMixedMediaStream();
   }
 
-  const mixedMediaStreamRef = useRef(null);
-  console.log("한번만 생성되는지")
+  // const mixedMediaStreamRef = useRef(null);
   // const jungleRefs = useRef([]);
-  const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
+  // const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
 
   // 삵들에 대해 음성변조 시작
   const getMixedMediaStream = () => {

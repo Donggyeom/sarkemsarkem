@@ -24,7 +24,14 @@ const GameProvider = ({ children }) => {
     const [message, setMessage] = useState("");
     
     const [mafias, setMafias] = useState([]);
+    const jungleRefs = useRef([]);
+    const mixedMediaStreamRef = useRef(null);
+    const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
 
+    useEffect(()=>{
+      jungleRefs.current = [];
+
+    },[])
     const [peopleCount, setPeopleCount] = useState({
         meetingTime: 60,
         citizenCount: 0,
@@ -455,7 +462,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias}}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext}}>
       {children}
     </GameContext.Provider>
   );
