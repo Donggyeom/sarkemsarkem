@@ -34,6 +34,7 @@ import ScPopup from '../components/games/ScPopup';
 import HelpButton from '../components/buttons/HelpButton';
 import Help from '../components/games/Help';
 import axios from 'axios';
+import LoadingPage from './LoadingPage';
 
 
 const StyledContent = styled.div`
@@ -131,12 +132,18 @@ const ButtonContainer2 = styled.div`
 
 
 const CommonLobby = ()=>{
-  const {roomSession, getGameSession, player, setGameOption, gameOption, 
+  const { roomSession, player, setGameOption, gameOption, 
     camArray, leaveSession, token } = useRoomContext();
-  const {handleGamePageClick, stompClient} = useGameContext();
+  const { gameSession, setGameSession, getGameSession, handleGamePageClick, stompClient } = useGameContext();
+
+  // const [ isLoaded, setIsLoaded ] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
+
+
+  ////////////   CommonLobby Effect   ////////////
+
 
   useEffect(() => {
 
@@ -144,17 +151,6 @@ const CommonLobby = ()=>{
     window.addEventListener("popstate", () => leaveSession());
 
 
-    if (location.pathname.slice(1) === ""){
-      console.log("게임방 정보가 없습니다.")
-      navigate("/");
-      return;
-    }
-
-    // if (roomSession.gameId == undefined) {
-    //   console.log('roomSession.gameId == null');
-    //   navigate("/loading");
-    //   getGameRoom();
-    // }
     if (roomSession == undefined || roomSession.roomId == undefined) {
       console.log(`roomSession`);
       console.log(roomSession);
@@ -164,6 +160,8 @@ const CommonLobby = ()=>{
       navigate(`/${location.pathname.split("/")[1]}`);
       return;
     }
+    
+    // 게임 세션 갱신
     getGameSession();
 
     // 윈도우 객체에 화면 종료 이벤트 추가
@@ -172,6 +170,10 @@ const CommonLobby = ()=>{
         window.removeEventListener('beforeunload', onbeforeunload);
     }
   }, [])
+
+
+  ////////////   CommonLobby 함수   ////////////
+
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
@@ -184,50 +186,26 @@ const CommonLobby = ()=>{
     await navigator.clipboard.writeText("localhost:3000/"+roomSession.roomId).then(alert("게임 링크가 복사되었습니다."));
     console.log('Invite functionality for hosts');
   };
-
-
-
-  // 변경된 게임 옵션을 redis 토픽에 전달
-  const callChangeOption = () => {
-    if(stompClient.current.connected && token !== null) {
-      stompClient.current.send("/pub/game/action", {}, 
-          JSON.stringify({
-              code:'OPTION_CHANGE', 
-              roomId: roomSession.roomId,
-              playerId: player.playerId,
-              param: gameOption
-      }));
-      console.log(gameOption);
-    }
-  };
-
-  // 게임 옵션이 변경되면, callChangeOption 호출
-  useEffect(()=> {
-   if(!player.isHost) return;
-   callChangeOption();
-  }, [gameOption]);
+  
 
   // 게임 옵션을 변경처리 하는 함수
   const handleGameOptionChange = (part, value) => {
     if (!player.isHost) return;
     if (stompClient.current.connect === undefined) return;
-  if (part === 'meetingTime') {
-    if (value >= 15 && value <= 180) {
-      setGameOption((prevGameOption) => ({
-        ...prevGameOption,
-        [part]: value,
-      }));
-    }
-  } else {
-    if (stompClient.current.connect === undefined) return;
-    if (value >= 0) {
-      setGameOption((prevGameOption) => ({
-        ...prevGameOption,
-        [part]: value,
-      }));
-    }
+    if (value < 0) return;    
+    else if (part === 'meetingTime' && (value < 15 || value > 180)) return;
+
+    const gameOption = {
+      ...gameSession.gameOption,
+      [part] : value,
+    };
+    setGameSession((prev) => {
+      return ({
+        ...prev,
+        gameOption: gameOption,
+      })
+    });
   }
-};
 
   // popup
 
@@ -298,7 +276,8 @@ const CommonLobby = ()=>{
   };
 
   return (
-    <Background>
+    <>
+    { gameSession.gameOption ? (<Background>
       {!isHelpOn && <Help top="50%" left="77.5%" />}
       {showSarkPopup && <ScPopup src={c_sark} top="20%" left="50%" />}
       {showVetPopup && <ScPopup src={c_vet} top="40%" left="50%" />}
@@ -319,15 +298,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                   style={{ ...buttonStyle }}
-                  onClick={() => handleGameOptionChange('sarkCount', gameOption.sarkCount - 1)}
+                  onClick={() => handleGameOptionChange('sarkCount', gameSession.gameOption.sarkCount - 1)}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                   onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={downbutton} alt="Down Button" />
                 </button>
-                <div>{gameOption.sarkCount}</div>
+                <div>{gameSession.gameOption.sarkCount}</div>
                 <button
                   style={{ ...buttonStyle }}
-                  onClick={() => handleGameOptionChange('sarkCount', gameOption.sarkCount + 1)}
+                  onClick={() => handleGameOptionChange('sarkCount', gameSession.gameOption.sarkCount + 1)}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                   onMouseLeave={(e) => e.target.style.filter = 'none'}>
                    <img src={upbutton} alt="Up Button" />
@@ -339,15 +318,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                   style={{ ...buttonStyle }}
-                  onClick={() => handleGameOptionChange('citizenCount', gameOption.citizenCount - 1)}
+                  onClick={() => handleGameOptionChange('citizenCount', gameSession.gameOption.citizenCount - 1)}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                   onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={downbutton} alt="Down Button" />
                 </button>
-                <div>{gameOption.citizenCount}</div>
+                <div>{gameSession.gameOption.citizenCount}</div>
                 <button
                   style={{ ...buttonStyle }}
-                  onClick={() => handleGameOptionChange('citizenCount', gameOption.citizenCount + 1)}
+                  onClick={() => handleGameOptionChange('citizenCount', gameSession.gameOption.citizenCount + 1)}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                   onMouseLeave={(e) => e.target.style.filter = 'none'}>
                    <img src={upbutton} alt="Up Button" />
@@ -361,15 +340,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('doctorCount', gameOption.doctorCount - 1)}
+                    onClick={() => handleGameOptionChange('doctorCount', gameSession.gameOption.doctorCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{gameOption.doctorCount}</div>
+                  <div>{gameSession.gameOption.doctorCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('doctorCount', gameOption.doctorCount + 1)}
+                    onClick={() => handleGameOptionChange('doctorCount', gameSession.gameOption.doctorCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -381,15 +360,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('policeCount', gameOption.policeCount - 1)}
+                    onClick={() => handleGameOptionChange('policeCount', gameSession.gameOption.policeCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{gameOption.policeCount}</div>
+                  <div>{gameSession.gameOption.policeCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('policeCount', gameOption.policeCount + 1)}
+                    onClick={() => handleGameOptionChange('policeCount', gameSession.gameOption.policeCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -403,15 +382,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('detectiveCount', gameOption.detectiveCount - 1)}
+                    onClick={() => handleGameOptionChange('detectiveCount', gameSession.gameOption.detectiveCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{gameOption.detectiveCount}</div>
+                  <div>{gameSession.gameOption.detectiveCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('detectiveCount', gameOption.detectiveCount + 1)}
+                    onClick={() => handleGameOptionChange('detectiveCount', gameSession.gameOption.detectiveCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -423,15 +402,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('psychologistCount', gameOption.psychologistCount - 1)}
+                    onClick={() => handleGameOptionChange('psychologistCount', gameSession.gameOption.psychologistCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{gameOption.psychologistCount}</div>
+                  <div>{gameSession.gameOption.psychologistCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('psychologistCount', gameOption.psychologistCount + 1)}
+                    onClick={() => handleGameOptionChange('psychologistCount', gameSession.gameOption.psychologistCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -445,15 +424,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                 <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('bullyCount', gameOption.bullyCount - 1)}
+                    onClick={() => handleGameOptionChange('bullyCount', gameSession.gameOption.bullyCount - 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{gameOption.bullyCount}</div>
+                  <div>{gameSession.gameOption.bullyCount}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('bullyCount', gameOption.bullyCount + 1)}
+                    onClick={() => handleGameOptionChange('bullyCount', gameSession.gameOption.bullyCount + 1)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -465,15 +444,15 @@ const CommonLobby = ()=>{
               <RightPartWrapper>
                <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('meetingTime', gameOption.meetingTime - 15)}
+                    onClick={() => handleGameOptionChange('meetingTime', gameSession.gameOption.meetingTime - 15)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                       <img src={downbutton} alt="Down Button" />
                   </button>
-                  <div>{gameOption.meetingTime}</div>
+                  <div>{gameSession.gameOption.meetingTime}</div>
                   <button
                     style={{ ...buttonStyle }}
-                    onClick={() => handleGameOptionChange('meetingTime', gameOption.meetingTime + 15)}
+                    onClick={() => handleGameOptionChange('meetingTime', gameSession.gameOption.meetingTime + 15)}
                     onMouseEnter={(e) => e.target.style.filter = 'brightness(0.8)'}
                     onMouseLeave={(e) => e.target.style.filter = 'none'}>
                     <img src={upbutton} alt="Up Button" />
@@ -512,7 +491,8 @@ const CommonLobby = ()=>{
         </RightSection>
         <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />
       </StyledContent>
-    </Background>
+    </Background>):<LoadingPage/>}
+    </>
   );
 };
 

@@ -47,10 +47,10 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
 
-  const { roomSession, player, gameSession, players, roomId, gameOption, 
+  const { roomSession, player, players, roomId,
     publisher, camArray, leaveSession } = useRoomContext();
-  const { myRole } = useGameContext();
-  const [meetingTime, setMeetingTime] = useState(gameOption.meetingTime);
+  const { gameSession, myRole } = useGameContext();
+  const [ meetingTime, setMeetingTime ] = useState(gameSession.gameOption.meetingTime);
   
   
 

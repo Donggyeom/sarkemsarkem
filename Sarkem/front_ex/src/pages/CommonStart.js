@@ -175,6 +175,15 @@ const CommonStart = ({onClick} ) => {
         });
       });
     }
+    else {
+      // 방을 이미 있을 경우 방장 X
+      setPlayer((prev) => {
+        return ({
+          ...prev,
+          isHost: false,
+        });
+      });
+    }
   };
 
   const getUserCamera = async () => {
