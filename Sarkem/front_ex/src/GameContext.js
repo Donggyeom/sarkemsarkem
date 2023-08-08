@@ -67,7 +67,7 @@ const GameProvider = ({ children }) => {
     const [voteTargetId, setVoteTargetId] = useState("");
 
     // 캠 배열에서 제거하기 위함
-    const [deadId, setdeadId] = useState("");
+    const [deadIds, setDeadIds] = useState([]);
 
 
     const [phase, setphase] = useState("");
@@ -359,7 +359,8 @@ const onSocketConnected = () => {
               break;
 
           case "BE_HUNTED":
-            setdeadId(sysMessage.param.deadPlayerId);
+            const newDeadId = sysMessage.param.deadPlayerId;
+            setDeadIds(prevDeadIds => [...prevDeadIds, newDeadId]);
             break;
 
         }
@@ -496,7 +497,7 @@ const onSocketConnected = () => {
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner, 
-      voteTargetId, deadId, threatedTarget}}>
+      voteTargetId, deadIds, threatedTarget}}>
       {children}
     </GameContext.Provider>
   );

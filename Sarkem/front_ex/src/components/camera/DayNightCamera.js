@@ -237,7 +237,7 @@ const CamCatWrapper = styled.div`
     const [clickedCamera, setClickedCamera] = useState(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
-    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, deadId} = useGameContext();
+    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, deadIds} = useGameContext();
     // const jungleRefs = useRef([]);
 
   useEffect(() => {
@@ -266,8 +266,26 @@ const CamCatWrapper = styled.div`
     return `${userToken}: 0표`;
   };
 
-  console.log(voteTargetId, "여기에요2");
+  const calculateAdjustedCamCount = () => {
+    const filteredCamArray = camArray.filter((user) => {
+      const userToken = JSON.parse(user.stream.connection.data).token;
+      return !deadIds.includes(userToken);
+    });
 
+    let adjustedCamCount = filteredCamArray.length;
+
+    filteredCamArray.forEach((user) => {
+      const userToken = JSON.parse(user.stream.connection.data).token;
+
+      if (deadIds.includes(userToken)) {
+        adjustedCamCount -= 1;
+      }
+    });
+
+    return adjustedCamCount;
+  };
+
+  const adjustedCamCount = calculateAdjustedCamCount();
 
   const handleCamClick = (user) => {
     console.log(voteSituation, "투표 결과 확인합니다");
@@ -386,32 +404,15 @@ const CamCatWrapper = styled.div`
     mixedMediaStreamRef.current = null;
   };
 
-  
 
-  const filteredCamArray = camArray.filter(user => {
-    const userToken = JSON.parse(user.stream.connection.data).token;
-    return userToken !== deadId;
-  });
   
-  let adjustedCamCount = filteredCamArray.length;
-  
-  filteredCamArray.forEach((user) => {
-    const userToken = JSON.parse(user.stream.connection.data).token;
-    
-    if (userToken === deadId) {
-      adjustedCamCount -= 1;
-    }
-  });
-  
-  console.log(filteredCamArray.length, "캠배열확인용");
-  console.log(adjustedCamCount, "캠배열확인용2");
   
   return (
       <CamCatGrid style={gridStyles}>
         {camArray
-          .filter(user => {
+          .filter((user) => {
             const userToken = JSON.parse(user.stream.connection.data).token;
-            return userToken !== deadId;
+            return !deadIds.includes(userToken);
           })
           .map((user, index) => (
             <CamCatWrapper
@@ -421,14 +422,14 @@ const CamCatWrapper = styled.div`
               index={index}
               onClick={() => handleCamClick(user)}
             >
-          <CamCat props={filteredCamArray[index]} user={user} />
-          <VotefootWrapper show={clickedCamera === user && startVote}>
-            <VotefootImage src={voteImage} alt="Vote" />
-          </VotefootWrapper>
-          <div>{getVoteResultForUser(JSON.parse(user.stream.connection.data).token)}</div>
-        </CamCatWrapper>
-      ))}
-      <ButtonWrapper>
+              <CamCat props={user} user={user} />
+              <VotefootWrapper show={clickedCamera === user && startVote}>
+                <VotefootImage src={voteImage} alt="Vote" />
+              </VotefootWrapper>
+              <div>{getVoteResultForUser(JSON.parse(user.stream.connection.data).token)}</div>
+            </CamCatWrapper>
+          ))}
+        <ButtonWrapper>
         {dayCount === 1 && phase === "day" ? (
           <>
             {startVote && (
