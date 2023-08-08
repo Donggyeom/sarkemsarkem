@@ -117,6 +117,9 @@ const ResultPage = () => {
     navigate('/');
   };
 
+  const sarkPlayers = roleAssignedArray.filter(playerRole => playerRole.job === '삵');
+  const nonSarkPlayers = roleAssignedArray.filter(playerRole => playerRole.job !== '삵');
+
   return (
     <div>
     {winner === 'CITIZEN' ? (
@@ -130,23 +133,28 @@ const ResultPage = () => {
           </ButtonContainer>
           <Title> 냥냥이팀 승리!</Title>
           <Table>
-            <thead>
-              <tr>
-                <TableHeader>승리여부</TableHeader>
-                <TableHeader>플레이어</TableHeader>
-                <TableHeader>직업</TableHeader>
-              </tr>
-            </thead>
-            <tbody>
-              {roleAssignedArray.map((playerRole, index) => (
-                <TableRow key={index} even={index % 2 === 0}>
-                  <TableCell>승리여부</TableCell>
-                  <TableCell>{playerRole.nickname}</TableCell>
-                  <TableCell>{playerRole.job}</TableCell>
-                </TableRow>
-              ))}
-            </tbody>
-          </Table>
+          <thead>
+            <tr>
+              <TableHeader>Player</TableHeader>
+              <TableHeader>Job</TableHeader>
+            </tr>
+          </thead>
+          <tbody>
+            {nonSarkPlayers.map((playerRole, index) => (
+              <TableRow key={index} even={index % 2 === 0}>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
+              </TableRow>
+            ))}
+                <hr></hr>
+            {sarkPlayers.map((playerRole, index) => (
+              <TableRow key={index} even={index % 2 === 0}>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
+              </TableRow>
+            ))}
+          </tbody>
+        </Table>
         </StyledSunsetPage>
       </Background1>
     ) : (
@@ -162,21 +170,27 @@ const ResultPage = () => {
         <Table>
           <thead>
             <tr>
-              <TableHeader>승리여부</TableHeader>
-              <TableHeader>플레이어</TableHeader>
-              <TableHeader>직업</TableHeader>
+              <TableHeader>Player</TableHeader>
+              <TableHeader>Job</TableHeader>
             </tr>
           </thead>
           <tbody>
-            {roleAssignedArray.map((playerRole, index) => (
+            {sarkPlayers.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0}>
-                <TableCell>승리여부</TableCell>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
+              </TableRow>
+            ))}
+            <hr></hr>
+            {nonSarkPlayers.map((playerRole, index) => (
+              <TableRow key={index} even={index % 2 === 0}>
                 <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{playerRole.job}</TableCell>
               </TableRow>
             ))}
           </tbody>
         </Table>
+
         </StyledSunsetPage>
       </Background2>
     )}
