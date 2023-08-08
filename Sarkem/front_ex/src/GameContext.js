@@ -213,11 +213,6 @@ const onSocketConnected = () => {
             ...prevRoles,
             [sysMessage.playerId]: sysMessage.param.role
         }));
-          setRoleAssignedArray((prevArray) => [
-            ...prevArray,
-            { playerId: sysMessage.playerId, role: sysMessage.param.role },
-          ]);
-
         break;
 
 
@@ -235,6 +230,10 @@ const onSocketConnected = () => {
             setphase("night");
             console.log(phase);
             navigate(`/${roomId}/night`)
+            break;
+        
+        case "GAME_END":
+            navigate(`/${roomId}/result`)
             break;
 
         case "TARGET_SELECTION":
@@ -298,6 +297,23 @@ const onSocketConnected = () => {
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`);
             break;
+
+        case "JOB_DISCLOSE":
+          const disclosedRoles = sysMessage.param;
+          const newRoleAssignedArray = [];
+        
+          for (const playerId in disclosedRoles) {
+            const roleInfo = disclosedRoles[playerId];
+            console.log(`Player ID: ${playerId}, Nickname: ${roleInfo[0]}, Job: ${roleInfo[1]}`);
+            newRoleAssignedArray.push({
+              playerId: playerId,
+              nickname: roleInfo[0],
+              job: roleInfo[1]
+            });
+          }
+        
+          setRoleAssignedArray((prevArray) => [...prevArray, ...newRoleAssignedArray]);
+          break;
         
         }
       }

@@ -126,8 +126,7 @@ public class GameThread extends Thread {
 
 		// 직업 정보 전송
 		gameManager.jobDiscolse(roomId);
-		// 게임 종료 메시지 전송
-		gameManager.sendGameEndMessage(roomId);
+		
 		
 		// 게임 결과 DB저장
 		dbService.InsertGameResult(gameSession);
@@ -231,7 +230,7 @@ public class GameThread extends Thread {
 		// "대상 선택" 메시지 전송
 		param = new HashMap<>();
 		param.put("day", gameSession.getDay());
-		gameManager.sendTargetSelectionMessage(roomId, param);
+		gameManager.sendTargetSelectionMessageToAll(roomId, param);
 	}
 
 	// 낮 투표 결과 종합
@@ -314,7 +313,14 @@ public class GameThread extends Thread {
 		// 밤페이즈 됐다고 메시지 전송하면 프론트에서
 		// 삵 제외 화면, 카메라, 마이크, 오디오 끄기
 		// 탐정 오디오만 변조된 음성으로 켜기
-		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하겠지??
+		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하라고 해야함!!!
+		List<String> votePlayers = new ArrayList<>(); // 여기에 밤투표 대상 직업 넣자
+		for(RolePlayer rp: gameSession.getAlivePlayers()) {
+			if(!rp.getRole().equals(GameRole.CITIZEN) && !rp.getRole().equals(GameRole.DETECTIVE)) {
+				votePlayers.add(rp.getPlayerId());
+			}
+		}
+		gameManager.sendTargetSelectionMessages(roomId, votePlayers);
 	}
 
 	// 밤 투표 결과 종합
@@ -391,13 +397,14 @@ public class GameThread extends Thread {
 		log.debug("삵 수: " + aliveSark + " / 시민 수: " + aliveCitizen);
 		// 마피아수>=시민수 => 마피아 win
 		if (aliveSark >= aliveCitizen) {
-			
-			gameSession.setWinTeam(1);
+			gameManager.endGame(roomId, GameRole.SARK); // 게임 종료 메시지 전송
+			gameSession.setWinTeam(1); // 게임 세션에 이긴 팀 저장
 			return true;
 		}
 		// 마피아수==0 => 시민 win
 		if (aliveSark == 0) {
-			gameSession.setWinTeam(2);
+			gameManager.endGame(roomId, GameRole.CITIZEN); // 게임 종료 메시지 전송
+			gameSession.setWinTeam(2); // 게임 세션에 이긴 팀 저장
 			return true;
 		}
 

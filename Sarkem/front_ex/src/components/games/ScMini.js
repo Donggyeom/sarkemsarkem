@@ -27,6 +27,8 @@ import cDetectImageSrc from '../../img/c_탐정.png';
 // 부여받은 번호대로 이미지 다르게 뜨게 해야 함. 설정해 줘야 함
 // 일단 삵으로 만들어 둠
 
+// 첫날 낮에만 뜨게 해야함
+
 const slideIn = keyframes`
   from {
     transform: translateY(-100%);
@@ -50,13 +52,15 @@ const slideOut = keyframes`
 
 const ScButtonImage = styled.img`
   width: 175px;
-  cursor: pointer;
+  cursor: ${({ role }) => (role === 'OBSERVER' ? 'default' : 'pointer')};
   position: absolute;
   top: 3%;
   right: 2%;
-  &:hover {
-    filter: brightness(0.8);
-  }
+  ${({ role }) => role !== 'OBSERVER' && `
+    &:hover {
+      filter: brightness(0.8);
+    }
+  `}
 `;
 
 const ScMiniButton = styled.div`
