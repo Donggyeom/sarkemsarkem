@@ -307,6 +307,7 @@ const CamCatWrapper = styled.div`
 
     if (clickedCamera === user) {
       setClickedCamera(null);
+      selectAction({ playerId: null });
     } else {
       selectAction({ playerId: JSON.parse(user.stream.connection.data).token });
       setClickedCamera(user);
