@@ -424,6 +424,22 @@ const onSocketConnected = () => {
               }));
       }
   };
+  // 미션성공
+  const missionConplete = () => {
+
+      console.log("미션 성공");
+      if (stompClient.current.connected && token !== null) {
+          stompClient.current.send("/pub/game/action", {},
+              JSON.stringify({
+                  code: 'HIDDENMISSION_SUCCESS ', // 스킵했을 때도 얘도 보내달라
+                  roomId: roomId,
+                  playerId: token,
+                  param: {
+                      // target: selectedTarget
+                  }
+              }));
+      }
+  };
 
 
   
