@@ -86,6 +86,9 @@ public class GameController {
 		case TARGET_SELECTED:
 			gameManager.selectedTarget(roomId, playerId);
 			break;
+		case LEAVE_GAME:
+			gameManager.leaveGame(roomId, playerId);
+			break;
 		default:
 			break;
 		}

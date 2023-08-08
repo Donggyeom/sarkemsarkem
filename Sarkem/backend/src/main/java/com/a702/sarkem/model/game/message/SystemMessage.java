@@ -48,6 +48,8 @@ public class SystemMessage implements Serializable {
 		
 		// 에러 코드
 		ONLY_HOST_ACTION, // 방장이 아닌 사용자 액션
+
+		LEAVE_PLAYER	// 특정 유저가 중도 퇴장할 시
 	}
 
 	private SystemCode code;

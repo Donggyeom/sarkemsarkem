@@ -451,7 +451,25 @@ public class GameManager {
 		gameSession.setBHiddenMissionSuccess(true);
 		gameSession.setHiddenMissionSuccessCnt(gameSession.getHiddenMissionSuccessCnt()+1);
 	}
-	
+
+	/**
+	 * 특정 플레이어 중도 퇴장 시 사망처리 및 메시지 전달
+	 * @param roomId
+	 * @param playerId
+	 */
+	public void leaveGame(String roomId, String playerId) {
+		log.info(playerId + "님이 게임 진행 중 접속을 종료하셨습니다.");
+		GameSession gameSession = getGameSession(roomId);
+		RolePlayer leavePlayer = gameSession.getPlayer(playerId);
+		if (leavePlayer == null) {
+			log.debug(playerId + " 유저가 존재하지 않습니다.");
+			return;
+		}
+		leavePlayer.setAlive(false);
+		log.info(playerId + "'s isAlive: " + leavePlayer.isAlive());
+		sendLeaveGameMessage(roomId, playerId);
+	};
+
 	/**
 	 * 채팅 메시지를 전체에게 전송
 	 * 
@@ -707,4 +725,7 @@ public class GameManager {
 	}
 	// 3. 게임 종료 끝
 
+	public void sendLeaveGameMessage(String roomId, String playerId) {
+		sendSystemMessageToAll(roomId, SystemCode.LEAVE_PLAYER, playerId);
+	}
 }
