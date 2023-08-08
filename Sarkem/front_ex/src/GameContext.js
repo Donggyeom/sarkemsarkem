@@ -69,22 +69,33 @@ const GameProvider = ({ children }) => {
     console.log(`WebSocket 연결 : ${stompClient.current.connected}`);
   }
 
-  const getGameSession = async () => {
-    // 게임세션 정보 획득
-    const response = await axios.get('/api/game/session/' + roomSession.roomId, {
-      headers: { 'Content-Type': 'application/json;charset=utf-8', },
-    });
-    
-    console.log('gamesession 획득');
-    console.log(response);
-    setGameSession((prev) => {
-      return ({
-        ...prev,
-        gameOption: response.data.gameOption,
+  const getGameSession = async (roomId) => {
+    try {
+      // 게임세션 정보 획득
+      const response = await axios.get('/api/game/session/' + roomId, {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
       });
-    });
-    
-    return response.data.gameId;
+
+      if (response.status === 208) {
+        console.log("이미 진행중인 게임입니다.");
+        return false;
+      }
+
+      console.log('gamesession 획득');
+      console.log(response);
+      setGameSession((prev) => {
+        return ({
+          ...prev,
+          gameOption: response.data.gameOption,
+        });
+      });
+
+      return true;
+    }
+    catch {
+      console.log("게임 세션 요청 실패");
+      return false;
+    }
   }
   
 

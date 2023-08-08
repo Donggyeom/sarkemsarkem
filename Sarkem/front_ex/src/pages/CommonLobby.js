@@ -134,7 +134,7 @@ const ButtonContainer2 = styled.div`
 const CommonLobby = ()=>{
   const { roomSession, player, setGameOption, gameOption, 
     camArray, leaveSession, token } = useRoomContext();
-  const { gameSession, setGameSession, getGameSession, handleGamePageClick, stompClient } = useGameContext();
+  const { gameSession, setGameSession, handleGamePageClick, stompClient } = useGameContext();
 
   // const [ isLoaded, setIsLoaded ] = useState(false);
 
@@ -160,9 +160,6 @@ const CommonLobby = ()=>{
       navigate(`/${location.pathname.split("/")[1]}`);
       return;
     }
-    
-    // 게임 세션 갱신
-    getGameSession();
 
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
