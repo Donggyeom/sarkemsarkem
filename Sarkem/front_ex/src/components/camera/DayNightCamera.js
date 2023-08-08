@@ -239,7 +239,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
   const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, 
-    playersRoles, myRole, phase, mafias, setMafias, voteTargetId} = useGameContext();
+    playersRoles, myRole, phase, mafias, setMafias, voteTargetId, deadId} = useGameContext();
 
 
   useEffect(() => {
@@ -293,7 +293,6 @@ const DayNightCamera = React.memo(({ camArray }) => {
     }
   };
 
-  
 
   const handleSkipClick = () => {
     if (!isConfirmed && !isSkipped && startVote) {
@@ -386,17 +385,43 @@ const DayNightCamera = React.memo(({ camArray }) => {
     jungleRefs.current = [];
     mixedMediaStreamRef.current = null;
   };
+
+  
+
+  const filteredCamArray = camArray.filter(user => {
+    const userToken = JSON.parse(user.stream.connection.data).token;
+    return userToken !== deadId;
+  });
+  
+  let adjustedCamCount = filteredCamArray.length;
+  
+  filteredCamArray.forEach((user) => {
+    const userToken = JSON.parse(user.stream.connection.data).token;
+    
+    if (userToken === deadId) {
+      adjustedCamCount -= 1;
+    }
+  });
+  
+  console.log(filteredCamArray.length, "캠배열확인용");
+  console.log(adjustedCamCount, "캠배열확인용2");
+  
   return (
-    <CamCatGrid style={gridStyles}>
-      {camArray.map((user, index) => (
-        <CamCatWrapper
-          key={index}
-          camCount={camCount}
-          user={user}
-          index={index}
-          onClick={() => handleCamClick(user)}
-        >
-          <CamCat props={camArray[index]} user={user} />
+      <CamCatGrid style={gridStyles}>
+        {camArray
+          .filter(user => {
+            const userToken = JSON.parse(user.stream.connection.data).token;
+            return userToken !== deadId;
+          })
+          .map((user, index) => (
+            <CamCatWrapper
+              key={index}
+              camCount={adjustedCamCount}
+              user={user}
+              index={index}
+              onClick={() => handleCamClick(user)}
+            >
+          <CamCat props={filteredCamArray[index]} user={user} />
           <VotefootWrapper show={clickedCamera === user && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>

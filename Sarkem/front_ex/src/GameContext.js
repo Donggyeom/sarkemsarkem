@@ -58,6 +58,9 @@ const GameProvider = ({ children }) => {
     // 낮 투표 타겟 저장 위한 타겟
     const [voteTargetId, setVoteTargetId] = useState("");
 
+    // 캠 배열에서 제거하기 위함
+    const [deadId, setdeadId] = useState("");
+
 
     const [phase, setphase] = useState("");
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
@@ -253,7 +256,6 @@ const onSocketConnected = () => {
 
         case "DAY_VOTE_END":
             setStartVote(false);
-
             setTargetId(sysMessage.param.targetId);
             console.log(sysMessage.param.targetId, "이거");
             console.log(targetId, "이놈확인해라");
@@ -334,6 +336,10 @@ const onSocketConnected = () => {
               }));
               break;
 
+          case "BE_HUNTED":
+            setdeadId(sysMessage.param.deadPlayerId);
+            break;
+
         }
       }
 
@@ -376,9 +382,7 @@ const onSocketConnected = () => {
   
   // 대상 확정
   const selectConfirm = () => {
-      setVoteTargetId(selectedTarget);
-      console.log(selectedTarget + " 플레이어 선택 ");
-      console.log(selectedTarget.nickname)
+
       console.log(voteTargetId, "여기에요");
       if (stompClient.current.connected && token !== null) {
           stompClient.current.send("/pub/game/action", {},
@@ -470,7 +474,7 @@ const onSocketConnected = () => {
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias,
-      voteTargetId}}>
+      voteTargetId, deadId}}>
       {children}
     </GameContext.Provider>
   );
