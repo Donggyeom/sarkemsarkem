@@ -435,6 +435,43 @@ public class GameManager {
 		gameSession.setHiddenMissionSuccessCnt(gameSession.getHiddenMissionSuccessCnt()+1);
 	}
 	
+	// 게임 종료시 보내는 직업정보 key값 아이디, value에 list로 닉네임, 직업(한글)을 담아보낸다
+	public void jobDiscolse(String roomId) {
+		GameSession gameSession = getGameSession(roomId);
+		List<String> nicknameJob = new ArrayList<>();
+		Map<String, List<String>> param = new HashMap<>();
+		for (RolePlayer rp : gameSession.getPlayers()) {
+			nicknameJob.add(rp.getNickname());
+			switch (rp.getRole()) {
+			case CITIZEN: 
+				nicknameJob.add("시민");
+				break;
+			case SARK: 
+				nicknameJob.add("삵");
+				break;
+			case DOCTOR: 
+				nicknameJob.add("수의사");
+				break;
+			case POLICE: 
+				nicknameJob.add("경찰");
+				break;
+			case PSYCHO: 
+				nicknameJob.add("심리학자");
+				break;
+			case BULLY: 
+				nicknameJob.add("냥아치");
+				break;
+			case DETECTIVE: 
+				nicknameJob.add("탐정");
+				break;
+			}
+			param.put(rp.getPlayerId(), nicknameJob);
+			log.debug(param.toString());
+		}
+		sendJobDiscloseMessage(roomId, param);
+	}
+	
+	
 	/**
 	 * 채팅 메시지를 전체에게 전송
 	 * 
@@ -444,6 +481,7 @@ public class GameManager {
 	 * @param param
 	 */
 	public void sendChattingMessage(ChatMessage message) {
+		log.debug("채팅 : " + message.getMessage());
 		ChannelTopic chatTopic = getChatTopic(message.getRoomId());
 		chatPublisher.publish(chatTopic, message);
 	}
@@ -687,7 +725,7 @@ public class GameManager {
 
 	// 3. 게임 종료
 	// "직업공개" 메시지 전송
-	public void sendJobDiscloseMessage(String roomId, Map<String, String> job) {
+	public void sendJobDiscloseMessage(String roomId, Map<String, List<String>> job) {
 		sendSystemMessageToAll(roomId, SystemCode.JOB_DISCLOSE, job);
 	}
 	// "게임종료" 메시지 전송

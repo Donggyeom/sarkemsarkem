@@ -84,7 +84,7 @@ const RightPart = styled.div`
   background-position: center center;
   background-repeat: no-repeat;
   padding: 50px 10px 50px 10px;
-  font-family: "RixInooAriDuri";
+  font-family: "RixInooAriDuriR";
   font-size: 35px;
 
   /* Input styling */
@@ -97,7 +97,7 @@ const RightPart = styled.div`
     background-color: transparent;
     outline: none;
     text-align: center; 
-    font-family: "RixInooAriDuri";
+    font-family: "RixInooAriDuriR";
   }
   span {
     margin: 0 50px; /* You can adjust the margin as needed */
@@ -240,6 +240,7 @@ const CommonStart = ({onClick} ) => {
               value={nickName}
               onChange={handleNickNameChange}
               placeholder="닉네임 입력"
+              maxLength={9} // 최대 글자수 제한
             />
             </RightPart>
             </DivWrapper>

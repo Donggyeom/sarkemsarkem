@@ -35,7 +35,7 @@ const StyledDayPage = styled.div`
 const TimeSecond = styled.text`
   color: #000000;
   text-align: left;
-  font: 400 42px "ONE Mobile POP", sans-serif;
+  font: 400 42px "RixInooAriDuriR", sans-serif;
   position: absolute;
   left: 22px;
   top: 90px;
@@ -54,12 +54,14 @@ const DayPage = () => {
         clearInterval(timer);
       }
     }, 1000); // 1초마다 실행
-
     return () => {
       clearInterval(timer);
     };
   }, [meetingTime, roomId]);
-
+  
+  useEffect(() => {
+    daystatus();
+  },[])
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
 
@@ -123,7 +125,12 @@ const DayPage = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
 
-
+  const daystatus = () =>{
+    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'|| myRole === 'DETECTIVE'){
+      publisher.publishVideo(true);
+      publisher.publishAudio(true);
+    }
+  };
 
   // const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가
   // console.log(currentSysMessage);
@@ -136,7 +143,7 @@ const DayPage = () => {
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn} />
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
-        {currentSysMessage && <DayPopup sysMessage={currentSysMessage} />} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
+        {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         <DayNightCamera camArray={camArray} />
         {getMyRole(dayCount)}
       </StyledDayPage>

@@ -6,6 +6,8 @@ import chatsendbuttonImage from '../img/chatsendbutton.png';
 import chatsenderImage from '../img/chatsender.png';
 import chatcloseImage from '../img/closebutton.png';
 import { useGameContext } from '../GameContext';
+import { useRoomContext } from '../Context';
+import receiverboxImage from '../img/receiverbox.png';
 import axios from 'axios';
 import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -64,6 +66,23 @@ const ChatMessages = styled.div`
   border-radius: 5px;
 `;
 
+const ChatReceiverMessage = styled.div`
+  word-wrap : break-word; // 문자 수가 많아지면 가로로 넘어가는 현상 해결하기위함
+  max-width: 60%; // 문자 수가 많아지면 가로로 넘어가는 현상 해결하기위함
+  background-color: transparent;
+  background-image: url(${receiverboxImage});
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-bottom: 10px;
+  padding: 12px;
+  border-radius: 5px;
+  width: fit-content;
+  position: relative;
+  // margin-left: auto;
+  margin-right: 10px;
+  font-family: 'SUITE-Regular', sans-serif;
+`;
+
 const ChatInputWrapper = styled.div`
   margin: 10px;
   display: flex;
@@ -114,7 +133,8 @@ const ChatCloseButton = styled.button`
 `;
 
   const Chatting = ({ handleCloseButtonClick }) => {
-    const { chatMessages, sendChatMessage, receiveChatMessage } = useGameContext();
+    const { chatMessages, sendMessage} = useGameContext();
+    const { token } = useRoomContext();
     const [inputMessage, setInputMessage] = useState('');
     const chatMessagesRef = useRef();
   
@@ -129,7 +149,7 @@ const ChatCloseButton = styled.button`
   
     const handleSendMessage = () => {
       console.log("메세지보내는중");
-      sendChatMessage(inputMessage);
+      sendMessage(inputMessage);
       console.log(inputMessage);
       console.log(chatMessages);
       setInputMessage('');
@@ -140,7 +160,9 @@ const ChatCloseButton = styled.button`
     };
   
     const handleInputKeyPress = (e) => {
-      if (e.key === 'Enter') {
+      console.log('handleInputKeyPress');
+      console.log(e);
+      if (e.key === 'TALK') {
         handleSendMessage();
       }
     };
@@ -151,13 +173,23 @@ const ChatCloseButton = styled.button`
           <ChatCloseButton onClick={handleCloseButtonClick}></ChatCloseButton>
         </headerWrapper>
         <ChatWrapper>
-          <ChatMessages ref={chatMessagesRef}>
-            {chatMessages.map((message, index) => (
-              <ChatMessage key={index}>
-                {message.text} {/* 수정: message.text 표시 */}
-              </ChatMessage>
-            ))}
-          </ChatMessages>
+        <ChatMessages ref={chatMessagesRef}>
+  {chatMessages.map((messageObj, index) => {
+    console.log('messageObj.playerId:', messageObj.playerId);
+    console.log('token:', token);
+    return (
+      messageObj.playerId === token ? (
+        <ChatMessage key={index}>
+          {messageObj.message}
+        </ChatMessage>
+      ) : (
+        <ChatReceiverMessage key={index}>
+          {messageObj.message}
+        </ChatReceiverMessage>
+      )
+    );
+  })}
+</ChatMessages>
         </ChatWrapper>
         <ChatInputWrapper>
           <ChatInput
@@ -172,6 +204,6 @@ const ChatCloseButton = styled.button`
         </ChatInputWrapper>
       </ChatContainer>
     );
-};
+}
 
 export default Chatting;
