@@ -238,8 +238,8 @@ const DayNightCamera = React.memo(({ camArray }) => {
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
-  const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase} = useGameContext();
-  const [mafias, setMafias] = useState([]);
+  const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias} = useGameContext();
+
 
   useEffect(() => {
     setIsConfirmed(false);
@@ -249,21 +249,6 @@ const DayNightCamera = React.memo(({ camArray }) => {
 
     if (phase === "night") {
       nightCamAudio();
-      console.log(camArray);
-      // 마피아 넣는 작업
-      for (let i = 0; i < camArray.length; i++) {
-        const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
-        // console.log("마피아 들어감?")
-        // console.log(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token));
-        // console.log(sarks);
-        // console.log(playersRoles);
-        // console.log(JSON.parse(camArray[i].stream.connection.data).token);
-        if (sarks.includes(JSON.parse(camArray[i].stream.connection.data).token)) {
-          const mafia = camArray[i].stream.mediaStream;
-          setMafias((mafias) => [...mafias, mafia]);
-        }
-        console.log(mafias);
-      }
       if (myRole === "DETECTIVE") {
         console.log(mafias);
         changeVoice();
@@ -327,7 +312,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
     if (myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO' || myRole === 'BULLY') {
       for (let i = 0; i < camCount; i++) {
         const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
-        if (camArray[i] instanceof Subscriber && !(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token))) {
+        if (camArray[i] instanceof Subscriber && (sarks.includes(JSON.parse(camArray[i].stream.connection.data).token))) {
           camArray[i].subscribeToVideo(false);
           camArray[i].subscribeToAudio(false);
         }
@@ -335,7 +320,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
     } else if (myRole === 'DETECTIVE') {
       for (let i = 0; i < camCount; i++) {
         const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
-        if (camArray[i] instanceof Subscriber && !(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token))) {
+        if (camArray[i] instanceof Subscriber && (sarks.includes(JSON.parse(camArray[i].stream.connection.data).token))) {
           camArray[i].subscribeToVideo(false);
         }
       }
@@ -355,6 +340,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
 
   //찐시작
   const changeVoice = () => {
+    console.log(mafias);
     mixedMediaStreamRef.current = getMixedMediaStream();
   }
 
@@ -392,7 +378,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
         jungle.isConnected = false;
       }
     });
-    setMafias([]);
+    // setMafias([]);
     jungleRefs.current = [];
     mixedMediaStreamRef.current = null;
   };

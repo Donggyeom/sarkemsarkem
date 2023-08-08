@@ -19,11 +19,11 @@ const GameProvider = ({ children }) => {
     const [currentSysMessage, setCurrentSysMessage] = useState(null);
     const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
     let stompClient = useRef({})
-    const [mafias, setMafias] = useState([]);
     const [chatMessages, setChatMessages] = useState([]); 
     const [chatConnected, setChatConnected] = useState(false);
     const [message, setMessage] = useState("");
-
+    
+    const [mafias, setMafias] = useState([]);
 
     const [peopleCount, setPeopleCount] = useState({
         meetingTime: 60,
@@ -59,13 +59,29 @@ const GameProvider = ({ children }) => {
     const [animationFrameId, setAnimationFrameId] = useState(null);
     const location = useLocation();
 
-
     useEffect(() => {
         if (token !== null) {
           connectGameWS();
           loadGestureRecognizer();
         }
     }, [token]);
+
+    useEffect(()=>{
+      if(myRole){
+        console.log(camArray);
+        const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
+        console.log(sarks);
+        for (let i = 0; i < camArray.length; i++) {
+          console.log(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token));
+          if (sarks.includes(JSON.parse(camArray[i].stream.connection.data).token)) {
+            const mafia = camArray[i].stream.mediaStream;
+            console.log(mafia);
+            setMafias((mafias) => [...mafias, mafia]);
+          }
+        }
+        console.log(mafias);
+      }
+    },[myRole])
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
@@ -423,7 +439,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage}}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias}}>
       {children}
     </GameContext.Provider>
   );

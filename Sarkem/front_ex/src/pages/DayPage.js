@@ -54,12 +54,14 @@ const DayPage = () => {
         clearInterval(timer);
       }
     }, 1000); // 1초마다 실행
-    daystatus();
     return () => {
       clearInterval(timer);
     };
   }, [meetingTime, roomId]);
-
+  
+  useEffect(() => {
+    daystatus();
+  },[])
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
 
@@ -124,7 +126,7 @@ const DayPage = () => {
   };
 
   const daystatus = () =>{
-    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
+    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'|| myRole === 'DETECTIVE'){
       publisher.publishVideo(true);
       publisher.publishAudio(true);
     }
