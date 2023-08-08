@@ -3,8 +3,12 @@ import styled from 'styled-components';
 import CamCat from './camcat';
 import voteImage from '../../img/votefoot.png';
 import { useGameContext } from '../../GameContext';
+import { useRoomContext } from '../../Context';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
+
+
+
 
 const Votefoot = styled.img`
   position: absolute;
@@ -58,6 +62,7 @@ const VotefootImage = styled.img`
   left: 50%;
   transform: translate(-50%, -50%);
 `;
+
 
 const calculateGrid = (camCount) => {
   const positions = [
@@ -237,6 +242,7 @@ const CamCatWrapper = styled.div`
     const [clickedCamera, setClickedCamera] = useState(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
+    const { publisher } = useRoomContext();
     const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, deadIds} = useGameContext();
     // const jungleRefs = useRef([]);
 
@@ -256,8 +262,13 @@ const CamCatWrapper = styled.div`
       console.log(jungleRefs);
       dayCamAudio();
       stopVoiceChange();
+      if (myRole === "OBSERVER" && publisher) {
+        publisher.publishVideo(false);
+        publisher.publishAudio(false);
+      }
     }
   }, [startVote, phase]);
+
 
   const getVoteResultForUser = (userToken) => {
     if (voteSituation && voteSituation[userToken] !== undefined) {
