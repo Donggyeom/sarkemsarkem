@@ -470,6 +470,12 @@ public class GameManager {
 		}
 		sendJobDiscloseMessage(roomId, param);
 	}
+	public void endGame(String roomId, GameRole winTeam) {
+		GameSession gameSession = getGameSession(roomId);
+		Map<String, String> winner = new HashMap<>();
+		winner.put("winner", winTeam.toString());
+		sendGameEndMessage(roomId, winner);
+	}
 	
 	
 	/**
@@ -729,8 +735,8 @@ public class GameManager {
 		sendSystemMessageToAll(roomId, SystemCode.JOB_DISCLOSE, job);
 	}
 	// "게임종료" 메시지 전송
-	public void sendGameEndMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.GAME_END, null);
+	public void sendGameEndMessage(String roomId, Map<String, String> param) {
+		sendSystemMessageToAll(roomId, SystemCode.GAME_END, param);
 	}
 
 	// "게임준비" 메시지 전송
