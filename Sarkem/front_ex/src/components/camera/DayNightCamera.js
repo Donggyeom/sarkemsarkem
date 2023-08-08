@@ -300,6 +300,8 @@ const CamCatWrapper = styled.div`
 
   const handleCamClick = (user) => {
     console.log(voteSituation, "투표 결과 확인합니다");
+    console.log(startVote);
+    console.log(dayCount);
     console.log(JSON.parse(user.stream.connection.data).token, "얘는 캠주인");
     if (!startVote || dayCount === 0 || isConfirmed || isSkipped) {
       return;
