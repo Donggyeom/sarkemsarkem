@@ -8,7 +8,7 @@ import axios from 'axios';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-  const { roomSession, player, setPlayers } = useRoomContext();
+  const { roomSession, player, setPlayer, setPlayers } = useRoomContext();
   const [ gameSession, setGameSession ] = useState({});
   const [ myRole, setMyRole ] = useState(null);
 
@@ -145,6 +145,14 @@ const GameProvider = ({ children }) => {
           console.log(`당신은 ${sysMessage.param.role} 입니다.`)
           setMyRole(sysMessage.param.role);
           break;
+      case "CHANGE_HOST":
+          console.log(`지금부터 당신이 방장입니다.`);
+          setPlayer((prev) => {
+            return ({
+              ...prev,
+              isHost: true
+            });
+          });
       // case "PHASE_DAY":
       //     navigate(`/${roomId}/day`);
       //     break;
