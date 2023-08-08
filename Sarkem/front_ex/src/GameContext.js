@@ -292,25 +292,34 @@ const onSocketConnected = () => {
             navigate(`/${roomId}/night`);
             break;
 
-        case "JOB_DISCLOSE":
-          const disclosedRoles = sysMessage.param;
-          console.log(sysMessage.param);
-          const newRoleAssignedArray = [];
-        
-          for (const playerId in disclosedRoles) {
-            const roleInfo = disclosedRoles[playerId];
-            console.log(`Player ID: ${playerId}, Nickname: ${roleInfo[0]}, Job: ${roleInfo[1]}`);
-            newRoleAssignedArray.push({
-              playerId: playerId,
-              nickname: roleInfo[0],
-              job: roleInfo[1]
-            });
-          }
-        
-          setRoleAssignedArray((prevArray) => [...prevArray, ...newRoleAssignedArray]);
-          break;
-        
-        }
+            case "JOB_DISCLOSE":
+              const disclosedRoles = sysMessage.param;
+              // console.log(sysMessage.param)
+              // console.log(sysMessage.param.job.length)
+                const newRoleAssignedArray = [];
+            
+                for (let i = 0; i < disclosedRoles.job.length; i++) {
+                  const nickname = disclosedRoles.nickname[i];
+                  const job = disclosedRoles.job[i];
+                  let team = "";
+            
+                  if (job === "삵") {
+                    team = "sark";
+                  } else {
+                    team = "citizen";
+                  }
+            
+                  newRoleAssignedArray.push({
+                    team: team,
+                    nickname: nickname,
+                    job: job,
+                  });
+                }
+            
+                setRoleAssignedArray((prevArray) => [...prevArray, ...newRoleAssignedArray]);
+              break;
+    }
+            
       }
 
       else{
