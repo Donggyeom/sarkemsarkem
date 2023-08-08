@@ -24,6 +24,7 @@ const GameProvider = ({ children }) => {
     const [message, setMessage] = useState("");
     
     const [mafias, setMafias] = useState([]);
+    const [winner, setWinner] = useState(null);
 
     const [peopleCount, setPeopleCount] = useState({
         meetingTime: 60,
@@ -229,6 +230,9 @@ const onSocketConnected = () => {
         
         case "GAME_END":
             navigate(`/${roomId}/result`)
+            const nowWinner = sysMessage.param.winner;
+            console.log(nowWinner);
+            setWinner(nowWinner);
             break;
 
         case "TARGET_SELECTION":
@@ -465,7 +469,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias}}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, winner, setWinner}}>
       {children}
     </GameContext.Provider>
   );
