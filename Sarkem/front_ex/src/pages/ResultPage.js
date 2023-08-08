@@ -129,16 +129,16 @@ const ResultPage = () => {
           <thead>
             <tr>
               <TableHeader>승리여부</TableHeader>
-              <TableHeader>플레이어 ID</TableHeader>
-              <TableHeader>역할</TableHeader>
+              <TableHeader>플레이어</TableHeader>
+              <TableHeader>직업</TableHeader>
             </tr>
           </thead>
           <tbody>
             {roleAssignedArray.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0}>
                 <TableCell>승리여부</TableCell>
-                <TableCell>{playerRole.playerId}</TableCell>
-                <TableCell>{playerRole.role}</TableCell>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
               </TableRow>
             ))}
           </tbody>
