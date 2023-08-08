@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import React, { useState, useEffect, useRef } from 'react';
+import '../index.css';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundNight';
 /* Code generated with AutoHTML Plugin for Figma */
@@ -33,7 +34,7 @@ const StyledNightPage = styled.div`
 const TimeSecond = styled.text`
     color: #FFFFFF;
     text-align: left;
-    font: 400 42px "ONE Mobile POP", sans-serif;
+    font: 400 42px "RixInooAriDuriR", sans-serif;
     position: absolute; /* position을 absolute로 설정합니다. */
     left: 22px; /* 원하는 위치 값을 지정합니다. */
     top: 90px; /* 원하는 위치 값을 지정합니다. */
@@ -48,8 +49,8 @@ const NightPage = () => {
   const { player, setPlayer, roomId, camArray } = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
-  const { myRole } = useGameContext();
-  
+  const { myRole, peopleCount, currentSysMessage, playersRoles , dayCount} = useGameContext();
+  const [ mafiaButton, setMafiaButton ] = useState(true);
 
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
@@ -74,7 +75,28 @@ const NightPage = () => {
       return <ScMini alt="ScMini" role={'CITIZEN'} />
     }
   };
-
+  
+  const nightstatus = () =>{
+    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY' || myRole === 'DETECTIVE'){
+      console.log("꺼졌니?")
+      publisher.publishVideo(false);
+      publisher.publishAudio(false);
+      setMafiaButton(false);
+    }
+  };
+  
+  
+  
+  const chatVisible = () =>{
+    if (myRole === 'OBSERVER'){
+      return (
+        <>
+          <ChatButtonAndPopup />
+        </>
+      )
+    }
+  }
+  
   const handleMicButtonClick = () => {
     const micOn = !player.isMicOn;
     setPlayer((prevState) => {
@@ -86,16 +108,17 @@ const NightPage = () => {
       player.stream.publishAudio(micOn);
     }
   };
-
+  
   const [isLogOn, setIsLogOn] = useState(true);
   const handleLogButtonClick = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
   
   
-
-    useEffect(() => {
-        console.log(roomId);
+  
+  useEffect(() => {
+    console.log(roomId);
+    nightstatus();
         if (roomId === undefined){
           console.log("세션 정보가 없습니다.")
           navigate("/");
@@ -119,13 +142,16 @@ const NightPage = () => {
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
-        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
+        {/* {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />} */}
+        {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
+        {/* {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>} */}
+        {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
-          <NightPopup></NightPopup>
+          {/* <NightPopup></NightPopup> */}
+          {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={dayCount}/>}
         {getMyRole()}
         <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
-        <ChatButtonAndPopup />
+        {chatVisible()}
       </StyledNightPage>
         
     </Background>

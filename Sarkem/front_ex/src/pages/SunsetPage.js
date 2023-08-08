@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
 import CamButton from '../components/buttons/CamButton';
@@ -14,6 +14,10 @@ import { useGameContext } from '../GameContext';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
+import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
+import loadingimage from '../img/loading1.jpg';
+
+
 
 const StyledContent = styled.div`
   display: flex;
@@ -519,23 +523,23 @@ const CamCatWrapper = styled.div`
   const TimeSecond = styled.text`
   color: #FFFFFF;
   text-align: left;
-  font: 400 42px "ONE Mobile POP", sans-serif;
+  font: 400 42px "RixInooAriDuriR", sans-serif;
   position: absolute; /* position을 absolute로 설정합니다. */
   left: 22px; /* 원하는 위치 값을 지정합니다. */
   top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
 
-const handleScMiniClick = () => {
-  console.log('ScMini clicked!');
-};
-
 const SunsetPage = () => {
    
   const { roomSession, player, setPlayer, camArray, leaveSession } = useRoomContext(); 
-  
-  const { myRole } = useGameContext();
+  const { myRole, startVote, agreeExpulsion, disagreeExpulsion, targetId } = useGameContext();
   const navigate = useNavigate();
   const location = useLocation();
+  console.log(targetId, "확인합시다");
+  const [targetIndex, setTargetIndex] = useState(null);
+  const assignedIndices = [];
+  let displayCamCat = false;
+
 
   const getMyRole = () => {
     if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE' ) {
@@ -548,6 +552,16 @@ const SunsetPage = () => {
       return <ScMini alt="ScMini" role={'CITIZEN'} />
     }
   };
+
+  const chatVisible = () =>{
+  if (myRole === 'OBSERVER'){
+    return (
+      <>
+        <ChatButtonAndPopup />
+      </>
+    )
+  }
+}
 
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
@@ -580,6 +594,8 @@ const SunsetPage = () => {
   };
 
   
+
+  
   
     useEffect(() => {
         console.log(roomSession.roomId);
@@ -601,6 +617,10 @@ const SunsetPage = () => {
 
   const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
   const gridStyles = calculateGrid(camCount);
+  const generateRandomPositionIndex = (maxIndex) => {
+    return Math.floor(Math.random() * maxIndex);
+  };
+
 
 
   return (
@@ -613,21 +633,160 @@ const SunsetPage = () => {
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
       <SunsetPopup></SunsetPopup>
-        <CamCatGrid style={gridStyles}>
-          {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
-            <CamCatWrapper key={index} camCount={camCount} index={index}>
-              <CamCat props={camArray[index]} />
-            </CamCatWrapper>
-          ))}
-        </CamCatGrid>
-        {getMyRole()}
-      </StyledContent>
-      <ChatButtonAndPopup />
-      {/* </CamCatGridContainer> */}
+      <SunsetPopup></SunsetPopup>
 
-      <TempButton url="/${roomId}/night" onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
-      </Background>
-  );
+{/* <CamCatGrid style={gridStyles}>
+  {camArray.map((user, index) => {
+    const userToken = JSON.parse(user.stream.connection.data).token;
+
+    let targetIndex = null;
+    if (userToken === targetId) {
+      if (camCount === 3) {
+        targetIndex = 1;
+      } else if (camCount >= 4 && camCount <= 6) {
+        targetIndex = 2;
+      } else if (camCount === 7) {
+        targetIndex = 3;
+      } else if (camCount === 8) {
+        targetIndex = 6;
+      } else if (camCount === 9) {
+        targetIndex = 8;
+      } else if (camCount === 10) {
+        targetIndex = 8;
+      }
+    }
+
+    let positionIndex;
+
+    if (targetIndex === null) {
+      if (camCount === 3) {
+        // 이미 배정된 인덱스 제외 후 랜덤 배정
+        const availableIndices = [0, 2].filter(i => !assignedIndices.includes(i));
+        positionIndex = generateRandomPositionIndex(availableIndices.length);
+        positionIndex = availableIndices[positionIndex];
+
+        // 배정된 인덱스를 추가
+        assignedIndices.push(positionIndex);
+      } else if (camCount >= 4 && camCount <= 6) {
+        // 이미 배정된 인덱스 제외 후 랜덤 배정
+        const availableIndices = [0, 1, 3, 4].filter(i => !assignedIndices.includes(i));
+        positionIndex = generateRandomPositionIndex(availableIndices.length);
+        positionIndex = availableIndices[positionIndex];
+
+        // 배정된 인덱스를 추가
+        assignedIndices.push(positionIndex);
+      }
+    } else {
+      positionIndex = targetIndex; // 이미 배정된 경우에는 해당 인덱스 사용
+      assignedIndices.push(positionIndex); // 이미 배정된 경우에도 인덱스 추가
+    }
+
+    if (assignedIndices.length === camCount) {
+      displayCamCat = true;
+    } else {
+      displayCamCat = false;
+    }
+
+    console.log(`타겟아이디 : ${targetId}, User Token: ${userToken}, Target Index: ${targetIndex}, Position Index: ${positionIndex}`, "확인하세요");
+    console.log(assignedIndices, "indices");
+    console.log(assignedIndices.length, camCount, "length");
+
+    return (
+      <div key={index}>
+        {displayCamCat ? (
+        <CamCatWrapper
+        key={index}
+        camCount={camCount}
+        index={positionIndex}
+      >
+        <CamCat props={user} />
+      
+      </CamCatWrapper>
+
+          
+        ) : (
+          <loadingimage/>
+        )}
+      </div>
+    );
+  })}
+</CamCatGrid> */}
+
+<CamCatGrid style={gridStyles}>
+  {camArray.map((user, index) => {
+    const userToken = JSON.parse(user.stream.connection.data).token;
+
+    let targetIndex = null;
+    if (userToken === targetId) {
+      if (camCount === 3) {
+        targetIndex = 1;
+      } else if (camCount >= 4 && camCount <= 6) {
+        targetIndex = 2;
+      } else if (camCount === 7) {
+        targetIndex = 3;
+      } else if (camCount === 8) {
+        targetIndex = 6;
+      } else if (camCount === 9) {
+        targetIndex = 8;
+      } else if (camCount === 10) {
+        targetIndex = 8;
+      }
+    }
+
+    let positionIndex;
+
+    if (targetIndex === null) {
+      if (camCount === 3) {
+        // 이미 배정된 인덱스 제외 후 랜덤 배정
+        const availableIndices = [0, 2].filter(i => !assignedIndices.includes(i));
+        positionIndex = generateRandomPositionIndex(availableIndices.length);
+        positionIndex = availableIndices[positionIndex];
+
+        // 배정된 인덱스를 추가
+        assignedIndices.push(positionIndex);
+      } else if (camCount >= 4 && camCount <= 6) {
+        // 이미 배정된 인덱스 제외 후 랜덤 배정
+        const availableIndices = [0, 1, 3, 4].filter(i => !assignedIndices.includes(i));
+        positionIndex = generateRandomPositionIndex(availableIndices.length);
+        positionIndex = availableIndices[positionIndex];
+
+        // 배정된 인덱스를 추가
+        assignedIndices.push(positionIndex);
+      }
+    } else {
+      positionIndex = targetIndex; // 이미 배정된 경우에는 해당 인덱스 사용
+      assignedIndices.push(positionIndex); // 이미 배정된 경우에도 인덱스 추가
+    }
+
+    if (assignedIndices.length === camCount) {
+      displayCamCat = true;
+    } else {
+      displayCamCat = false;
+    }
+
+    console.log(`타겟아이디 : ${targetId}, User Token: ${userToken}, Target Index: ${targetIndex}, Position Index: ${positionIndex}`, "확인하세요");
+
+    return (
+      <CamCatWrapper
+        camCount={camCount}
+        index={positionIndex}
+      >
+        <CamCat props={user} />
+      </CamCatWrapper>
+    );
+  })}
+</CamCatGrid>
+
+<div>
+  <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
+  <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
+</div>
+{getMyRole()}
+</StyledContent>
+<TempButton url={`/${roomSession.roomId}/night`} onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
+{chatVisible()}
+</Background>
+);
 };
 
 export default SunsetPage;

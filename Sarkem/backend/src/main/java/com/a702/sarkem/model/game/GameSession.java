@@ -2,7 +2,9 @@ package com.a702.sarkem.model.game;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.player.GameRole;
@@ -107,11 +109,11 @@ public class GameSession {
 		return alivePlayers;
 	}
 
-	// 해당 롤 플레이어들 반환하는 함수
+	// 해당 롤 플레이어들 반환하는 함수(살아있는 애들만)
 	public List<RolePlayer> getRolePlayers(GameRole role) {
 		List<RolePlayer> rolePlayers = new ArrayList<>();
 		for (RolePlayer p : this.players) {
-			if (p.getRole().equals(role)) {
+			if (p.getRole().equals(role)&&p.isAlive()) {
 				rolePlayers.add(p);
 			}
 		}
@@ -122,11 +124,20 @@ public class GameSession {
 	public List<String> getRolePlayersId(GameRole role) {
 		List<String> rolePlayersId = new ArrayList<>();
 		for (RolePlayer p : this.players) {
-			if (p.getRole().equals(role)) {
+			if (p.getRole().equals(role)&&p.isAlive()) {
 				rolePlayersId.add(p.getPlayerId());
 			}
 		}
 		return rolePlayersId;
+	}
+	
+	// 플레이어들 직업 정보 map으로 묶어서 반환하는 함수
+	public Map<String, String> getPlayersJob() {
+		Map<String, String> jobMap = new HashMap<>();
+		for (RolePlayer p : this.players) {
+			jobMap.put(p.getPlayerId(), p.getRole().toString());
+		}
+		return jobMap;
 	}
 
 	// 게임 옵션 반환

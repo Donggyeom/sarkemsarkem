@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import OpenViduVideoComponent from './OvVideo';
+import Tempcat from '../../img/tempcat.png';
 
 const containerStyle = {
   position: 'relative', // Set container to relative position
@@ -40,7 +41,14 @@ export default class UserVideoComponent extends Component {
           <div style={videoContainerStyle}>
             <OpenViduVideoComponent streamManager={this.props.streamManager} />
           </div>
-        ) : null}
+        ) : 
+          (
+            <div style={videoContainerStyle}>
+            <img src={TempcatImage} alt="Tempcat" />
+          </div>
+          )
+        
+        }
         <div style={nicknameStyle}>
           <p>{this.getNicknameTag()}</p>
         </div>

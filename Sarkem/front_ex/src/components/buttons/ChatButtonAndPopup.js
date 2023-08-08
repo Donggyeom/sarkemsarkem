@@ -29,12 +29,12 @@ const ChatPopup = styled.div`
   z-index: 1; // Set higher z-index when the popup is open
 `;
 
-const ChatButtonAndPopup = () => {
+const ChatButtonAndPopup = ({roomId}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [messages, setMessages] = useState([]);
 
   const handleChatButtonClick = () => {
-    setShowPopup((prevShowPopup) => !prevShowPopup); // Toggle the popup visibility
+    setShowPopup((prevShowPopup) => !prevShowPopup);
   };
 
   const handleCloseButtonClick = () => {
@@ -50,10 +50,11 @@ const ChatButtonAndPopup = () => {
     <>
       {showPopup && (
         <ChatPopup style={{ bottom: '100px', right: '200px' }}>
-                   <Chatting
+            <Chatting
             handleCloseButtonClick={handleCloseButtonClick}
             messages={messages}
             onSendMessage={handleSendMessage}
+            roomId={roomId}
           />
         </ChatPopup>
       )}

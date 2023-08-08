@@ -34,7 +34,7 @@ const StyledPopupContainer = styled.div`
 const StyledPopupTitle = styled.div`
   color: #ffffff;
   font-size: 42px;
-  font-family: "RixInooAriDuri", sans-serif;
+  font-family: "RixInooAriDuriR", sans-serif;
   text-align: center;
   text-shadow: 1px 1px black;
   -webkit-text-stroke: 1px black; /* For webkit-based browsers like Chrome, Safari */
@@ -42,17 +42,22 @@ const StyledPopupTitle = styled.div`
   padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
 `;
 
-const NightPopup = () => {
+const NightPopup = ({sysMessage, dayCount}) => {
   const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
+    if (sysMessage) {
+      setShowPopup(true);
+    
     const fadeOutTimeout = setTimeout(() => {
       setShowPopup(false);
     }, 3500);
+    console.log(sysMessage);
 
     return () => clearTimeout(fadeOutTimeout);
-  }, []);
-
+  }
+  }, [sysMessage]);
+  console.log(sysMessage);
   return (
     <StyledPopupContainer showPopup={showPopup}>
       {/* Your popup content */}
@@ -86,11 +91,11 @@ const NightPopup = () => {
             right: '110px',
           }}
         >
-          N일차 밤
+          {dayCount}일차 밤
         </div>
       </div>
 
-      <StyledPopupTitle>잡아먹을 고양이를 지목하세요.</StyledPopupTitle>
+      <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };

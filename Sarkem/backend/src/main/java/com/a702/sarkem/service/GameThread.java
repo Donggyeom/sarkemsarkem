@@ -76,8 +76,8 @@ public class GameThread extends Thread {
 
 			// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로!!!!!!
 			if (!maxVotedPlayer.getPlayerId().equals("")) {
-				// 저녁 페이즈 => 추방투표 시작
-				convertPhaseToTwilight();
+				// 저녁 페이즈 => 추방투표 시작 / 추방 투표에 투표 대상자 보냄
+				convertPhaseToTwilight(expulsionPlayer);
 				
 				// 추방 투표 결과 종합
 				boolean voteResult = twilightVote(maxVotedPlayer);
@@ -89,7 +89,7 @@ public class GameThread extends Thread {
 				// 실제로 추방하기
 				if (voteResult) {
 					maxVotedPlayer.setAlive(false);
-					maxVotedPlayer.setRole(GameRole.OBSERVER);
+//					maxVotedPlayer.setRole(GameRole.OBSERVER);
 					// 추방 메시지 보내기
 					gameManager.sendExcludedMessage(roomId, maxVotedPlayer.getPlayerId());
 				}
@@ -124,8 +124,11 @@ public class GameThread extends Thread {
 			if (isGameEnd()) break;
 		}
 
+		// 직업 정보 전송
+		gameManager.sendJobDiscloseMessage(roomId, gameSession.getPlayersJob());
 		// 게임 종료 메시지 전송
 		gameManager.sendGameEndMessage(roomId);
+		
 		// 게임 결과 DB저장
 		dbService.InsertGameResult(gameSession);
 		
@@ -260,7 +263,7 @@ public class GameThread extends Thread {
 	}
 
 	// 저녁 페이즈
-	private void convertPhaseToTwilight() {
+	private void convertPhaseToTwilight(HashMap<String, String> expulsionPlayer) {
 		// 저녁 페이즈로 변경
 		gameSession.setPhase(PhaseType.TWILIGHT);
 		// 투표 현황 초기화
@@ -270,7 +273,7 @@ public class GameThread extends Thread {
 			rp.setVotedCnt(0);
 		}
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
-		gameManager.sendTwilightPhaseMessage(roomId);
+		gameManager.sendTwilightPhaseMessage(roomId, expulsionPlayer);
 		// 대상이 있으면 저녁투표 시작
 		gameManager.sendTwilightSelectionMessage(roomId);
 	}
@@ -336,7 +339,7 @@ public class GameThread extends Thread {
 		// 사냥 대상 사망 처리
 		for (RolePlayer target : sarkTarget) {
 			target.setAlive(false);
-			target.setRole(GameRole.OBSERVER);
+//			target.setRole(GameRole.OBSERVER);
 		}
 		
 		return sarkTarget;
@@ -388,6 +391,7 @@ public class GameThread extends Thread {
 		log.debug("삵 수: " + aliveSark + " / 시민 수: " + aliveCitizen);
 		// 마피아수>=시민수 => 마피아 win
 		if (aliveSark >= aliveCitizen) {
+			
 			gameSession.setWinTeam(1);
 			return true;
 		}

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
+import '../index.css';
 
 const CamCatGrid = styled.div`
   flex: 1;
@@ -125,7 +126,7 @@ const calculateGrid = (camCount) => {
       backgroundColor: 'white', // Set your default background color here for other camCounts
     };
   }
-};
+};``
 
 const TimeSecond = styled.text`
   /* Your style content here */

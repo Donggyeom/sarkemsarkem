@@ -1,6 +1,7 @@
 import Background from '../components/backgrounds/BackgroundSunset';
+import '../index.css';
 import styled from 'styled-components';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 // img
 import boxImage from '../img/box.png';
 import sc_police from '../img/sc_경찰.png';
@@ -23,7 +24,6 @@ import upbutton from '../img/upbutton.png';
 import downbutton from '../img/downbutton.png';
 // 
 import BackButton from '../components/buttons/backButton';
-import CamCat from '../components/camera/camcat';
 import { useLocation, useNavigate } from 'react-router-dom';
 import StartButton from '../components/buttons/StartButton';
 import InviteButton from '../components/buttons/InviteButton';
@@ -35,7 +35,6 @@ import HelpButton from '../components/buttons/HelpButton';
 import Help from '../components/games/Help';
 import axios from 'axios';
 import LoadingPage from './LoadingPage';
-
 
 const StyledContent = styled.div`
   display: flex;
@@ -58,8 +57,18 @@ const RightSection = styled.div`
 
 
 const DivWrapper = styled.div`
+
   display: flex;
   // justify-content : space-around;
+  
+`;
+
+const DivWrapper2 = styled.div`
+
+  display: flex;
+  height: 15%;
+  justify-content: space-around;
+  
 `;
 
 const LeftPart = styled.div`
@@ -72,6 +81,16 @@ const LeftPart = styled.div`
 `;
 
 const RightPart = styled.div`
+  /* Right part of each RightDiv */
+  flex: 2.75;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-position: center center;
+  background-repeat: no-repeat;
+`;
+
+const MiddlePart = styled.div`
   /* Right part of each RightDiv */
   flex: 2.75;
   display: flex;
@@ -127,7 +146,7 @@ const ButtonContainer = styled.div`
 `;
 const ButtonContainer2 = styled.div`
   width: auto;
-  height: 60%;
+  height: 80%;
 `;
 
 
@@ -273,7 +292,7 @@ const CommonLobby = ()=>{
 
   return (
     <>
-    { gameSession.gameOption ? (<Background>
+    { gameSession?.gameOption ? (<Background>
       {!isHelpOn && <Help top="50%" left="77.5%" />}
       {showSarkPopup && <ScPopup src={c_sark} top="20%" left="50%" />}
       {showVetPopup && <ScPopup src={c_vet} top="40%" left="50%" />}
@@ -456,33 +475,39 @@ const CommonLobby = ()=>{
               </RightPartWrapper>
         </RightPart>
       </DivWrapper>
-          <DivWrapper>
+          
           
             {player.isHost ? (
               <>
+              <DivWrapper>
                 <LeftPart>
-                <ButtonContainer>
-
-                <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
-                </ButtonContainer>
-                </LeftPart>
-                <RightPart>
                   <ButtonContainer>
-                    <InviteButton onClick={handleInviteClick} />
+
+                  <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
                   </ButtonContainer>
+                  </LeftPart>
+                  <RightPart>
+                    <ButtonContainer>
+                      <InviteButton onClick={handleInviteClick} />
+                    </ButtonContainer>
                 </RightPart>
-                
+              </DivWrapper>
+               
               </>
             ) : (
               <>
-                <RightPart>
+                <DivWrapper2>
+                  <MiddlePart>
                   <ButtonContainer2>
                     <InviteButton onClick={handleInviteClick} />
                   </ButtonContainer2>
-                </RightPart>
+
+                  </MiddlePart>
+                  
+
+                </DivWrapper2>
               </>
             )}
-          </DivWrapper>
         
         </RightSection>
         <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />

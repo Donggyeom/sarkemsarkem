@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import '../index.css';
 import { useNavigate, useLocation } from 'react-router-dom'; // React Router의 useNavigate를 import 합니다.
 import CommonStart from './CommonStart';
 import makeroomImage from '../img/makebutton.png';

@@ -486,6 +486,7 @@ public class GameManager {
 	 * @param param
 	 */
 	public void sendChattingMessage(ChatMessage message) {
+		log.debug("채팅 : " + message.getMessage());
 		ChannelTopic chatTopic = getChatTopic(message.getRoomId());
 		chatPublisher.publish(chatTopic, message);
 	}
@@ -638,9 +639,16 @@ public class GameManager {
 	public void sendRoleAssignMessage(String roomId) {
 		GameSession gameSession = getGameSession(roomId);
 		List<RolePlayer> rPlayers = gameSession.getPlayers();
-		Map<String, GameRole> param = new HashMap<>();
+		Map<String, Object> param = new HashMap<>();
+		// 마피아 리스트 만들기
+		// 직업 확인 했을 때 마피아면 롤+마피아리스트 같이 보내기
+		List<String> sarkList = gameSession.getRolePlayersId(GameRole.SARK);
 		for (RolePlayer rp : rPlayers) {
 			param.put("role", rp.getRole());
+			if(rp.getRole().equals(GameRole.SARK)) {
+				param.put("sark", sarkList);
+//				log.debug("삵 리스트" + param.toString());
+			}
 			sendSystemMessage(roomId, rp.getPlayerId(), SystemCode.ROLE_ASSIGNED, param);
 		}
 	}
@@ -651,8 +659,8 @@ public class GameManager {
 	}
 
 	// "저녁 페이즈" 메시지 전송
-	public void sendTwilightPhaseMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, null);
+	public void sendTwilightPhaseMessage(String roomId, HashMap<String, String> expulsionPlayer) {
+		sendSystemMessageToAll(roomId, SystemCode.PHASE_TWILIGHT, expulsionPlayer);
 	}
 
 	// "저녁(추방) 투표 시작" 메시지 전송
@@ -666,8 +674,8 @@ public class GameManager {
 	}
 
 	// "낮 투표 종료" 메시지 전송
-	public void sendEndDayVoteMessage(String roomId, Map<String, String> param) {
-		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, param);
+	public void sendEndDayVoteMessage(String roomId, HashMap<String, String> expulsionPlayer) {
+		sendSystemMessageToAll(roomId, SystemCode.DAY_VOTE_END, expulsionPlayer);
 	}
 
 	// "추방 투표 종료(개인)" 메시지 전송
@@ -721,6 +729,10 @@ public class GameManager {
 	// 2. 게임 진행 끝
 
 	// 3. 게임 종료
+	// "직업공개" 메시지 전송
+	public void sendJobDiscloseMessage(String roomId, Map<String, String> job) {
+		sendSystemMessageToAll(roomId, SystemCode.JOB_DISCLOSE, job);
+	}
 	// "게임종료" 메시지 전송
 	public void sendGameEndMessage(String roomId) {
 		sendSystemMessageToAll(roomId, SystemCode.GAME_END, null);

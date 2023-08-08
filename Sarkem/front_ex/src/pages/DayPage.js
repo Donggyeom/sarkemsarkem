@@ -1,6 +1,5 @@
-/* eslint-disable */
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import '../index.css';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundDay';
 
@@ -36,22 +35,25 @@ const StyledDayPage = styled.div`
 `;
 
 const TimeSecond = styled.text`
-    color: #000000;
-    text-align: left;
-    font: 400 42px "ONE Mobile POP", sans-serif;
-    position: absolute; /* position을 absolute로 설정합니다. */
-    left: 22px; /* 원하는 위치 값을 지정합니다. */
-    top: 90px; /* 원하는 위치 값을 지정합니다. */
+  color: #000000;
+  text-align: left;
+  font: 400 42px "RixInooAriDuriR", sans-serif;
+  position: absolute;
+  left: 22px;
+  top: 90px;
 `;
-
 
 const DayPage = () => {
 
-  const { roomSession, player, players, roomId, camArray, leaveSession } = useRoomContext();
-  const { gameSession, myRole } = useGameContext();
+  const { roomSession, player, setPlayer, players, roomId, camArray, leaveSession } = useRoomContext();
+  const { gameSession, myRole, threatedTarget, currentSysMessage, dayCount } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
-  
-  
+  const navigate = useNavigate();
+  const [voteCount, setVoteCount] = useState(0);
+  const [isLogOn, setIsLogOn] = useState(true);
+  const handleLogButtonClick = () => {
+    setIsLogOn((prevIsLogOn) => !prevIsLogOn);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -61,63 +63,73 @@ const DayPage = () => {
         clearInterval(timer);
       }
     }, 1000); // 1초마다 실행
-
+    daystatus();
     return () => {
       clearInterval(timer);
     };
   }, [meetingTime, roomId]);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [voteCount, setVoteCount] = useState(0);
-
-  const handleVoteClick = () => {
-    setVoteCount((prevCount) => prevCount + 1);
+  const daystatus = () => {
+    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
+      player.stream.publishVideo(true);
+      player.stream.publishAudio(true);
+    }
   };
 
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
-    setIsCamOn(camOn);
+    setPlayer((prev) => {
+      return ({
+        ...prev,
+        isCamon: camOn
+      });
+    });
     if (player.stream) {
       player.stream.publishVideo(camOn);
     }
   };
-  
-  
+
   const handleMicButtonClick = () => {
     const micOn = !player.isMicOn;
-    setIsMicOn(micOn);
+    setPlayer((prev) => {
+      return ({
+        ...prev,
+        isMicOn: micOn
+      });
+    });
     if (player.stream) {
       player.stream.publishAudio(micOn);
+    // 버튼 클릭 이벤트를 threatedTarget이 못하게
+    console.log('냥아치 협박 대상인가?');
+    if (player.stream !== threatedTarget) {
+      player.stream.publishAudio(micOn);
+      console.log('냥아치 협박 대상 아님! 마이크 버튼 클릭!');
     }
   };
-  
-  
+}
   const handleScMiniClick = () => {
-      // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-      console.log('ScMini clicked!');
+    console.log('ScMini clicked!');
   };
 
-  const getMyRole = () => {
-    if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE' ) {
+  const getMyRole = (dayCount) => {
+    if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE') {
       return (
         <>
-          <ScMini alt="ScMini" role={myRole} />
+          <ScMini alt="ScMini" role={myRole} dayCount={dayCount}/>
         </>
       );
-      }
+    }
   };
 
   const chatVisible = () =>{
-    if (myRole === 'OBSERVER' || myRole === 'SARK'){
+    if (myRole === 'OBSERVER' || myRole === 'CITIZEN'){
       return (
         <>
-          <ChatButtonAndPopup />
+          <ChatButtonAndPopup roomId={roomId}/>;
         </>
-      )
+      );
     }
-  }
-
+  };
 
   useEffect(() => {
     if (roomSession.roomId === undefined){
@@ -131,26 +143,26 @@ const DayPage = () => {
         window.removeEventListener('beforeunload', onbeforeunload);
     }
   }, [])
+  
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
     leaveSession();
   }
 
-  const [isLogOn, setIsLogOn] = useState(true);
-  const handleLogButtonClick = () => {
-    setIsLogOn((prevIsLogOn) => !prevIsLogOn);
-  };
-   
-    return (
+  
+
+  // const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가
+  // console.log(currentSysMessage);
+  return (
     <Background>
       <StyledDayPage>
         {!isLogOn && <Log top="60%" left="26%" />}
-        <SunMoon alt="SunMoon"></SunMoon>
+        <SunMoon alt="SunMoon" />
         <TimeSecond>{meetingTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
-          <DayPopup></DayPopup>
+        {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
           <DayNightCamera camArray={camArray}/>
           {getMyRole()}
         </StyledDayPage>

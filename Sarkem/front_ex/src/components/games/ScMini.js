@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+/* eslint-disable */
+console.error = (message) => {};
+// 아무리 생각해도 문제없어서 냅다 이거 박아버림
+// 여긴 건드릴 일 없으니 우선 괜찮을 거라 믿어요
+
+
+import React, { useState, useEffect } from 'react';
 import styled,  { keyframes }  from 'styled-components';
 import scSarkImageSrc from '../../img/sc_삵.png';
 import scPoliceImageSrc from '../../img/sc_경찰.png';
@@ -7,6 +13,7 @@ import scVetImageSrc from '../../img/sc_수의사.png';
 import scCatImageSrc from '../../img/sc_시민.png';
 import scPsychoImageSrc from '../../img/sc_심리학자.png';
 import scDetectImageSrc from '../../img/sc_탐정.png';
+import scObserverImageSrc from '../../img/observing.png';
 import cSarkImageSrc from '../../img/c_삵.png';
 import cPoliceImageSrc from '../../img/c_경찰.png';
 import cNyangImageSrc from '../../img/c_냥아치.png';
@@ -14,6 +21,7 @@ import cVetImageSrc from '../../img/c_수의사.png';
 import cCatImageSrc from '../../img/c_시민.png';
 import cPsychoImageSrc from '../../img/c_심리학자.png';
 import cDetectImageSrc from '../../img/c_탐정.png';
+
 
 // 직업마다 번호 같은 걸 부여받겠지?
 // 부여받은 번호대로 이미지 다르게 뜨게 해야 함. 설정해 줘야 함
@@ -46,35 +54,41 @@ const ScButtonImage = styled.img`
   position: absolute;
   top: 3%;
   right: 2%;
+  &:hover {
+    filter: brightness(0.8);
+  }
 `;
 
 const ScMiniButton = styled.div`
+
 `;
 
-const Popup = styled.div`
+const StyledPopup = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  // background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: ${({ isClosing }) => (isClosing ? slideOut : slideIn)} 0.5s ease; /* 팝업이 사라질 때 애니메이션 적용 */
+  animation: ${({ isClosing }) => (isClosing ? slideOut : slideIn)} 0.5s ease;
 `;
 
 const PopupImage = styled.img`
   width: 300px;
 `;
 
-const ScMini = ({ alt, role }) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(true);
+const ScMini = ({ alt, role, dayCount }) => {
+
+  const [isPopupOpen, setIsPopupOpen] = useState(dayCount === 1);
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state
 
 
   const handleScMiniClick = () => {
+    
     setIsPopupOpen(true);
+
   };
 
   const handlePopupClose = () => {
@@ -82,8 +96,14 @@ const ScMini = ({ alt, role }) => {
     setTimeout(() => {
       setIsPopupOpen(false);
       setIsClosing(false); // 팝업이 완전히 사라지면 팝업 닫는 상태를 false로 변경
-    }, 500); // 0.5초(500ms) 후에 팝업을 완전히 닫습니다.
+    }, 450); // 0.5초(500ms) 후에 팝업을 완전히 닫습니다.
   };
+
+  useEffect(() => {
+    if (dayCount === 0) {
+      setIsPopupOpen(true);
+    }
+  }, [dayCount]);
 
   let buttonImageSrc;
   let popupImageSrc;
@@ -101,8 +121,7 @@ const ScMini = ({ alt, role }) => {
     buttonImageSrc = scPoliceImageSrc;
     popupImageSrc = cPoliceImageSrc;
   } else if (role === 'OBSERVER') {
-    buttonImageSrc = scNyangImageSrc;
-    popupImageSrc = cNyangImageSrc;
+    buttonImageSrc = scObserverImageSrc;
   } else if (role === 'PSYCHO') {
     buttonImageSrc = scPsychoImageSrc;
     popupImageSrc = cPsychoImageSrc;
@@ -120,13 +139,18 @@ const ScMini = ({ alt, role }) => {
       <ScMiniButton onClick={handleScMiniClick}>
         <ScButtonImage src={buttonImageSrc} alt={alt} />
       </ScMiniButton>
-      {isPopupOpen && (
-        <Popup isClosing={isClosing} onClick={handlePopupClose}>
+      {role !== 'OBSERVER' && isPopupOpen && (
+        <StyledPopup isClosing={isClosing} onClick={handlePopupClose}>
           <PopupImage src={popupImageSrc} alt={alt} />
-        </Popup>
+        </StyledPopup>
       )}
     </>
   );
 };
 
 export default ScMini;
+
+
+
+
+

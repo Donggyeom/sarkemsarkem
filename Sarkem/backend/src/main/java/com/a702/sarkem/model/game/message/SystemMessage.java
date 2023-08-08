@@ -39,12 +39,13 @@ public class SystemMessage implements Serializable {
 		BE_THREATED		, // 협박상태 시작
 		MISSION_START	, // 히든미션 시작
 		MISSION_SUCCESS, // 히든미션 성공
-		TARGET_SELECTION	, // 대상 선택
-		TARGET_SELECTION_END	, // 대상 선택 종료
+		TARGET_SELECTION, // 대상 선택
+		TARGET_SELECTION_END, // 대상 선택 종료
 		                  // 추방 투표 종료
 		NOTICE_MESSAGE	, // 메세지 출력
-		ROLE_ASSIGNED    , // 역할배정
+		ROLE_ASSIGNED   , // 역할배정
 		OPTION_CHANGED	, // 게임방 설정 변경
+		JOB_DISCLOSE 	, // 직업 공개
 		
 		// 에러 코드
 		ONLY_HOST_ACTION, // 방장이 아닌 사용자 액션
