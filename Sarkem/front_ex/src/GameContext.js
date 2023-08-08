@@ -24,7 +24,15 @@ const GameProvider = ({ children }) => {
     const [message, setMessage] = useState("");
     
     const [mafias, setMafias] = useState([]);
+    const [winner, setWinner] = useState(null);
+    const jungleRefs = useRef([]);
+    const mixedMediaStreamRef = useRef(null);
+    const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
 
+    useEffect(()=>{
+      jungleRefs.current = [];
+
+    },[])
     const [peopleCount, setPeopleCount] = useState({
         meetingTime: 60,
         citizenCount: 0,
@@ -49,7 +57,7 @@ const GameProvider = ({ children }) => {
     const [selectedTarget, setSelectedTarget] = useState("");
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
-    const [threatedTarget, setThreatedTarget] = useState("");
+    const [threatedTarget, setThreatedTarget] = useState(false);
     
     // twilight 투표 설정 위한 타겟id
     const [targetId, setTargetId] = useState("");
@@ -226,7 +234,7 @@ const onSocketConnected = () => {
 
         case "PHASE_TWILIGHT":
             navigate(`/${roomId}/sunset`)
-            setThreatedTarget(); // 저녁 되면 협박 풀림
+            setThreatedTarget(false); // 저녁 되면 협박 풀림
             break;
 
         case "PHASE_NIGHT":
@@ -237,6 +245,9 @@ const onSocketConnected = () => {
         
         case "GAME_END":
             navigate(`/${roomId}/result`)
+            const nowWinner = sysMessage.param.winner;
+            console.log(nowWinner);
+            setWinner(nowWinner);
             break;
 
         case "TARGET_SELECTION":
@@ -294,36 +305,47 @@ const onSocketConnected = () => {
           }
           break;
 
-        // case "BE_THREATENED":
-        //     alert("냥아치 협박 시작!", sysMessage.playerId);
-        //     setThreatedTarget(sysMessage.playerId);
-        //     setIsMicOn(false);
-        //     break;
+        case "BE_THREATED":
+            // alert("냥아치 협박 시작!", sysMessage.playerId);
+            setThreatedTarget(true);
+            console.log(threatedTarget);
+            // setIsMicOn(false);
+            break;
 
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`);
             break;
 
-        case "JOB_DISCLOSE":
-          const disclosedRoles = sysMessage.param;
-          const newRoleAssignedArray = [];
-        
-          for (const playerId in disclosedRoles) {
-            const roleInfo = disclosedRoles[playerId];
-            console.log(`Player ID: ${playerId}, Nickname: ${roleInfo[0]}, Job: ${roleInfo[1]}`);
-            newRoleAssignedArray.push({
-              playerId: playerId,
-              nickname: roleInfo[0],
-              job: roleInfo[1]
-            });
-          }
-        
-          setRoleAssignedArray((prevArray) => [...prevArray, ...newRoleAssignedArray]);
-          break;
-        
-        }
+            case "JOB_DISCLOSE":
+              const disclosedRoles = sysMessage.param;
+              // console.log(sysMessage.param)
+              // console.log(sysMessage.param.job.length)
+                const newRoleAssignedArray = [];
+            
+                for (let i = 0; i < disclosedRoles.job.length; i++) {
+                  const nickname = disclosedRoles.nickname[i];
+                  const job = disclosedRoles.job[i];
+                  let team = "";
+            
+                  if (job === "삵") {
+                    team = "sark";
+                  } else {
+                    team = "citizen";
+                  }
+            
+                  newRoleAssignedArray.push({
+                    team: team,
+                    nickname: nickname,
+                    job: job,
+                  });
+                }
+            
+                setRoleAssignedArray((prevArray) => [...prevArray, ...newRoleAssignedArray]);
+              break;
+    }
+            
       }
-
+      //여기는 모두에게 보내는거
       else{
         
         // 역할 저장을 위해 넣었음 //
@@ -473,8 +495,8 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias,
-      voteTargetId, deadId}}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner, 
+      voteTargetId, deadId, threatedTarget}}>
       {children}
     </GameContext.Provider>
   );
