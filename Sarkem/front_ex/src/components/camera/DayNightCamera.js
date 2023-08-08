@@ -404,7 +404,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
         </CamCatWrapper>
       ))}
       <ButtonWrapper>
-        {dayCount === 1 ? (
+        {dayCount === 1 && phase === "day" ? (
           <>
             {startVote && (
               <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>

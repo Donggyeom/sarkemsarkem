@@ -237,10 +237,9 @@ const onSocketConnected = () => {
             break;
 
         case "TARGET_SELECTION":
-          // alert('투표가 시작됐습니다');
           setStartVote(true);
-          
-          if (sysMessage.param.day !== null) {
+      
+          if (sysMessage.param && sysMessage.param.day !== undefined && sysMessage.param.day !== null) {
               setDayCount(sysMessage.param.day);
           }
           break;
@@ -288,8 +287,10 @@ const onSocketConnected = () => {
             break;
 
         case "BE_HUNTED":
-            setMyRole("OBSERVER");
-            break;
+          if (sysMessage.param && sysMessage.param.deadPlayerId === token) {
+              setMyRole("OBSERVER");
+          }
+          break;
 
         // case "BE_THREATENED":
         //     alert("냥아치 협박 시작!", sysMessage.playerId);
