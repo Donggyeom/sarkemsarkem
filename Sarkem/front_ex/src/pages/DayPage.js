@@ -10,9 +10,7 @@ import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
 
-import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
@@ -47,11 +45,11 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
 
-  const { roomSession, player, players, roomId, camArray, leaveSession } = useRoomContext();
+  const { roomSession, player, players, leaveSession } = useRoomContext();
   const { gameSession, myRole } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   
-  
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -65,11 +63,8 @@ const DayPage = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [meetingTime, roomId]);
+  }, [meetingTime]);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [voteCount, setVoteCount] = useState(0);
 
   const handleVoteClick = () => {
     setVoteCount((prevCount) => prevCount + 1);
@@ -151,10 +146,10 @@ const DayPage = () => {
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <DayPopup></DayPopup>
-          <DayNightCamera camArray={camArray}/>
+          <DayNightCamera players={players} />
           {getMyRole()}
         </StyledDayPage>
-        <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
+
           {chatVisible()}
     </Background>
   );

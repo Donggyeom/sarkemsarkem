@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundSunset';
 import CamButton from '../components/buttons/CamButton';
@@ -6,7 +6,7 @@ import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import CamCat from '../components/camera/camcat';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import TempButton from '../components/buttons/TempButton';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
@@ -530,12 +530,23 @@ const handleScMiniClick = () => {
 };
 
 const SunsetPage = () => {
-   
-  const { roomSession, player, setPlayer, camArray, leaveSession } = useRoomContext(); 
+  
+  const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
   
   const { myRole } = useGameContext();
+  
   const navigate = useNavigate();
-  const location = useLocation();
+  
+  const camCount = players.size; // camCount를 SunsetPage 내부에서 계산
+  const gridStyles = calculateGrid(camCount);
+  const camArray = [];
+
+  players.forEach((player, index) => {
+    if (player.stream == undefined) return;
+
+    camArray.push(player.stream);
+  });
+
 
   const getMyRole = () => {
     if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE' ) {
@@ -581,27 +592,23 @@ const SunsetPage = () => {
 
   
   
-    useEffect(() => {
-        console.log(roomSession.roomId);
-        if (roomSession.roomId === undefined){
-          console.log("세션 정보가 없습니다.")
-          navigate("/");
-          return;
-        }
-      // 윈도우 객체에 화면 종료 이벤트 추가
-      window.addEventListener('beforeunload', onbeforeunload);
-      return () => {
-          window.removeEventListener('beforeunload', onbeforeunload);
+  useEffect(() => {
+      console.log(roomSession.roomId);
+      if (roomSession.roomId === undefined){
+        console.log("세션 정보가 없습니다.")
+        navigate("/");
+        return;
       }
-      }, [])
-    // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
-    const onbeforeunload = (event) => {
-      leaveSession();
+    // 윈도우 객체에 화면 종료 이벤트 추가
+    window.addEventListener('beforeunload', onbeforeunload);
+    return () => {
+        window.removeEventListener('beforeunload', onbeforeunload);
     }
-
-  const camCount = camArray.length; // camCount를 SunsetPage 내부에서 계산
-  const gridStyles = calculateGrid(camCount);
-
+    }, [])
+  // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
+  const onbeforeunload = (event) => {
+    leaveSession();
+  }
 
   return (
     <Background>
@@ -614,9 +621,9 @@ const SunsetPage = () => {
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
       <SunsetPopup></SunsetPopup>
         <CamCatGrid style={gridStyles}>
-          {camArray.slice().reverse().map((user, index) => ( // Using slice() to create a copy and then reversing it
-            <CamCatWrapper key={index} camCount={camCount} index={index}>
-              <CamCat props={camArray[index]} />
+          {camArray && camArray.map((user, index) => (
+            <CamCatWrapper key={index} camcount={camCount} index={index}>
+              <CamCat props={user} />
             </CamCatWrapper>
           ))}
         </CamCatGrid>

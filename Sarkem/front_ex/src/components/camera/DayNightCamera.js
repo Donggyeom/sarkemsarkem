@@ -198,10 +198,18 @@ const CamCatWrapper = styled.div`
   : ''};
   `;
   
-  const DayNightCamera = React.memo(({ camArray }) => {
-    const camCount = camArray.length;
+  const DayNightCamera = React.memo(({ players }) => {
+    const camCount = players.size;
     const gridStyles = calculateGrid(camCount);
     const [clickedCameras, setClickedCameras] = useState([]);
+    
+    const camArray = [];
+
+    players.forEach((player, index) => {
+      if (player.stream == undefined) return;
+
+      camArray.push(player.stream);
+    });
 
     const handleCamClick = (index) => {
       setClickedCameras((prevClicked) => {
@@ -220,9 +228,9 @@ const CamCatWrapper = styled.div`
   
     return (
       <CamCatGrid style={gridStyles}>
-        {camArray.slice().reverse().map((user, index) => (
-          <CamCatWrapper key={index} camCount={camCount} index={index} onClick={() => handleCamClick(index)}>
-            <CamCat props={camArray[index]} />
+        {camArray && camArray.map((user, index) => (
+          <CamCatWrapper key={index} camcount={camCount} index={index} onClick={() => handleCamClick(index)}>
+            <CamCat props={user} />
             {clickedCameras.includes(index) && (
               <Votefoot src={voteImage} alt="Vote" />
             )}

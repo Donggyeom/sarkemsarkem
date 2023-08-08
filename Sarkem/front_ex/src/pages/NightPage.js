@@ -13,7 +13,7 @@ import TempButton from '../components/buttons/TempButton';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DayNightCamera from '../components/camera/DayNightCamera';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
@@ -45,10 +45,9 @@ const handleScMiniClick = () => {
 };
 
 const NightPage = () => {
-  const { player, setPlayer, roomId, camArray } = useRoomContext(); 
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { roomSession, player, setPlayer, players } = useRoomContext(); 
   const { myRole } = useGameContext();
+  const navigate = useNavigate();
   
 
   const handleCamButtonClick = () => {
@@ -95,8 +94,8 @@ const NightPage = () => {
   
 
     useEffect(() => {
-        console.log(roomId);
-        if (roomId === undefined){
+        console.log(roomSession.roomId);
+        if (roomSession.roomId === undefined){
           console.log("세션 정보가 없습니다.")
           navigate("/");
           return;
@@ -116,7 +115,7 @@ const NightPage = () => {
     <Background>
       <StyledNightPage>
          {!isLogOn && <Log top="60%" left="26%" />}
-        <DayNightCamera camArray={camArray}/>
+        <DayNightCamera players={players}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
@@ -124,7 +123,6 @@ const NightPage = () => {
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           <NightPopup></NightPopup>
         {getMyRole()}
-        <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
         <ChatButtonAndPopup />
       </StyledNightPage>
         
