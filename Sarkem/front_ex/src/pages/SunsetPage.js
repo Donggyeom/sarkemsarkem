@@ -680,7 +680,7 @@ const SunsetPage = () => {
     return (
       <CamCatWrapper
         camCount={camCount}
-        // index={user.positionIndex}
+        // index={user.positionIndex} 이거로 들어가면 균일하게 들어감
         index={positionIndex}
       > 
         <CamCat props={user} />
