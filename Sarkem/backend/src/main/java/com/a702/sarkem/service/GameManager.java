@@ -622,9 +622,9 @@ public class GameManager {
 	public void sendTargetSelectionMessageToAll(String roomId, Map<String, Integer> param) {
 		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION, param);
 	}
-	// "대상선택" 메시지 전송(낮)
-	public void sendTargetSelectionMessages(String roomId, Map<String, Integer> param) {
-		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION, param);
+	// "대상선택" 메시지 전송(밤)
+	public void sendTargetSelectionMessages(String roomId, List<String> playerIds) {
+		sendSystemMessage(roomId, playerIds, SystemCode.TARGET_SELECTION, null);
 	}
 
 	// "대상선택 종료" 메시지 전송 (전체-낮투표)
