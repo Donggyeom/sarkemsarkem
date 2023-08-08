@@ -237,7 +237,7 @@ const CamCatWrapper = styled.div`
     const [clickedCamera, setClickedCamera] = useState(null);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSkipped, setIsSkipped] = useState(false);
-    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext} = useGameContext();
+    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId} = useGameContext();
     // const jungleRefs = useRef([]);
 
 
@@ -262,11 +262,12 @@ const CamCatWrapper = styled.div`
 
   const getVoteResultForUser = (userToken) => {
     if (voteSituation && voteSituation[userToken] !== undefined) {
-      return `${userToken}: ${voteSituation[userToken]}표`;
+      return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
     }
     return `${userToken}: 0표`;
   };
 
+  console.log(voteTargetId, "여기에요2");
 
 
   const handleCamClick = (user) => {
@@ -290,6 +291,8 @@ const CamCatWrapper = styled.div`
       selectConfirm();
     }
   };
+
+  
 
   const handleSkipClick = () => {
     if (!isConfirmed && !isSkipped && startVote) {
@@ -402,7 +405,7 @@ const CamCatWrapper = styled.div`
         </CamCatWrapper>
       ))}
       <ButtonWrapper>
-        {dayCount === 1 ? (
+        {dayCount === 1 && phase === "day" ? (
           <>
             {startVote && (
               <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
