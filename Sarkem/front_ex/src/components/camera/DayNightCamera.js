@@ -231,14 +231,14 @@ const CamCatWrapper = styled.div`
   `
                                   : ''};
   `;
-
-const DayNightCamera = React.memo(({ camArray }) => {
-  const camCount = camArray.length;
-  const gridStyles = calculateGrid(camCount);
-  const [clickedCamera, setClickedCamera] = useState(null);
-  const [isConfirmed, setIsConfirmed] = useState(false);
-  const [isSkipped, setIsSkipped] = useState(false);
-  const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias} = useGameContext();
+  const DayNightCamera = React.memo(({ camArray }) => {
+    const camCount = camArray.length;
+    const gridStyles = calculateGrid(camCount);
+    const [clickedCamera, setClickedCamera] = useState(null);
+    const [isConfirmed, setIsConfirmed] = useState(false);
+    const [isSkipped, setIsSkipped] = useState(false);
+    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId} = useGameContext();
+    // const jungleRefs = useRef([]);
 
 
   useEffect(() => {
@@ -254,19 +254,20 @@ const DayNightCamera = React.memo(({ camArray }) => {
         changeVoice();
       }
     } else if (phase === "day") {
+      console.log(jungleRefs);
       dayCamAudio();
       stopVoiceChange();
     }
-
   }, [startVote, phase]);
 
   const getVoteResultForUser = (userToken) => {
     if (voteSituation && voteSituation[userToken] !== undefined) {
-      return `${userToken}: ${voteSituation[userToken]}표`;
+      return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
     }
     return `${userToken}: 0표`;
   };
 
+  console.log(voteTargetId, "여기에요2");
 
 
   const handleCamClick = (user) => {
@@ -290,6 +291,8 @@ const DayNightCamera = React.memo(({ camArray }) => {
       selectConfirm();
     }
   };
+
+  
 
   const handleSkipClick = () => {
     if (!isConfirmed && !isSkipped && startVote) {
@@ -344,9 +347,9 @@ const DayNightCamera = React.memo(({ camArray }) => {
     mixedMediaStreamRef.current = getMixedMediaStream();
   }
 
-  const mixedMediaStreamRef = useRef(null);
-  const jungleRefs = useRef([]);
-  const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
+  // const mixedMediaStreamRef = useRef(null);
+  // const jungleRefs = useRef([]);
+  // const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
 
   // 삵들에 대해 음성변조 시작
   const getMixedMediaStream = () => {
@@ -365,12 +368,14 @@ const DayNightCamera = React.memo(({ camArray }) => {
       mixedMediaStream.addTrack(audioTrackWithEffects.stream.getAudioTracks()[0]);
       jungle.isConnected = true;
       jungleRefs.current.push(jungle);
+      console.log(jungleRefs);
     })
   }
 
   // 음성 변조 중지
   const stopVoiceChange = () => {
     console.log("음성 변조 중지")
+    console.log(jungleRefs);
     jungleRefs.current.forEach((jungle) => {
       if (jungle && jungle.isConnected) {
         console.log(jungle, "음성 변조 중지 중...");
@@ -400,7 +405,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
         </CamCatWrapper>
       ))}
       <ButtonWrapper>
-        {dayCount === 1 ? (
+        {dayCount === 1 && phase === "day" ? (
           <>
             {startVote && (
               <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>

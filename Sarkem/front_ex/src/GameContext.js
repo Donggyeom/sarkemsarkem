@@ -25,7 +25,14 @@ const GameProvider = ({ children }) => {
     
     const [mafias, setMafias] = useState([]);
     const [winner, setWinner] = useState(null);
+    const jungleRefs = useRef([]);
+    const mixedMediaStreamRef = useRef(null);
+    const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
 
+    useEffect(()=>{
+      jungleRefs.current = [];
+
+    },[])
     const [peopleCount, setPeopleCount] = useState({
         meetingTime: 60,
         citizenCount: 0,
@@ -51,8 +58,14 @@ const GameProvider = ({ children }) => {
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState("");
+    
+    // twilight 투표 설정 위한 타겟id
     const [targetId, setTargetId] = useState("");
     const [roleAssignedArray, setRoleAssignedArray] = useState([]);
+
+    // 낮 투표 타겟 저장 위한 타겟
+    const [voteTargetId, setVoteTargetId] = useState("");
+
 
     const [phase, setphase] = useState("");
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
@@ -173,7 +186,6 @@ const onSocketConnected = () => {
         console.log(token, sysMessage.playerId);
 
 
-
         // if (token != sysMessage.playerId) return;
         if (token === sysMessage.playerId) {
 
@@ -236,14 +248,17 @@ const onSocketConnected = () => {
             break;
 
         case "TARGET_SELECTION":
-            // alert('투표가 시작됐습니다');
-            setStartVote(true);
-            setDayCount(sysMessage.param.day);
-            break;
+          setStartVote(true);
+      
+          if (sysMessage.param && sysMessage.param.day !== undefined && sysMessage.param.day !== null) {
+              setDayCount(sysMessage.param.day);
+          }
+          break;
 
         case "VOTE_SITUATION":
             console.log(sysMessage.param, "얘일걸");
             setVotesituation(sysMessage.param);
+            setVoteTargetId("");
             alert(voteSituation , "투표결과");
             break;
 
@@ -283,8 +298,10 @@ const onSocketConnected = () => {
             break;
 
         case "BE_HUNTED":
-            setMyRole("OBSERVER");
-            break;
+          if (sysMessage.param && sysMessage.param.deadPlayerId === token) {
+              setMyRole("OBSERVER");
+          }
+          break;
 
         // case "BE_THREATENED":
         //     alert("냥아치 협박 시작!", sysMessage.playerId);
@@ -380,8 +397,10 @@ const onSocketConnected = () => {
   
   // 대상 확정
   const selectConfirm = () => {
+      setVoteTargetId(selectedTarget);
       console.log(selectedTarget + " 플레이어 선택 ");
       console.log(selectedTarget.nickname)
+      console.log(voteTargetId, "여기에요");
       if (stompClient.current.connected && token !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
@@ -394,6 +413,8 @@ const onSocketConnected = () => {
               }));
       }
   };
+
+
   
   // 추방 투표 동의
   const agreeExpulsion = () => {
@@ -469,7 +490,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, winner, setWinner}}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner}}>
       {children}
     </GameContext.Provider>
   );
