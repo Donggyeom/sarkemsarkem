@@ -270,12 +270,27 @@ const CamCatWrapper = styled.div`
   }, [startVote, phase]);
 
 
-  const getVoteResultForUser = (userToken) => {
-    if (voteSituation && voteSituation[userToken] !== undefined) {
-      return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
+  // const getVoteResultForUser = (userToken) => {
+  //   if (voteSituation && voteSituation[userToken] !== undefined) {
+  //     return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
+  //   }
+  //   return `${userToken}: 0표`;
+  // };
+
+  const getVoteResultForUser = (userToken, phase) => {
+    if (phase === "day") {
+      if (voteSituation && voteSituation[userToken] !== undefined) {
+            return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
+          }
+          return `${userToken}: 0표`;
+          
+    } else if (phase === "night") {
+        if (voteSituation && voteSituation[userToken] === "삵이 죽일사람") {
+            return `${userToken}: 삵이 죽일사람`;
+        }
+        return `${userToken}: 투표하지 않음`;
     }
-    return `${userToken}: 0표`;
-  };
+};
 
   const calculateAdjustedCamCount = () => {
     const filteredCamArray = camArray.filter((user) => {
@@ -440,7 +455,7 @@ const CamCatWrapper = styled.div`
               <VotefootWrapper show={clickedCamera === user && startVote}>
                 <VotefootImage src={voteImage} alt="Vote" />
               </VotefootWrapper>
-              <div>{getVoteResultForUser(JSON.parse(user.stream.connection.data).token)}</div>
+              <div>{getVoteResultForUser(JSON.parse(user.stream.connection.data).token, phase)}</div>
             </CamCatWrapper>
           ))}
         <ButtonWrapper>

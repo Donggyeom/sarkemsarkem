@@ -263,11 +263,16 @@ const onSocketConnected = () => {
           break;
 
         case "VOTE_SITUATION":
-            console.log(sysMessage.param, "얘일걸");
-            setVotesituation(sysMessage.param);
-            setVoteTargetId("");
-            alert(voteSituation , "투표결과");
-            break;
+          if (sysMessage.param.hasOwnProperty("target")) {
+              // setVotesituation(sysMessage.param.target);
+              console.log(sysMessage.param.target, "타겟저장");
+              setVotesituation({ [sysMessage.param.target]: sysMessage.param.target });
+              
+          } else {
+              setVotesituation(sysMessage.param);
+              setVoteTargetId("");
+          }
+          break;
 
         case "DAY_VOTE_END":
             setStartVote(false);
