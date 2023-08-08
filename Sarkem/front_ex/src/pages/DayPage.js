@@ -109,7 +109,8 @@ const DayPage = () => {
     }
   };
 
-  const chatVisible = () =>{
+  // 테스트를 위해 myRole == 'CITIZEN' 넣음, 나중에는 빼야됨
+  const chatVisible = () =>{ 
     if (myRole === 'OBSERVER' || myRole === 'CITIZEN'){
       return (
         <>

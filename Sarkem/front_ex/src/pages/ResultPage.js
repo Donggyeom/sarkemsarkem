@@ -57,29 +57,32 @@ const Table = styled.table`
   width: 70%;
   max-height: 62%;
   overflow-x: auto;
-  border-collapse: collapse;
+  border-spacing: 0px 4px; /* Remove default border spacing */
   text-align: center;
   z-index: 1;
-  margin: 0 auto; /* 가로 중앙 정렬 */
-  margin-left: -63%; /* 왼쪽으로 이동 */
-  margin-top: -10%; /* 상단으로 이동 */
-`;
-
-const TableHeader = styled.th`
-  font-size: 35px; /* Adjust the font size as needed */
-  background-color: #f2f2f2;
-  padding: 10px;
-`;
-
-const TableRow = styled.tr`
-  background-color: ${(props) => (props.even ? '#f2f2f2' : 'white')};
-  
+  margin: 0 auto;
+  margin-left: -63%;
+  margin-top: -10%;
+  borderCollapse: 'separate',
 `;
 
 const TableCell = styled.td`
-  font-size: 20px; /* Adjust the font size as needed */
+  font-size: 20px;
   padding: 10px;
+  margin-bottom: 30px;
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+  &:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
 `;
+
+const TableRow = styled.tr`
+`;
+
 
 const ResultPage = () => {
   const {
@@ -132,27 +135,21 @@ const ResultPage = () => {
             <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
           </ButtonContainer>
           <Title> 냥냥이팀 승리!</Title>
-          <Table>
-          <thead>
-            <tr>
-              <TableHeader>Player</TableHeader>
-              <TableHeader>Job</TableHeader>
-            </tr>
-          </thead>
+          <Table >
           <tbody>
             {nonSarkPlayers.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
+              <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#f25282" }}>
                 <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{playerRole.job}</TableCell>
               </TableRow>
             ))}
-                <hr></hr>
             {sarkPlayers.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
+              <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#ff9cb9" }}>
                 <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{playerRole.job}</TableCell>
               </TableRow>
             ))}
+            
           </tbody>
         </Table>
         </StyledSunsetPage>
@@ -168,27 +165,21 @@ const ResultPage = () => {
         </ButtonContainer>
         <Title> 삵팀 승리!</Title>
         <Table>
-          <thead>
-            <tr>
-              <TableHeader>Player</TableHeader>
-              <TableHeader>Job</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {sarkPlayers.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
-                <TableCell>{playerRole.nickname}</TableCell>
-                <TableCell>{playerRole.job}</TableCell>
-              </TableRow>
-            ))}
-            {nonSarkPlayers.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
-                <TableCell>{playerRole.nickname}</TableCell>
-                <TableCell>{playerRole.job}</TableCell>
-              </TableRow>
-            ))}
-          </tbody>
-        </Table>
+        <tbody>
+          {sarkPlayers.map((playerRole, index) => (
+            <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#9ed8ff" }}>
+              <TableCell>{playerRole.nickname}</TableCell>
+              <TableCell>{playerRole.job}</TableCell>
+            </TableRow>
+          ))}
+          {nonSarkPlayers.map((playerRole, index) => (
+            <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#7db1d4" }}>
+              <TableCell>{playerRole.nickname}</TableCell>
+              <TableCell>{playerRole.job}</TableCell>
+            </TableRow>
+          ))}
+        </tbody>
+      </Table>
 
         </StyledSunsetPage>
       </Background2>

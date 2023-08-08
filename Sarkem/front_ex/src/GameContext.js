@@ -229,8 +229,8 @@ const onSocketConnected = () => {
 
 
         case "PHASE_DAY":
-              setphase("day");
-              navigate(`/${roomId}/day`)
+            setphase("day");
+            navigate(`/${roomId}/day`)
             break;
 
         case "PHASE_TWILIGHT":
@@ -255,6 +255,7 @@ const onSocketConnected = () => {
 
         case "TARGET_SELECTION":
           setStartVote(true);
+          setVotesituation({});
       
           if (sysMessage.param && sysMessage.param.day !== undefined && sysMessage.param.day !== null) {
               setDayCount(sysMessage.param.day);
