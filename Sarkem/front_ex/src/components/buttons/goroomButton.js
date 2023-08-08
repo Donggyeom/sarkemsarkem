@@ -71,12 +71,13 @@ const GoroomButton = (props) => {
     setPlayers(players);
 
     // 게임 세션 갱신
-    getGameSession(roomId).then(result => {
-      if (!result) {
-        alert("이미 게임이 실행중입니다.");
-        navigate("/");
-      }
-    })
+    const isEnterable = await getGameSession(roomId);
+    if (!isEnterable) {
+      alert("이미 게임 중인 방입니다.");
+      navigate("/");
+      return;
+    }
+    console.log(isEnterable)
     const session = await initSession();
     connectSession(session, gameRoom.roomId);
     navigate(`/${roomId}/lobby`);
