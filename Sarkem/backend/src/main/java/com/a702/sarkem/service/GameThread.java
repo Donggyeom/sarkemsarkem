@@ -125,7 +125,7 @@ public class GameThread extends Thread {
 		}
 
 		// 직업 정보 전송
-		gameManager.sendJobDiscloseMessage(roomId, gameSession.getPlayersJob());
+		gameManager.jobDiscolse(roomId);
 		// 게임 종료 메시지 전송
 		gameManager.sendGameEndMessage(roomId);
 		
