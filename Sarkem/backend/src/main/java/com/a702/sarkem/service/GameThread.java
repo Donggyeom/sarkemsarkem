@@ -166,7 +166,8 @@ public class GameThread extends Thread {
 		Map<String, Integer> param = new HashMap<>();
 		param.put("day", day);
 		gameManager.sendDayPhaseMessage(roomId, param);
-
+		gameManager.sendNoticeMessageToAll(roomId, "낮이 되었습니다.\n회의를 통해 추방할 고양이를 투표해주세요.", gameSession.getPhase());
+		
 		// 밤에 누가 죽었는지, 아무도 안죽었는지 전체한테 노티스 메시지 보내기
 		if (!"".equals(nightResultNoticeMessage)) {
 			gameManager.sendNoticeMessageToAll(roomId, nightResultNoticeMessage, gameSession.getPhase());
@@ -194,17 +195,22 @@ public class GameThread extends Thread {
 			HashMap<String, String> targetMap = new HashMap<>();
 			targetMap.put("targetId", target.getPlayerId());
 			targetMap.put("targetNickname", target.getNickname());
+			gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), target.getNickname() + "님의 심리를 분석합니다.", gameSession.getPhase());
 			gameManager.sendPsychoStartMessage(roomId, rp.getPlayerId(), targetMap);
 		}
 
 		// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
 		for (RolePlayer rp : gameSession.getRolePlayers(GameRole.BULLY)) {
 			gameManager.sendThreatingMessage(roomId, rp.getTarget());
+			gameManager.sendNoticeMessageToPlayer(roomId, rp.getTarget(), "냥아치에게 협박을 당해\n이번 낮에는 말을 할 수 없습니다.", gameSession.getPhase());
 		}
 		
 		// 1일차에는 아래 기능 미실행
 		if (gameSession.getDay() > 1) {
-
+			// 히든미션 관련 초기화
+			gameSession.setBHiddenMissionStatus(false);
+			gameSession.setBHiddenMissionSuccess(false);
+			
 			// 히든미션 발생 여부 정하기
 			gameManager.hiddenMissionOccur(roomId);
 
@@ -214,8 +220,8 @@ public class GameThread extends Thread {
 				int num = rnd.nextInt(5);
 				HashMap<String, Integer> hMissionIdx = new HashMap<>();
 				hMissionIdx.put("missionIdx", num);
-				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK),
-						hMissionIdx);
+				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK), hMissionIdx);
+				gameManager.sendNoticeMessageToPlayers(roomId, gameSession.getRolePlayersId(GameRole.SARK), "히든미션이 발행되었습니다.\n고양이를 사냥하려면 미션을 수행해야합니다.", gameSession.getPhase());
 				gameSession.setHiddenMissionCnt(gameSession.getHiddenMissionCnt()+1);
 			}
 
@@ -273,6 +279,7 @@ public class GameThread extends Thread {
 		}
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
 		gameManager.sendTwilightPhaseMessage(roomId, expulsionPlayer);
+		gameManager.sendNoticeMessageToAll(roomId, expulsionPlayer.get("targetNickname")+"님의 추방에 대한\n찬반 투표를 진행해주세요.", gameSession.getPhase());
 		// 대상이 있으면 저녁투표 시작
 		gameManager.sendTwilightSelectionMessage(roomId);
 	}
@@ -289,10 +296,9 @@ public class GameThread extends Thread {
 		
 		// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
 		if (gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
-			return true;
-			
+			gameManager.sendNoticeMessageToAll(roomId, target.getNickname() + "님이 추방 대상자로 선정되었습니다.", gameSession.getPhase());
+			return true;		
 		}
-		
 		return false;
 	}
 
@@ -300,8 +306,34 @@ public class GameThread extends Thread {
 	private void convertPhaseToNight() {
 		// 밤 페이즈로 변경
 		gameSession.setPhase(PhaseType.NIGHT);
-		// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로온거라, 노티스메시지 보내주기
-		gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.", gameSession.getPhase());
+		String message = "";
+		// 직업별로 노티스메시지 띄워주기
+		for(RolePlayer rp : gameSession.getAlivePlayers()) {
+			switch (rp.getRole()) {
+			case CITIZEN: 
+				message = "밤이 되었습니다.";
+				break;
+			case SARK: 
+				message = "밤이 되었습니다.\n회의를 통해 사냥할 고양이를 선택해주세요.";
+				break;
+			case DOCTOR: 
+				message = "밤이 되었습니다.\n삵 퇴치제를 처방할 고양이를 선택해주세요.";
+				break;
+			case POLICE: 
+				message = "밤이 되었습니다.\n신분을 확인할 고양이를 선택해주세요.";
+				break;
+			case PSYCHO: 
+				message = "밤이 되었습니다.\n심리를 확인할 고양이를 선택해주세요.";
+				break;
+			case BULLY: 
+				message = "밤이 되었습니다.\n협박할 고양이를 선택해주세요.";
+				break;
+			case DETECTIVE: 
+				message = "밤이 되었습니다.\n삵들의 대화를 엿듣습니다.";
+				break;
+			}
+			gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), message, gameSession.getPhase());
+		}
 		// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택, 받은 투표수 초기화
 		for (RolePlayer rp : gameSession.getPlayers()) {
 			rp.setTarget("");

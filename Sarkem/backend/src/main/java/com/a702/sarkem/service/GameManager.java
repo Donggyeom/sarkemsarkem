@@ -409,7 +409,7 @@ public class GameManager {
 		if (voteResult) { 
 			gameSession.addExpulsionVoteCnt();
 		}
-		// TODO: 추방 투표 현황 전송
+		// 추방 투표 현황 전송
 		sendTwilightSelectionEndMessage(roomId, playerId);
 	}
 	
@@ -430,7 +430,8 @@ public class GameManager {
 	// 히든 미션 성공 시
 	public void hiddenMissionSuccess(String roomId) {
 		GameSession gameSession = getGameSession(roomId);
-		sendHiddenMissionSuccessMessage(roomId);
+		sendHiddenMissionSuccessMessage(roomId); // 성공 메시지 보내고
+		sendNoticeMessageToAll(roomId, "삵이 히든미션을 성공했습니다.", gameSession.getPhase()); // 노티스메시지도 보내고
 		gameSession.setBHiddenMissionSuccess(true);
 		gameSession.setHiddenMissionSuccessCnt(gameSession.getHiddenMissionSuccessCnt()+1);
 	}
