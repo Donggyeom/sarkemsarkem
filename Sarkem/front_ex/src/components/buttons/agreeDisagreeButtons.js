@@ -9,6 +9,7 @@ const SmallButton = styled.button`
   background: none;
   cursor: pointer;
   border: none;
+  position: relative; 
   z-index:1;
   &:hover {
     filter: brightness(0.8);

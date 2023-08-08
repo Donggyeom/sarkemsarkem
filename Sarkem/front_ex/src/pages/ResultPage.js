@@ -4,6 +4,7 @@ import Background1 from '../components/backgrounds/BackgroundSunset';
 import Background2 from '../components/backgrounds/BackgroundNight';
 import ReButton from '../components/buttons/reButton';
 import ResultBox from '../components/games/ResultBox';
+import ResultBox2 from '../components/games/ResultBox2';
 import logoImage from '../img/logo.png';
 import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
@@ -88,7 +89,7 @@ const ResultPage = () => {
     session,
     setSession,
   } = useRoomContext();
-  const { roleAssignedArray } = useGameContext();
+  const { roleAssignedArray, winner } = useGameContext();
   const navigate = useNavigate();
   console.log(roleAssignedArray);
 
@@ -116,36 +117,85 @@ const ResultPage = () => {
     navigate('/');
   };
 
+  const sarkPlayers = roleAssignedArray.filter(playerRole => playerRole.job === '삵');
+  const nonSarkPlayers = roleAssignedArray.filter(playerRole => playerRole.job !== '삵');
+
   return (
-    <Background1>
-      <StyledSunsetPage>
+    <div>
+    {winner === 'CITIZEN' ? (
+      <Background1>
+        <StyledSunsetPage>
         <ResultBox> </ResultBox>
-        <ButtonContainer>
-          <Logo src={logoImage} alt="로고" />
-          <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
-          <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
-        </ButtonContainer>
-        <Title> 냥냥이팀 승리!</Title>
-        <Table>
+          <ButtonContainer>
+            <Logo src={logoImage} alt="로고" />
+            <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
+            <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
+          </ButtonContainer>
+          <Title> 냥냥이팀 승리!</Title>
+          <Table>
           <thead>
             <tr>
-              <TableHeader>승리여부</TableHeader>
-              <TableHeader>플레이어</TableHeader>
-              <TableHeader>직업</TableHeader>
+              <TableHeader>Player</TableHeader>
+              <TableHeader>Job</TableHeader>
             </tr>
           </thead>
           <tbody>
-            {roleAssignedArray.map((playerRole, index) => (
+            {nonSarkPlayers.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0}>
-                <TableCell>승리여부</TableCell>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
+              </TableRow>
+            ))}
+                <hr></hr>
+            {sarkPlayers.map((playerRole, index) => (
+              <TableRow key={index} even={index % 2 === 0}>
                 <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{playerRole.job}</TableCell>
               </TableRow>
             ))}
           </tbody>
         </Table>
-      </StyledSunsetPage>
-    </Background1>
+        </StyledSunsetPage>
+      </Background1>
+    ) : (
+      <Background2>
+        <StyledSunsetPage>
+        <ResultBox2> </ResultBox2>
+        <ButtonContainer>
+          <Logo src={logoImage} alt="로고" />
+          <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
+          <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
+        </ButtonContainer>
+        <Title> 삵팀 승리!</Title>
+        <Table>
+          <thead>
+            <tr>
+              <TableHeader>Player</TableHeader>
+              <TableHeader>Job</TableHeader>
+            </tr>
+          </thead>
+          <tbody>
+            {sarkPlayers.map((playerRole, index) => (
+              <TableRow key={index} even={index % 2 === 0}>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
+              </TableRow>
+            ))}
+            {nonSarkPlayers.map((playerRole, index) => (
+              <TableRow key={index} even={index % 2 === 0}>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
+              </TableRow>
+            ))}
+          </tbody>
+        </Table>
+
+        </StyledSunsetPage>
+      </Background2>
+    )}
+  </div>
+
+
   );
 };
 
