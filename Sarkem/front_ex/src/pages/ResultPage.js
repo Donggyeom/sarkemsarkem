@@ -11,7 +11,6 @@ import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import createRandomId from '../utils';
 
-
 const StyledSunsetPage = styled.div`
   display: flex;
   position: relative;
@@ -58,27 +57,30 @@ const Table = styled.table`
   width: 70%;
   max-height: 62%;
   overflow-x: auto;
-  border-collapse: separate; /* Use separate border-collapse for spacing */
+  border-spacing: 0px 4px; /* Remove default border spacing */
   text-align: center;
   z-index: 1;
   margin: 0 auto;
   margin-left: -63%;
   margin-top: -10%;
+  borderCollapse: 'separate',
 `;
 
 const TableCell = styled.td`
-  font-size: 20px; /* Adjust the font size as needed */
+  font-size: 20px;
   padding: 10px;
+  margin-bottom: 30px;
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+  &:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
 `;
 
-const WinRoundedTableRow = styled.tr`
-  background-color: #f2f2f2 ;
-  border-radius: 10px;
-`;
-
-const LoseRoundedTableRow = styled.tr`
-  background-color: gray;
-  border-radius: 10px;
+const TableRow = styled.tr`
 `;
 
 
@@ -136,17 +138,18 @@ const ResultPage = () => {
           <Table >
           <tbody>
             {nonSarkPlayers.map((playerRole, index) => (
-              <WinRoundedTableRow key={index} even={index % 2 === 0}>
+              <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#f25282" }}>
                 <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{playerRole.job}</TableCell>
-              </WinRoundedTableRow>
+              </TableRow>
             ))}
             {sarkPlayers.map((playerRole, index) => (
-              <LoseRoundedTableRow key={index} even={index % 2 === 0}>
+              <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#ff9cb9" }}>
                 <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{playerRole.job}</TableCell>
-              </LoseRoundedTableRow>
+              </TableRow>
             ))}
+            
           </tbody>
         </Table>
         </StyledSunsetPage>
@@ -164,16 +167,16 @@ const ResultPage = () => {
         <Table>
         <tbody>
           {sarkPlayers.map((playerRole, index) => (
-            <WinRoundedTableRow key={index} even={index % 2 === 0}>
+            <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#9ed8ff" }}>
               <TableCell>{playerRole.nickname}</TableCell>
               <TableCell>{playerRole.job}</TableCell>
-            </WinRoundedTableRow>
+            </TableRow>
           ))}
           {nonSarkPlayers.map((playerRole, index) => (
-            <LoseRoundedTableRow key={index} even={index % 2 === 0}>
+            <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#7db1d4" }}>
               <TableCell>{playerRole.nickname}</TableCell>
               <TableCell>{playerRole.job}</TableCell>
-            </LoseRoundedTableRow>
+            </TableRow>
           ))}
         </tbody>
       </Table>
