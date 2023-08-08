@@ -37,10 +37,6 @@ const RoomProvider = ({ children }) => {
       return new Map(prev).set(player.playerId, player);
     });
     console.log(players);
-    // 세션 스토리지에 playerId, roomId 저장
-    window.sessionStorage.setItem("playerId", player.playerId);
-    window.sessionStorage.setItem("roomId", roomSession.roomId);
-    console.log("세션스토리지에 저장합니다.")
   }, [player]);
 
 
@@ -88,6 +84,7 @@ const RoomProvider = ({ children }) => {
       const response = await axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`)
       // 세션 스토리지에 저장된 데이터 삭제
       window.sessionStorage.removeItem("roomId");
+      window.sessionStorage.removeItem("gameId");
       window.sessionStorage.removeItem("playerId");
       // 데이터 초기화
       // setSession(undefined);
@@ -243,7 +240,9 @@ const RoomProvider = ({ children }) => {
         nickName: response.data.nickName,
       });
     }));
-
+    // sessionStorage에 playerId 갱신
+    console.log("sessionStorage에 playerId를 갱신합니다.")
+    window.sessionStorage.setItem("playerId", response.data.playerId);
     return response.data; // The token
   }
 

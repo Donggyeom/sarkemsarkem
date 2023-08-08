@@ -49,6 +49,14 @@ const GoroomButton = (props) => {
       });
     });
     
+    // sessionStorage에 roomId 갱신
+    console.log("sessionStorage에 roomId를 갱신합니다.")
+    window.sessionStorage.setItem("roomId", gameRoom.roomId);
+
+    // sessionStorage에 playerId 갱신
+    console.log("sessionStorage에 gameId를 갱신합니다.")
+    window.sessionStorage.setItem("gameId", gameRoom.gameId);
+
     let players = new Map();
     gameRoom.players.forEach(element => {
       var p = players.get(element.playerId);
