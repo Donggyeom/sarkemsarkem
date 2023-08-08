@@ -3,29 +3,48 @@ import { useNavigate } from 'react-router';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
+import axios from 'axios';
 
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-    const {roomSession, player, setPlayers, gameId, gameOption, setGameOption} = useRoomContext();
-    const navigate = useNavigate();
-    let stompClient = useRef({})
+  const { roomSession, player, setPlayers } = useRoomContext();
+  const [ gameSession, setGameSession ] = useState({});
+  const [ myRole, setMyRole ] = useState(null);
 
-    const [myRole, setMyRole] = useState(null);
-    
-    useEffect(() => {
-      console.log('GameProvider 생성');
-    }, []);
+  const navigate = useNavigate();
+  let stompClient = useRef({})
+  
 
-    useEffect(() => {
-      console.log(`playerId : ${player.playerId}`);
-      if (player.playerId != undefined) {
-        connectGameWS();
-        setPlayers((prev) => {
-          return new Map([...prev, [player.playerId, player]]);
-        });
-      }
-    }, [player.playerId]);
+  ////////////   GameContext Effect   ////////////
+
+  useEffect(() => {
+    console.log('GameProvider 생성');
+  }, []);
+
+
+  useEffect(() => {
+    console.log(`playerId : ${player.playerId}`);
+    if (player.playerId != undefined) {
+      connectGameWS();
+      setPlayers((prev) => {
+        return new Map([...prev, [player.playerId, player]]);
+      });
+    }
+  }, [player.playerId]);
+
+  
+  // 게임 옵션이 변경되면, callChangeOption 호출
+  useEffect(()=> {
+
+    if(!player.isHost) return;
+
+    callChangeOption();
+
+  }, [gameSession.gameOption]);
+
+
+  ////////////   GameContext 함수   ////////////
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
@@ -46,15 +65,43 @@ const GameProvider = ({ children }) => {
     stompClient.current.subscribe('/sub/game/system/' + roomSession.roomId, receiveMessage)
   }
 
-  // const connectChat = () => {
-  //   console.log('/sub/game/system/chat_' + roomId + " redis 구독")
-  //   stompClient.current.subscribe('/sub/chat/room/' + roomId, receiveMessage)
-  // }
-
-
   const onSocketConnected = () => {
     console.log(`WebSocket 연결 : ${stompClient.current.connected}`);
   }
+
+  const getGameSession = async () => {
+    // 게임세션 정보 획득
+    const response = await axios.get('/api/game/session/' + roomSession.roomId, {
+      headers: { 'Content-Type': 'application/json;charset=utf-8', },
+    });
+    
+    console.log('gamesession 획득');
+    console.log(response);
+    setGameSession((prev) => {
+      return ({
+        ...prev,
+        gameOption: response.data.gameOption,
+      });
+    });
+    
+    return response.data.gameId;
+  }
+  
+
+  // 변경된 게임 옵션을 redis 토픽에 전달
+  const callChangeOption = () => {
+    if(stompClient.current.connected) {
+      stompClient.current.send("/pub/game/action", {}, 
+          JSON.stringify({
+              code:'OPTION_CHANGE', 
+              roomId: roomSession.roomId,
+              playerId: player.playerId,
+              param: gameSession.gameOption
+      }));
+      console.log(gameSession.gameOption);
+    }
+  };
+
 
   const receiveMessage = (message) => {
       // 시스템 메시지 처리
@@ -76,8 +123,12 @@ const GameProvider = ({ children }) => {
           break;
       case "OPTION_CHANGED":
           if(player.isHost) return;
-          setGameOption(sysMessage.param);
-          console.log(sysMessage.param.sarkCount);
+          setGameSession((prev) => {
+            return ({
+              ...prev,
+              gameOption: sysMessage.param,
+            });
+          });
           break;
       case "ROLE_ASSIGNED":
           console.log(`당신은 ${sysMessage.param.role} 입니다.`)
@@ -102,6 +153,7 @@ const GameProvider = ({ children }) => {
       }
   }
 
+
   const handleGamePageClick = () => {
       stompClient.current.send("/pub/game/action", {}, 
       JSON.stringify({
@@ -113,10 +165,12 @@ const GameProvider = ({ children }) => {
   };
 
   return (
-    <GameContext.Provider value={{ stompClient, myRole, handleGamePageClick, }}>
+    <GameContext.Provider value={{ gameSession, setGameSession, stompClient, myRole, handleGamePageClick, getGameSession }}>
       {children}
     </GameContext.Provider>
   );
+
+
 };
 
 const useGameContext = () => {
