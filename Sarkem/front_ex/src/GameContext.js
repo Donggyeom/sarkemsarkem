@@ -58,6 +58,7 @@ const GameProvider = ({ children }) => {
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState(false);
+    const [psyTarget, setPsyTarget] = useState("");
     
     // twilight 투표 설정 위한 타겟id
     const [targetId, setTargetId] = useState("");
@@ -236,6 +237,7 @@ const onSocketConnected = () => {
 
         case "PHASE_NIGHT":
             setphase("night");
+            setThreatedTarget(false); // 저녁 되면 협박 풀림
             console.log(phase);
             navigate(`/${roomId}/night`)
             break;
@@ -309,7 +311,10 @@ const onSocketConnected = () => {
             console.log(threatedTarget);
             // setIsMicOn(false);
             break;
-
+        case "PSYCHOANALYSIS_START":
+          setPsyTarget(sysMessage.param.targetId);
+          console.log(psyTarget);
+          break;
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`);
             break;
