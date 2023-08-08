@@ -3,6 +3,7 @@ import camcatImage from '../../img/camcat2.png';
 import OpenViduVideoComponent from './OvVideo';
 import { loadModels, faceMyDetect, stopFace } from '../job/Psychologist';
 import styled from 'styled-components';
+import { useGameContext } from '../../GameContext';
 
 const Box = styled.div
   `
@@ -16,19 +17,21 @@ const CamCat = (props) => {
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
-
+  const {psyTarget} = useGameContext();
   // const nickName = JSON.parse(streamManager.stream.connection.data).userData;
   // console.log(props.props.videos[1].video);
   useEffect(() => {
     loadModels();
-  }, []);
-
+    startFaceDetection();
+  }, [psyTarget]);
+  console.log(JSON.parse(props.props.stream.connection.data).token);
   //faceapi 실행
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
-    const id = faceMyDetect(props.props.videos[1].video, setBoxPosition, running, setRunning);
-    console.log(props.props.videos);
-    setIntervalId(id);
+    if(JSON.parse(props.props.stream.connection.data).token===psyTarget){
+      const id = faceMyDetect(props.props.videos[1].video, setBoxPosition, running, setRunning);
+      setIntervalId(id);
+    }
   };
   //끄는거 
   const stopFaceDetection = () => {
@@ -68,7 +71,7 @@ const CamCat = (props) => {
               overflow: 'visible',
             }}
           />
-          {running && (
+          {/* {running && (
             <Box
               style={{
                 left: boxPosition.x,
@@ -77,7 +80,7 @@ const CamCat = (props) => {
                 height: boxPosition.height,
               }}
             />
-          )}
+          )} */}
         </div>
 
         <div style={{ flex: 0.4, textAlign: 'center', width: '95%' }}>

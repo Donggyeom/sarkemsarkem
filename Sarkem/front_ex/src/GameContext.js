@@ -241,6 +241,7 @@ const onSocketConnected = () => {
         case "PHASE_NIGHT":
             setphase("night");
             setThreatedTarget(false); // 저녁 되면 협박 풀림
+            setPsyTarget("");
             console.log(phase);
             navigate(`/${roomId}/night`)
             break;
@@ -315,7 +316,6 @@ const onSocketConnected = () => {
             break;
         case "PSYCHOANALYSIS_START":
           setPsyTarget(sysMessage.param.targetId);
-          console.log(psyTarget);
           break;
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`);
@@ -502,7 +502,7 @@ const onSocketConnected = () => {
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner, 
-      voteTargetId, deadIds, threatedTarget}}>
+      voteTargetId, deadIds, threatedTarget, psyTarget}}>
       {children}
     </GameContext.Provider>
   );
