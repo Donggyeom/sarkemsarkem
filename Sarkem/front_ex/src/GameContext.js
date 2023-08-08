@@ -237,10 +237,13 @@ const onSocketConnected = () => {
             break;
 
         case "TARGET_SELECTION":
-            // alert('투표가 시작됐습니다');
-            setStartVote(true);
-            setDayCount(sysMessage.param.day);
-            break;
+          // alert('투표가 시작됐습니다');
+          setStartVote(true);
+          
+          if (sysMessage.param.day !== null) {
+              setDayCount(sysMessage.param.day);
+          }
+          break;
 
         case "VOTE_SITUATION":
             console.log(sysMessage.param, "얘일걸");
