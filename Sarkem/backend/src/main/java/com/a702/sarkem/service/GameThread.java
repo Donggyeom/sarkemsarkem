@@ -313,7 +313,14 @@ public class GameThread extends Thread {
 		// 밤페이즈 됐다고 메시지 전송하면 프론트에서
 		// 삵 제외 화면, 카메라, 마이크, 오디오 끄기
 		// 탐정 오디오만 변조된 음성으로 켜기
-		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하겠지??
+		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하라고 해야함!!!
+		List<String> votePlayers = new ArrayList<>(); // 여기에 밤투표 대상 직업 넣자
+		for(RolePlayer rp: gameSession.getAlivePlayers()) {
+			if(!rp.getRole().equals(GameRole.CITIZEN) && !rp.getRole().equals(GameRole.DETECTIVE)) {
+				votePlayers.add(rp.getPlayerId());
+			}
+		}
+		gameManager.sendTargetSelectionMessages(roomId, votePlayers);
 	}
 
 	// 밤 투표 결과 종합
