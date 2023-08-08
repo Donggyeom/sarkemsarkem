@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
+import { useRoomContext } from '../../Context';
 
 const LeftSectionWrapper = styled.div`
   flex: 55%;
@@ -288,16 +289,18 @@ const CamCatWrapper = styled.div`
   : ''};
 `;
 
-const LobbyCamera = React.memo(({ camArray }) => {
-  const camCount = camArray.length;
+const LobbyCamera = React.memo(( {players} ) => {
+  const camCount = 1;
   const gridStyles = calculateGrid(camCount);
-
+  players.forEach((player, index) => {
+    console.log(player);
+  })
   return (
     <LeftSectionWrapper>
       <CamCatGrid style={gridStyles}>
-        {camArray.slice().reverse().map((user, index) => (
+        {players.forEach((user, index) => (
           <CamCatWrapper key={index} camcount={camCount} index={index}>
-            <CamCat props={camArray[index]} />
+            <CamCat props={user.stream} />
           </CamCatWrapper>
         ))}
       </CamCatGrid>

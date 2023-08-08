@@ -132,8 +132,7 @@ const ButtonContainer2 = styled.div`
 
 
 const CommonLobby = ()=>{
-  const { roomSession, player, setGameOption, gameOption, 
-    camArray, leaveSession, token } = useRoomContext();
+  const { roomSession, player, players, leaveSession } = useRoomContext();
   const { gameSession, setGameSession, getGameSession, handleGamePageClick, stompClient } = useGameContext();
 
   // const [ isLoaded, setIsLoaded ] = useState(false);
@@ -288,7 +287,7 @@ const CommonLobby = ()=>{
       {showNyangachiPopup && <ScPopup src={c_nyangachi} top="80%" left="50%" />}
       <BackButton/>
       <StyledContent>
-         <LobbyCamera camArray={camArray} />
+         <LobbyCamera players={players} />
         <RightSection>
           <DivWrapper
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}/>

@@ -10,9 +10,6 @@ const RoomProvider = ({ children }) => {
   const [roomSession, setRoomSession] = useState({});
   const [player, setPlayer] = useState({});
   const [players, setPlayers] = useState(new Map());
-  const [publisher, setPublisher] = useState(undefined);
-  const [subscribers, setSubscribers] = useState([]);
-  const [camArray, setCamArray] = useState([]);
 
   const OV = new OpenVidu();
   const navigate = useNavigate();
@@ -88,17 +85,9 @@ const RoomProvider = ({ children }) => {
       window.sessionStorage.removeItem("playerId");
       // 데이터 초기화
       // setSession(undefined);
-      setSubscribers([]);
-      setPublisher(undefined);
-      setCamArray([]);
+      setPlayers(new Map());
+      setPlayer({});
       navigate(`/${roomSession.roomId}`)
-  }
-
-
-  // 특정 유저가 룸을 떠날 시 subscribers 배열에서 삭제
-  const deleteSubscriber = (streamManager) => {
-    setSubscribers((preSubscribers) => preSubscribers.filter((subscriber) => subscriber !== streamManager))
-    setCamArray((prevCamArray) => prevCamArray.filter((user) => user !== streamManager));
   }
 
 
@@ -110,15 +99,15 @@ const RoomProvider = ({ children }) => {
     const newSession = OV.initSession();
 
     // 세션에서 발생하는 구체적인 이벤트 정의
-    // stream 생성 이벤트 발생 시 subscribers 배열에 추가
+    // stream 생성 이벤트 발생
     newSession.on('streamCreated', (event) => {
       const subscriber = newSession.subscribe(event.stream, undefined);
-      setCamArray((camArray) => [...camArray, subscriber]);
-      setSubscribers((subscribers) => [...subscribers, subscriber]);
-      console.log(`streamCreated subscriber`);
-      console.log(subscriber);
+      // setSubscribers((subscribers) => [...subscribers, subscriber]);
+      console.log(`streamCreated`);
+      // console.log(subscriber);
       const newPlayer = {
-        ...JSON.parse(event.stream.streamManager.stream.connection.data)
+        ...JSON.parse(event.stream.streamManager.stream.connection.data),
+        stream: subscriber,
       };
       setPlayers((prev) => {
         return new Map(prev).set(newPlayer.playerId, newPlayer);
@@ -129,9 +118,14 @@ const RoomProvider = ({ children }) => {
 
     // stream 종료 이벤트 발생 시
     newSession.on('streamDestroyed', (event) => {
-      console.log(`streamDestoryed - ${player.playerId}`);
-      deleteSubscriber(event.stream.streamManager);
-      console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickName, "님이 접속을 종료했습니다.")
+      const targetId = JSON.parse(event.stream.streamManager.stream.connection.data).playerId;
+      const targetNickname = JSON.parse(event.stream.streamManager.stream.connection.data).nickName;
+      setPlayers((prev) => {
+        const players = new Map(prev);
+        players.delete(targetId);
+        return players;
+      });
+      console.log(targetNickname, "님이 접속을 종료했습니다.");
     });
 
     newSession.on('sessionDisconnected', (event) => {
@@ -188,15 +182,12 @@ const RoomProvider = ({ children }) => {
       publisher.publishVideo(player.isCamOn);
       publisher.publishAudio(player.isMicOn);
       // 퍼블리셔 useState 갱신
-      setPublisher(publisher);
       setPlayer((prevState) => {
         return ({
           ...prevState,
           stream: publisher,
         });
       });
-      setCamArray((camArray) => [...camArray, publisher]);
-      console.log(publisher)
     }
     catch (error) {
       console.error(error);
@@ -253,8 +244,7 @@ const RoomProvider = ({ children }) => {
   // }
 
   return (
-    <RoomContext.Provider value={{ roomSession, setRoomSession, createGameRoom, getGameRoom, 
-      publisher, setPublisher, subscribers, setSubscribers, camArray, setCamArray,
+    <RoomContext.Provider value={{ roomSession, setRoomSession, createGameRoom, getGameRoom,
       OV, initSession, connectSession, leaveSession, getToken,  
       player, setPlayer, players, setPlayers }}>
       {children}

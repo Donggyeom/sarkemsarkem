@@ -91,7 +91,7 @@ const TextAboveWrapper = styled.div`
 
 
 const ResultPage = () => {
-  const { roomSession, setPublisher, setSubscribers, setCamArray } = useRoomContext(); 
+  const { roomSession, setPlayer, setPlayers, setCamArray } = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -102,9 +102,8 @@ const ResultPage = () => {
     if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
     
     // 데이터 초기화
-    // setSession(undefined);
-    setSubscribers([]);
-    setPublisher(undefined);
+    setPlayer({});
+    setPlayers(new Map());
     setCamArray([]);
     console.log("새로운 방 만들기")
     navigate(`/${createRandomId()}`);
@@ -117,8 +116,8 @@ const ResultPage = () => {
     
     // 데이터 초기화
     // setSession(undefined);
-    setSubscribers([]);
-    setPublisher(undefined);
+    setPlayer({});
+    setPlayers(new Map());
     setCamArray([]);
     console.log("홈으로 나가기")
     navigate('/');

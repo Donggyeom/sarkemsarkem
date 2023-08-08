@@ -3,6 +3,7 @@ import camcatImage from '../../img/camcat2.png';
 import OpenViduVideoComponent from './OvVideo';
 
 const CamCat = (props) => {
+  console.log(props);
   return (
     <div
       style={{
