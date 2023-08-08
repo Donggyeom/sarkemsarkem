@@ -535,7 +535,7 @@ const SunsetPage = () => {
    
   const { roomId, publisher, camArray, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   
-  const { myRole, startVote, agreeExpulsion, disagreeExpulsion, targetId } = useGameContext();
+  const { myRole, startVote, agreeExpulsion, disagreeExpulsion, targetId,dayCount } = useGameContext();
   const navigate = useNavigate();
   const location = useLocation();
   console.log(targetId, "확인합시다");
@@ -627,8 +627,7 @@ const SunsetPage = () => {
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
-      <SunsetPopup></SunsetPopup>
-      <SunsetPopup></SunsetPopup>
+      <SunsetPopup dayCount={dayCount}></SunsetPopup>
 
 {/* <CamCatGrid style={gridStyles}>
   {camArray.map((user, index) => {

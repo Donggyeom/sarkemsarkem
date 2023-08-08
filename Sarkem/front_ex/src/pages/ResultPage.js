@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Background from '../components/backgrounds/BackgroundSunset';
+import Background1 from '../components/backgrounds/BackgroundSunset';
+import Background2 from '../components/backgrounds/BackgroundNight';
 import ReButton from '../components/buttons/reButton';
 import ResultBox from '../components/games/ResultBox';
 import logoImage from '../img/logo.png';
@@ -116,7 +117,7 @@ const ResultPage = () => {
   };
 
   return (
-    <Background>
+    <Background1>
       <StyledSunsetPage>
         <ResultBox> </ResultBox>
         <ButtonContainer>
@@ -129,22 +130,22 @@ const ResultPage = () => {
           <thead>
             <tr>
               <TableHeader>승리여부</TableHeader>
-              <TableHeader>플레이어 ID</TableHeader>
-              <TableHeader>역할</TableHeader>
+              <TableHeader>플레이어</TableHeader>
+              <TableHeader>직업</TableHeader>
             </tr>
           </thead>
           <tbody>
             {roleAssignedArray.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0}>
                 <TableCell>승리여부</TableCell>
-                <TableCell>{playerRole.playerId}</TableCell>
-                <TableCell>{playerRole.role}</TableCell>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
               </TableRow>
             ))}
           </tbody>
         </Table>
       </StyledSunsetPage>
-    </Background>
+    </Background1>
   );
 };
 
