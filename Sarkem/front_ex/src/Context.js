@@ -46,6 +46,7 @@ const RoomProvider = ({ children }) => {
     // }, [roomSession.gameId]);
 
     useEffect(() => {
+      console.log(`player 변경`,  player);
       if (player.playerId == undefined) return;
 
       console.log('player 변경');
@@ -54,6 +55,10 @@ const RoomProvider = ({ children }) => {
         return new Map(prev).set(player.playerId, player);
       });
       console.log(players);
+      // 세션 스토리지에 playerId, roomId 저장
+    window.sessionStorage.setItem("playerId", player.playerId);
+    window.sessionStorage.setItem("roomId", roomSession.roomId);
+    console.log("세션스토리지에 저장합니다.")
     }, [player]);
 
     useEffect(() => {
@@ -90,16 +95,19 @@ const RoomProvider = ({ children }) => {
 
 
     // 세션 해제
-    const leaveSession = () => {
+    const leaveSession = async () => {
         console.log("세션 해제중입니다.....")
         // 세션 연결 종료
-        if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
-        
+        if (roomSession.openviduSession) await roomSession.openviduSession.disconnect();
+        // game 퇴장 요청
+        const response = await axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`)
         // 데이터 초기화
-        // setSession(undefined);
         setSubscribers([]);
         setPublisher(undefined);
         setCamArray([]);
+        // 세션 스토리지에 저장된 데이터 삭제
+        window.sessionStorage.removeItem("roomId");
+        window.sessionStorage.removeItem("playerId");
         navigate(`/${roomId}`)
     }
 
@@ -113,6 +121,7 @@ const RoomProvider = ({ children }) => {
   const initSession = async () => {
     console.log(`initSession`);
     // openvidu 세션 시작
+
     const newSession = OV.initSession();
     
 
@@ -138,15 +147,20 @@ const RoomProvider = ({ children }) => {
       setPlayers((prev) => {
         return new Map(prev).set(playerId, newPlayer);
       });
-      
       console.log(nickName, "님이 접속했습니다.");
     });
 
     // stream 종료 이벤트 발생 시
     newSession.on('streamDestroyed', (event) => {
+      console.log(`streamDestoryed - ${player.playerId}`);
       deleteSubscriber(event.stream.streamManager);
       console.log(JSON.parse(event.stream.streamManager.stream.connection.data).nickName, "님이 접속을 종료했습니다.")
     });
+
+    newSession.on('sessionDisconnected', (event) => {
+      console.log("openvidu 세션 연결이 끊겼습니다.");
+      leaveSession();
+    })
 
     // stream 예외 이벤트 발생 시 에러 출력
     newSession.on('exception', (e) => console.warn(e));
@@ -160,6 +174,7 @@ const RoomProvider = ({ children }) => {
         openviduSession: newSession,
       });
     });
+
     return newSession;
   }
 

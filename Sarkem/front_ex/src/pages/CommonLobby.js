@@ -133,15 +133,15 @@ const ButtonContainer2 = styled.div`
 const CommonLobby = ()=>{
   const {roomSession, getGameSession, player, setGameOption, gameOption, 
     camArray, leaveSession, token } = useRoomContext();
-  const {handleGamePageClick, stompClient} = useGameContext();
+  const {handleGamePageClick, stompClient } = useGameContext();
 
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
 
-    window.history.pushState(null, "", location.href);
-    window.addEventListener("popstate", () => leaveSession());
+    // window.history.pushState(null, "", location.href);
+    // window.addEventListener("popstate", () => leaveSession());
 
 
     if (location.pathname.slice(1) === ""){

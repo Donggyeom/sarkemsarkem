@@ -101,16 +101,16 @@ const NightPage = () => {
           navigate("/");
           return;
         }
-        window.history.pushState(null, "", location.href);
-        window.addEventListener("popstate", () => window.history.pushState(null, "", location.href));
-        window.addEventListener('beforeunload', (event) => {
-          // 표준에 따라 기본 동작 방지
-          event.preventDefault();
-          // Chrome에서는 returnValue 설정이 필요함
-          event.returnValue = '';
-        });
+        // 윈도우 객체에 화면 종료 이벤트 추가
+        window.addEventListener('beforeunload', onbeforeunload);
+        return () => {
+            window.removeEventListener('beforeunload', onbeforeunload);
+        }
       }, [])
-
+    // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
+    const onbeforeunload = (event) => {
+      leaveSession();
+    }
 
     return (   
     <Background>
