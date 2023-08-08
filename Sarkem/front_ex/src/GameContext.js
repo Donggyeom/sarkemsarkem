@@ -294,6 +294,7 @@ const onSocketConnected = () => {
 
         case "JOB_DISCLOSE":
           const disclosedRoles = sysMessage.param;
+          console.log(sysMessage.param);
           const newRoleAssignedArray = [];
         
           for (const playerId in disclosedRoles) {
