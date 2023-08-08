@@ -61,10 +61,20 @@ const DayPage = () => {
   
   useEffect(() => {
     daystatus();
+    threated();
   },[])
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
 
+
+  const threated = () =>{
+    console.log(threatedTarget);
+    if(threatedTarget){
+      publisher.publishAudio(false);
+      // publisher.publishVideo(false);
+    }
+
+  }
 
   const handleCamButtonClick = () => {
     const camOn = !isCamOn;
