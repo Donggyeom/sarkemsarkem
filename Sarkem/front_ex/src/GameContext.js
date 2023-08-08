@@ -57,7 +57,7 @@ const GameProvider = ({ children }) => {
     const [selectedTarget, setSelectedTarget] = useState("");
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
-    const [threatedTarget, setThreatedTarget] = useState("");
+    const [threatedTarget, setThreatedTarget] = useState(false);
     
     // twilight 투표 설정 위한 타겟id
     const [targetId, setTargetId] = useState("");
@@ -231,7 +231,7 @@ const onSocketConnected = () => {
 
         case "PHASE_TWILIGHT":
             navigate(`/${roomId}/sunset`)
-            setThreatedTarget(); // 저녁 되면 협박 풀림
+            setThreatedTarget(false); // 저녁 되면 협박 풀림
             break;
 
         case "PHASE_NIGHT":
@@ -303,11 +303,12 @@ const onSocketConnected = () => {
           }
           break;
 
-        // case "BE_THREATENED":
-        //     alert("냥아치 협박 시작!", sysMessage.playerId);
-        //     setThreatedTarget(sysMessage.playerId);
-        //     setIsMicOn(false);
-        //     break;
+        case "BE_THREATED":
+            // alert("냥아치 협박 시작!", sysMessage.playerId);
+            setThreatedTarget(true);
+            console.log(threatedTarget);
+            // setIsMicOn(false);
+            break;
 
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`);
@@ -342,7 +343,7 @@ const onSocketConnected = () => {
     }
             
       }
-
+      //여기는 모두에게 보내는거
       else{
         
         // 역할 저장을 위해 넣었음 //
@@ -490,7 +491,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner}}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner     , threatedTarget}}>
       {children}
     </GameContext.Provider>
   );
