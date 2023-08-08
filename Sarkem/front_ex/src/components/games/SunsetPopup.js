@@ -43,7 +43,7 @@ const StyledPopupTitle = styled.div`
 `;
 
 
-const SunsetPopup = () => {
+const SunsetPopup = ({dayCount}) => {
   const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const SunsetPopup = () => {
   }, []);
 
   return (
-    <StyledPopupContainer showPopup={showPopup}>
+    <StyledPopupContainer showPopup={showPopup} >
       {/* Your popup content */}
       <div
         style={{
@@ -87,11 +87,11 @@ const SunsetPopup = () => {
             right: '110px',
           }}
         >
-          N일차 저녁
+          {dayCount}일차 저녁
         </div>
       </div>
 
-      <StyledPopupTitle>얘를 살려 말어?</StyledPopupTitle>
+      <StyledPopupTitle>추방하려면 찬성, 함께하려면 반대를 선택하세요.</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Background from '../components/backgrounds/BackgroundSunset';
+import Background1 from '../components/backgrounds/BackgroundSunset';
+import Background2 from '../components/backgrounds/BackgroundNight';
 import ReButton from '../components/buttons/reButton';
 import ResultBox from '../components/games/ResultBox';
 import logoImage from '../img/logo.png';
@@ -116,7 +117,7 @@ const ResultPage = () => {
   };
 
   return (
-    <Background>
+    <Background1>
       <StyledSunsetPage>
         <ResultBox> </ResultBox>
         <ButtonContainer>
@@ -144,7 +145,7 @@ const ResultPage = () => {
           </tbody>
         </Table>
       </StyledSunsetPage>
-    </Background>
+    </Background1>
   );
 };
 
