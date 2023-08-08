@@ -476,7 +476,7 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContex, voteTargetIdt}}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId}}>
       {children}
     </GameContext.Provider>
   );
