@@ -50,8 +50,14 @@ const GameProvider = ({ children }) => {
     const [expulsionTarget, setExpulsionTarget] = useState("");
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState("");
+    
+    // twilight 투표 설정 위한 타겟id
     const [targetId, setTargetId] = useState("");
     const [roleAssignedArray, setRoleAssignedArray] = useState([]);
+
+    // 낮 투표 타겟 저장 위한 타겟
+    const [voteTargetId, setVoteTargetId] = useState("");
+
 
     const [phase, setphase] = useState("");
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
@@ -172,7 +178,6 @@ const onSocketConnected = () => {
         console.log(token, sysMessage.playerId);
 
 
-
         // if (token != sysMessage.playerId) return;
         if (token === sysMessage.playerId) {
 
@@ -241,6 +246,7 @@ const onSocketConnected = () => {
         case "VOTE_SITUATION":
             console.log(sysMessage.param, "얘일걸");
             setVotesituation(sysMessage.param);
+            setVoteTargetId("");
             alert(voteSituation , "투표결과");
             break;
 
@@ -350,8 +356,10 @@ const onSocketConnected = () => {
   
   // 대상 확정
   const selectConfirm = () => {
+      setVoteTargetId(selectedTarget);
       console.log(selectedTarget + " 플레이어 선택 ");
       console.log(selectedTarget.nickname)
+      console.log(voteTargetId, "여기에요");
       if (stompClient.current.connected && token !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
@@ -364,6 +372,8 @@ const onSocketConnected = () => {
               }));
       }
   };
+
+
   
   // 추방 투표 동의
   const agreeExpulsion = () => {
@@ -439,7 +449,8 @@ const onSocketConnected = () => {
   return (
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias}}>
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias,
+      voteTargetId}}>
       {children}
     </GameContext.Provider>
   );

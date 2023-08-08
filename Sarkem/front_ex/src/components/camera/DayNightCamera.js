@@ -238,7 +238,8 @@ const DayNightCamera = React.memo(({ camArray }) => {
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
-  const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias} = useGameContext();
+  const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, 
+    playersRoles, myRole, phase, mafias, setMafias, voteTargetId} = useGameContext();
 
 
   useEffect(() => {
@@ -262,11 +263,12 @@ const DayNightCamera = React.memo(({ camArray }) => {
 
   const getVoteResultForUser = (userToken) => {
     if (voteSituation && voteSituation[userToken] !== undefined) {
-      return `${userToken}: ${voteSituation[userToken]}표`;
+      return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
     }
     return `${userToken}: 0표`;
   };
 
+  console.log(voteTargetId, "여기에요2");
 
 
   const handleCamClick = (user) => {
@@ -290,6 +292,8 @@ const DayNightCamera = React.memo(({ camArray }) => {
       selectConfirm();
     }
   };
+
+  
 
   const handleSkipClick = () => {
     if (!isConfirmed && !isSkipped && startVote) {
