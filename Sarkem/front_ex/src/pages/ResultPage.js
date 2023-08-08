@@ -11,6 +11,7 @@ import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import createRandomId from '../utils';
 
+
 const StyledSunsetPage = styled.div`
   display: flex;
   position: relative;
@@ -57,29 +58,29 @@ const Table = styled.table`
   width: 70%;
   max-height: 62%;
   overflow-x: auto;
-  border-collapse: collapse;
+  border-collapse: separate; /* Use separate border-collapse for spacing */
   text-align: center;
   z-index: 1;
-  margin: 0 auto; /* 가로 중앙 정렬 */
-  margin-left: -63%; /* 왼쪽으로 이동 */
-  margin-top: -10%; /* 상단으로 이동 */
-`;
-
-const TableHeader = styled.th`
-  font-size: 35px; /* Adjust the font size as needed */
-  background-color: #f2f2f2;
-  padding: 10px;
-`;
-
-const TableRow = styled.tr`
-  background-color: ${(props) => (props.even ? '#f2f2f2' : 'white')};
-  
+  margin: 0 auto;
+  margin-left: -63%;
+  margin-top: -10%;
 `;
 
 const TableCell = styled.td`
   font-size: 20px; /* Adjust the font size as needed */
   padding: 10px;
 `;
+
+const WinRoundedTableRow = styled.tr`
+  background-color: #f2f2f2 ;
+  border-radius: 10px;
+`;
+
+const LoseRoundedTableRow = styled.tr`
+  background-color: gray;
+  border-radius: 10px;
+`;
+
 
 const ResultPage = () => {
   const {
@@ -132,26 +133,19 @@ const ResultPage = () => {
             <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
           </ButtonContainer>
           <Title> 냥냥이팀 승리!</Title>
-          <Table>
-          <thead>
-            <tr>
-              <TableHeader>Player</TableHeader>
-              <TableHeader>Job</TableHeader>
-            </tr>
-          </thead>
+          <Table >
           <tbody>
             {nonSarkPlayers.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
+              <WinRoundedTableRow key={index} even={index % 2 === 0}>
                 <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{playerRole.job}</TableCell>
-              </TableRow>
+              </WinRoundedTableRow>
             ))}
-                <hr></hr>
             {sarkPlayers.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
+              <LoseRoundedTableRow key={index} even={index % 2 === 0}>
                 <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{playerRole.job}</TableCell>
-              </TableRow>
+              </LoseRoundedTableRow>
             ))}
           </tbody>
         </Table>
@@ -168,27 +162,21 @@ const ResultPage = () => {
         </ButtonContainer>
         <Title> 삵팀 승리!</Title>
         <Table>
-          <thead>
-            <tr>
-              <TableHeader>Player</TableHeader>
-              <TableHeader>Job</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {sarkPlayers.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
-                <TableCell>{playerRole.nickname}</TableCell>
-                <TableCell>{playerRole.job}</TableCell>
-              </TableRow>
-            ))}
-            {nonSarkPlayers.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
-                <TableCell>{playerRole.nickname}</TableCell>
-                <TableCell>{playerRole.job}</TableCell>
-              </TableRow>
-            ))}
-          </tbody>
-        </Table>
+        <tbody>
+          {sarkPlayers.map((playerRole, index) => (
+            <WinRoundedTableRow key={index} even={index % 2 === 0}>
+              <TableCell>{playerRole.nickname}</TableCell>
+              <TableCell>{playerRole.job}</TableCell>
+            </WinRoundedTableRow>
+          ))}
+          {nonSarkPlayers.map((playerRole, index) => (
+            <LoseRoundedTableRow key={index} even={index % 2 === 0}>
+              <TableCell>{playerRole.nickname}</TableCell>
+              <TableCell>{playerRole.job}</TableCell>
+            </LoseRoundedTableRow>
+          ))}
+        </tbody>
+      </Table>
 
         </StyledSunsetPage>
       </Background2>
