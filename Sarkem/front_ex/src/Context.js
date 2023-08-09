@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { OpenVidu } from 'openvidu-browser';
@@ -17,8 +17,7 @@ const RoomProvider = ({ children }) => {
     const [isMicOn, setIsMicOn] = useState(true);
     const [isCamOn, setIsCamOn] = useState(true);
     const [showImage, setShowImage] = useState(false);
-
-    const OV = new OpenVidu();
+    const OV = useRef();
     const navigate = useNavigate();
 
 
@@ -52,8 +51,9 @@ const RoomProvider = ({ children }) => {
 
     // Openvidu 세션 생성 및 이벤트 정보 등록
   const joinSession = async () => {
+    OV.current = new OpenVidu();
     // openvidu 세션 시작
-    const newSession = OV.initSession();
+    const newSession = OV.current.initSession();
     
 
     // 세션에서 발생하는 구체적인 이벤트 정의
@@ -92,7 +92,7 @@ const RoomProvider = ({ children }) => {
           await session.connect(response, {nickname: nickName, token : token});
 
           // 내 퍼블리셔 객체 생성
-          let publisher = await OV.initPublisherAsync(undefined, {
+          let publisher = await OV.current.initPublisherAsync(undefined, {
             audioSource: undefined,
               videoSource: undefined,
               publishAudio: isMicOn,
