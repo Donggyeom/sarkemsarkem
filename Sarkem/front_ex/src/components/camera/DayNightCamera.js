@@ -16,6 +16,7 @@ const Votefoot = styled.img`
 `;
 
 const CamCatGrid = styled.div`
+    // overflow : hidden;
     position : absolute;
     display: grid;
     align-items: center;
@@ -84,7 +85,9 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width: '60%',
+      width: '59%',
+      gridRowGap : '5%',
+      gridColumnGap : '5%'
     };
   } else if (camCount === 4) {
     return {
@@ -154,7 +157,7 @@ const CamCatWrapper = styled.div`
       camCount === 3 && index === 1
         ? `
     position: relative;
-    top : 100%;
+    top : 110.5%;
   `
         :
         camCount === 3 && index === 2
