@@ -204,10 +204,11 @@ const CommonStart = ({onClick} ) => {
               autoPlay
               style={{
                 marginTop: "25%",
-                width: '100%',
+                width: '96%',
                 height: '100%',
                 objectFit: 'cover',
                 borderRadius: '10%',
+                borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434'
 
               }}
             />

@@ -106,7 +106,7 @@ return (
       height: '100%',
     }}
   >
-    <div className="streamcomponent" style={{ flex: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434', backgroundColor:'white' }}>
+    <div className="streamcomponent" style={{ flex: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434', backgroundColor:'white',}}>
       <div style={{ flex: 0.6 }}>
         <OpenViduVideoComponent streamManager={props.props} />
       </div>
