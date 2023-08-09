@@ -31,11 +31,9 @@ const StyledContent = styled.div`
 `;
 
 const CamCatGrid = styled.div`
-  // position : absolute;
   display: grid;
-  // align-items: center;
   justify-items: center;
-  // overflow: hidden;
+  margin-bottom : 2%;
   ${({ style }) =>
     style && `
     width: ${style.width};
@@ -64,7 +62,8 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
       width: '100%',
-      left: '2%',
+      left: '4%',
+      marginTop : '5%',
     };
   } else if (camCount === 4) {
     return {
@@ -129,20 +128,21 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 70%;
-    top : 22.5%;
+    // top : 22.5%;
   `
   :
   camCount === 3 && index === 1
   ? `
     position: relative;
     width : 150%;
+    margin-left : 7.5%; 
   `
   :
   camCount === 3 && index === 2
   ? `
     position: relative;
     width : 70%;
-    top : 22.5%;
+    // top : 22.5%;
   `
   :
   camCount === 4 && index === 0
@@ -654,18 +654,46 @@ const SunsetPage = () => {
 
     if (targetIndex === null) {
       if (camCount === 3) {
-        // 이미 배정된 인덱스 제외 후 작은 숫자부터 배정
         const availableIndices = [0, 2].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); // 작은 숫자부터 배정
+        positionIndex = Math.min(...availableIndices); 
+
+      } else if (camCount === 4) {
+        const availableIndices = [0, 1, 3].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
         assignedIndices.push(positionIndex);
-      } else if (camCount >= 4 && camCount <= 6) {
-        // 이미 배정된 인덱스 제외 후 작은 숫자부터 배정
+
+      }  else if (camCount === 5) {
         const availableIndices = [0, 1, 3, 4].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); // 작은 숫자부터 배정
+        positionIndex = Math.min(...availableIndices); 
         assignedIndices.push(positionIndex);
-      }
+
+      } else if (camCount === 6) {
+        const availableIndices = [0, 1, 3, 4, 5].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
+
+      } else if (camCount === 7) {
+        const availableIndices = [0, 1, 2, 4, 5, 6].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
+
+      } else if (camCount === 8) {
+        const availableIndices = [0, 1, 2, 3, 4, 5, 7].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
+
+      } else if (camCount === 9) {
+        const availableIndices = [0, 1, 2, 3, 4, 5, 6, 7].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
+
+      } else if (camCount === 10) {
+        const availableIndices = [0, 1, 2, 3, 4, 5, 6, 7, 9].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
+    }
     } else {
-      positionIndex = targetIndex; // 이미 배정된 경우에는 해당 인덱스 사용
+      positionIndex = targetIndex; 
       assignedIndices.push(positionIndex);
     }
 

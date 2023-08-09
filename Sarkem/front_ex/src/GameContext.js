@@ -240,9 +240,9 @@ const onSocketConnected = () => {
             break;
 
         case "PHASE_TWILIGHT":
-            navigate(`/${roomId}/sunset`)
-            setThreatedTarget(false); // 저녁 되면 협박 풀림
-            setHiddenMission(false); //저녁되면 마피아 미션 끝
+            navigate(`/${roomId}/sunset`);
+            setThreatedTarget(false);
+            setHiddenMission(false);
             break;
 
         case "PHASE_NIGHT":

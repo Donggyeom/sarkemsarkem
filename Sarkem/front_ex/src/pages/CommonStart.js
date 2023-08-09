@@ -39,6 +39,8 @@ const LeftSection = styled.div`
   flex: 4;
   display: flex;
   justify-content: center;
+  margin-left : 2.5%;
+  // margin-top : 1%;
 `;
 
 const RightSection = styled.div`
@@ -219,10 +221,10 @@ const CommonStart = ({onClick} ) => {
               style={{
                 position: 'absolute',
                 top: '35%',
-                left: '50%',
+                left: '50.5%',
                 transform: 'translate(-50%, -50%)', // Center the image
-                width: '102%', // Adjust the size of the image as needed
-                height: '45%',
+                width: '102.5%', // Adjust the size of the image as needed
+                height: '32%',
                 zIndex: 1, // Ensure the image is above the video (z-index: 0 by default)
               }}
             />
