@@ -11,6 +11,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
+import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.gameroom.GameRoom;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
@@ -217,7 +218,7 @@ public class GameThread extends Thread {
 			// 히든미션 발생했으면 하라고 메시지 보내기
 			if (gameSession.isBHiddenMissionStatus()) {
 				Random rnd = new Random();
-				int num = rnd.nextInt(5);
+				int num = rnd.nextInt(6);
 				HashMap<String, Integer> hMissionIdx = new HashMap<>();
 				hMissionIdx.put("missionIdx", num);
 				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK), hMissionIdx);
@@ -401,7 +402,16 @@ public class GameThread extends Thread {
 	private boolean isPlayersVoteEnded() throws InterruptedException {
 		List<RolePlayer> players = gameSession.getPlayers();
 		int confirmCnt = 0;
+		int time = gameSession.getMeetingTime();
+		int idx = 0;
+		HashMap<String, Integer> remainTime = new HashMap<>();
+		// TODO: 남은 시간 쏘는 곳 작성 중....
 		while (true) {
+			idx++;
+			if(idx%2==0) {
+				remainTime.put("time", time--);
+				gameManager.sendRemainTime(roomId, null);
+			}
 			confirmCnt = 0;
 			for (RolePlayer p : players) {
 				if (p.isTargetConfirmed())
