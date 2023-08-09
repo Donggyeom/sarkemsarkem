@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import CamCat from './camcat';
 
 const LeftSectionWrapper = styled.div`
+  // margin-left : 2%;
   flex: 55%;
   display: flex;
   flex-direction: column;

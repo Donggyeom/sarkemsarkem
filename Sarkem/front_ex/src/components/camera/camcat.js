@@ -39,58 +39,96 @@ const CamCat = (props) => {
   };
 
 
-  return (
-    <div
-      style={{
-        position: 'relative',
-        overflow: 'visible', // 변경: streamcomponent 영역을 벗어난 부분도 보이게 함
-        display: 'flex',
-        justifyContent: 'center',
-        backgroundRepeat: 'no-repeat',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        height: '100%',
-      }}
-    >
+//   return (
+//     <div
+//       style={{
+//         position: 'relative',
+//         overflow: 'visible', // 변경: streamcomponent 영역을 벗어난 부분도 보이게 함
+//         display: 'flex',
+//         justifyContent: 'center',
+//         backgroundRepeat: 'no-repeat',
+//         flexDirection: 'column',
+//         alignItems: 'center',
+//         width: '100%',
+//         height: '100%',
+//       }}
+//     >
 
-      <div className="streamcomponent" style={{ flex: 'auto' }}>
-        <div style={{ flex: 0.6, justifyContent: 'center' }}>
+//       <div className="streamcomponent" style={{ flex: 'auto' }}>
+//         <div style={{ flex: 0.6, justifyContent: 'center' }}>
+//           <OpenViduVideoComponent streamManager={props.props} />
+//           {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
+//           <img
+//             src={camcatImage}
+//             alt="CamCat"
+//             style={{
+//               position: 'absolute',
+//               top: '-15%',
+//               left: '-1.5%',
+//               width: '96%',
+//               height: '40%',
+//               overflow: 'visible',
+//             }}
+//           />
+//           {/* {running && (
+//             <Box
+//               style={{
+//                 left: boxPosition.x,
+//                 top: boxPosition.y,
+//                 width: boxPosition.width,
+//                 height: boxPosition.height,
+//               }}
+//             />
+//           )} */}
+//         </div>
 
-          <OpenViduVideoComponent streamManager={props.props} />
-          {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
-          <img
-            src={camcatImage}
-            alt="CamCat"
-            style={{
-              position: 'absolute',
-              top: '-15%',
-              left: '-1.5%',
-              width: '96%',
-              height: '40%',
-              overflow: 'visible',
-            }}
-          />
-          {/* {running && (
-            <Box
-              style={{
-                left: boxPosition.x,
-                top: boxPosition.y,
-                width: boxPosition.width,
-                height: boxPosition.height,
-              }}
-            />
-          )} */}
-        </div>
+//         <div style={{ flex: 0.4, textAlign: 'center', width: '95%' }}>
+//           {JSON.parse(props.props.stream.connection.data).nickname}
+//         </div>
+//         {/* <button onClick={startFaceDetection}>심리학자 시작</button>
+//         <button onClick={stopFaceDetection}>심리학자 종료</button> */}
+//       </div>
+//     </div>
+//   );
+// };
 
-        <div style={{ flex: 0.4, textAlign: 'center', width: '95%' }}>
-          {JSON.parse(props.props.stream.connection.data).nickname}
-        </div>
-        {/* <button onClick={startFaceDetection}>심리학자 시작</button>
-        <button onClick={stopFaceDetection}>심리학자 종료</button> */}
+return (
+  <div
+    style={{
+      position: 'relative',
+      overflow: 'visible', // 변경: streamcomponent 영역을 벗어난 부분도 보이게 함
+      display: 'flex',
+      justifyContent: 'center',
+      backgroundRepeat: 'no-repeat',
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '90%',
+      height: '100%',
+    }}
+  >
+    <div className="streamcomponent" style={{ flex: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434',}}>
+      <div style={{ flex: 0.6 }}>
+        <OpenViduVideoComponent streamManager={props.props} />
+      </div>
+      {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
+      <img
+        src={camcatImage}
+        alt="CamCat"
+        style={{
+          position: 'absolute',
+          top: '-12%',
+          left: '-1.0%',
+          width: '101.5%',
+          height: '34%',
+          overflow: 'visible',
+        }}
+      />
+      <div style={{ flex: 0.4, textAlign: 'center', width: '100%' }}>
+        {JSON.parse(props.props.stream.connection.data).nickname}
       </div>
     </div>
-  );
-};
+  </div>
+);
+      }
 
 export default CamCat;
