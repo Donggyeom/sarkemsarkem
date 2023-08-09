@@ -325,9 +325,11 @@ const DayNightCamera = React.memo(({ players }) => {
   };
 
   const startHiddenMission = () => {
+    console.log("히든 미션을 시작합니다");
     predictWebcam();
   }
   const stopHiddenMission = () => {
+    console.log("히든 미션을 종료합니다.")
     stopPredicting();
   }
 

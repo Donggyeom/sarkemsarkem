@@ -65,6 +65,9 @@ const GameProvider = ({ children }) => {
     }
   }, [player.playerId]);
 
+  useEffect(() => {
+    console.log("GestureRecognizer 생성 완료");
+  }, [gestureRecognizer]);
   
   // 게임 옵션이 변경되면, callChangeOption 호출
   useEffect(()=> {
