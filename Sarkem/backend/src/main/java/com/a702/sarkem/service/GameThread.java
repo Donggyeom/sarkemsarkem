@@ -407,11 +407,11 @@ public class GameThread extends Thread {
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		// TODO: 남은 시간 쏘는 곳 작성 중....
 		while (true) {
-			idx++;
 			if(idx%2==0) {
 				remainTime.put("time", time--);
 				gameManager.sendRemainTime(roomId, null);
 			}
+			idx++;
 			confirmCnt = 0;
 			for (RolePlayer p : players) {
 				if (p.isTargetConfirmed())
