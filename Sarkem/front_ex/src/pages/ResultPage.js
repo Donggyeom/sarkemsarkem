@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Background1 from '../components/backgrounds/BackgroundSunset';
 import Background2 from '../components/backgrounds/BackgroundNight';
@@ -90,20 +90,54 @@ const ResultPage = () => {
     setSubscribers,
     setCamArray,
     session,
-    setSession,
+    setSession, roomId, isHost, camArray, leaveSession, token, setIsHost
   } = useRoomContext();
-  const { roleAssignedArray, winner } = useGameContext();
+  const { peopleCount, setPeopleCount, roleAssignedArray, winner, stompClient } = useGameContext();
   const navigate = useNavigate();
   console.log(roleAssignedArray);
+
+  const callChangeOption = () => {
+    if(stompClient.current.connected && token !== null) {
+      stompClient.current.send("/pub/game/action", {}, 
+          JSON.stringify({
+              code:'OPTION_CHANGE', 
+              roomId: roomId, 
+              playerId: token,
+              param: peopleCount
+          }))
+          console.log(peopleCount)
+  }
+  }
+
+  useEffect(() => {
+    if (!isHost) return;
+    callChangeOption();
+  }, [peopleCount]);
+  
+  const handlePeopleCountChange = () => {
+    if (!isHost) return;
+    if (stompClient.current.connect === undefined) return;
+  
+    const newPeopleCount = {};
+    for (const key in peopleCount) {
+      if (key==='meetingTime') newPeopleCount[key]=60;
+      else newPeopleCount[key] = 0;
+    }
+  
+    setPeopleCount(newPeopleCount);
+    console.log(peopleCount);
+  };
 
   const handleAgainButtonClick = () => {
     console.log("세션 해제중입니다.....");
     if (session) session.disconnect();
-
+    leaveSession();
     setSession(undefined);
     setSubscribers([]);
     setPublisher(undefined);
     setCamArray([]);
+    setIsHost(() => true);
+    handlePeopleCountChange();
     console.log("새로운 방 만들기");
     navigate(`/${createRandomId()}`, { state: { isHost: true } });
   };
@@ -111,7 +145,7 @@ const ResultPage = () => {
   const handleExitButtonClick = () => {
     console.log("세션 해제중입니다.....");
     if (session) session.disconnect();
-
+    leaveSession();
     setSession(undefined);
     setSubscribers([]);
     setPublisher(undefined);
