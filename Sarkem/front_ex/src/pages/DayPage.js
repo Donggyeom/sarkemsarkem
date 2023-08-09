@@ -44,21 +44,7 @@ const TimeSecond = styled.text`
 const DayPage = () => {
   const { roomId, publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn, } = useRoomContext();
   const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount, currentSysMessage, remainTime  } = useGameContext();
-  // const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
 
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     if (meetingTime > 0) {
-  //       setMeetingTime((prevTime) => prevTime - 1);
-  //     } else {
-  //       clearInterval(timer);
-  //     }
-  //   }, 1000); // 1초마다 실행
-  //   return () => {
-  //     clearInterval(timer);
-  //   };
-  // }, [meetingTime, roomId]);
-  
   useEffect(() => {
     daystatus();
     threated();
