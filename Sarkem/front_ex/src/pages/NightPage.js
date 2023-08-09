@@ -51,7 +51,7 @@ const NightPage = () => {
     session, setSession, token, setToken, OV, joinSession, connectSession, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   const navigate = useNavigate();
   const location = useLocation();
-  const { myRole, peopleCount, currentSysMessage, playersRoles , dayCount} = useGameContext();
+  const { myRole, peopleCount, currentSysMessage, playersRoles , dayCount, remainTime} = useGameContext();
   const [ mafiaButton, setMafiaButton ] = useState(true);
 
   const handleCamButtonClick = () => {
@@ -135,7 +135,7 @@ const NightPage = () => {
          {!isLogOn && <Log top="60%" left="26%" />}
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
-        <TimeSecond>60s</TimeSecond>
+        <TimeSecond>{remainTime}s</TimeSecond>
         {/* {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />} */}
         {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
         {/* {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>} */}
