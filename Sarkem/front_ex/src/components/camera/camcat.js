@@ -17,7 +17,8 @@ const CamCat = ({id}) => {
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const stream = players.get(id).stream;
+  const player = players.get(id);
+  const stream = player.stream;
 
   console.log(`CamCat`);
   console.log(players);
@@ -61,7 +62,7 @@ const CamCat = ({id}) => {
         <div style={{ flex: 0.6, justifyContent: 'center' }}>
           {/* {JSON.stringify(stream)}
           {console.log(typeof stream)} */}
-          <OpenViduVideoComponent streamManager={[stream]} />
+          <OpenViduVideoComponent streamManager={stream} />
           {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
           <img
             src={camcatImage}
@@ -88,7 +89,7 @@ const CamCat = ({id}) => {
         </div>
 
         <div style={{ flex: 0.4, textAlign: 'center', width: '95%' }}>
-          {stream}
+          {player.nickName}
         </div>
         {/* <button onClick={startFaceDetection}>심리학자 시작</button>
         <button onClick={stopFaceDetection}>심리학자 종료</button> */}
