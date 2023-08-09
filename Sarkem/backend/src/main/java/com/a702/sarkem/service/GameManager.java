@@ -506,8 +506,9 @@ public class GameManager {
 	public void sendSystemMessage(String roomId, String target, SystemCode code, Object param) {
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		SystemMessage systemMessage = new SystemMessage(code, roomId, target, param);
-		log.debug(systemMessage.toString());
-		gamePublisher.publish(gameTopic, systemMessage);
+		if(!systemMessage.equals(SystemCode.REMAIN_TIME)) {
+			log.debug(systemMessage.toString());
+		}
 	}
 
 	/**
