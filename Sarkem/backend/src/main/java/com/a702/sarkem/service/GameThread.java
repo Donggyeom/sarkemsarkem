@@ -218,7 +218,7 @@ public class GameThread extends Thread {
 			// 히든미션 발생했으면 하라고 메시지 보내기
 			if (gameSession.isBHiddenMissionStatus()) {
 				Random rnd = new Random();
-				int num = rnd.nextInt(5);
+				int num = rnd.nextInt(6);
 				HashMap<String, Integer> hMissionIdx = new HashMap<>();
 				hMissionIdx.put("missionIdx", num);
 				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK), hMissionIdx);
