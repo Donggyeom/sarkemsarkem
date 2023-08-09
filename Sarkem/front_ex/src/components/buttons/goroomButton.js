@@ -71,7 +71,7 @@ const GoroomButton = (props) => {
     setPlayers(players);
 
     // 게임 세션 갱신
-    const isEnterable = await getGameSession(roomId);
+    const isEnterable = await getGameSession(gameRoom.roomId);
     if (!isEnterable) {
       alert("이미 게임 중인 방입니다.");
       navigate("/");

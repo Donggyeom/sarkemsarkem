@@ -9,9 +9,7 @@ import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
 
-import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
@@ -67,13 +65,16 @@ const DayPage = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [meetingTime, roomId]);
+  }, [meetingTime]);
 
   const daystatus = () => {
     if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
       player.stream.publishVideo(true);
       player.stream.publishAudio(true);
     }
+  }
+  const handleVoteClick = () => {
+    setVoteCount((prevCount) => prevCount + 1);
   };
 
   const handleCamButtonClick = () => {
@@ -163,13 +164,14 @@ const DayPage = () => {
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
         {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
-          <DayNightCamera camArray={camArray}/>
+            <DayPopup></DayPopup>
+          <DayNightCamera players={players} />
           {getMyRole()}
         </StyledDayPage>
-        <TempButton url="/${roomId}/sunset" onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
+
           {chatVisible()}
-    </Background>
-  );
-};
+      </Background>
+      );
+  };
 
 export default DayPage;

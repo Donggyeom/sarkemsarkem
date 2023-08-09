@@ -86,6 +86,7 @@ const ResultPage = () => {
     setCamArray,
     session,
     setSession,
+    roomSession, setPlayer, setPlayers
   } = useRoomContext();
   const { roleAssignedArray } = useGameContext();
   const navigate = useNavigate();
@@ -95,23 +96,27 @@ const ResultPage = () => {
     console.log("세션 해제중입니다.....");
     if (session) session.disconnect();
 
-    setSession(undefined);
-    setSubscribers([]);
-    setPublisher(undefined);
-    setCamArray([]);
-    console.log("새로운 방 만들기");
-    navigate(`/${createRandomId()}`, { state: { isHost: true } });
+    console.log("세션 해제중입니다.....")
+    // 세션 연결 종료
+    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
+    
+    // 데이터 초기화
+    setPlayer({});
+    setPlayers(new Map());
+    console.log("새로운 방 만들기")
+    navigate(`/${createRandomId()}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
 
   const handleExitButtonClick = () => {
-    console.log("세션 해제중입니다.....");
-    if (session) session.disconnect();
-
-    setSession(undefined);
-    setSubscribers([]);
-    setPublisher(undefined);
-    setCamArray([]);
-    console.log("홈으로 나가기");
+    console.log("세션 해제중입니다.....")
+    // 세션 연결 종료
+    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
+    
+    // 데이터 초기화
+    // setSession(undefined);
+    setPlayer({});
+    setPlayers(new Map());
+    console.log("홈으로 나가기")
     navigate('/');
   };
 

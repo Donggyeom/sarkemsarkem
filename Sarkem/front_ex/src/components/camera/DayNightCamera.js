@@ -231,10 +231,20 @@ const CamCatWrapper = styled.div`
   `
                                   : ''};
   `;
+     
+const DayNightCamera = React.memo(({ players }) => {
+  const camCount = players.size;
+    const gridStyles = calculateGrid(camCount);
+    const [clickedCameras, setClickedCameras] = useState([]);
+    
+    const camArray = [];
 
-const DayNightCamera = React.memo(({ camArray }) => {
-  const camCount = camArray.length;
-  const gridStyles = calculateGrid(camCount);
+    players.forEach((player, index) => {
+      if (player.stream == undefined) return;
+
+      camArray.push(player.stream);
+    });
+
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
@@ -281,8 +291,6 @@ const DayNightCamera = React.memo(({ camArray }) => {
     }
     return `${userToken}: 0표`;
   };
-
-
 
   const handleCamClick = (user) => {
     console.log(voteSituation, "투표 결과 확인합니다");
@@ -407,10 +415,13 @@ const DayNightCamera = React.memo(({ camArray }) => {
           onClick={() => handleCamClick(user)}
         >
           <CamCat props={camArray[index]} user={user} />
+          {/* {clickedCameras.includes(index) && (
+              <Votefoot src={voteImage} alt="Vote" />
+            )} */}
           <VotefootWrapper show={clickedCamera === user && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
-          <div>{getVoteResultForUser(JSON.parse(user.stream.connection.data).token)}</div>
+          <div>{getVoteResultForUser(user.playerId)}</div>
         </CamCatWrapper>
       ))}
       <ButtonWrapper>

@@ -15,8 +15,7 @@ const GameProvider = ({ children }) => {
   const { roomSession, player, setPlayer, setPlayers } = useRoomContext();
   const [ gameSession, setGameSession ] = useState({});
   const [ myRole, setMyRole ] = useState(null);
-  // roomId : 방번호 , token : 플레이어아이디 
-  const {roomId, token, isHost, isMicOn, setIsMicOn, publisher, camArray} = useRoomContext();
+  // roomId : 방번호 , player.playerid : 플레이어아이디 
     // 현재 시스템 메시지를 저장할 상태 추가
   const [currentSysMessage, setCurrentSysMessage] = useState(null);
   const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
@@ -57,11 +56,12 @@ const GameProvider = ({ children }) => {
 
   useEffect(() => {
     console.log(`playerId : ${player.playerId}`);
-    if (player.playerId != undefined) {
+    if (player.playerId !== undefined) {
       connectGameWS();
       setPlayers((prev) => {
         return new Map([...prev, [player.playerId, player]]);
       });
+      loadGestureRecognizer();
     }
   }, [player.playerId]);
 
@@ -77,13 +77,6 @@ const GameProvider = ({ children }) => {
 
 
   ////////////   GameContext 함수   ////////////
-
-    useEffect(() => {
-        if (token !== null) {
-          connectGameWS();
-          loadGestureRecognizer();
-        }
-    }, [token]);
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
@@ -104,14 +97,14 @@ const GameProvider = ({ children }) => {
 
   // 게임룸 redis 구독
   const connectGame = () => {
-    console.log('/sub/game/system/' + roomSession.roomId + " redis 구독")
-    stompClient.current.subscribe('/sub/game/system/' + roomSession.roomId, receiveMessage)
+    console.log('/sub/game/system/' + window.sessionStorage.getItem("roomId") + " redis 구독")
+    stompClient.current.subscribe('/sub/game/system/' + window.sessionStorage.getItem("roomId"), receiveMessage)
   }
 
   // 채팅 연결할 때 //
   const connectChat = () => {
-    console.log('/sub/chat/room/' + roomId + " redis 구독")
-    stompClient.current.subscribe('/sub/chat/room/' + roomId, receiveChatMessage);
+    console.log('/sub/chat/room/' + window.sessionStorage.getItem("roomId") + " redis 구독")
+    stompClient.current.subscribe('/sub/chat/room/' + window.sessionStorage.getItem("roomId"), receiveChatMessage);
   };
 
   const receiveChatMessage = async (message) => {
@@ -125,25 +118,25 @@ const GameProvider = ({ children }) => {
   
   const sendChatPubMessage = (message) => {
     console.log("chat publish 들어감"); 
-    if (stompClient.current.connected && token !== null) {
+    if (stompClient.current.connected && player.playerId !== null) {
       console.log("stompclient 연결됨"); 
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'ENTER',
-        playerId:token, 
-        roomId: roomId,
+        playerId:player.playerId, 
+        roomId: roomSession.roomId,
         message: message
       }));
     }
   };
 
   const sendMessage = (message) => {
-    if (stompClient.current.connected && token !== null) {
+    if (stompClient.current.connected && player.playerId !== null) {
       console.log("Talk 타입 메시지 들간다"); 
       console.log("메시지: ", message); 
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'TALK', 
-        roomId: roomId,
-        playerId:token,
+        roomId: roomSession.roomId,
+        playerId:player.playerId,
         message: message
       }));
     }
@@ -152,15 +145,15 @@ const GameProvider = ({ children }) => {
 //   const sendMessage = async (e) => {
 //    console.log("메시지 보낸다");
 //    if (message === '') return;
-//    await stompClient.current.send('/pub/chat/room', {}, JSON.stringify({type:'TALK', roomId:roomId, playerId:token, message: message}))
+//    await stompClient.current.send('/pub/chat/room', {}, JSON.stringify({type:'TALK', roomId:roomId, playerId:player.playerid, message: message}))
 //    setMessage('');
 //  }
 
 
   // 게임 끝나거나 비활성화 할때 //
   const unconnectChat = () => {
-    console.log('/sub/chat/room/' + roomId + " redis 구독")
-    stompClient.current.unsubscribe('/sub/chat/room/' + roomId, receiveMessage)
+    console.log('/sub/chat/room/' + roomSession.roomId + " redis 구독")
+    stompClient.current.unsubscribe('/sub/chat/room/' + roomSession.roomId, receiveMessage)
   };
 
   const getGameSession = async (roomId) => {
@@ -211,7 +204,7 @@ const GameProvider = ({ children }) => {
 
 
 
-      // if (token != sysMessage.playerId) return;
+      // if (player.playerid != sysMessage.playerId) return;
       if (player.playerId === sysMessage.playerId) {
 
       switch (sysMessage.code) {
@@ -261,18 +254,18 @@ case "GAME_START":
 
       case "PHASE_DAY":
             setphase("day");
-            navigate(`/${roomId}/day`)
+            navigate(`/${roomSession.roomId}/day`)
           break;
 
       case "PHASE_TWILIGHT":
-          navigate(`/${roomId}/sunset`)
+          navigate(`/${roomSession.roomId}/sunset`)
           setThreatedTarget(); // 저녁 되면 협박 풀림
           break;
 
       case "PHASE_NIGHT":
           setphase("night");
           console.log(phase);
-          navigate(`/${roomId}/night`)
+          navigate(`/${roomSession.roomId}/night`)
           break;
 
       case "TARGET_SELECTION":
@@ -329,11 +322,16 @@ case "GAME_START":
       case "BE_THREATENED":
           alert("냥아치 협박 시작!", sysMessage.playerId);
           setThreatedTarget(sysMessage.playerId);
-          setIsMicOn(false);
+          setPlayer((prev) => {
+            return ({
+              ...prev,
+              isMicOn: false,
+            });
+          });
           break;
 
       case "PHASE_NIGHT":
-          navigate(`/${roomId}/night`);
+          navigate(`/${roomSession.roomId}/night`);
           break;
 
       case "CHANGE_HOST":
@@ -373,12 +371,12 @@ case "GAME_START":
           setSelectedTarget(target.playerId)
       }
       console.log("다른 플레이어 선택 " + target.playerId);
-      if (stompClient.current.connected && token !== null) {
+      if (stompClient.current.connected && player.playerid !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECT',
-                  roomId: roomId,
-                  playerId: token,
+                  roomId: roomSession.roomId,
+                  playerId: player.playerid,
                   param: {
                       target: target.playerId
                   }
@@ -390,12 +388,12 @@ case "GAME_START":
   const selectConfirm = () => {
       console.log(selectedTarget + " 플레이어 선택 ");
       console.log(selectedTarget.nickname)
-      if (stompClient.current.connected && token !== null) {
+      if (stompClient.current.connected && player.playerid !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
-                  roomId: roomId,
-                  playerId: token,
+                  roomId: roomSession.roomId,
+                  playerId: player.playerid,
                   param: {
                       // target: selectedTarget
                   }
@@ -408,8 +406,8 @@ case "GAME_START":
       stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
               code: 'EXPULSION_VOTE',
-              roomId: roomId, 
-              playerId: token,
+              roomId: roomSession.roomId, 
+              playerId: player.playerid,
               param: {
                   result: true
               }
@@ -422,8 +420,8 @@ case "GAME_START":
       stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
               code: 'EXPULSION_VOTE',
-              roomId: roomId, 
-              playerId: token,
+              roomId: roomSession.roomId, 
+              playerId: player.playerid,
               param: {
                   result: false
               }
@@ -455,7 +453,7 @@ case "GAME_START":
     // 
     const predictWebcam = async () => {
       if (gestureRecognizer) {
-        const videoElement = publisher.videos[1].video;
+        const videoElement = player.stream.videos[1].video;
         const nowInMs = Date.now();
         const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
   

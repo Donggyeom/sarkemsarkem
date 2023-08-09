@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
-import { useRoomContext } from '../../Context';
 
 const LeftSectionWrapper = styled.div`
   flex: 55%;
@@ -298,9 +297,8 @@ const LobbyCamera = React.memo(( {players} ) => {
     if (player.stream == undefined) return;
 
     camArray.push(player.stream);
-  })
-  console.log(camArray);
-  console.log(players);
+  });
+
   return (
     <LeftSectionWrapper>
       <CamCatGrid style={gridStyles}>

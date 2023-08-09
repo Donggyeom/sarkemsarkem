@@ -14,7 +14,7 @@ import TempButton from '../components/buttons/TempButton';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DayNightCamera from '../components/camera/DayNightCamera';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
@@ -46,11 +46,11 @@ const handleScMiniClick = () => {
 };
 
 const NightPage = () => {
-  const { player, setPlayer, roomId, camArray } = useRoomContext(); 
-  const navigate = useNavigate();
-  const location = useLocation();
   const { myRole, peopleCount, currentSysMessage, playersRoles , dayCount} = useGameContext();
   const [ mafiaButton, setMafiaButton ] = useState(true);
+  const { roomSession, player, setPlayer, players } = useRoomContext(); 
+  const navigate = useNavigate();
+  
 
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
@@ -115,11 +115,11 @@ const NightPage = () => {
   };
   
   
-  
-  useEffect(() => {
-    console.log(roomId);
-    nightstatus();
-        if (roomId === undefined){
+
+    useEffect(() => {
+        console.log(roomSession.roomId);
+        nightstatus();
+        if (roomSession.roomId === undefined){
           console.log("세션 정보가 없습니다.")
           navigate("/");
           return;
@@ -139,7 +139,7 @@ const NightPage = () => {
     <Background>
       <StyledNightPage>
          {!isLogOn && <Log top="60%" left="26%" />}
-        <DayNightCamera camArray={camArray}/>
+        <DayNightCamera players={players}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
         {/* {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />} */}
@@ -150,8 +150,7 @@ const NightPage = () => {
           {/* <NightPopup></NightPopup> */}
           {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={dayCount}/>}
         {getMyRole()}
-        <TempButton url="/${roomId}/result" onClick={() => navigate(`/${roomId}/result`)} />
-        {chatVisible()}
+        <ChatButtonAndPopup />
       </StyledNightPage>
         
     </Background>
