@@ -127,7 +127,7 @@ const NightPage = () => {
           event.returnValue = '';
         });
       }, [])
-      console.log(currentSysMessage);
+      // console.log(currentSysMessage);
 
     return (   
     <Background>

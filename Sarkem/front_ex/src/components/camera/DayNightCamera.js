@@ -239,15 +239,15 @@ const CamCatWrapper = styled.div`
   `
                                   : ''};
   `;
-  const DayNightCamera = React.memo(({ camArray }) => {
-    const camCount = camArray.length;
-    const gridStyles = calculateGrid(camCount);
-    const [clickedCamera, setClickedCamera] = useState(null);
-    const [isConfirmed, setIsConfirmed] = useState(false);
-    const [isSkipped, setIsSkipped] = useState(false);
-    const { publisher } = useRoomContext();
-    const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, deadIds} = useGameContext();
-    // const jungleRefs = useRef([]);
+const DayNightCamera = React.memo(({ camArray }) => {
+  const camCount = camArray.length;
+  const gridStyles = calculateGrid(camCount);
+  const [clickedCamera, setClickedCamera] = useState(null);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isSkipped, setIsSkipped] = useState(false);
+  const { publisher } = useRoomContext();
+  const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, deadIds, hiddenMission, setHiddenMission } = useGameContext();
+  // const jungleRefs = useRef([]);
 
   useEffect(() => {
     setIsConfirmed(false);
@@ -283,10 +283,10 @@ const CamCatWrapper = styled.div`
   const getVoteResultForUser = (userToken, phase) => {
     if (phase === "day") {
       if (voteSituation && voteSituation[userToken] !== undefined) {
-            return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
-          }
-          return `${userToken}: 0표`;
-          
+        return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
+      }
+      return `${userToken}: 0표`;
+
     } else if (phase === "night") {
       if (myRole === "SARK" || myRole === "OBSERVER") {
         if (voteSituation[userToken]) {
@@ -355,7 +355,15 @@ const CamCatWrapper = styled.div`
       selectConfirm();
     }
   };
-
+  useEffect(() => {
+    console.log("히든미션 바뀜");
+    if (hiddenMission) {
+      console.log("미션시작이요~~");
+      startHiddenMission();
+    }else{
+      stopHiddenMission();
+    }
+  }, [hiddenMission])
   const startHiddenMission = () => {
     predictWebcam();
   }
@@ -441,31 +449,31 @@ const CamCatWrapper = styled.div`
   };
 
 
-  
-  
+
+
   return (
-      <CamCatGrid style={gridStyles}>
-        {camArray
-          .filter((user) => {
-            const userToken = JSON.parse(user.stream.connection.data).token;
-            return !deadIds.includes(userToken);
-          })
-          .map((user, index) => (
-            <CamCatWrapper
-              key={index}
-              camCount={adjustedCamCount}
-              user={user}
-              index={index}
-              onClick={() => handleCamClick(user)}
-            >
-              <CamCat props={user} user={user} />
-              <VotefootWrapper show={clickedCamera === user && startVote}>
-                <VotefootImage src={voteImage} alt="Vote" />
-              </VotefootWrapper>
-              <div>{getVoteResultForUser(JSON.parse(user.stream.connection.data).token, phase)}</div>
-            </CamCatWrapper>
-          ))}
-        <ButtonWrapper>
+    <CamCatGrid style={gridStyles}>
+      {camArray
+        .filter((user) => {
+          const userToken = JSON.parse(user.stream.connection.data).token;
+          return !deadIds.includes(userToken);
+        })
+        .map((user, index) => (
+          <CamCatWrapper
+            key={index}
+            camCount={adjustedCamCount}
+            user={user}
+            index={index}
+            onClick={() => handleCamClick(user)}
+          >
+            <CamCat props={user} user={user} />
+            <VotefootWrapper show={clickedCamera === user && startVote}>
+              <VotefootImage src={voteImage} alt="Vote" />
+            </VotefootWrapper>
+            <div>{getVoteResultForUser(JSON.parse(user.stream.connection.data).token, phase)}</div>
+          </CamCatWrapper>
+        ))}
+      <ButtonWrapper>
         {dayCount === 1 && phase === "day" ? (
           <>
             {startVote && (
@@ -492,13 +500,13 @@ const CamCatWrapper = styled.div`
             )}
           </>
         )}
-        <ActionButton onClick={startHiddenMission}>
+        {/* <ActionButton onClick={startHiddenMission}>
           히든미션
         </ActionButton>
         <ActionButton onClick={stopHiddenMission}>
           미션 종료
-        </ActionButton>
-        <p>Detected Gesture: {detectedGesture}</p>
+        </ActionButton> */}
+        {/* <p>Detected Gesture: {detectedGesture}</p> */}
       </ButtonWrapper>
     </CamCatGrid>
   );

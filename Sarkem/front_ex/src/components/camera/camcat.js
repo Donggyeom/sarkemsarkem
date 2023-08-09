@@ -24,7 +24,7 @@ const CamCat = (props) => {
     loadModels();
     startFaceDetection();
   }, [psyTarget]);
-  console.log(JSON.parse(props.props.stream.connection.data).token);
+  // console.log(JSON.parse(props.props.stream.connection.data).token);
   //faceapi 실행
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
