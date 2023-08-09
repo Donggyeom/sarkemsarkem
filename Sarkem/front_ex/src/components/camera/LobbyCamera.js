@@ -3,17 +3,16 @@ import styled from 'styled-components';
 import CamCat from './camcat';
 
 const LeftSectionWrapper = styled.div`
-  // margin-left : 2%;
   flex: 55%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content : center;
   position: relative;
+  // overflow : hidden;
 `;
 
 const CamCatGrid = styled.div`
-// left : 1.5%;
 position : relative;
 display: grid;
 align-items: center;
@@ -46,9 +45,9 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width: '100%',
-      left : '2%',
+      left : '2.5%',
       bottom : '2%',
-      gridRowGap: '10%',
+      gridRowGap: '8%',
     };
   } else if (camCount === 4) {
     return {
@@ -56,7 +55,7 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr',
       width: '94%',
       gridRowGap: '6.5%',
-      left : '5%',
+      left : '4%',
       bottom : '1%',
     };
   } else if (camCount === 5) {
@@ -64,34 +63,45 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width: '90%',
+      gridRowGap : '4%',
+      bottom : '2%',
     };
   } else if (camCount === 6) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width: '65%',
-      height : '100%',
+      width: '70%',
+      left : '1.5%',
+      bottom : '3%',
+      gridRowGap: '4%',
+      gridColumnGap : '10%',
     };
   } else if (camCount === 7) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
+      top : '1.5%',
       width: '100%',
       height : '100%',
+      left : '1%'
     };
   } else if (camCount === 8) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
+      top : '1.5%',
       width: '100%',
       height : '100%',
+      left : '1%',
     };
   } else if (camCount === 9) {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
+      top : '1.5%',
       width: '100%',
       height : '100%',
+      left : '1%',
     };
   } else if (camCount === 10) {
     return {
@@ -118,7 +128,7 @@ const CamCatWrapper = styled.div`
   camCount === 3 && index === 1
   ? `
     position: relative;
-    top : 119%;
+    top : 116%;
   `
   :
   camCount === 5 && index === 0
@@ -132,7 +142,7 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 75%;
-    top : 100%;
+    top : 112%;
   `
   :
   camCount === 5 && index === 2
@@ -145,7 +155,7 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 75%;
-    top : 100%;
+    top : 112%;
   `
   :
   camCount === 5 && index === 4
