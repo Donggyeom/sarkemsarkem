@@ -32,28 +32,19 @@ const BigSepStyle = styled.svg`
   overflow: visible;
 `;
 
+const LineStyle = styled.div`
+  width: 112%; /* Set the desired width for your line */
+  height: 5px; /* Set the desired height for your line */
+  background-color: black; /* Color of the line */
+  margin-left: -6%;
+  margin-top: 5%;
+`
+
 const ResultBox = ({ ...props }) => {
-  const resultBoxWidth = 76; // Percentage width of ResultBoxStyle
-
-  // Calculate the path coordinates based on the percentage width
-  const pathStartX = (resultBoxWidth / 100) * -15;
-  const pathEndX = (resultBoxWidth / 100) * 50; // Adjust the value as needed
-
   return (
     <ResultBoxStyle {...props}>
-      <BigSepStyle
-        width={`${resultBoxWidth}%`}
-        height="104"
-        viewBox={`0 0 100 104`} /* Use a fixed viewBox width */
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d={`M${pathStartX} 40.334H${pathEndX}`}
-          stroke="black"
-          strokeWidth="5.15599"
-        />
-      </BigSepStyle>
+           <LineStyle></LineStyle>
+
     </ResultBoxStyle>
   );
 };

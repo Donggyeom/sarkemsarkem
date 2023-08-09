@@ -5,11 +5,6 @@ import { loadModels, faceMyDetect, stopFace } from '../job/Psychologist';
 import styled from 'styled-components';
 import { useGameContext } from '../../GameContext';
 
-const Box = styled.div
-  `
-  position: absolute;
-  border: 2px solid red;
-`;
 
 
 const CamCat = (props) => {
@@ -22,7 +17,12 @@ const CamCat = (props) => {
   // console.log(props.props.videos[1].video);
   useEffect(() => {
     loadModels();
+    console.log(psyTarget==="");
+    if(psyTarget===""){
+      stopFaceDetection();
+    }else{
     startFaceDetection();
+    }
   }, [psyTarget]);
   // console.log(JSON.parse(props.props.stream.connection.data).token);
   //faceapi 실행

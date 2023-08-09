@@ -368,7 +368,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
     }
   };
   useEffect(() => {
-    console.log("히든미션 바뀜");
+    console.log("히든미션 바뀜", hiddenMission);
     if (hiddenMission) {
       console.log("미션시작이요~~");
       startHiddenMission();

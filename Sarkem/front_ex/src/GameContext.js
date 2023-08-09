@@ -192,8 +192,8 @@ const onSocketConnected = () => {
     const receiveMessage = async (message) => {
         // 시스템 메시지 처리
         let sysMessage = JSON.parse(message.body);
-        console.log(sysMessage);
-        console.log(token, sysMessage.playerId);
+        // console.log(sysMessage);
+        // console.log(token, sysMessage.playerId);
 
 
         // if (token != sysMessage.playerId) return;
@@ -342,7 +342,7 @@ const onSocketConnected = () => {
             break;
         case "REMAIN_TIME":
             setRemainTime(sysMessage.param.time);
-            console.log("남은 시간: ",sysMessage.param.time);
+            // console.log("남은 시간: ",sysMessage.param.time);
             break;
 
             case "JOB_DISCLOSE":
@@ -517,15 +517,18 @@ const onSocketConnected = () => {
     };
 
     useEffect(()=>{
-      console.log(gestureRecognizer);
+      console.log("제스쳐생성");
     },[gestureRecognizer])
     // 
     const predictWebcam = async () => {
       if (gestureRecognizer) {
         const videoElement = publisher.videos[1].video;
         // console.log(videoElement);
+        console.log("실행은 되는거니 친구야");
         const nowInMs = Date.now();
         const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
+        console.log(gestureRecognizer);
+        console.log(results);
         if (results.gestures.length > 0) {
           console.log(results.gestures);
           const detectedGestureName = results.gestures[0][0].categoryName;

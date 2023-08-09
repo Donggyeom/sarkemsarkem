@@ -136,10 +136,10 @@ const NightPage = () => {
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{remainTime}s</TimeSecond>
-        {/* {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />} */}
-        {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
-        {/* {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>} */}
-        {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
+        {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
+        {/* {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />} */}
+        {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
+        {/* {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>} */}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           {/* <NightPopup></NightPopup> */}
           {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={dayCount}/>}

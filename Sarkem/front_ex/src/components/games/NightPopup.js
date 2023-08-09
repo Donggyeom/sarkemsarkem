@@ -57,7 +57,18 @@ const NightPopup = ({sysMessage, dayCount}) => {
     return () => clearTimeout(fadeOutTimeout);
   }
   }, [sysMessage]);
-  // console.log(sysMessage);
+
+  const formattedMessage = sysMessage?.param?.message
+  ? sysMessage.param.message.split('.').map((sentence, index) => (
+      <React.Fragment key={index}>
+        {index > 0 && <br />}
+        {sentence.trim()}
+        {index < sysMessage.param.message.split('.').length - 1 && '.'}
+      </React.Fragment>
+    ))
+  : null;
+
+
   return (
     <StyledPopupContainer showPopup={showPopup}>
       {/* Your popup content */}
@@ -95,7 +106,7 @@ const NightPopup = ({sysMessage, dayCount}) => {
         </div>
       </div>
 
-      <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>
+      <StyledPopupTitle>{formattedMessage}</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };
