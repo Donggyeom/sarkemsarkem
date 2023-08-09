@@ -285,12 +285,16 @@ const CamCatWrapper = styled.div`
           return `${userToken}: 0표`;
           
     } else if (phase === "night") {
-        if (voteSituation && voteSituation[userToken] === "삵이 죽일사람") {
-            return `${userToken}: 삵이 죽일사람`;
+      if (myRole === "SARK" || myRole === "OBSERVER") {
+        if (voteSituation[userToken]) {
+          return `${userToken}: 삵이 죽일 사람`;
         }
         return `${userToken}: 투표하지 않음`;
+      }
+      return ''; // sark나 observer가 아닌 경우
     }
-};
+    return ''; // day나 night가 아닌 경우
+  };
 
   const calculateAdjustedCamCount = () => {
     const filteredCamArray = camArray.filter((user) => {

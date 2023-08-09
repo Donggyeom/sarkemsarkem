@@ -616,6 +616,11 @@ public class GameManager {
 		List<String> playersId = gameRoom.getPlayersId();
 		sendSystemMessage(roomId, playersId, SystemCode.GAME_START, null);
 	}
+	
+	// "남은 시간" 메시지 전송
+	public void sendRemainTime(String roomId, Map<String, Integer> param) {
+		sendSystemMessageToAll(roomId, SystemCode.REMAIN_TIME, param);
+	}
 	// 1. 게임 로비 끝
 
 	// 2. 게임 진행
