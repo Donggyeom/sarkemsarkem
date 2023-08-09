@@ -11,7 +11,6 @@ const CamCat = (props) => {
 
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
-  const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const {psyTarget} = useGameContext();
   // const nickName = JSON.parse(streamManager.stream.connection.data).userData;
   // console.log(props.props.videos[1].video);
@@ -29,13 +28,15 @@ const CamCat = (props) => {
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
     if(JSON.parse(props.props.stream.connection.data).token===psyTarget){
-      const id = faceMyDetect(props.props.videos[1].video, setBoxPosition, running, setRunning);
+      const id = faceMyDetect(props.props.videos[1].video, running, setRunning);
       setIntervalId(id);
     }
   };
   //끄는거 
   const stopFaceDetection = () => {
-    stopFace(intervalId, setRunning, setBoxPosition);
+    clearInterval(intervalId);
+    setRunning(false);
+    stopFace(intervalId, setRunning);
   };
 
 
@@ -71,14 +72,6 @@ const CamCat = (props) => {
 //             }}
 //           />
 //           {/* {running && (
-//             <Box
-//               style={{
-//                 left: boxPosition.x,
-//                 top: boxPosition.y,
-//                 width: boxPosition.width,
-//                 height: boxPosition.height,
-//               }}
-//             />
 //           )} */}
 //         </div>
 
