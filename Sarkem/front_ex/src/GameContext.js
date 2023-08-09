@@ -59,7 +59,10 @@ const GameProvider = ({ children }) => {
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState(false);
     const [psyTarget, setPsyTarget] = useState("");
-    
+    const [hiddenMission, setHiddenMission] = useState(false);//히든미션 실행
+    const hiddenMissionType = ["Thumb_Up", "Thumb_Down", "Victory", "Pointing_Up", "Closed_Fist", "ILoveYou"];//히든미션 리스트
+    const [selectMission, setSelectMission] = useState("");//히든 선택된 히든미션
+
     // twilight 투표 설정 위한 타겟id
     const [targetId, setTargetId] = useState("");
     const [roleAssignedArray, setRoleAssignedArray] = useState([]);
@@ -236,12 +239,14 @@ const onSocketConnected = () => {
         case "PHASE_TWILIGHT":
             navigate(`/${roomId}/sunset`)
             setThreatedTarget(false); // 저녁 되면 협박 풀림
+            setHiddenMission(false); //저녁되면 마피아 미션 끝
             break;
 
         case "PHASE_NIGHT":
             setphase("night");
-            setThreatedTarget(false); // 저녁 되면 협박 풀림
+            setThreatedTarget(false); // 밤 되면 협박 풀림
             setPsyTarget("");
+            setHiddenMission(false);// 밤이 되면 마피아 미션 끝
             console.log(phase);
             navigate(`/${roomId}/night`)
             break;
@@ -322,6 +327,12 @@ const onSocketConnected = () => {
             break;
         case "PSYCHOANALYSIS_START":
           setPsyTarget(sysMessage.param.targetId);
+          break;
+        case "MISSION_START":
+          console.log("미션시작");
+          console.log(hiddenMissionType[sysMessage.param.missionIdx]);
+          setHiddenMission(true);
+          setSelectMission(hiddenMissionType[sysMessage.param.missionIdx]);
           break;
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`);
@@ -432,7 +443,6 @@ const onSocketConnected = () => {
   };
   // 미션성공
   const missionConplete = () => {
-
       console.log("미션 성공");
       if (stompClient.current.connected && token !== null) {
           stompClient.current.send("/pub/game/action", {},
@@ -487,6 +497,7 @@ const onSocketConnected = () => {
     // 제스처 인식기 생성
     const loadGestureRecognizer = async () => {
       const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm');
+      console.log("생성 첫번쨰");
       const recognizer = await GestureRecognizer.createFromOptions(vision, {
         baseOptions: {
           modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task',
@@ -496,26 +507,37 @@ const onSocketConnected = () => {
         runningMode: 'VIDEO',
       });
       setGestureRecognizer(recognizer);
+      console.log("생성 두번쨰");
     };
 
+    useEffect(()=>{
+      console.log(gestureRecognizer);
+    },[gestureRecognizer])
     // 
     const predictWebcam = async () => {
       if (gestureRecognizer) {
         const videoElement = publisher.videos[1].video;
+        // console.log(videoElement);
         const nowInMs = Date.now();
         const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
-  
         if (results.gestures.length > 0) {
+          console.log(results.gestures);
           const detectedGestureName = results.gestures[0][0].categoryName;
-          setDetectedGesture(detectedGestureName);
-        } else {
-          setDetectedGesture('');
+          console.log(selectMission);
+          console.log(detectedGestureName);
+          console.log(selectMission===detectedGestureName);
+          if(selectMission===detectedGestureName){
+            console.log("미션성공한건가용");
+            missionConplete();
+            setHiddenMission(false);
+          }
         }
         // Continue predicting frames from webcam
         setAnimationFrameId(requestAnimationFrame(predictWebcam));
       }
     };
     const stopPredicting = () => {
+      console.log("멈춤");
       cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
       setAnimationFrameId(null);
     };
@@ -524,7 +546,7 @@ const onSocketConnected = () => {
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner, 
-      voteTargetId, deadIds, threatedTarget, psyTarget}}>
+      voteTargetId, deadIds, threatedTarget, psyTarget, hiddenMission, setHiddenMission}}>
       {children}
     </GameContext.Provider>
   );
