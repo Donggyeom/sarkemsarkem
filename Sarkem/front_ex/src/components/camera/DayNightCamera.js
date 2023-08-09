@@ -93,13 +93,17 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width: '60%',
+      width: '55%',
+      gridRowGap : '5%',
+      gridColumnGap : '5%',
     };
   } else if (camCount === 5) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
       width: '75%',
+      gridRowGap : '7%',
+
     };
   } else if (camCount === 6) {
     return {
@@ -107,18 +111,23 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr 1fr',
       top: '7.5%',
       width: '80%',
+      gridRowGap : '3%',
+      bottom : '1%',
     };
   } else if (camCount === 7) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: 'repeat(4, 1fr)',
       width: '90%',
+      gridRowGap : '7%',
     };
   } else if (camCount === 8) {
     return {
       gridTemplateRows: 'repeat(2, 1fr)',
       gridTemplateColumns: 'repeat(4, 1fr)',
       width: '85%',
+      gridRowGap : '3%',
+      bottom : '1%',
     };
   } else if (camCount === 9) {
     return {
@@ -126,6 +135,7 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: 'repeat(5, 1fr)',
       width: '95%',
       height: '70%',
+
     };
   } else if (camCount === 10) {
     return {
@@ -134,6 +144,8 @@ const calculateGrid = (camCount) => {
       left: '5%',
       width: '90%',
       height: '70%',
+      gridRowGap : '3%',
+      bottom : '1%',
     };
   } else {
     // Add more cases as needed
@@ -149,95 +161,95 @@ const CamCatWrapper = styled.div`
   ${({ camCount, index }) =>
 
     camCount === 3 && index === 0
-      ? `
+    ? `
+    position: relative;
+    left : 56.5%;
+    `
+    :
+    camCount === 3 && index === 1
+    ? `
+    position: relative;
+    top : 110%;
+    `
+    :
+    camCount === 3 && index === 2
+    ? `
+    position: relative;
+    `
+    :
+    camCount === 5 && index === 0
+    ? `
     position: relative;
     left : 50%;
-  `
-      :
-      camCount === 3 && index === 1
-        ? `
-    position: relative;
-    top : 110.5%;
-  `
-        :
-        camCount === 3 && index === 2
-          ? `
-    position: relative;
-  `
-          :
-          camCount === 5 && index === 0
-            ? `
+    `
+    :
+    camCount === 5 && index === 1
+    ? `
     position: relative;
     left : 50%;
-  `
-            :
-            camCount === 5 && index === 1
-              ? `
+    `
+    :
+    camCount === 5 && index === 2
+    ? `
+    position: relative;
+    top : 114%;
+    `
+    :
+    camCount === 7 && index === 0
+    ? `
     position: relative;
     left : 50%;
-  `
-              :
-              camCount === 5 && index === 2
-                ? `
-    position: relative;
-    top : 100%;
-  `
-                :
-                camCount === 7 && index === 0
-                  ? `
+    `
+    :
+    camCount === 7 && index === 1
+    ? `
     position: relative;
     left : 50%;
-  `
-                  :
-                  camCount === 7 && index === 1
-                    ? `
+    `
+    :
+    camCount === 7 && index === 2
+    ? `
     position: relative;
     left : 50%;
-  `
-                    :
-                    camCount === 7 && index === 2
-                      ? `
-    position: relative;
-    left : 50%;
-  `
+    `
 
-                      :
-                      camCount === 7 && index === 3
-                        ? `
+    :
+    camCount === 7 && index === 3
+    ? `
+    position: relative;
+    top : 114%;
+    `
+    :
+    camCount === 9 && index === 0
+    ? `
+    position: relative;
+    left : 50%;
+    `
+    :
+    camCount === 9 && index === 1
+    ? `
+    position: relative;
+    left : 50%;
+    `
+    :
+    camCount === 9 && index === 2
+    ? `
+    position: relative;
+    left : 50%;
+    `
+    :
+    camCount === 9 && index === 3
+    ? `
+    position: relative;
+    left : 50%;
+    `
+    :
+    camCount === 9 && index === 4
+    ? `
     position: relative;
     top : 100%;
-  `
-                        :
-                        camCount === 9 && index === 0
-                          ? `
-    position: relative;
-    left : 50%;
-  `
-                          :
-                          camCount === 9 && index === 1
-                            ? `
-    position: relative;
-    left : 50%;
-  `
-                            :
-                            camCount === 9 && index === 2
-                              ? `
-    position: relative;
-    left : 50%;
-  `
-                              :
-                              camCount === 9 && index === 3
-                                ? `
-    position: relative;
-    left : 50%;
-  `
-                                :
-                                camCount === 9 && index === 4
-                                  ? `
-    position: relative;
-    top : 100%;
-  `
-                                  : ''};
+    `
+  : ''};
   `;
 const DayNightCamera = React.memo(({ camArray }) => {
   const camCount = camArray.length;

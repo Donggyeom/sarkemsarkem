@@ -51,6 +51,7 @@ const slideOut = keyframes`
 `;
 
 const ScButtonImage = styled.img`
+  z-Index : 2;
   width: 175px;
   cursor: ${({ role }) => (role === 'OBSERVER' ? 'default' : 'pointer')};
   position: absolute;
@@ -68,6 +69,7 @@ const ScMiniButton = styled.div`
 `;
 
 const StyledPopup = styled.div`
+  z-Index : 2;
   position: fixed;
   top: 0;
   left: 0;
@@ -81,6 +83,7 @@ const StyledPopup = styled.div`
 
 const PopupImage = styled.img`
   width: 300px;
+  z-Index : 2;
 `;
 
 const ScMini = ({ alt, role, dayCount }) => {
