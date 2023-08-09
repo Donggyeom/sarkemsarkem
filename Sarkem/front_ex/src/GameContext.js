@@ -12,21 +12,17 @@ import nightCamAudio from './components/camera/DayNightCamera';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-  const { roomSession, player, setPlayer, setPlayers } = useRoomContext();
+  const { roomSession, player, setPlayer, players, setPlayers } = useRoomContext();
   const [ gameSession, setGameSession ] = useState({});
-  const [ myRole, setMyRole ] = useState(null);
-  // roomId : 방번호 , player.playerid : 플레이어아이디 
-    // 현재 시스템 메시지를 저장할 상태 추가
+  // 현재 시스템 메시지를 저장할 상태 추가
   const [currentSysMessage, setCurrentSysMessage] = useState(null);
   const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
-
+  
   const [mafias, setMafias] = useState([]);
   const [chatMessages, setChatMessages] = useState([]); 
   const [chatConnected, setChatConnected] = useState(false);
   const [message, setMessage] = useState("");
-
-  const [playersRoles, setPlayersRoles] = useState({});
-
+  
   const [myVote, setMyVote] = useState(0);
   const [dayCount, setDayCount] = useState(0);
   const [startVote, setStartVote] = useState(false);
@@ -35,20 +31,29 @@ const GameProvider = ({ children }) => {
   const [voteSituation, setVotesituation] = useState({});
   const [threatedTarget, setThreatedTarget] = useState("");
   const [targetId, setTargetId] = useState("");
-  const [roleAssignedArray, setRoleAssignedArray] = useState([]);
-
+  
   const [phase, setphase] = useState("");
   const [gestureRecognizer, setGestureRecognizer] = useState(null);
   const [detectedGesture, setDetectedGesture] = useState('');
   const [animationFrameId, setAnimationFrameId] = useState(null);
   const location = useLocation();
-
-  const navigate = useNavigate();
-  let stompClient = useRef({})
   
-
+  const navigate = useNavigate();
+  let stompClient = useRef({});
+  
+  const Roles = new Map(Object.entries({
+    CITIZEN: "CITIZEN",
+    SARK: "SARK",
+    DOCTOR: "DOCTOR", 
+    POLICE: "POLICE", 
+    OBSERVER: "OBSERVER", 
+    PSYCHO: "PSYCHO", 
+    BULLY: "BULLY", 
+    DETECTIVE: "DETECTIVE",
+  }));
+  
   ////////////   GameContext Effect   ////////////
-
+  
   useEffect(() => {
     console.log('GameProvider 생성');
   }, []);
@@ -206,7 +211,6 @@ const GameProvider = ({ children }) => {
       console.log(player.playerId, sysMessage.playerId);
 
 
-
       // if (player.playerid != sysMessage.playerId) return;
       if (player.playerId === sysMessage.playerId) {
 
@@ -235,21 +239,19 @@ const GameProvider = ({ children }) => {
           });
         });
         break;
-
-      // 역할 저장을 위해 넣었음 //
       case "ROLE_ASSIGNED":
-        console.log(`당신은 ${sysMessage.param.role} 입니다.`);
-        setMyRole(sysMessage.param.role);
-        
-        setPlayersRoles((prevRoles) => ({
-          ...prevRoles,
-          [sysMessage.playerId]: sysMessage.param.role
-      }));
-        setRoleAssignedArray((prevArray) => [
-          ...prevArray,
-          { playerId: sysMessage.playerId, role: sysMessage.param.role },
-        ]);
-
+        const assignedRole = Roles.get(sysMessage.param.role);
+        if (assignedRole == null) {
+          alert("직업배정에 실패했습니다.", assignedRole);
+          return;
+        }
+        console.log(`당신은 ${assignedRole} 입니다.`);
+        setPlayer((prev) => {
+          return ({
+            ...prev,
+            role: assignedRole,
+          });
+        });
       break;
 case "GAME_START":   
           navigate(`/${roomSession.roomId}/day`);
@@ -315,11 +317,21 @@ case "GAME_START":
           break;
 
       case "BE_EXCLUDED":
-          setMyRole("OBSERVER");
+          setPlayer((prev) => {
+            return ({
+              ...prev,
+              role: Roles.OBSERVER,
+            });
+          });
           break;
 
       case "BE_HUNTED":
-          setMyRole("OBSERVER");
+          setPlayer((prev) => {
+            return ({
+              ...prev,
+              role: Roles.OBSERVER,
+            });
+          });
           break;
 
       case "BE_THREATENED":
@@ -350,14 +362,28 @@ case "GAME_START":
     else{
       // 역할 저장을 위해 넣었음 //
       switch (sysMessage.code) {
-        case "ROLE_ASSIGNED":
-            
-            setPlayersRoles((prevRoles) => ({
-                ...prevRoles,
-                [sysMessage.playerId]: sysMessage.param.role
-            }));
-            break;
-
+      case "ROLE_ASSIGNED":
+        const assignedRole = Roles.get(sysMessage.param.role);
+        if (assignedRole == null) {
+          alert("직업배정에 오류가 발생했습니다.", assignedRole);
+          return;
+        }
+        let player = players.get(sysMessage.playerId);
+        if (player == null) {
+          alert("ROLE_ASSIGNED - 플레이어 정보를 불러오는데 실패했습니다.", sysMessage.playerId);
+          return;
+        }
+        player = {
+          ...player,
+          role: assignedRole,
+        };
+        setPlayers((prev) => {
+          return new Map([
+            ...prev,
+            [player.playerId, player],
+          ]);
+        });
+        break;
       }
     }
 
@@ -490,9 +516,11 @@ case "GAME_START":
   };
 
   return (
-    <GameContext.Provider value={{ stompClient, myRole, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
-      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession}}>
+    <GameContext.Provider value={{ stompClient, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
+      systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, 
+      Roles
+    }}>
       {children}
     </GameContext.Provider>
   );

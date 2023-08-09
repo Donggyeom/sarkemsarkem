@@ -5,6 +5,7 @@ import voteImage from '../../img/votefoot.png';
 import { useGameContext } from '../../GameContext';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
+import { useRoomContext } from '../../Context';
 
 const Votefoot = styled.img`
   position: absolute;
@@ -232,24 +233,21 @@ const CamCatWrapper = styled.div`
                                   : ''};
   `;
      
-const DayNightCamera = React.memo(({ players }) => {
-  const camCount = players.size;
-    const gridStyles = calculateGrid(camCount);
-    const [clickedCameras, setClickedCameras] = useState([]);
-    
-    const camArray = [];
-
-    players.forEach((player, index) => {
-      if (player.stream == undefined) return;
-
-      camArray.push(player.stream);
-    });
+const DayNightCamera = React.memo(({ ids }) => {
+  console.log('DayNightCamera');
+  console.log(ids);
+  const camCount = ids.length;
+  const gridStyles = calculateGrid(camCount);
+  const [clickedCameras, setClickedCameras] = useState([]);
 
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
-  const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase} = useGameContext();
-  const [mafias, setMafias] = useState([]);
+  const { player, players } = useRoomContext();
+  const { selectAction, selectConfirm, setSelectedTarget, 
+    myVote, startVote, dayCount, predictWebcam, stopPredicting, 
+    detectedGesture, voteSituation, phase,
+    Roles } = useGameContext();
 
   useEffect(() => {
     setIsConfirmed(false);
@@ -258,52 +256,46 @@ const DayNightCamera = React.memo(({ players }) => {
     console.log(phase);
 
     if (phase === "night") {
+      // 모두의 카메라, 마이크 설정
       nightCamAudio();
-      console.log(camArray);
+
       // 마피아 넣는 작업
-      for (let i = 0; i < camArray.length; i++) {
-        const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
-        // console.log("마피아 들어감?")
-        // console.log(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token));
-        // console.log(sarks);
-        // console.log(playersRoles);
-        // console.log(JSON.parse(camArray[i].stream.connection.data).token);
-        if (sarks.includes(JSON.parse(camArray[i].stream.connection.data).token)) {
-          const mafia = camArray[i].stream.mediaStream;
-          setMafias((mafias) => [...mafias, mafia]);
-        }
-        console.log(mafias);
+      let sarkArray = [];
+      for (let player of players) {
+        if (player.role === Roles.SARK) sarkArray.push(player);
       }
-      if (myRole === "DETECTIVE") {
-        console.log(mafias);
-        changeVoice();
+
+      if (player.role === Roles.DETECTIVE) {
+        changeVoice(sarkArray);
       }
-    } else if (phase === "day") {
+    } 
+    else if (phase === "day") {
       dayCamAudio();
       stopVoiceChange();
     }
 
   }, [startVote, phase]);
 
-  const getVoteResultForUser = (userToken) => {
-    if (voteSituation && voteSituation[userToken] !== undefined) {
-      return `${userToken}: ${voteSituation[userToken]}표`;
+  const getVoteResultForUser = (id) => {
+    let player = players.get(id);
+    if (voteSituation && voteSituation[id] !== undefined) {
+      return `${player.nickName}: ${voteSituation[id]}표`;
     }
-    return `${userToken}: 0표`;
+    return `${player.nickName}: 0표`;
   };
 
-  const handleCamClick = (user) => {
+  const handleCamClick = (id) => {
     console.log(voteSituation, "투표 결과 확인합니다");
-    console.log(JSON.parse(user.stream.connection.data).token, "얘는 캠주인");
+    console.log(id, "얘는 캠주인");
     if (!startVote || dayCount === 0 || isConfirmed || isSkipped) {
       return;
     }
 
-    if (clickedCamera === user) {
+    if (clickedCamera === id) {
       setClickedCamera(null);
     } else {
-      selectAction({ playerId: JSON.parse(user.stream.connection.data).token });
-      setClickedCamera(user);
+      selectAction({ playerId: id });
+      setClickedCamera(id);
     }
   };
 
@@ -332,38 +324,45 @@ const DayNightCamera = React.memo(({ players }) => {
   }
 
   const nightCamAudio = () => {
-    if (myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO' || myRole === 'BULLY') {
-      for (let i = 0; i < camCount; i++) {
-        const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
-        if (camArray[i] instanceof Subscriber && !(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token))) {
-          camArray[i].subscribeToVideo(false);
-          camArray[i].subscribeToAudio(false);
-        }
-      }
-    } else if (myRole === 'DETECTIVE') {
-      for (let i = 0; i < camCount; i++) {
-        const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
-        if (camArray[i] instanceof Subscriber && !(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token))) {
-          camArray[i].subscribeToVideo(false);
+    if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
+      for (let player of players) {
+        if (player.role != Roles.SARK) {
+          player.stream.subscribeToVideo(false);
+          player.stream.subscribeToAudio(false);
         }
       }
     }
-  }
-  const dayCamAudio = () => {
-    if (myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE') {
-      for (let i = 0; i < camCount; i++) {
-        console.log(camArray[i] instanceof Subscriber);
-        if (camArray[i] instanceof Subscriber) {
-          camArray[i].subscribeToVideo(true);
-          camArray[i].subscribeToAudio(true);
+    else if (player.role == Roles.DETECTIVE) {
+      // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
+      for (let player of players) {
+        player.stream.subscribeToVideo(false);
+
+        if (player.role != Roles.SARK) {
+          player.stream.subscribeToAudio(false);
         }
       }
+    }
+    else {
+      // 마피아, 탐정, 관전자를 제외한 나머지 플레이어의 화면에서 모두의 캠, 오디오를 끈다.
+      player.stream.subscribeToVideo(false);
+      player.stream.subscribeToAudio(false);
+    } 
+  }
+
+
+  const dayCamAudio = () => {
+    for (let otherPlayer of players) {
+      if (player.playerId == otherPlayer.playerId) continue;  // 내가 아닌 경우에만 설정
+      if (otherPlayer.role == Roles.OBSERVER) continue;            // 관전자가 아닌 경우에만 설정
+
+      otherPlayer.stream.subscribeToVideo(true);
+      otherPlayer.stream.subscribeToAudio(true);
     }
   }
 
   //찐시작
-  const changeVoice = () => {
-    mixedMediaStreamRef.current = getMixedMediaStream();
+  const changeVoice = (sarkArray) => {
+    mixedMediaStreamRef.current = getMixedMediaStream(sarkArray);
   }
 
   const mixedMediaStreamRef = useRef(null);
@@ -371,14 +370,16 @@ const DayNightCamera = React.memo(({ players }) => {
   const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
 
   // 삵들에 대해 음성변조 시작
-  const getMixedMediaStream = () => {
+  const getMixedMediaStream = (sarkArray) => {
     console.log("음성 변조 시작...")
     const mixedMediaStream = new MediaStream();
-    mafias.forEach((mediaStream) => {
+    sarkArray.forEach((sark) => {
+      const mediaStream = sark.stream.stream.mediaStream;
+
       const audioTrack = mediaStream.getAudioTracks()[0];
       const source = audioContext.createMediaStreamSource(new MediaStream([audioTrack]));
       const jungle = new Jungle(audioContext);
-      const randomPitch = Math.random() < 0.5 ? -1 : 1;
+      // const randomPitch = Math.random() < 0.5 ? -1 : 1;
       jungle.setPitchOffset(1);
       source.connect(jungle.input);
       jungle.output.connect(audioContext.destination);
@@ -387,12 +388,12 @@ const DayNightCamera = React.memo(({ players }) => {
       mixedMediaStream.addTrack(audioTrackWithEffects.stream.getAudioTracks()[0]);
       jungle.isConnected = true;
       jungleRefs.current.push(jungle);
-    })
+    });
   }
 
   // 음성 변조 중지
   const stopVoiceChange = () => {
-    console.log("음성 변조 중지")
+    console.log("음성 변조 중지");
     jungleRefs.current.forEach((jungle) => {
       if (jungle && jungle.isConnected) {
         console.log(jungle, "음성 변조 중지 중...");
@@ -400,28 +401,29 @@ const DayNightCamera = React.memo(({ players }) => {
         jungle.isConnected = false;
       }
     });
-    setMafias([]);
     jungleRefs.current = [];
     mixedMediaStreamRef.current = null;
   };
+
+
   return (
     <CamCatGrid style={gridStyles}>
-      {camArray.map((user, index) => (
+      {ids && ids.map((id, index) => (
         <CamCatWrapper
           key={index}
           camCount={camCount}
-          user={user}
+          user={id}
           index={index}
-          onClick={() => handleCamClick(user)}
+          onClick={() => handleCamClick(id)}
         >
-          <CamCat props={camArray[index]} user={user} />
+          <CamCat id={id} />
           {/* {clickedCameras.includes(index) && (
               <Votefoot src={voteImage} alt="Vote" />
             )} */}
-          <VotefootWrapper show={clickedCamera === user && startVote}>
+          <VotefootWrapper show={clickedCamera === id && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
-          <div>{getVoteResultForUser(user.playerId)}</div>
+          <div>{getVoteResultForUser(id)}</div>
         </CamCatWrapper>
       ))}
       <ButtonWrapper>

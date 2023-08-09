@@ -165,7 +165,7 @@ const DayPage = () => {
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
         {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
             <DayPopup></DayPopup>
-          <DayNightCamera players={players} />
+          <DayNightCamera ids={Array.from(players.keys())} />
           {getMyRole()}
         </StyledDayPage>
 

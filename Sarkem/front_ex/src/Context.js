@@ -22,7 +22,7 @@ const RoomProvider = ({ children }) => {
     // const [isCamOn, setIsCamOn] = useState(true);
     const [showImage, setShowImage] = useState(false);
 
-  const OV = new OpenVidu();
+  const OV = useRef(null);
   const navigate = useNavigate();
 
 
@@ -30,9 +30,9 @@ const RoomProvider = ({ children }) => {
 
   useEffect(() => {
     console.log('RoomProvider 생성');
-
+    OV.current = new OpenVidu();
     // openvidu log 제거
-    OV.enableProdMode();
+    OV.current.enableProdMode();
   }, []);
 
 
@@ -41,7 +41,7 @@ const RoomProvider = ({ children }) => {
     console.log(player);
     console.log(player.stream);
     if (player.stream == undefined) return;
-    
+
     console.log('player 변경');
     console.log(player);
     setPlayers((prev) => {
@@ -113,7 +113,7 @@ const RoomProvider = ({ children }) => {
     console.log(`initSession`);
     // openvidu 세션 시작
 
-    const newSession = OV.initSession();
+    const newSession = OV.current.initSession();
 
     // 세션에서 발생하는 구체적인 이벤트 정의
     // stream 생성 이벤트 발생
@@ -189,7 +189,7 @@ const RoomProvider = ({ children }) => {
       });
 
       // 내 퍼블리셔 객체 생성
-      let publisher = await OV.initPublisherAsync(undefined, {
+      let publisher = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
         publishAudio: player.isMicOn,
