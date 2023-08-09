@@ -100,7 +100,7 @@ const DayPage = () => {
     if (myRole === 'OBSERVER' || myRole === 'CITIZEN'){
       return (
         <>
-          <ChatButtonAndPopup roomId={roomId}/>;
+          <ChatButtonAndPopup roomId={roomId}/>
         </>
       );
     }

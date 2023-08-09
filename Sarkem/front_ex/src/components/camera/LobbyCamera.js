@@ -83,7 +83,7 @@ const calculateGrid = (camCount) => {
       top : '1.5%',
       width: '100%',
       height : '100%',
-      left : '1%'
+      left : '1.5%',
     };
   } else if (camCount === 8) {
     return {
@@ -92,7 +92,7 @@ const calculateGrid = (camCount) => {
       top : '1.5%',
       width: '100%',
       height : '100%',
-      left : '1%',
+      left : '1.5%',
     };
   } else if (camCount === 9) {
     return {
@@ -101,13 +101,14 @@ const calculateGrid = (camCount) => {
       top : '1.5%',
       width: '100%',
       height : '100%',
-      left : '1%',
+      left : '1.5%'
     };
   } else if (camCount === 10) {
     return {
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
       width: '100%',
       height : '100%',
+      left : '1%',
     };
   } else {
     return {
