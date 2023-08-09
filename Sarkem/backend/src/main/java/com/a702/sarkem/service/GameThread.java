@@ -409,7 +409,7 @@ public class GameThread extends Thread {
 		while (true) {
 			if(idx%2==0) {
 				remainTime.put("time", time--);
-				gameManager.sendRemainTime(roomId, null);
+				gameManager.sendRemainTime(roomId, remainTime);
 			}
 			idx++;
 			confirmCnt = 0;

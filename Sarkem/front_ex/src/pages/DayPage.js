@@ -43,21 +43,21 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
   const { roomId, publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn, } = useRoomContext();
-  const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount, currentSysMessage  } = useGameContext();
-  const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
+  const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount, currentSysMessage, remainTime  } = useGameContext();
+  // const [meetingTime, setMeetingTime] = useState(peopleCount.meetingTime);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (meetingTime > 0) {
-        setMeetingTime((prevTime) => prevTime - 1);
-      } else {
-        clearInterval(timer);
-      }
-    }, 1000); // 1초마다 실행
-    return () => {
-      clearInterval(timer);
-    };
-  }, [meetingTime, roomId]);
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     if (meetingTime > 0) {
+  //       setMeetingTime((prevTime) => prevTime - 1);
+  //     } else {
+  //       clearInterval(timer);
+  //     }
+  //   }, 1000); // 1초마다 실행
+  //   return () => {
+  //     clearInterval(timer);
+  //   };
+  // }, [meetingTime, roomId]);
   
   useEffect(() => {
     daystatus();
@@ -150,7 +150,7 @@ const DayPage = () => {
       <StyledDayPage>
         {!isLogOn && <Log top="60%" left="26%" />}
         <SunMoon alt="SunMoon" />
-        <TimeSecond>{meetingTime}s</TimeSecond>
+        <TimeSecond>{remainTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn} />
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
