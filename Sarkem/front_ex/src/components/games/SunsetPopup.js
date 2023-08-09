@@ -91,7 +91,7 @@ const SunsetPopup = ({dayCount}) => {
         </div>
       </div>
 
-      <StyledPopupTitle>추방하려면 찬성, 함께하려면 반대를 선택하세요.</StyledPopupTitle>
+      <StyledPopupTitle>추방하려면 찬성, 아니라면 반대를 선택하세요.</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };

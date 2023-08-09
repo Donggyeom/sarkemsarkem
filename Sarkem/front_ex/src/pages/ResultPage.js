@@ -92,7 +92,7 @@ const ResultPage = () => {
     session,
     setSession, roomId, isHost, camArray, leaveSession, token, setIsHost
   } = useRoomContext();
-  const { peopleCount, setPeopleCount, roleAssignedArray, winner, stompClient } = useGameContext();
+  const { peopleCount, setPeopleCount, roleAssignedArray, setRoleAssignedArray, winner, stompClient } = useGameContext();
   const navigate = useNavigate();
   console.log(roleAssignedArray);
 
@@ -117,15 +117,16 @@ const ResultPage = () => {
   const handlePeopleCountChange = () => {
     if (!isHost) return;
     if (stompClient.current.connect === undefined) return;
-  
-    const newPeopleCount = {};
-    for (const key in peopleCount) {
-      if (key==='meetingTime') newPeopleCount[key]=60;
-      else newPeopleCount[key] = 0;
-    }
-  
-    setPeopleCount(newPeopleCount);
-    console.log(peopleCount);
+    
+    peopleCount.bullyCount=0
+    peopleCount.sarkCount=0
+    peopleCount.citizenCount=0
+    peopleCount.doctorCount=0
+    peopleCount.policeCount=0
+    peopleCount.detectiveCount=0
+    peopleCount.psychologistCount=0
+    peopleCount.meetingTime=60
+
   };
 
   const handleAgainButtonClick = () => {
@@ -137,8 +138,11 @@ const ResultPage = () => {
     setPublisher(undefined);
     setCamArray([]);
     setIsHost(() => true);
+    setRoleAssignedArray([]);
     handlePeopleCountChange();
     console.log("새로운 방 만들기");
+    console.log(roleAssignedArray)
+    console.log(peopleCount)
     navigate(`/${createRandomId()}`, { state: { isHost: true } });
   };
 
@@ -150,6 +154,8 @@ const ResultPage = () => {
     setSubscribers([]);
     setPublisher(undefined);
     setCamArray([]);
+    setRoleAssignedArray([]);
+
     console.log("홈으로 나가기");
     navigate('/');
   };
