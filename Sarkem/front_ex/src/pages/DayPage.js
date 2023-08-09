@@ -13,13 +13,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
-import TempButton from '../components/buttons/TempButton';
 import DayNightCamera from '../components/camera/DayNightCamera';
 
 // log
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 
+import TempButton from '../components/buttons/TempButton';
 
 const StyledDayPage = styled.div`
   display: flex;
@@ -43,8 +43,8 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
 
-  const { roomSession, player, setPlayer, players, roomId, camArray, leaveSession } = useRoomContext();
-  const { gameSession, myRole, threatedTarget, currentSysMessage, dayCount } = useGameContext();
+  const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
+  const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
@@ -52,6 +52,21 @@ const DayPage = () => {
   const handleLogButtonClick = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
+
+  
+  useEffect(() => {
+    if (roomSession.roomId === undefined){
+      console.log("세션 정보가 없습니다.")
+      navigate("/");
+      return;
+    }
+    // 윈도우 객체에 화면 종료 이벤트 추가
+    window.addEventListener('beforeunload', onbeforeunload);
+    return () => {
+        window.removeEventListener('beforeunload', onbeforeunload);
+    }
+  }, []);
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -68,36 +83,32 @@ const DayPage = () => {
   }, [meetingTime]);
 
   const daystatus = () => {
-    if(myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'PSYCHO'|| myRole === 'BULLY'){
+    let role = player.role;
+    if(role !== Roles.OBSERVER) {
       player.stream.publishVideo(true);
       player.stream.publishAudio(true);
     }
   }
+
   const handleVoteClick = () => {
     setVoteCount((prevCount) => prevCount + 1);
   };
 
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
+    if (player.stream) {
+      player.stream.publishVideo(camOn);
+    }
     setPlayer((prev) => {
       return ({
         ...prev,
         isCamon: camOn
       });
     });
-    if (player.stream) {
-      player.stream.publishVideo(camOn);
-    }
   };
 
   const handleMicButtonClick = () => {
     const micOn = !player.isMicOn;
-    setPlayer((prev) => {
-      return ({
-        ...prev,
-        isMicOn: micOn
-      });
-    });
     if (player.stream) {
       player.stream.publishAudio(micOn);
     // 버튼 클릭 이벤트를 threatedTarget이 못하게
@@ -106,44 +117,24 @@ const DayPage = () => {
       player.stream.publishAudio(micOn);
       console.log('냥아치 협박 대상 아님! 마이크 버튼 클릭!');
     }
+    setPlayer((prev) => {
+      return ({
+        ...prev,
+        isMicOn: micOn
+      });
+    });
   };
 }
-  const handleScMiniClick = () => {
-    console.log('ScMini clicked!');
-  };
-
-  const getMyRole = (dayCount) => {
-    if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE') {
-      return (
-        <>
-          <ScMini alt="ScMini" role={myRole} dayCount={dayCount}/>
-        </>
-      );
-    }
-  };
+  // const handleScMiniClick = () => {
+  //   console.log('ScMini clicked!');
+  // };
 
   const chatVisible = () =>{
-    if (myRole === 'OBSERVER' || myRole === 'CITIZEN'){
-      return (
-        <>
-          <ChatButtonAndPopup roomId={roomId}/>;
-        </>
-      );
+    if (player.role === Roles.OBSERVER || player.role === Roles.CITIZEN) {
+      
+      return <ChatButtonAndPopup roomId={roomSession.roomId}/>;
     }
   };
-
-  useEffect(() => {
-    if (roomSession.roomId === undefined){
-      console.log("세션 정보가 없습니다.")
-      navigate("/");
-      return;
-    }
-    // 윈도우 객체에 화면 종료 이벤트 추가
-    window.addEventListener('beforeunload', onbeforeunload);
-    return () => {
-        window.removeEventListener('beforeunload', onbeforeunload);
-    }
-  }, [])
   
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
@@ -165,10 +156,10 @@ const DayPage = () => {
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
         {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
             <DayPopup></DayPopup>
-          <DayNightCamera ids={Array.from(players.keys())} />
-          {getMyRole()}
+          {players && <DayNightCamera ids={Array.from(players.keys())} />}
+          <ScMini />
         </StyledDayPage>
-
+        <TempButton url={`/${roomSession.roomId}/sunset`} onClick={() => navigate(`/${roomSession.roomId}/sunset`)} alt="Start Game" />
           {chatVisible()}
       </Background>
       );

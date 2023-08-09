@@ -10,7 +10,6 @@ import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import NightPopup from '../components/games/NightPopup';
-import TempButton from '../components/buttons/TempButton';
 import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
@@ -46,9 +45,9 @@ const handleScMiniClick = () => {
 };
 
 const NightPage = () => {
-  const { myRole, peopleCount, currentSysMessage, playersRoles , dayCount} = useGameContext();
-  const [ mafiaButton, setMafiaButton ] = useState(true);
   const { roomSession, player, setPlayer, players } = useRoomContext(); 
+  const { myRole, currentSysMessage, dayCount} = useGameContext();
+  const [ mafiaButton, setMafiaButton ] = useState(true);
   const navigate = useNavigate();
   
 
@@ -139,13 +138,13 @@ const NightPage = () => {
     <Background>
       <StyledNightPage>
          {!isLogOn && <Log top="60%" left="26%" />}
-        <DayNightCamera players={players}/>
+        {players && <DayNightCamera ids={Array.from(players.keys())} />}
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>60s</TimeSecond>
         {/* {mafiaButton && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />} */}
-        {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />}
+        {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />}
         {/* {mafiaButton && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>} */}
-        {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>}
+        {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           {/* <NightPopup></NightPopup> */}
           {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={dayCount}/>}

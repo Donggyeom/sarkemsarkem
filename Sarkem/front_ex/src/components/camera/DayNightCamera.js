@@ -234,8 +234,6 @@ const CamCatWrapper = styled.div`
   `;
      
 const DayNightCamera = React.memo(({ ids }) => {
-  console.log('DayNightCamera');
-  console.log(ids);
   const camCount = ids.length;
   const gridStyles = calculateGrid(camCount);
   const [clickedCameras, setClickedCameras] = useState([]);

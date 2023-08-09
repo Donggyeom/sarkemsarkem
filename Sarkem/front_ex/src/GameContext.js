@@ -4,10 +4,7 @@ import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
-import DayPopup from './components/games/DayPopup';
-import { Message } from '@stomp/stompjs';
 import axios from "axios";
-import nightCamAudio from './components/camera/DayNightCamera';
 
 const GameContext = createContext();
 
@@ -493,11 +490,14 @@ case "GAME_START":
           setDetectedGesture('');
         }
         // Continue predicting frames from webcam
-        setAnimationFrameId(requestAnimationFrame(predictWebcam));
+        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 100));
       }
     };
     const stopPredicting = () => {
       cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
+      if(animationFrameId) {
+        clearTimeout(animationFrameId);
+      }
       setAnimationFrameId(null);
     };
 

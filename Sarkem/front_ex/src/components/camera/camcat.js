@@ -20,11 +20,6 @@ const CamCat = ({id}) => {
   const player = players.get(id);
   const stream = player.stream;
 
-  console.log(`CamCat`);
-  console.log(players);
-  console.log(id);
-  console.log(stream);
-  
   useEffect(() => {
     loadModels();
   }, []);

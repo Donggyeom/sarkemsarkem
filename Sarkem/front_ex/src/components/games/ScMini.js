@@ -21,6 +21,8 @@ import cVetImageSrc from '../../img/c_수의사.png';
 import cCatImageSrc from '../../img/c_시민.png';
 import cPsychoImageSrc from '../../img/c_심리학자.png';
 import cDetectImageSrc from '../../img/c_탐정.png';
+import { useRoomContext } from '../../Context';
+import { useGameContext } from '../../GameContext';
 
 
 // 직업마다 번호 같은 걸 부여받겠지?
@@ -79,12 +81,15 @@ const PopupImage = styled.img`
   width: 300px;
 `;
 
-const ScMini = ({ alt, role, dayCount }) => {
-
-  const [isPopupOpen, setIsPopupOpen] = useState(dayCount === 1);
+const ScMini = () => {
+  const alt = "ScMini";
+  const { player } = useRoomContext();
+  const { dayCount, phase } = useGameContext();
+  const [isPopupOpen, setIsPopupOpen] = useState(dayCount === 1 && phase === "day");
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state
 
-
+  const role = player.role;
+  
   const handleScMiniClick = () => {
     
     setIsPopupOpen(true);
