@@ -409,7 +409,7 @@ public class GameThread extends Thread {
 		while (true) {
 			if(idx%2==0) {
 				remainTime.put("time", time--);
-				gameManager.sendRemainTime(roomId, null);
+				gameManager.sendRemainTime(roomId, remainTime);
 			}
 			idx++;
 			confirmCnt = 0;
@@ -420,11 +420,25 @@ public class GameThread extends Thread {
 			// 투표가 모두 완료되면 종료
 			if (confirmCnt == players.size())
 				return true;
-
+			if(time<=0) break;
 			sleep(500);
 		}
+		return true;
 	}
 
+	// 밤투표 시간 보내기
+	private boolean isNightTimeEnded() throws InterruptedException {
+		int time = gameSession.getMeetingTime();
+		HashMap<String, Integer> remainTime = new HashMap<>();
+		while (true) {
+			remainTime.put("time", time--);
+			gameManager.sendRemainTime(roomId, remainTime);
+			if (time <= 0) break;
+			sleep(1000);
+		}
+		return true;
+	}
+		
 	// 게임 종료
 	private boolean isGameEnd() {
 		int aliveSark = 0;
@@ -458,8 +472,7 @@ public class GameThread extends Thread {
 		public void run() {
 			// 투표 대기
 			try {
-				if (isPlayersVoteEnded())
-					return;
+				if (isPlayersVoteEnded()) return;
 			} catch (InterruptedException e) {
 			}
 		}
@@ -470,8 +483,7 @@ public class GameThread extends Thread {
 		public void run() {
 			// 투표 대기
 			try {
-				if (isPlayersVoteEnded())
-					return;
+				if (isPlayersVoteEnded()) return;
 			} catch (InterruptedException e) {
 			}
 		}
@@ -481,8 +493,7 @@ public class GameThread extends Thread {
 		@Override
 		public void run() {
 			try {
-				// nightTime 만큼 대기
-				sleep(nightTime);
+				if (isNightTimeEnded())	return;
 			} catch (InterruptedException e) { }
 		}
 	}

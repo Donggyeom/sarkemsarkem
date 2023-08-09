@@ -8,6 +8,7 @@ const BackButtonContainer = styled.div`
   top: 10px;
   left: 10px;
   cursor: pointer;
+  z-index : 1;
 `;
 
 const BackButton = () => {
