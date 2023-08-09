@@ -535,7 +535,7 @@ const SunsetPage = () => {
    
   const { roomId, publisher, camArray, isCamOn, setIsCamOn, isMicOn, setIsMicOn} = useRoomContext(); 
   
-  const { myRole, startVote, agreeExpulsion, disagreeExpulsion, targetId,dayCount } = useGameContext();
+  const { myRole, startVote, agreeExpulsion, disagreeExpulsion, targetId,dayCount, remainTime } = useGameContext();
   const navigate = useNavigate();
   const location = useLocation();
   console.log(targetId, "확인합시다");
@@ -623,7 +623,7 @@ const SunsetPage = () => {
       <StyledContent>
       {!isLogOn && <Log top="60%" left="26%" />}
       <SunMoon alt="SunMoon"></SunMoon>
-      <TimeSecond>60s</TimeSecond>
+      <TimeSecond>{remainTime}s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn}/>
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>

@@ -50,6 +50,9 @@ const GameProvider = ({ children }) => {
 
     });
 
+    // 남은 시간
+    const [remainTime, setRemainTime] = useState(0);
+
     const [myRole, setMyRole] = useState(null);
     const [myVote, setMyVote] = useState(0);
     const [dayCount, setDayCount] = useState(0);
@@ -337,6 +340,10 @@ const onSocketConnected = () => {
         case "PHASE_NIGHT":
             navigate(`/${roomId}/night`);
             break;
+        case "REMAIN_TIME":
+            setRemainTime(sysMessage.param.time);
+            console.log("남은 시간: ",sysMessage.param.time);
+            break;
 
             case "JOB_DISCLOSE":
               const disclosedRoles = sysMessage.param;
@@ -384,7 +391,6 @@ const onSocketConnected = () => {
             const newDeadId = sysMessage.param.deadPlayerId;
             setDeadIds(prevDeadIds => [...prevDeadIds, newDeadId]);
             break;
-
         }
       }
 
@@ -546,7 +552,11 @@ const onSocketConnected = () => {
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner, 
+<<<<<<< HEAD
       voteTargetId, deadIds, threatedTarget, psyTarget, hiddenMission, setHiddenMission}}>
+=======
+      voteTargetId, deadIds, threatedTarget, psyTarget, remainTime}}>
+>>>>>>> 4beb781acf76bdbcc5c136ebfd807fbabe878cb0
       {children}
     </GameContext.Provider>
   );
