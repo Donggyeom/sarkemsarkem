@@ -25,7 +25,7 @@ const ResultBoxStyle = styled.div`
 `;
 
 const BigSepStyle = styled.svg`
-  padding: 20.62px 0px 20.62px 0px;
+  padding: 2% 0; /* Adjust padding using relative units */
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
@@ -33,22 +33,26 @@ const BigSepStyle = styled.svg`
 `;
 
 const ResultBox = ({ ...props }) => {
-  const resultBoxWidth = 1400; // ResultBoxStyle의 너비
+  const resultBoxWidth = 76; // Percentage width of ResultBoxStyle
 
-  // path 시작점을 왼쪽으로 15px만큼 이동, 우측 끝점을 너비에 맞춰서 조정
-  const pathStartX = -65;
-  const pathEndX = resultBoxWidth - 290;
+  // Calculate the path coordinates based on the percentage width
+  const pathStartX = (resultBoxWidth / 100) * -15;
+  const pathEndX = (resultBoxWidth / 100) * 50; // Adjust the value as needed
 
   return (
     <ResultBoxStyle {...props}>
       <BigSepStyle
-        width={resultBoxWidth}
+        width={`${resultBoxWidth}%`}
         height="104"
-        viewBox={`0 0 ${resultBoxWidth} 104`}
+        viewBox={`0 0 100 104`} /* Use a fixed viewBox width */
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d={`M${pathStartX} 40.334H${pathEndX}`} stroke="black" strokeWidth="5.15599" />
+        <path
+          d={`M${pathStartX} 40.334H${pathEndX}`}
+          stroke="black"
+          strokeWidth="5.15599"
+        />
       </BigSepStyle>
     </ResultBoxStyle>
   );
