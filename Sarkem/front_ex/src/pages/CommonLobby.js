@@ -33,7 +33,6 @@ import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
 import HelpButton from '../components/buttons/HelpButton';
 import Help from '../components/games/Help';
-import axios from 'axios';
 import LoadingPage from './LoadingPage';
 
 const StyledContent = styled.div`
@@ -303,7 +302,7 @@ const CommonLobby = ()=>{
       {showNyangachiPopup && <ScPopup src={c_nyangachi} top="80%" left="50%" />}
       <BackButton/>
       <StyledContent>
-         <LobbyCamera players={players} />
+         <LobbyCamera ids={Array.from(players.keys())} />
         <RightSection>
           <DivWrapper
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}/>

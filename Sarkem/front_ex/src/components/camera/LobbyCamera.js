@@ -288,23 +288,17 @@ const CamCatWrapper = styled.div`
   : ''};
 `;
 
-const LobbyCamera = React.memo(( {players} ) => {
-  const camCount = players.size;
+const LobbyCamera = React.memo(( {ids} ) => {
+  const camCount = ids.length;
   const gridStyles = calculateGrid(camCount);
-  const camArray = [];
-
-  players.forEach((player, index) => {
-    if (player.stream == undefined) return;
-
-    camArray.push(player.stream);
-  });
-
+  console.log(`LobbyCamera`);
+  console.log(ids);
   return (
     <LeftSectionWrapper>
       <CamCatGrid style={gridStyles}>
-        {camArray && camArray.map((user, index) => (
+        {ids && ids.map((id, index) => (
           <CamCatWrapper key={index} camcount={camCount} index={index}>
-            <CamCat props={user} />
+            <CamCat id={id} />
           </CamCatWrapper>
         ))}
       </CamCatGrid>

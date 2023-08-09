@@ -4,6 +4,7 @@ export default class OpenViduVideoComponent extends Component {
 
     constructor(props) {
         super(props);
+        // this.props = JSON.parse(props);
         this.videoRef = React.createRef();
     }
     

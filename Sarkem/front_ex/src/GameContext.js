@@ -56,14 +56,14 @@ const GameProvider = ({ children }) => {
 
   useEffect(() => {
     console.log(`playerId : ${player.playerId}`);
-    if (player.playerId !== undefined) {
+    if (player.stream !== undefined) {
       connectGameWS();
       setPlayers((prev) => {
         return new Map([...prev, [player.playerId, player]]);
       });
       loadGestureRecognizer();
     }
-  }, [player.playerId]);
+  }, [player.stream]);
 
   
   // 게임 옵션이 변경되면, callChangeOption 호출

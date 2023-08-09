@@ -37,14 +37,16 @@ const RoomProvider = ({ children }) => {
 
 
   useEffect(() => {
-    if (player.playerId == undefined) return;
-
+    console.log(`useEffect player`);
+    console.log(player);
+    console.log(player.stream);
+    if (player.stream == undefined) return;
+    
     console.log('player 변경');
     console.log(player);
     setPlayers((prev) => {
       return new Map(prev).set(player.playerId, player);
     });
-    console.log(players);
   }, [player]);
 
 
@@ -89,7 +91,11 @@ const RoomProvider = ({ children }) => {
       // 세션 연결 종료
       if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
       // game 퇴장 요청
-      const response = await axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`)
+      const response = await axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`,
+        {
+          headers: { 'Content-Type': 'application/json;charset=utf-8', },
+        }
+      )
       // 세션 스토리지에 저장된 데이터 삭제
       window.sessionStorage.removeItem("roomId");
       window.sessionStorage.removeItem("gameId");

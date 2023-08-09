@@ -79,7 +79,7 @@ const GoroomButton = (props) => {
     }
     console.log(isEnterable)
     const session = await initSession();
-    connectSession(session, gameRoom.roomId);
+    await connectSession(session, gameRoom.roomId);
     navigate(`/${roomId}/lobby`);
   };
 

@@ -8,9 +8,6 @@ import chatcloseImage from '../img/closebutton.png';
 import { useGameContext } from '../GameContext';
 import { useRoomContext } from '../Context';
 import receiverboxImage from '../img/receiverbox.png';
-import axios from 'axios';
-import { Stomp } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 
 
 const ChatContainer = styled.div`
