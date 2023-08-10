@@ -9,6 +9,7 @@ const RoomProvider = ({ children }) => {
   const [roomSession, setRoomSession] = useState({});
   const [player, setPlayer] = useState({});
   const [players, setPlayers] = useState(new Map());
+  const [showImage, setShowImage] = useState(false);
 
   const OV = useRef(null);
   const navigate = useNavigate();
@@ -44,6 +45,15 @@ const RoomProvider = ({ children }) => {
     console.log(players);
 
   }, [players]);
+
+  // TODO: showImage 기능
+  // useEffect(() => {
+  //   if (!isCamOn) {
+  //       setShowImage(true);
+  //   } else {
+  //       setShowImage(false);
+  //   }
+  // }, [isCamOn]);
 
 
   ////////////   RoomContext 함수   ////////////

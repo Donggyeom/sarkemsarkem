@@ -57,6 +57,18 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
     }
   }, [sysMessage]);
   // console.log(sysMessage);
+
+  const formattedMessage = sysMessage?.param?.message ? sysMessage.param.message.split('.').map((sentence, index) => (
+      <React.Fragment key={index}>
+        {index > 0 && <br />}
+        {sentence.trim()}
+        {index < sysMessage.param.message.split('.').length - 1 && '.'}
+      </React.Fragment>
+    ))
+  : null;
+
+
+  // console.log(sysMessage);
   return (
     <StyledPopupContainer showPopup={showPopup}>
       <div
@@ -91,7 +103,7 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
           {dayCount}일차 낮
         </div>
       </div>
-      <StyledPopupTitle>{sysMessage?.param?.message}</StyledPopupTitle>
+      <StyledPopupTitle>{formattedMessage}</StyledPopupTitle>
     </StyledPopupContainer>
   );
 };

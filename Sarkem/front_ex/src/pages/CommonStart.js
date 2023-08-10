@@ -38,6 +38,8 @@ const LeftSection = styled.div`
   flex: 4;
   display: flex;
   justify-content: center;
+  margin-left : 2.5%;
+  // margin-top : 1%;
 `;
 
 const RightSection = styled.div`
@@ -91,12 +93,13 @@ const RightPart = styled.div`
     width: 300px; /* 원하는 너비로 설정 */
     height: 50px; /* 원하는 높이로 설정 */
     padding: 5px;
-    font-size: 35px;
+    font-size: 30px;
     border: none;
     background-color: transparent;
     outline: none;
-    text-align: center; 
+    // text-align: center; 
     font-family: "RixInooAriDuriR";
+    font-weight: 10% !important;
   }
   span {
     margin: 0 50px; /* You can adjust the margin as needed */
@@ -251,6 +254,7 @@ const CommonStart = ({onClick} ) => {
     setNickName(event.target.value);
   };
 
+
   return (
     <Background>
       <StyledStartPage>
@@ -267,10 +271,11 @@ const CommonStart = ({onClick} ) => {
               autoPlay
               style={{
                 marginTop: "25%",
-                width: '100%',
+                width: '96%',
                 height: '100%',
                 objectFit: 'cover',
                 borderRadius: '10%',
+                borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434'
 
               }}
             />
@@ -281,10 +286,10 @@ const CommonStart = ({onClick} ) => {
               style={{
                 position: 'absolute',
                 top: '35%',
-                left: '50%',
+                left: '50.5%',
                 transform: 'translate(-50%, -50%)', // Center the image
-                width: '102%', // Adjust the size of the image as needed
-                height: '45%',
+                width: '102.5%', // Adjust the size of the image as needed
+                height: '32%',
                 zIndex: 1, // Ensure the image is above the video (z-index: 0 by default)
               }}
             />

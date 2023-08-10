@@ -114,10 +114,10 @@ const NightPage = () => {
     return (   
     <Background>
       <StyledNightPage>
-         {!isLogOn && <Log top="60%" left="26%" />}
+        {!isLogOn && <Log />}
         {players && <DayNightCamera ids={Array.from(players.keys())} />}
         <SunMoon alt="SunMoon"></SunMoon>
-        <TimeSecond>60s</TimeSecond>
+        <TimeSecond>{remainTime}</TimeSecond>
         {player.role === 'SARK' && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />}
         {/* {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />} */}
         {player.role === 'SARK' && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>}

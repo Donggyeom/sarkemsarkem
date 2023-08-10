@@ -25,6 +25,8 @@ import com.a702.sarkem.redis.ChatPublisher;
 import com.a702.sarkem.redis.ChatSubscriber;
 import com.a702.sarkem.redis.GamePublisher;
 import com.a702.sarkem.redis.SystemSubscriber;
+import com.a702.sarkem.repo.GameLogRepository;
+import com.a702.sarkem.repo.InGameRoleRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,9 @@ public class GameManager {
 	private final ChatPublisher chatPublisher;
 	// topic 관리
 	private Map<String, ChannelTopic> topics = new HashMap<>();
+	
+	private final GameLogRepository gameLogRepository;
+	private final InGameRoleRepository inGameRoleRepository;
 
 	public ChannelTopic getGameTopic(String roomId) {
 		return topics.get("GAME_" + roomId);
@@ -290,7 +295,8 @@ public class GameManager {
 		GameSession gameSession = getGameSession(roomId);
 		ChannelTopic gameTopic = topics.get("GAME_" + roomId);
 		ChannelTopic chatTopic = topics.get("CHAT_" + roomId);
-		GameThread gameThread = new GameThread(this, gameRoom, gameSession, gameTopic, chatTopic);
+		DBService dbService = new DBService(gameLogRepository, inGameRoleRepository);
+		GameThread gameThread = new GameThread(this, dbService, gameRoom, gameSession, gameTopic, chatTopic);
 		gameThread.run();
 	}
 
@@ -432,7 +438,7 @@ public class GameManager {
 		if (voteResult) {
 			gameSession.addExpulsionVoteCnt();
 		}
-		// TODO: 추방 투표 현황 전송
+		// 추방 투표 현황 전송
 		sendTwilightSelectionEndMessage(roomId, playerId);
 	}
 
@@ -478,7 +484,7 @@ public class GameManager {
         log.info(playerId + "'s isAlive: " + leavePlayer.isAlive());
         sendLeaveGameMessage(roomId, playerId);
     }
-
+	
 	// 게임 종료시 보내는 직업정보 key값 nickname, job/ value에 list로 닉네임리스트, 직업리스트(한글)을 담아보낸다
 	public void jobDiscolse(String roomId) {
 		GameSession gameSession = getGameSession(roomId);

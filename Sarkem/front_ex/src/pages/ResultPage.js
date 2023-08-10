@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Background from '../components/backgrounds/BackgroundSunset';
+import Background1 from '../components/backgrounds/BackgroundSunset';
+import Background2 from '../components/backgrounds/BackgroundNight';
 import ReButton from '../components/buttons/reButton';
 import ResultBox from '../components/games/ResultBox';
+import ResultBox2 from '../components/games/ResultBox2';
 import logoImage from '../img/logo.png';
 import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
@@ -55,12 +57,27 @@ const Table = styled.table`
   width: 70%;
   max-height: 62%;
   overflow-x: auto;
-  border-collapse: collapse;
+  border-spacing: 0px 4px; /* Remove default border spacing */
   text-align: center;
   z-index: 1;
-  margin: 0 auto; /* 가로 중앙 정렬 */
-  margin-left: -63%; /* 왼쪽으로 이동 */
-  margin-top: -10%; /* 상단으로 이동 */
+  margin: 0 auto;
+  margin-left: -63%;
+  margin-top: -10%;
+  borderCollapse: 'separate',
+`;
+
+const TableCell = styled.td`
+  font-size: 20px;
+  padding: 10px;
+  margin-bottom: 30px;
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+  &:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
 `;
 
 const TableHeader = styled.th`
@@ -74,10 +91,10 @@ const TableRow = styled.tr`
   
 `;
 
-const TableCell = styled.td`
-  font-size: 20px; /* Adjust the font size as needed */
-  padding: 10px;
-`;
+// const TableCell = styled.td`
+//   font-size: 20px; /* Adjust the font size as needed */
+//   padding: 10px;
+// `;
 
 const ResultPage = () => {
   const {
@@ -88,9 +105,41 @@ const ResultPage = () => {
     setSession,
     roomSession, setPlayer, setPlayers
   } = useRoomContext();
-  const { roleAssignedArray } = useGameContext();
+  const { roleAssignedArray, winner, stompClient } = useGameContext();
   const navigate = useNavigate();
   console.log(roleAssignedArray);
+// const callChangeOption = () => {
+//   if(stompClient.current.connected && token !== null) {
+//     stompClient.current.send("/pub/game/action", {}, 
+//         JSON.stringify({
+//             code:'OPTION_CHANGE', 
+//             roomId: roomId, 
+//             playerId: token,
+//             param: peopleCount
+//         }))
+//         console.log(peopleCount)
+//   }
+// }
+
+// useEffect(() => {
+//   if (!isHost) return;
+//   callChangeOption();
+// }, [peopleCount]);
+
+// const handlePeopleCountChange = () => {
+//   if (!isHost) return;
+//   if (stompClient.current.connect === undefined) return;
+  
+//   peopleCount.bullyCount=0
+//   peopleCount.sarkCount=0
+//   peopleCount.citizenCount=0
+//   peopleCount.doctorCount=0
+//   peopleCount.policeCount=0
+//   peopleCount.detectiveCount=0
+//   peopleCount.psychologistCount=0
+//   peopleCount.meetingTime=60
+
+// };
 
   const handleAgainButtonClick = () => {
     console.log("세션 해제중입니다.....");
@@ -120,36 +169,73 @@ const ResultPage = () => {
     navigate('/');
   };
 
+  const sarkPlayers = roleAssignedArray.filter(playerRole => playerRole.job === '삵');
+  const nonSarkPlayers = roleAssignedArray.filter(playerRole => playerRole.job !== '삵');
+
   return (
-    <Background>
-      <StyledSunsetPage>
+    <div>
+    {winner === 'CITIZEN' ? (
+      <Background1>
+        <StyledSunsetPage>
         <ResultBox> </ResultBox>
+          <ButtonContainer>
+            <Logo src={logoImage} alt="로고" />
+            <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
+            <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
+          </ButtonContainer>
+          <Title> 냥냥이팀 승리!</Title>
+          <Table >
+          <tbody>
+            {nonSarkPlayers.map((playerRole, index) => (
+              <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#f25282" }}>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
+              </TableRow>
+            ))}
+            {sarkPlayers.map((playerRole, index) => (
+              <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#ff9cb9" }}>
+                <TableCell>{playerRole.nickname}</TableCell>
+                <TableCell>{playerRole.job}</TableCell>
+              </TableRow>
+            ))}
+            
+          </tbody>
+        </Table>
+        </StyledSunsetPage>
+      </Background1>
+    ) : (
+      <Background2>
+        <StyledSunsetPage>
+        <ResultBox2> </ResultBox2>
         <ButtonContainer>
           <Logo src={logoImage} alt="로고" />
           <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
           <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
         </ButtonContainer>
-        <Title> 냥냥이팀 승리!</Title>
+        <Title> 삵팀 승리!</Title>
         <Table>
-          <thead>
-            <tr>
-              <TableHeader>승리여부</TableHeader>
-              <TableHeader>플레이어 ID</TableHeader>
-              <TableHeader>역할</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {roleAssignedArray.map((playerRole, index) => (
-              <TableRow key={index} even={index % 2 === 0}>
-                <TableCell>승리여부</TableCell>
-                <TableCell>{playerRole.playerId}</TableCell>
-                <TableCell>{playerRole.role}</TableCell>
-              </TableRow>
-            ))}
-          </tbody>
-        </Table>
-      </StyledSunsetPage>
-    </Background>
+        <tbody>
+          {sarkPlayers.map((playerRole, index) => (
+            <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#9ed8ff" }}>
+              <TableCell>{playerRole.nickname}</TableCell>
+              <TableCell>{playerRole.job}</TableCell>
+            </TableRow>
+          ))}
+          {nonSarkPlayers.map((playerRole, index) => (
+            <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#7db1d4" }}>
+              <TableCell>{playerRole.nickname}</TableCell>
+              <TableCell>{playerRole.job}</TableCell>
+            </TableRow>
+          ))}
+        </tbody>
+      </Table>
+
+        </StyledSunsetPage>
+      </Background2>
+    )}
+  </div>
+
+
   );
 };
 

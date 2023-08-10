@@ -25,31 +25,26 @@ const ResultBoxStyle = styled.div`
 `;
 
 const BigSepStyle = styled.svg`
-  padding: 20.62px 0px 20.62px 0px;
+  padding: 2% 0; /* Adjust padding using relative units */
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
   overflow: visible;
 `;
 
+const LineStyle = styled.div`
+  width: 112%; /* Set the desired width for your line */
+  height: 5px; /* Set the desired height for your line */
+  background-color: black; /* Color of the line */
+  margin-left: -6%;
+  margin-top: 5%;
+`
+
 const ResultBox = ({ ...props }) => {
-  const resultBoxWidth = 1400; // ResultBoxStyle의 너비
-
-  // path 시작점을 왼쪽으로 15px만큼 이동, 우측 끝점을 너비에 맞춰서 조정
-  const pathStartX = -65;
-  const pathEndX = resultBoxWidth - 290;
-
   return (
     <ResultBoxStyle {...props}>
-      <BigSepStyle
-        width={resultBoxWidth}
-        height="104"
-        viewBox={`0 0 ${resultBoxWidth} 104`}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d={`M${pathStartX} 40.334H${pathEndX}`} stroke="black" strokeWidth="5.15599" />
-      </BigSepStyle>
+           <LineStyle></LineStyle>
+
     </ResultBoxStyle>
   );
 };

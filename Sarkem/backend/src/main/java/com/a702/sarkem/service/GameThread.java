@@ -31,9 +31,10 @@ public class GameThread extends Thread {
 	private int meetingTime;
 	private int nightTime;
 
-	public GameThread(GameManager gameManager, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
+	public GameThread(GameManager gameManager, DBService dbService, GameRoom gameRoom, GameSession gameSession, ChannelTopic gameTopic,
 			ChannelTopic chatTopic) {
 		GameThread.gameManager = gameManager;
+		this.dbService = dbService;
 		this.gameRoom = gameRoom;
 		this.gameSession = gameSession;
 		this.roomId = gameRoom.getRoomId();

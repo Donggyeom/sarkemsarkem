@@ -5,7 +5,10 @@ import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 import ChatButtonAndPopup from './components/buttons/ChatButtonAndPopup';
+import DayPopup from './components/games/DayPopup';
+import { Message } from '@stomp/stompjs';
 import axios from "axios";
+import nightCamAudio from './components/camera/DayNightCamera';
 
 const GameContext = createContext();
 
@@ -15,11 +18,14 @@ const GameProvider = ({ children }) => {
   // 현재 시스템 메시지를 저장할 상태 추가
   const [currentSysMessage, setCurrentSysMessage] = useState(null);
   const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
-  
-  const [mafias, setMafias] = useState([]);
   const [chatMessages, setChatMessages] = useState([]); 
   const [chatConnected, setChatConnected] = useState(false);
   const [message, setMessage] = useState("");
+  
+  const [winner, setWinner] = useState(null);
+  const jungleRefs = useRef([]);
+  const mixedMediaStreamRef = useRef(null);
+  const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
   
   const [myVote, setMyVote] = useState(0);
   const [dayCount, setDayCount] = useState(0);
@@ -28,16 +34,32 @@ const GameProvider = ({ children }) => {
   const [expulsionTarget, setExpulsionTarget] = useState("");
   const [voteSituation, setVotesituation] = useState({});
   const [threatedTarget, setThreatedTarget] = useState("");
+  // twilight 투표 설정 위한 타겟id
   const [targetId, setTargetId] = useState("");
+  // 남은 시간
+  const [remainTime, setRemainTime] = useState(0);
   
+  const [psyTarget, setPsyTarget] = useState("");
+  const [psychologist, setPsychologist] = useState(false);//심리학자 실행
+  const [hiddenMission, setHiddenMission] = useState(false);//히든미션 실행
+  const hiddenMissionType = ["Thumb_Up", "Thumb_Down", "Victory", "Pointing_Up", "Closed_Fist", "ILoveYou"];//히든미션 리스트
+  const [selectMission, setSelectMission] = useState("");//히든 선택된 히든미션
+  const [scMiniPopUp, setScMiniPopUp] = useState(true);//첫날만 직업 카드 자동으로 뜸
+  
+  // 낮 투표 타겟 저장 위한 타겟
+  const [voteTargetId, setVoteTargetId] = useState("");
   const [phase, setphase] = useState("");
   const [gestureRecognizer, setGestureRecognizer] = useState(null);
   const [detectedGesture, setDetectedGesture] = useState('');
   const [animationFrameId, setAnimationFrameId] = useState(null);
-  const location = useLocation();
+  
+  // 캠 배열에서 제거하기 위함
+  const [deadIds, setDeadIds] = useState([]);
   
   const navigate = useNavigate();
+  const location = useLocation();
   let stompClient = useRef({});
+
   
   const Roles = new Map(Object.entries({
     CITIZEN: "CITIZEN",
@@ -54,8 +76,8 @@ const GameProvider = ({ children }) => {
   
   useEffect(() => {
     console.log('GameProvider 생성');
+    jungleRefs.current = [];
   }, []);
-
 
   useEffect(() => {
     console.log(`playerId : ${player.playerId}`);
@@ -84,6 +106,23 @@ const GameProvider = ({ children }) => {
 
   ////////////   GameContext 함수   ////////////
 
+    useEffect(()=>{
+      if(myRole){
+        console.log(camArray);
+        const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
+        console.log(sarks);
+        for (let i = 0; i < camArray.length; i++) {
+          console.log(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token));
+          if (sarks.includes(JSON.parse(camArray[i].stream.connection.data).token)) {
+            const mafia = camArray[i].stream.mediaStream;
+            console.log(mafia);
+            setMafias((mafias) => [...mafias, mafia]);
+          }
+        }
+        console.log(mafias);
+      }
+    },[myRole])
+
   // WebSocket 연결
   const connectGameWS = async (event) => {
     console.log("connectGameWS");
@@ -107,11 +146,6 @@ const GameProvider = ({ children }) => {
     stompClient.current.subscribe('/sub/game/system/' + window.sessionStorage.getItem("roomId"), receiveMessage)
   }
 
-  // 채팅 연결할 때 //
-  const connectChat = () => {
-    console.log('/sub/chat/room/' + window.sessionStorage.getItem("roomId") + " redis 구독")
-    stompClient.current.subscribe('/sub/chat/room/' + window.sessionStorage.getItem("roomId"), receiveChatMessage);
-  };
 
   const receiveChatMessage = async (message) => {
     const parsedMessage = JSON.parse(message.body);
@@ -122,6 +156,7 @@ const GameProvider = ({ children }) => {
     setChatMessages((prevMessages) => [...prevMessages, { message: chatMessage, playerId }]);
   };
   
+
   const sendChatPubMessage = (message) => {
     console.log("chat publish 들어감"); 
     if (stompClient.current.connected && player.playerId !== null) {
@@ -133,6 +168,12 @@ const GameProvider = ({ children }) => {
         message: message
       }));
     }
+  };
+
+  // 채팅 연결할 때 //
+  const connectChat = () => {
+    console.log('/sub/chat/room/' + window.sessionStorage.getItem("roomId") + " redis 구독")
+    stompClient.current.subscribe('/sub/chat/room/' + window.sessionStorage.getItem("roomId"), receiveChatMessage);
   };
 
   const sendMessage = (message) => {
@@ -147,19 +188,11 @@ const GameProvider = ({ children }) => {
       }));
     }
   }
-
-//   const sendMessage = async (e) => {
-//    console.log("메시지 보낸다");
-//    if (message === '') return;
-//    await stompClient.current.send('/pub/chat/room', {}, JSON.stringify({type:'TALK', roomId:roomId, playerId:player.playerid, message: message}))
-//    setMessage('');
-//  }
-
-
+  
   // 게임 끝나거나 비활성화 할때 //
   const unconnectChat = () => {
-    console.log('/sub/chat/room/' + roomSession.roomId + " redis 구독")
-    stompClient.current.unsubscribe('/sub/chat/room/' + roomSession.roomId, receiveMessage)
+    console.log('/sub/chat/room/' + roomSession.roomId + " redis 구독");
+    stompClient.current.unsubscribe('/sub/chat/room/' + roomSession.roomId, receiveMessage);
   };
 
   const getGameSession = async (roomId) => {
@@ -193,42 +226,37 @@ const GameProvider = ({ children }) => {
 
   const handleGamePageClick = () => {
     stompClient.current.send("/pub/game/action", {}, 
-    JSON.stringify({
-        code:'GAME_START', 
-        roomId: roomSession.roomId, 
-        playerId: player.playerId
-    })
-    );
-};
-
+      JSON.stringify({
+          code:'GAME_START', 
+          roomId: roomSession.roomId, 
+          playerId: player.playerId
+      })
+      );
+  };
 
   const receiveMessage = async (message) => {
-      // 시스템 메시지 처리
-      let sysMessage = JSON.parse(message.body);
-      console.log(sysMessage);
-      console.log(player.playerId, sysMessage.playerId);
+    // 시스템 메시지 처리
+    let sysMessage = JSON.parse(message.body);
 
+    if (player.playerId === sysMessage.playerId) {
 
-      // if (player.playerid != sysMessage.playerId) return;
-      if (player.playerId === sysMessage.playerId) {
-
-      switch (sysMessage.code) {
-        // param에 phase, message
-      case "NOTICE_MESSAGE":
-          console.log(sysMessage.param);
-          setCurrentSysMessage(()=>sysMessage);
-          setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
-            { ...sysMessage, dayCount: sysMessage.param.day }]);
-          // console.log(currentSysMessage);
-          break;
-      case "GAME_START":   
+    switch (sysMessage.code) {
+      // param에 phase, message
+    case "NOTICE_MESSAGE":
+        console.log(sysMessage.param);
+        setCurrentSysMessage(()=>sysMessage);
+        setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
+          { ...sysMessage, dayCount: sysMessage.param.day }]);
+        // console.log(currentSysMessage);
+        break;
+    case "GAME_START":   
         navigate(`/${roomSession.roomId}/day`);
         break;
-      case "ONLY_HOST_ACTION":
-          console.log(sysMessage);
-          // alert('방장만 실행 가능합니다.');
-          break;
-      case "OPTION_CHANGED":
+    case "ONLY_HOST_ACTION":
+        console.log(sysMessage);
+        // alert('방장만 실행 가능합니다.');
+        break;
+    case "OPTION_CHANGED":
         if(player.isHost) return;
         setGameSession((prev) => {
           return ({
@@ -237,7 +265,8 @@ const GameProvider = ({ children }) => {
           });
         });
         break;
-      case "ROLE_ASSIGNED":
+    // 역할 저장을 위해 넣었음 //
+    case "ROLE_ASSIGNED":
         const assignedRole = Roles.get(sysMessage.param.role);
         if (assignedRole == null) {
           alert("직업배정에 실패했습니다.", assignedRole);
@@ -250,144 +279,213 @@ const GameProvider = ({ children }) => {
             role: assignedRole,
           });
         });
-      break;
-case "GAME_START":   
-          navigate(`/${roomSession.roomId}/day`);
-          break;
+        break;
+        
+    case "PHASE_DAY":
+        setphase("day");
+        navigate(`/${roomSession.roomId}/day`)
+        break;
 
-      case "PHASE_DAY":
-            setphase("day");
-            navigate(`/${roomSession.roomId}/day`)
-          break;
+    case "PHASE_TWILIGHT":
+        navigate(`/${roomSession.roomId}/sunset`)
+        setThreatedTarget(false); // 저녁 되면 협박 풀림
+        setHiddenMission(false);
+        break;
 
-      case "PHASE_TWILIGHT":
-          navigate(`/${roomSession.roomId}/sunset`)
-          setThreatedTarget(); // 저녁 되면 협박 풀림
-          break;
+    case "PHASE_NIGHT":
+        setphase("night");
+        setThreatedTarget(false); // 밤 되면 협박 풀림
+        setPsyTarget("");//심리학자 끝
+        setPsychologist(false);
+        setHiddenMission(false);// 밤이 되면 마피아 미션 끝
+        console.log(phase);
+        navigate(`/${roomSession.roomId}/night`)
+        break;
 
-      case "PHASE_NIGHT":
-          setphase("night");
-          console.log(phase);
-          navigate(`/${roomSession.roomId}/night`)
-          break;
+    case "GAME_END":
+        navigate(`/${roomId}/result`)
+        const nowWinner = sysMessage.param.winner;
+        console.log(nowWinner);
+        setWinner(nowWinner);
+        break;
 
-      case "TARGET_SELECTION":
-          // alert('투표가 시작됐습니다');
-          setStartVote(true);
-          setDayCount(sysMessage.param.day);
-          break;
+    case "TARGET_SELECTION":
+        // alert('투표가 시작됐습니다');
+        setStartVote(true);
+        setVotesituation({});
+    
+        if (sysMessage.param && sysMessage.param.day !== undefined && sysMessage.param.day !== null) {
+            setDayCount(sysMessage.param.day);
+        }
+        break;
 
-      case "VOTE_SITUATION":
-          console.log(sysMessage.param, "얘일걸");
-          setVotesituation(sysMessage.param);
-          alert(voteSituation , "투표결과");
-          break;
+    case "VOTE_SITUATION":
+        if (sysMessage.param.hasOwnProperty("target")) {
+            // setVotesituation(sysMessage.param.target);
+            console.log(sysMessage.param.target, "타겟저장");
+            setVotesituation({ [sysMessage.param.target]: sysMessage.param.target });
+            
+        } else {
+            setVotesituation(sysMessage.param);
+            setVoteTargetId("");
+        }
+        break;
 
-      case "DAY_VOTE_END":
-          setStartVote(false);
+    case "DAY_VOTE_END":
+        setStartVote(false);
+        setTargetId(sysMessage.param.targetId);
+        console.log(sysMessage.param.targetId, "이거");
+        console.log(targetId, "이놈확인해라");
+        
+        // 2번 -> sunsetpage로 넘겨서 사용해라
 
-          setTargetId(sysMessage.param.targetId);
-          console.log(sysMessage.param.targetId, "이거");
-          console.log(targetId, "이놈확인해라");
-          
-          // 2번 -> sunsetpage로 넘겨서 사용해라
+        break;
 
-          break;
+    case "TARGET_SELECTION_END":
+        // alert("선택 완료", sysMessage.param.targetNickname);
+        setSelectedTarget("");
+        break;
 
-      case "TARGET_SELECTION_END":
-          // alert("선택 완료", sysMessage.param.targetNickname);
-          setSelectedTarget("");
-          break;
+    case "TWILIGHT_SELECTION":
+        alert("죽일지 살릴지 선택해주세요");
+        setStartVote(true);
+        break;
 
-      case "TWILIGHT_SELECTION":
-          alert("죽일지 살릴지 선택해주세요");
-          setStartVote(true);
-          break;
+    case "TWILIGHT_SELECTION_END":
+        // 추방 투표 완료(개인)
+        console.log("추방 투표 완료");
+        break;
 
-      case "TWILIGHT_SELECTION_END":
-          // 추방 투표 완료(개인)
-          console.log("추방 투표 완료");
-          break;
+    case "TWILIGHT_VOTE_END":
+        setStartVote(false);
+        // alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
+        break;
 
-      case "TWILIGHT_VOTE_END":
-          setStartVote(false);
-          alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
-          break;
-
-      case "BE_EXCLUDED":
-          setPlayer((prev) => {
-            return ({
-              ...prev,
-              role: Roles.OBSERVER,
-            });
-          });
-          break;
-
-      case "BE_HUNTED":
-          setPlayer((prev) => {
-            return ({
-              ...prev,
-              role: Roles.OBSERVER,
-            });
-          });
-          break;
-
-      case "BE_THREATENED":
-          alert("냥아치 협박 시작!", sysMessage.playerId);
-          setThreatedTarget(sysMessage.playerId);
-          setPlayer((prev) => {
-            return ({
-              ...prev,
-              isMicOn: false,
-            });
-          });
-          break;
-
-      case "PHASE_NIGHT":
-          navigate(`/${roomSession.roomId}/night`);
-          break;
-
-      case "CHANGE_HOST":
-        console.log(`지금부터 당신이 방장입니다.`);
+    case "BE_EXCLUDED":
         setPlayer((prev) => {
           return ({
             ...prev,
-            isHost: true
+            role: Roles.OBSERVER,
           });
         });
-      }
-    }
-    else{
-      // 역할 저장을 위해 넣었음 //
-      switch (sysMessage.code) {
-      case "ROLE_ASSIGNED":
-        const assignedRole = Roles.get(sysMessage.param.role);
-        if (assignedRole == null) {
-          alert("직업배정에 오류가 발생했습니다.", assignedRole);
-          return;
+        break;
+
+    case "BE_HUNTED":
+        if (sysMessage.param && sysMessage.param.deadPlayerId === player.playerId) {
+          setPlayer((prev) => {
+            return ({
+              ...prev,
+              role: Roles.OBSERVER,
+            });
+          });
         }
-        let player = players.get(sysMessage.playerId);
-        if (player == null) {
-          alert("ROLE_ASSIGNED - 플레이어 정보를 불러오는데 실패했습니다.", sysMessage.playerId);
-          return;
-        }
-        player = {
-          ...player,
-          role: assignedRole,
-        };
-        setPlayers((prev) => {
-          return new Map([
-            ...prev,
-            [player.playerId, player],
-          ]);
+        break;
+
+    case "BE_THREATED":
+        // alert("냥아치 협박 시작!", sysMessage.playerId);
+        setThreatedTarget(true);
+        // setPlayer((prev) => {
+        //   return ({
+        //     ...prev,
+        //     isMicOn: false,
+        //   });
+        // });
+        break;
+
+    case "PSYCHOANALYSIS_START":
+        setPsyTarget(sysMessage.param.targetId);
+        setPsychologist(true);
+        break;
+    case "MISSION_START":
+        console.log("미션시작");
+        console.log(hiddenMissionType[sysMessage.param.missionIdx]);
+        setHiddenMission(true);
+        setSelectMission(hiddenMissionType[sysMessage.param.missionIdx]);
+        break;
+
+    case "PHASE_NIGHT":
+        navigate(`/${roomSession.roomId}/night`);
+        break;
+
+    case "CHANGE_HOST":
+      console.log(`지금부터 당신이 방장입니다.`);
+      setPlayer((prev) => {
+        return ({
+          ...prev,
+          isHost: true
         });
+      });
+      break;
+
+    case "REMAIN_TIME":
+        setRemainTime(sysMessage.param.time);
+        // console.log("남은 시간: ",sysMessage.param.time);
+        break;
+
+    case "JOB_DISCLOSE":
+        const disclosedRoles = sysMessage.param;
+        // console.log(sysMessage.param)
+        // console.log(sysMessage.param.job.length)
+        const newRoleAssignedArray = [];
+    
+        for (let i = 0; i < disclosedRoles.job.length; i++) {
+          const nickname = disclosedRoles.nickname[i];
+          const job = disclosedRoles.job[i];
+          let team = "";
+    
+          if (job === "삵") {
+            team = "sark";
+          } else {
+            team = "citizen";
+          }
+    
+          newRoleAssignedArray.push({
+            team: team,
+            nickname: nickname,
+            job: job,
+          });
+        }
+        // TODO: 게임 종료됐을 때, 직업 구성 받기
+        // setRoleAssignedArray((prevArray) => [...prevArray, ...newRoleAssignedArray]);
         break;
       }
     }
+    else {
 
+      // 역할 저장을 위해 넣었음 //
+      switch (sysMessage.code) {
+      case "ROLE_ASSIGNED":
+          const assignedRole = Roles.get(sysMessage.param.role);
+          if (assignedRole == null) {
+            alert("직업배정에 오류가 발생했습니다.", assignedRole);
+            return;
+          }
+          let player = players.get(sysMessage.playerId);
+          if (player == null) {
+            alert("ROLE_ASSIGNED - 플레이어 정보를 불러오는데 실패했습니다.", sysMessage.playerId);
+            return;
+          }
+          player = {
+            ...player,
+            role: assignedRole,
+          };
+          setPlayers((prev) => {
+            return new Map([
+              ...prev,
+              [player.playerId, player],
+            ]);
+          });
+          break;
+      case "BE_HUNTED":
+          const newDeadId = sysMessage.param.deadPlayerId;
+          setDeadIds(prevDeadIds => [...prevDeadIds, newDeadId]);
+          break;
+      }
+    }
     handleSystemMessage(message);
   }
-  
+
+
   const selectAction = ((target) => {
       console.log(target, "2번");
       if (selectedTarget !== "") {
@@ -413,8 +511,8 @@ case "GAME_START":
   
   // 대상 확정
   const selectConfirm = () => {
-      console.log(selectedTarget + " 플레이어 선택 ");
-      console.log(selectedTarget.nickname)
+
+      // console.log(voteTargetId, "여기에요");
       if (stompClient.current.connected && player.playerid !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
@@ -477,6 +575,22 @@ case "GAME_START":
       setGestureRecognizer(recognizer);
     };
 
+    // 미션성공
+    const missionConplete = () => {
+        console.log("미션 성공");
+        if (stompClient.current.connected && player.playerId !== undefined) {
+            stompClient.current.send("/pub/game/action", {},
+                JSON.stringify({
+                    code: 'HIDDENMISSION_SUCCESS ', // 스킵했을 때도 얘도 보내달라
+                    roomId: roomSession.roomId,
+                    playerId: player.playerId,
+                    param: {
+                        // target: selectedTarget
+                    }
+                }));
+        }
+    };
+
     // 
     const predictWebcam = async () => {
       if (gestureRecognizer) {
@@ -486,14 +600,17 @@ case "GAME_START":
   
         if (results.gestures.length > 0) {
           const detectedGestureName = results.gestures[0][0].categoryName;
-          setDetectedGesture(detectedGestureName);
-        } else {
-          setDetectedGesture('');
-        }
+          if(selectMission===detectedGestureName){
+            console.log("미션성공한건가용");
+            missionConplete();
+            setHiddenMission(false);
+          }
+        } 
         // Continue predicting frames from webcam
         setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 100));
       }
     };
+
     const stopPredicting = () => {
       cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
       if(animationFrameId) {
@@ -531,8 +648,9 @@ case "GAME_START":
     <GameContext.Provider value={{ stompClient, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
-      Roles
-    }}>
+      Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, 
+      voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp}}
+    >
       {children}
     </GameContext.Provider>
   );

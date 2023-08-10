@@ -55,6 +55,8 @@ const LogoWrapper = styled.div`
 const StartButtonContainer = styled.div`
   width: 15%;
   height: 10%;
+  
+  margin-top: 30px;
 `;
 
 const StartPage = () => {

@@ -29,6 +29,7 @@ import { useGameContext } from '../../GameContext';
 // 부여받은 번호대로 이미지 다르게 뜨게 해야 함. 설정해 줘야 함
 // 일단 삵으로 만들어 둠
 
+
 const slideIn = keyframes`
   from {
     transform: translateY(-100%);
@@ -51,14 +52,17 @@ const slideOut = keyframes`
 `;
 
 const ScButtonImage = styled.img`
+  z-Index : 2;
   width: 175px;
-  cursor: pointer;
+  cursor: ${({ role }) => (role === 'OBSERVER' ? 'default' : 'pointer')};
   position: absolute;
   top: 3%;
   right: 2%;
-  &:hover {
-    filter: brightness(0.8);
-  }
+  ${({ role }) => role !== 'OBSERVER' && `
+    &:hover {
+      filter: brightness(0.8);
+    }
+  `}
 `;
 
 const ScMiniButton = styled.div`
@@ -66,6 +70,7 @@ const ScMiniButton = styled.div`
 `;
 
 const StyledPopup = styled.div`
+  z-Index : 2;
   position: fixed;
   top: 0;
   left: 0;
@@ -79,13 +84,16 @@ const StyledPopup = styled.div`
 
 const PopupImage = styled.img`
   width: 300px;
+  z-Index : 2;
 `;
 
 const ScMini = () => {
   const alt = "ScMini";
   const { player } = useRoomContext();
   const { dayCount, phase } = useGameContext();
-  const [isPopupOpen, setIsPopupOpen] = useState(dayCount === 1 && phase === "day");
+  const {scMiniPopUp, setScMiniPopUp } = useGameContext();
+  // const [isPopupOpen, setIsPopupOpen] = useState(dayCount === 1 && phase === "day");
+  const [isPopupOpen, setIsPopupOpen] = useState(scMiniPopUp);
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state
 
   const role = player.role;
@@ -93,26 +101,35 @@ const ScMini = () => {
   const handleScMiniClick = () => {
     
     setIsPopupOpen(true);
-
   };
-
+  
   const handlePopupClose = () => {
     setIsClosing(true); // 팝업을 닫는 상태로 변경하여 애니메이션 적용
     setTimeout(() => {
       setIsPopupOpen(false);
       setIsClosing(false); // 팝업이 완전히 사라지면 팝업 닫는 상태를 false로 변경
     }, 450); // 0.5초(500ms) 후에 팝업을 완전히 닫습니다.
+    setScMiniPopUp(false);
   };
 
+  // useEffect(() => {
+  //   if (dayCount === 0) {
+  //     setIsPopupOpen(true);
+  //   }
+  // }, [dayCount]);
+
   useEffect(() => {
-    if (dayCount === 0) {
+    console.log(scMiniPopUp);
+    console.log("너가 실행되는거니?");
+    if (scMiniPopUp) {
+      console.log("내가 왜나옴?");
       setIsPopupOpen(true);
     }
-  }, [dayCount]);
-
+  }, [scMiniPopUp]);
+  
   let buttonImageSrc;
   let popupImageSrc;
-
+  
   if (role === 'SARK') {
     buttonImageSrc = scSarkImageSrc;
     popupImageSrc = cSarkImageSrc;

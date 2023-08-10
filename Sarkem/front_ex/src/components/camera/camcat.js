@@ -3,7 +3,7 @@ import camcatImage from '../../img/camcat2.png';
 import OpenViduVideoComponent from './OvVideo';
 import { loadModels, faceMyDetect, stopFace } from '../job/Psychologist';
 import styled from 'styled-components';
-import { useRoomContext } from '../../Context';
+import { useGameContext } from '../../GameContext';
 
 const Box = styled.div
   `
@@ -17,6 +17,7 @@ const CamCat = ({id}) => {
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const {psyTarget} = useGameContext();
   const player = players.get(id);
   const stream = player.stream;
 
@@ -24,19 +25,23 @@ const CamCat = ({id}) => {
     loadModels();
   }, []);
 
+  useEffect(() => {
+    loadModels();
+    startFaceDetection();
+  }, [psyTarget]);
+
   //faceapi 실행
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
-    // TODO: 변수명 id 수정 필요
-    // const id = faceMyDetect(stream.videos[1].video, setBoxPosition, running, setRunning);
-    // console.log(stream.videos);
-    // setIntervalId(id);
+    if(player.playerId===psyTarget){
+      const id = faceMyDetect(stream.videos[1].video, setBoxPosition, running, setRunning);
+      setIntervalId(id);
+    }
   };
   //끄는거 
   const stopFaceDetection = () => {
-    // stopFace(intervalId, setRunning, setBoxPosition);
+    stopFace(intervalId, setRunning, setBoxPosition);
   };
-
 
   return (
     <div
@@ -48,49 +53,32 @@ const CamCat = ({id}) => {
         backgroundRepeat: 'no-repeat',
         flexDirection: 'column',
         alignItems: 'center',
-        width: '100%',
+        width: '90%',
         height: '100%',
       }}
     >
 
-      <div className="streamcomponent" style={{ flex: 'auto' }}>
-        <div style={{ flex: 0.6, justifyContent: 'center' }}>
-          {/* {JSON.stringify(stream)}
-          {console.log(typeof stream)} */}
+      <div className="streamcomponent" style={{ flex: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434', backgroundColor:'white',}}>
+        <div style={{ flex: 0.6 }}>
           <OpenViduVideoComponent streamManager={stream} />
-          {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
-          <img
-            src={camcatImage}
-            alt="CamCat"
-            style={{
-              position: 'absolute',
-              top: '-15%',
-              left: '-1.5%',
-              width: '96%',
-              height: '40%',
-              overflow: 'visible',
-            }}
-          />
-          {running && (
-            <Box
-              style={{
-                left: boxPosition.x,
-                top: boxPosition.y,
-                width: boxPosition.width,
-                height: boxPosition.height,
-              }}
-            />
-          )}
         </div>
-
-        <div style={{ flex: 0.4, textAlign: 'center', width: '95%' }}>
-          {player.nickName}
-        </div>
-        {/* <button onClick={startFaceDetection}>심리학자 시작</button>
-        <button onClick={stopFaceDetection}>심리학자 종료</button> */}
+        {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
+        <img
+          src={camcatImage}
+          alt="CamCat"
+          style={{
+            position: 'absolute',
+            top: '-12%',
+            left: '-1.0%',
+            width: '101.5%',
+            height: '34%',
+            overflow: 'visible',
+          }}
+        />
       </div>
+
     </div>
-  );
-};
+  )
+}
 
 export default CamCat;

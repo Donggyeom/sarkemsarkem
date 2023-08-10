@@ -26,6 +26,9 @@
   font-style: normal;
 }
 
+* {
+  color: #403f3f; /* 일단 차콜그레이색 */
+}
 
 body {
   margin: 0;
@@ -76,4 +79,11 @@ code {
   to {
     transform: rotate(360deg);
   }
+}
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
 }

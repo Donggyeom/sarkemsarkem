@@ -3,9 +3,12 @@ import styled from 'styled-components';
 import CamCat from './camcat';
 import voteImage from '../../img/votefoot.png';
 import { useGameContext } from '../../GameContext';
+import { useRoomContext } from '../../Context';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
-import { useRoomContext } from '../../Context';
+
+
+
 
 const Votefoot = styled.img`
   position: absolute;
@@ -13,6 +16,7 @@ const Votefoot = styled.img`
 `;
 
 const CamCatGrid = styled.div`
+    // overflow : hidden;
     position : absolute;
     display: grid;
     align-items: center;
@@ -80,19 +84,25 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width: '60%',
+      width: '59%',
+      gridRowGap : '5%',
+      gridColumnGap : '5%'
     };
   } else if (camCount === 4) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width: '60%',
+      width: '55%',
+      gridRowGap : '5%',
+      gridColumnGap : '5%',
     };
   } else if (camCount === 5) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
       width: '75%',
+      gridRowGap : '7%',
+
     };
   } else if (camCount === 6) {
     return {
@@ -100,18 +110,23 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr 1fr',
       top: '7.5%',
       width: '80%',
+      gridRowGap : '3%',
+      bottom : '1%',
     };
   } else if (camCount === 7) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: 'repeat(4, 1fr)',
       width: '90%',
+      gridRowGap : '7%',
     };
   } else if (camCount === 8) {
     return {
       gridTemplateRows: 'repeat(2, 1fr)',
       gridTemplateColumns: 'repeat(4, 1fr)',
       width: '85%',
+      gridRowGap : '3%',
+      bottom : '1%',
     };
   } else if (camCount === 9) {
     return {
@@ -127,6 +142,8 @@ const calculateGrid = (camCount) => {
       left: '5%',
       width: '90%',
       height: '70%',
+      gridRowGap : '3%',
+      bottom : '1%',
     };
   } else {
     // Add more cases as needed
@@ -142,110 +159,109 @@ const CamCatWrapper = styled.div`
   ${({ camCount, index }) =>
 
     camCount === 3 && index === 0
-      ? `
+    ? `
+    position: relative;
+    left : 56.5%;
+    `
+    :
+    camCount === 3 && index === 1
+    ? `
+    position: relative;
+    top : 110%;
+    `
+    :
+    camCount === 3 && index === 2
+    ? `
+    position: relative;
+    `
+    :
+    camCount === 5 && index === 0
+    ? `
     position: relative;
     left : 50%;
-  `
-      :
-      camCount === 3 && index === 1
-        ? `
-    position: relative;
-    top : 100%;
-  `
-        :
-        camCount === 3 && index === 2
-          ? `
-    position: relative;
-  `
-          :
-          camCount === 5 && index === 0
-            ? `
+    `
+    :
+    camCount === 5 && index === 1
+    ? `
     position: relative;
     left : 50%;
-  `
-            :
-            camCount === 5 && index === 1
-              ? `
+    `
+    :
+    camCount === 5 && index === 2
+    ? `
+    position: relative;
+    top : 114%;
+    `
+    :
+    camCount === 7 && index === 0
+    ? `
     position: relative;
     left : 50%;
-  `
-              :
-              camCount === 5 && index === 2
-                ? `
-    position: relative;
-    top : 100%;
-  `
-                :
-                camCount === 7 && index === 0
-                  ? `
+    `
+    :
+    camCount === 7 && index === 1
+    ? `
     position: relative;
     left : 50%;
-  `
-                  :
-                  camCount === 7 && index === 1
-                    ? `
+    `
+    :
+    camCount === 7 && index === 2
+    ? `
     position: relative;
     left : 50%;
-  `
-                    :
-                    camCount === 7 && index === 2
-                      ? `
-    position: relative;
-    left : 50%;
-  `
+    `
 
-                      :
-                      camCount === 7 && index === 3
-                        ? `
+    :
+    camCount === 7 && index === 3
+    ? `
+    position: relative;
+    top : 114%;
+    `
+    :
+    camCount === 9 && index === 0
+    ? `
+    position: relative;
+    left : 50%;
+    `
+    :
+    camCount === 9 && index === 1
+    ? `
+    position: relative;
+    left : 50%;
+    `
+    :
+    camCount === 9 && index === 2
+    ? `
+    position: relative;
+    left : 50%;
+    `
+    :
+    camCount === 9 && index === 3
+    ? `
+    position: relative;
+    left : 50%;
+    `
+    :
+    camCount === 9 && index === 4
+    ? `
     position: relative;
     top : 100%;
-  `
-                        :
-                        camCount === 9 && index === 0
-                          ? `
-    position: relative;
-    left : 50%;
-  `
-                          :
-                          camCount === 9 && index === 1
-                            ? `
-    position: relative;
-    left : 50%;
-  `
-                            :
-                            camCount === 9 && index === 2
-                              ? `
-    position: relative;
-    left : 50%;
-  `
-                              :
-                              camCount === 9 && index === 3
-                                ? `
-    position: relative;
-    left : 50%;
-  `
-                                :
-                                camCount === 9 && index === 4
-                                  ? `
-    position: relative;
-    top : 100%;
-  `
-                                  : ''};
+    `
+  : ''};
   `;
      
 const DayNightCamera = React.memo(({ ids }) => {
+  const { player, players } = useRoomContext();
   const camCount = ids.length;
   const gridStyles = calculateGrid(camCount);
-  const [clickedCameras, setClickedCameras] = useState([]);
-
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
-  const { player, players } = useRoomContext();
   const { selectAction, selectConfirm, setSelectedTarget, 
     myVote, startVote, dayCount, predictWebcam, stopPredicting, 
     detectedGesture, voteSituation, phase,
-    Roles } = useGameContext();
+    Roles, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, 
+    voteTargetId, deadIds, hiddenMission, setHiddenMission } = useGameContext();
 
   useEffect(() => {
     setIsConfirmed(false);
@@ -270,28 +286,86 @@ const DayNightCamera = React.memo(({ ids }) => {
     else if (phase === "day") {
       dayCamAudio();
       stopVoiceChange();
+      // TODO: 
+      // if (myRole === "OBSERVER" && publisher) {
+      //   publisher.publishVideo(false);
+      //   publisher.publishAudio(false);
+      // }
     }
 
   }, [startVote, phase]);
 
-  const getVoteResultForUser = (id) => {
-    let player = players.get(id);
-    if (voteSituation && voteSituation[id] !== undefined) {
-      return `${player.nickName}: ${voteSituation[id]}표`;
+  useEffect(() => {
+    setCamCount(adjustedCamCount);
+  }, [adjustedCamCount]);
+
+
+  useEffect(() => {
+    console.log("히든미션 바뀜", hiddenMission);
+    if (hiddenMission) {
+      console.log("미션시작이요~~");
+      startHiddenMission();
+    }else{
+      stopHiddenMission();
     }
-    return `${player.nickName}: 0표`;
+  }, [hiddenMission])
+
+
+  /// DayNightCamera 함수 ////
+
+  const calculateAdjustedCamCount = () => {
+    const filteredCamArray = camArray.filter((user) => {
+      const userToken = JSON.parse(user.stream.connection.data).token;
+      return !deadIds.includes(userToken);
+    });
+
+    let adjustedCamCount = filteredCamArray.length;
+
+    filteredCamArray.forEach((user) => {
+      const userToken = JSON.parse(user.stream.connection.data).token;
+
+      if (deadIds.includes(userToken)) {
+        adjustedCamCount -= 1;
+      }
+    });
+
+    return adjustedCamCount;
+  };
+
+  const getVoteResultForUser = (id) => {
+    if (phase === 'day') {
+      let player = players.get(id);
+      if (voteSituation && voteSituation[id] !== undefined) {
+        return `${player.nickName}: ${voteSituation[id]}, 미확정표`;
+      }
+      return `${player.nickName}: 0표`;
+    }
+    else if (phase === 'night') {
+      if (player.role === "SARK" || player.role === "OBSERVER") {
+        if (voteSituation[id]) {
+          return `${id}: 삵이 죽일 사람`;
+        }
+        return `${id}: 투표하지 않음`;
+      }
+      return ''; // sark나 observer가 아닌 경우
+    }
+    return ''; // day나 night가 아닌 경우
   };
 
   const handleCamClick = (id) => {
     console.log(voteSituation, "투표 결과 확인합니다");
+    console.log(startVote);
+    console.log(dayCount);
     console.log(id, "얘는 캠주인");
-    if (!startVote || dayCount === 0 || isConfirmed || isSkipped) {
+    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped) {
       return;
     }
 
     if (clickedCamera === id) {
       setClickedCamera(null);
-    } else {
+      selectAction({ playerId: null });
+    } 
+    else {
       selectAction({ playerId: id });
       setClickedCamera(id);
     }
@@ -322,20 +396,20 @@ const DayNightCamera = React.memo(({ ids }) => {
   }
 
   const nightCamAudio = () => {
-    if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
-      for (let player of players) {
-        if (player.role != Roles.SARK) {
-          player.stream.subscribeToVideo(false);
-          player.stream.subscribeToAudio(false);
-        }
-      }
-    }
-    else if (player.role == Roles.DETECTIVE) {
+    if (player.role == Roles.DETECTIVE) {
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
       for (let player of players) {
         player.stream.subscribeToVideo(false);
 
         if (player.role != Roles.SARK) {
+          player.stream.subscribeToAudio(false);
+        }
+      }
+    }
+    else if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
+      for (let player of players) {
+        if (player.role != Roles.SARK) {
+          player.stream.subscribeToVideo(false);
           player.stream.subscribeToAudio(false);
         }
       }
@@ -363,10 +437,6 @@ const DayNightCamera = React.memo(({ ids }) => {
     mixedMediaStreamRef.current = getMixedMediaStream(sarkArray);
   }
 
-  const mixedMediaStreamRef = useRef(null);
-  const jungleRefs = useRef([]);
-  const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
-
   // 삵들에 대해 음성변조 시작
   const getMixedMediaStream = (sarkArray) => {
     console.log("음성 변조 시작...")
@@ -392,6 +462,7 @@ const DayNightCamera = React.memo(({ ids }) => {
   // 음성 변조 중지
   const stopVoiceChange = () => {
     console.log("음성 변조 중지");
+    console.log(jungleRefs);
     jungleRefs.current.forEach((jungle) => {
       if (jungle && jungle.isConnected) {
         console.log(jungle, "음성 변조 중지 중...");
@@ -425,7 +496,7 @@ const DayNightCamera = React.memo(({ ids }) => {
         </CamCatWrapper>
       ))}
       <ButtonWrapper>
-        {dayCount === 1 ? (
+        {dayCount === 1 && phase === 'day' ? (
           <>
             {startVote && (
               <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>

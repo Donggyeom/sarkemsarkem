@@ -1,5 +1,7 @@
 package com.a702.sarkem.service;
 
+import org.springframework.stereotype.Service;
+
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.dto.GameLog;
 import com.a702.sarkem.model.game.dto.InGameRole;
@@ -9,6 +11,7 @@ import com.a702.sarkem.repo.InGameRoleRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
 @RequiredArgsConstructor
 public class DBService {
 

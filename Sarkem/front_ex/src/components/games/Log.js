@@ -8,15 +8,15 @@ const ChatContainer = styled.div`
   background-size: cover;
   background-color: transparent;
   background-repeat: no-repeat;
-  width: 580px;
-  height: 540px;
+  width: 380px;
+  height: 350px;
   display: flex;
   flex-direction: column;
   padding: 10px;
   font-family: 'NeoDunggeunmoPro-Regular', sans-serif;
-  position: fixed;
-  top: ${props => props.top};
-  left: ${props => props.left};
+  position: absolute;
+  top: 540px;
+  left: 200px;
   transform: translate(-50%, -50%);
   z-index: 9999;
   display: flex;
@@ -26,11 +26,13 @@ const ChatContainer = styled.div`
 
 const ScrollableText = styled.div`
   max-height: 75%;
+  height: 60%;
   overflow: auto;
-  line-height: 1.5; /* Adjust the value as needed */
+  line-height: 1.2; /* Adjust the value as needed */
+  margin-left: 2%;
 `;
 
-const Log = ({ top, left }) => {
+const Log = () => {
   const { currentSysMessagesArray } = useGameContext();
   console.log(currentSysMessagesArray);
 
@@ -44,9 +46,8 @@ const Log = ({ top, left }) => {
   }, [currentSysMessagesArray]);
 
   return (
-    <ChatContainer top={top} left={left}>
+    <ChatContainer >
       <h3> —̳͟͞💗  —̳͟͞💗 ˚ GAME LOG —̳͟͞💗  —̳͟͞💗 ˚</h3>
-      <hr></hr>
       <ScrollableText ref={scrollableRef}>
       {currentSysMessagesArray.map((sysMessage, index) => (
         <div key={index}>

@@ -481,13 +481,12 @@ const CommonLobby = ()=>{
               <DivWrapper>
                 <LeftPart>
                   <ButtonContainer>
-
-                  <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
+                   <InviteButton onClick={handleInviteClick} />
                   </ButtonContainer>
                   </LeftPart>
                   <RightPart>
                     <ButtonContainer>
-                      <InviteButton onClick={handleInviteClick} />
+                      <StartButton url="/${roomId}/day" onClick={handleGamePageClick} alt="Start Game" />
                     </ButtonContainer>
                 </RightPart>
               </DivWrapper>

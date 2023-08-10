@@ -18,7 +18,6 @@ import loadingimage from '../img/loading1.jpg';
 
 
 
-
 const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,11 +30,9 @@ const StyledContent = styled.div`
 `;
 
 const CamCatGrid = styled.div`
-  // position : absolute;
   display: grid;
-  // align-items: center;
   justify-items: center;
-  // overflow: hidden;
+  margin-bottom : 2%;
   ${({ style }) =>
     style && `
     width: ${style.width};
@@ -64,7 +61,8 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
       width: '100%',
-      left: '2%',
+      left: '4%',
+      marginTop : '5%',
     };
   } else if (camCount === 4) {
     return {
@@ -129,20 +127,21 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 70%;
-    top : 22.5%;
+    // top : 22.5%;
   `
   :
   camCount === 3 && index === 1
   ? `
     position: relative;
     width : 150%;
+    margin-left : 7.5%; 
   `
   :
   camCount === 3 && index === 2
   ? `
     position: relative;
     width : 70%;
-    top : 22.5%;
+    // top : 22.5%;
   `
   :
   camCount === 4 && index === 0
@@ -540,8 +539,11 @@ const SunsetPage = () => {
   const assignedIndices = [];
   const camCount = players.size; // camCount를 SunsetPage 내부에서 계산
   const gridStyles = calculateGrid(camCount);
+  const location = useLocation();
+  console.log(targetId, "확인합시다");
 
   let displayCamCat = false;
+
 
   useEffect(() => {
     if (roomSession.roomId === undefined){
@@ -556,6 +558,14 @@ const SunsetPage = () => {
     }
   }, []);
 
+  // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
+  const onbeforeunload = (event) => {
+    leaveSession();
+  }
+
+  const generateRandomPositionIndex = (maxIndex) => {
+    return Math.floor(Math.random() * maxIndex);
+  };
 
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
@@ -588,105 +598,116 @@ const SunsetPage = () => {
   };
   
 
-  // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
-  const onbeforeunload = (event) => {
-    leaveSession();
-  }
-  const generateRandomPositionIndex = (maxIndex) => {
-    return Math.floor(Math.random() * maxIndex);
-  };
+
+
+
   return (
     <Background>
       <StyledContent>
-      {!isLogOn && <Log top="60%" left="26%" />}
+      {!isLogOn && <Log />}
       <SunMoon alt="SunMoon"></SunMoon>
-      <TimeSecond>60s</TimeSecond>
+      <TimeSecond>{remainTime}s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
-      {/* <SunsetPopup></SunsetPopup>
-        <CamCatGrid style={gridStyles}>
-          {camArray && camArray.map((user, index) => (
-            <CamCatWrapper key={index} camcount={camCount} index={index}>
-              <CamCat props={user} />
-            </CamCatWrapper>
-          ))}
-        </CamCatGrid> */}
-        {/* {getMyRole()}
-      </StyledContent>
-      <ChatButtonAndPopup /> */}
-      {/* </CamCatGridContainer> */}
+      <SunsetPopup dayCount={dayCount}></SunsetPopup>
 
       <CamCatGrid style={gridStyles}>
-        {players && Array.from(players.keys()).map((id, index) => {
-          let targetIndex = null;
-          if (id === targetId) {
-            if (camCount === 3) {
-              targetIndex = 1;
-            } else if (camCount >= 4 && camCount <= 6) {
-              targetIndex = 2;
-            } else if (camCount === 7) {
-              targetIndex = 3;
-            } else if (camCount === 8) {
-              targetIndex = 6;
-            } else if (camCount === 9) {
-              targetIndex = 8;
-            } else if (camCount === 10) {
-              targetIndex = 8;
-            }
-          }
+  {players && Array.from(players.keys()).map((id, index) => {
+    let targetIndex = null;
+    if (id === targetId) {
+      if (camCount === 3) {
+        targetIndex = 1;
+      } else if (camCount >= 4 && camCount <= 6) {
+        targetIndex = 2;
+      } else if (camCount === 7) {
+        targetIndex = 3;
+      } else if (camCount === 8) {
+        targetIndex = 6;
+      } else if (camCount === 9) {
+        targetIndex = 8;
+      } else if (camCount === 10) {
+        targetIndex = 8;
+      }
+    }
 
-          let positionIndex;
+    let positionIndex;
 
-          if (targetIndex === null) {
-            if (camCount === 3) {
-              // 이미 배정된 인덱스 제외 후 랜덤 배정
-              const availableIndices = [0, 2].filter(i => !assignedIndices.includes(i));
-              positionIndex = generateRandomPositionIndex(availableIndices.length);
-              positionIndex = availableIndices[positionIndex];
+    if (targetIndex === null) {
+      if (camCount === 3) {
+        const availableIndices = [0, 2].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
 
-              // 배정된 인덱스를 추가
-              assignedIndices.push(positionIndex);
-            } else if (camCount >= 4 && camCount <= 6) {
-              // 이미 배정된 인덱스 제외 후 랜덤 배정
-              const availableIndices = [0, 1, 3, 4].filter(i => !assignedIndices.includes(i));
-              positionIndex = generateRandomPositionIndex(availableIndices.length);
-              positionIndex = availableIndices[positionIndex];
+      } else if (camCount === 4) {
+        const availableIndices = [0, 1, 3].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
 
-              // 배정된 인덱스를 추가
-              assignedIndices.push(positionIndex);
-            }
-          } else {
-            positionIndex = targetIndex; // 이미 배정된 경우에는 해당 인덱스 사용
-            assignedIndices.push(positionIndex); // 이미 배정된 경우에도 인덱스 추가
-          }
+      }  else if (camCount === 5) {
+        const availableIndices = [0, 1, 3, 4].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
 
-          if (assignedIndices.length === camCount) {
-            displayCamCat = true;
-          } else {
-            displayCamCat = false;
-          }
+      } else if (camCount === 6) {
+        const availableIndices = [0, 1, 3, 4, 5].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
 
-          console.log(`타겟아이디 : ${targetId}, User Token: ${id}, Target Index: ${targetIndex}, Position Index: ${positionIndex}`, "확인하세요");
+      } else if (camCount === 7) {
+        const availableIndices = [0, 1, 2, 4, 5, 6].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
 
-          return (
-            <CamCatWrapper camCount={camCount} index={positionIndex}>
-              <CamCat id={id} />
-            </CamCatWrapper>
-          );
-        })}
-      </CamCatGrid>
+      } else if (camCount === 8) {
+        const availableIndices = [0, 1, 2, 3, 4, 5, 7].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
 
-      <div>
-        <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
-        <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
-      </div>
-      <ScMini />
-      </StyledContent>
-      <TempButton url={`/${roomSession.roomId}/night`} onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
-      {chatVisible()}
-      </Background>
-      );
+      } else if (camCount === 9) {
+        const availableIndices = [0, 1, 2, 3, 4, 5, 6, 7].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
+
+      } else if (camCount === 10) {
+        const availableIndices = [0, 1, 2, 3, 4, 5, 6, 7, 9].filter(i => !assignedIndices.includes(i));
+        positionIndex = Math.min(...availableIndices); 
+        assignedIndices.push(positionIndex);
+    }
+    } else {
+      positionIndex = targetIndex; 
+      assignedIndices.push(positionIndex);
+    }
+
+    if (assignedIndices.length === camCount) {
+      displayCamCat = true;
+    } else {
+      displayCamCat = false;
+    }
+
+    console.log(`타겟아이디 : ${targetId}, User Token: ${id}, Target Index: ${targetIndex}, Position Index: ${positionIndex}`, "확인하세요");
+
+    return (
+      <CamCatWrapper
+        camCount={camCount}
+        // index={user.positionIndex} 이거로 들어가면 균일하게 들어감
+        index={positionIndex}
+      > 
+        <CamCat id={id} />
+      </CamCatWrapper>
+    );
+  })}
+</CamCatGrid>
+
+<div>
+  <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
+  <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
+</div>
+<ScMini />
+</StyledContent>
+<TempButton url={`/${roomSession.roomId}/night`} onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
+{chatVisible()}
+</Background>
+);
 };
 
 export default SunsetPage;
