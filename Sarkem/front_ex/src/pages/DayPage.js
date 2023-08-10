@@ -43,7 +43,7 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
   const { roomId, publisher, camArray, leaveSession, isCamOn, setIsCamOn, isMicOn, setIsMicOn, } = useRoomContext();
-  const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount, currentSysMessage, remainTime  } = useGameContext();
+  const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount, currentSysMessage, remainTime, scMiniPopUp} = useGameContext();
 
   useEffect(() => {
     if(isCamOn){
@@ -87,11 +87,11 @@ const DayPage = () => {
     console.log('ScMini clicked!');
   };
 
-  const getMyRole = (dayCount) => {
+  const getMyRole = () => {
     if (myRole === 'SARK' || myRole === 'CITIZEN' || myRole === 'DOCTOR' || myRole === 'POLICE' || myRole === 'OBSERVER' || myRole === 'PSYCHO' || myRole === 'BULLY' || myRole === 'DETECTIVE') {
       return (
         <>
-          <ScMini alt="ScMini" role={myRole} dayCount={dayCount}/>
+          <ScMini alt="ScMini" role={myRole}/>
         </>
       );
     }
@@ -143,8 +143,8 @@ const DayPage = () => {
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={isMicOn} />
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
         {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
-        <DayNightCamera camArray={camArray} />
-        {getMyRole(dayCount)}
+        <DayNightCamera camArray={camArray} />s
+        {getMyRole()}
       </StyledDayPage>
       <TempButton url={`/${roomId}/sunset`} onClick={() => navigate(`/${roomId}/sunset`)} alt="Start Game" />
       {chatVisible()}

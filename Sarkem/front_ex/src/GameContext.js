@@ -66,7 +66,7 @@ const GameProvider = ({ children }) => {
     const [hiddenMission, setHiddenMission] = useState(false);//히든미션 실행
     const hiddenMissionType = ["Thumb_Up", "Thumb_Down", "Victory", "Pointing_Up", "Closed_Fist", "ILoveYou"];//히든미션 리스트
     const [selectMission, setSelectMission] = useState("");//히든 선택된 히든미션
-
+    const [scMiniPopUp, setScMiniPopUp] = useState(true);//첫날만 직업 카드 자동으로 뜸
     // twilight 투표 설정 위한 타겟id
     const [targetId, setTargetId] = useState("");
     const [roleAssignedArray, setRoleAssignedArray] = useState([]);
@@ -558,7 +558,7 @@ const onSocketConnected = () => {
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, setRoleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner, 
-      voteTargetId, deadIds, threatedTarget, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist}}>
+      voteTargetId, deadIds, threatedTarget, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp}}>
       {children}
     </GameContext.Provider>
   );
