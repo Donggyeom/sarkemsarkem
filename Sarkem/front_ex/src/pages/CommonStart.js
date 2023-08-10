@@ -98,7 +98,7 @@ const RightPart = styled.div`
     border: none;
     background-color: transparent;
     outline: none;
-    text-align: center; 
+    // text-align: center; 
     font-family: "RixInooAriDuriR";
   }
   span {
