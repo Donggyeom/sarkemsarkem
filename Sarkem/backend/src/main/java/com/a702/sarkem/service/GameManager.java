@@ -449,37 +449,85 @@ public class GameManager {
 		int num = rnd.nextInt(10); // 0<=num<10
 		if(num<3) gameSession.setBHiddenMissionStatus(true);
 	}
-
+	
 	// 히든 미션 성공 시
 	public void hiddenMissionSuccess(String roomId) {
 		GameSession gameSession = getGameSession(roomId);
-		sendHiddenMissionSuccessMessage(roomId);
+		sendHiddenMissionSuccessMessage(roomId); // 성공 메시지 보내고
+		sendNoticeMessageToAll(roomId, "삵이 히든미션을 성공했습니다.", gameSession.getPhase()); // 노티스메시지도 보내고
 		gameSession.setBHiddenMissionSuccess(true);
 		gameSession.setHiddenMissionSuccessCnt(gameSession.getHiddenMissionSuccessCnt()+1);
 	}
-
+	
+	
 	/**
 	 * 특정 플레이어 중도 퇴장 시 사망처리 및 메시지 전달
 	 * @param roomId
 	 * @param playerId
 	 */
-	public void leaveGame(String roomId, String playerId) {
-		log.info(playerId + "님이 게임 진행 중 접속을 종료하셨습니다.");
-		GameSession gameSession = getGameSession(roomId);
-		RolePlayer leavePlayer = gameSession.getPlayer(playerId);
-		if (leavePlayer == null) {
-			log.debug(playerId + " 유저가 게임에 존재하지 않습니다.");
-			return;
-		}
-		leavePlayer.setAlive(false);
-		deletePlayer(roomId, playerId);
-		log.info(playerId + "'s isAlive: " + leavePlayer.isAlive());
-		sendLeaveGameMessage(roomId, playerId);
-	};
+    public void leaveGame(String roomId, String playerId) {
+        log.info(playerId + "님이 게임 진행 중 접속을 종료하셨습니다.");
+        GameSession gameSession = getGameSession(roomId);
+        RolePlayer leavePlayer = gameSession.getPlayer(playerId);
+        if (leavePlayer == null) {
+            log.debug(playerId + " 유저가 게임에 존재하지 않습니다.");
+            return;
+        }
+        leavePlayer.setAlive(false);
+        deletePlayer(roomId, playerId);
+        log.info(playerId + "'s isAlive: " + leavePlayer.isAlive());
+        sendLeaveGameMessage(roomId, playerId);
+    }
 
+	// 게임 종료시 보내는 직업정보 key값 nickname, job/ value에 list로 닉네임리스트, 직업리스트(한글)을 담아보낸다
+	public void jobDiscolse(String roomId) {
+		GameSession gameSession = getGameSession(roomId);
+		List<String> nickname = new ArrayList<>();
+		List<String> job = new ArrayList<>();
+		Map<String, List<String>> param = new HashMap<>();
+		for (RolePlayer rp : gameSession.getPlayers()) {
+			nickname.add(rp.getNickname());
+			switch (rp.getRole()) {
+			case CITIZEN: 
+				job.add("시민");
+				break;
+			case SARK: 
+				job.add("삵");
+				break;
+			case DOCTOR: 
+				job.add("수의사");
+				break;
+			case POLICE: 
+				job.add("경찰");
+				break;
+			case PSYCHO: 
+				job.add("심리학자");
+				break;
+			case BULLY: 
+				job.add("냥아치");
+				break;
+			case DETECTIVE: 
+				job.add("탐정");
+				break;
+			}
+		}
+		param.put("nickname", nickname);
+		param.put("job", job);
+		log.debug(param.toString());
+		sendJobDiscloseMessage(roomId, param);
+	}
+	
+	public void endGame(String roomId, GameRole winTeam) {
+		GameSession gameSession = getGameSession(roomId);
+		Map<String, String> winner = new HashMap<>();
+		winner.put("winner", winTeam.toString());
+		sendGameEndMessage(roomId, winner);
+	}
+	
+	
 	/**
 	 * 채팅 메시지를 전체에게 전송
-	 *
+	 * 
 	 * @param roomId
 	 * @param target
 	 * @param code
@@ -502,7 +550,9 @@ public class GameManager {
 	public void sendSystemMessage(String roomId, String target, SystemCode code, Object param) {
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		SystemMessage systemMessage = new SystemMessage(code, roomId, target, param);
-		log.debug(systemMessage.toString());
+		if(!code.equals(SystemCode.REMAIN_TIME)) {
+			log.debug(systemMessage.toString());
+		}
 		gamePublisher.publish(gameTopic, systemMessage);
 	}
 
@@ -612,12 +662,21 @@ public class GameManager {
 		List<String> playersId = gameRoom.getPlayersId();
 		sendSystemMessage(roomId, playersId, SystemCode.GAME_START, null);
 	}
+	
+	// "남은 시간" 메시지 전송
+	public void sendRemainTime(String roomId, Map<String, Integer> param) {
+		sendSystemMessageToAll(roomId, SystemCode.REMAIN_TIME, param);
+	}
 	// 1. 게임 로비 끝
 
 	// 2. 게임 진행
-	// "대상선택" 메시지 전송
-	public void sendTargetSelectionMessage(String roomId, Map<String, Integer> param) {
+	// "대상선택" 메시지 전송(낮)
+	public void sendTargetSelectionMessageToAll(String roomId, Map<String, Integer> param) {
 		sendSystemMessageToAll(roomId, SystemCode.TARGET_SELECTION, param);
+	}
+	// "대상선택" 메시지 전송(밤)
+	public void sendTargetSelectionMessages(String roomId, List<String> playerIds) {
+		sendSystemMessage(roomId, playerIds, SystemCode.TARGET_SELECTION, null);
 	}
 
 	// "대상선택 종료" 메시지 전송 (전체-낮투표)
@@ -730,12 +789,12 @@ public class GameManager {
 
 	// 3. 게임 종료
 	// "직업공개" 메시지 전송
-	public void sendJobDiscloseMessage(String roomId, Map<String, String> job) {
+	public void sendJobDiscloseMessage(String roomId, Map<String, List<String>> job) {
 		sendSystemMessageToAll(roomId, SystemCode.JOB_DISCLOSE, job);
 	}
 	// "게임종료" 메시지 전송
-	public void sendGameEndMessage(String roomId) {
-		sendSystemMessageToAll(roomId, SystemCode.GAME_END, null);
+	public void sendGameEndMessage(String roomId, Map<String, String> param) {
+		sendSystemMessageToAll(roomId, SystemCode.GAME_END, param);
 	}
 
 	// "게임준비" 메시지 전송

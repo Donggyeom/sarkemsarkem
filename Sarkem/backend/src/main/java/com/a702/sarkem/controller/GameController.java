@@ -1,10 +1,5 @@
 package com.a702.sarkem.controller;
 
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,18 +7,15 @@ import org.springframework.stereotype.Controller;
 
 import com.a702.sarkem.model.chat.ChatMessage;
 import com.a702.sarkem.model.chat.ChatMessage.MessageType;
-import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.game.message.ActionMessage;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
-import com.a702.sarkem.model.gameroom.GameRoom;
-import com.a702.sarkem.model.player.GameRole;
-import com.a702.sarkem.model.player.RolePlayer;
 import com.a702.sarkem.service.GameManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor

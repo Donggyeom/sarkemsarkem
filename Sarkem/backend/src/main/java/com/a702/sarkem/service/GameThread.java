@@ -11,6 +11,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
+import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.gameroom.GameRoom;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
@@ -125,9 +126,8 @@ public class GameThread extends Thread {
 		}
 
 		// 직업 정보 전송
-		gameManager.sendJobDiscloseMessage(roomId, gameSession.getPlayersJob());
-		// 게임 종료 메시지 전송
-		gameManager.sendGameEndMessage(roomId);
+		gameManager.jobDiscolse(roomId);
+		
 		
 		// 게임 결과 DB저장
 		dbService.InsertGameResult(gameSession);
@@ -167,7 +167,12 @@ public class GameThread extends Thread {
 		Map<String, Integer> param = new HashMap<>();
 		param.put("day", day);
 		gameManager.sendDayPhaseMessage(roomId, param);
-
+		if(day==1) {
+			gameManager.sendNoticeMessageToAll(roomId, "첫째날 낮입니다.\n회의를 진행해주세요.", gameSession.getPhase());
+		}else {
+			gameManager.sendNoticeMessageToAll(roomId, "낮이 되었습니다.\n회의를 통해 추방할 고양이를 투표해주세요.", gameSession.getPhase());
+		}
+		
 		// 밤에 누가 죽었는지, 아무도 안죽었는지 전체한테 노티스 메시지 보내기
 		if (!"".equals(nightResultNoticeMessage)) {
 			gameManager.sendNoticeMessageToAll(roomId, nightResultNoticeMessage, gameSession.getPhase());
@@ -195,28 +200,33 @@ public class GameThread extends Thread {
 			HashMap<String, String> targetMap = new HashMap<>();
 			targetMap.put("targetId", target.getPlayerId());
 			targetMap.put("targetNickname", target.getNickname());
+			gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), target.getNickname() + "님의 심리를 분석합니다.", gameSession.getPhase());
 			gameManager.sendPsychoStartMessage(roomId, rp.getPlayerId(), targetMap);
 		}
 
 		// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
 		for (RolePlayer rp : gameSession.getRolePlayers(GameRole.BULLY)) {
 			gameManager.sendThreatingMessage(roomId, rp.getTarget());
+			gameManager.sendNoticeMessageToPlayer(roomId, rp.getTarget(), "냥아치에게 협박을 당해\n이번 낮에는 말을 할 수 없습니다.", gameSession.getPhase());
 		}
 		
 		// 1일차에는 아래 기능 미실행
 		if (gameSession.getDay() > 1) {
-
+			// 히든미션 관련 초기화
+			gameSession.setBHiddenMissionStatus(false);
+			gameSession.setBHiddenMissionSuccess(false);
+			
 			// 히든미션 발생 여부 정하기
 			gameManager.hiddenMissionOccur(roomId);
 
 			// 히든미션 발생했으면 하라고 메시지 보내기
 			if (gameSession.isBHiddenMissionStatus()) {
 				Random rnd = new Random();
-				int num = rnd.nextInt(5);
+				int num = rnd.nextInt(6);
 				HashMap<String, Integer> hMissionIdx = new HashMap<>();
 				hMissionIdx.put("missionIdx", num);
-				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK),
-						hMissionIdx);
+				gameManager.sendHiddenMissionStartMessage(roomId, gameSession.getRolePlayersId(GameRole.SARK), hMissionIdx);
+				gameManager.sendNoticeMessageToPlayers(roomId, gameSession.getRolePlayersId(GameRole.SARK), "히든미션이 발행되었습니다.\n고양이를 사냥하려면 미션을 수행해야합니다.", gameSession.getPhase());
 				gameSession.setHiddenMissionCnt(gameSession.getHiddenMissionCnt()+1);
 			}
 
@@ -231,7 +241,7 @@ public class GameThread extends Thread {
 		// "대상 선택" 메시지 전송
 		param = new HashMap<>();
 		param.put("day", gameSession.getDay());
-		gameManager.sendTargetSelectionMessage(roomId, param);
+		gameManager.sendTargetSelectionMessageToAll(roomId, param);
 	}
 
 	// 낮 투표 결과 종합
@@ -274,6 +284,7 @@ public class GameThread extends Thread {
 		}
 		// "저녁 페이즈" 메시지 전송 => 추방투표 시작
 		gameManager.sendTwilightPhaseMessage(roomId, expulsionPlayer);
+		gameManager.sendNoticeMessageToAll(roomId, expulsionPlayer.get("targetNickname")+"님의 추방에 대한\n찬반 투표를 진행해주세요.", gameSession.getPhase());
 		// 대상이 있으면 저녁투표 시작
 		gameManager.sendTwilightSelectionMessage(roomId);
 	}
@@ -290,10 +301,9 @@ public class GameThread extends Thread {
 		
 		// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
 		if (gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
-			return true;
-			
+			gameManager.sendNoticeMessageToAll(roomId, target.getNickname() + "님이 추방 대상자로 선정되었습니다.", gameSession.getPhase());
+			return true;		
 		}
-		
 		return false;
 	}
 
@@ -301,8 +311,34 @@ public class GameThread extends Thread {
 	private void convertPhaseToNight() {
 		// 밤 페이즈로 변경
 		gameSession.setPhase(PhaseType.NIGHT);
-		// 투표대상 없으면 저녁페이즈 건너뛰고 밤페이즈로 바로온거라, 노티스메시지 보내주기
-		gameManager.sendNoticeMessageToAll(roomId, "추방할 대상이 없어 바로 밤이 되었습니다.", gameSession.getPhase());
+		String message = "";
+		// 직업별로 노티스메시지 띄워주기
+		for(RolePlayer rp : gameSession.getAlivePlayers()) {
+			switch (rp.getRole()) {
+			case CITIZEN: 
+				message = "밤이 되었습니다.";
+				break;
+			case SARK: 
+				message = "밤이 되었습니다.\n회의를 통해 사냥할 고양이를 선택해주세요.";
+				break;
+			case DOCTOR: 
+				message = "밤이 되었습니다.\n삵 퇴치제를 처방할 고양이를 선택해주세요.";
+				break;
+			case POLICE: 
+				message = "밤이 되었습니다.\n신분을 확인할 고양이를 선택해주세요.";
+				break;
+			case PSYCHO: 
+				message = "밤이 되었습니다.\n심리를 확인할 고양이를 선택해주세요.";
+				break;
+			case BULLY: 
+				message = "밤이 되었습니다.\n협박할 고양이를 선택해주세요.";
+				break;
+			case DETECTIVE: 
+				message = "밤이 되었습니다.\n삵들의 대화를 엿듣습니다.";
+				break;
+			}
+			gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), message, gameSession.getPhase());
+		}
 		// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택, 받은 투표수 초기화
 		for (RolePlayer rp : gameSession.getPlayers()) {
 			rp.setTarget("");
@@ -314,7 +350,14 @@ public class GameThread extends Thread {
 		// 밤페이즈 됐다고 메시지 전송하면 프론트에서
 		// 삵 제외 화면, 카메라, 마이크, 오디오 끄기
 		// 탐정 오디오만 변조된 음성으로 켜기
-		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하겠지??
+		// (심리학자, 냥아치, 의사, 경찰, 삵 대상 지정) 하라고 해야함!!!
+		List<String> votePlayers = new ArrayList<>(); // 여기에 밤투표 대상 직업 넣자
+		for(RolePlayer rp: gameSession.getAlivePlayers()) {
+			if(!rp.getRole().equals(GameRole.CITIZEN) && !rp.getRole().equals(GameRole.DETECTIVE)) {
+				votePlayers.add(rp.getPlayerId());
+			}
+		}
+		gameManager.sendTargetSelectionMessages(roomId, votePlayers);
 	}
 
 	// 밤 투표 결과 종합
@@ -363,7 +406,16 @@ public class GameThread extends Thread {
 	private boolean isPlayersVoteEnded() throws InterruptedException {
 		List<RolePlayer> players = gameSession.getPlayers();
 		int confirmCnt = 0;
+		int time = gameSession.getMeetingTime();
+		int idx = 0;
+		HashMap<String, Integer> remainTime = new HashMap<>();
+		// TODO: 남은 시간 쏘는 곳 작성 중....
 		while (true) {
+			if(idx%2==0) {
+				remainTime.put("time", time--);
+				gameManager.sendRemainTime(roomId, remainTime);
+			}
+			idx++;
 			confirmCnt = 0;
 			for (RolePlayer p : players) {
 				if (p.isTargetConfirmed())
@@ -372,11 +424,25 @@ public class GameThread extends Thread {
 			// 투표가 모두 완료되면 종료
 			if (confirmCnt == players.size())
 				return true;
-
+			if(time<=0) break;
 			sleep(500);
 		}
+		return true;
 	}
 
+	// 밤투표 시간 보내기
+	private boolean isNightTimeEnded() throws InterruptedException {
+		int time = gameSession.getMeetingTime();
+		HashMap<String, Integer> remainTime = new HashMap<>();
+		while (true) {
+			remainTime.put("time", time--);
+			gameManager.sendRemainTime(roomId, remainTime);
+			if (time <= 0) break;
+			sleep(1000);
+		}
+		return true;
+	}
+		
 	// 게임 종료
 	private boolean isGameEnd() {
 		int aliveSark = 0;
@@ -391,13 +457,14 @@ public class GameThread extends Thread {
 		log.debug("삵 수: " + aliveSark + " / 시민 수: " + aliveCitizen);
 		// 마피아수>=시민수 => 마피아 win
 		if (aliveSark >= aliveCitizen) {
-			
-			gameSession.setWinTeam(1);
+			gameManager.endGame(roomId, GameRole.SARK); // 게임 종료 메시지 전송
+			gameSession.setWinTeam(1); // 게임 세션에 이긴 팀 저장
 			return true;
 		}
 		// 마피아수==0 => 시민 win
 		if (aliveSark == 0) {
-			gameSession.setWinTeam(2);
+			gameManager.endGame(roomId, GameRole.CITIZEN); // 게임 종료 메시지 전송
+			gameSession.setWinTeam(2); // 게임 세션에 이긴 팀 저장
 			return true;
 		}
 
@@ -409,8 +476,7 @@ public class GameThread extends Thread {
 		public void run() {
 			// 투표 대기
 			try {
-				if (isPlayersVoteEnded())
-					return;
+				if (isPlayersVoteEnded()) return;
 			} catch (InterruptedException e) {
 			}
 		}
@@ -421,8 +487,7 @@ public class GameThread extends Thread {
 		public void run() {
 			// 투표 대기
 			try {
-				if (isPlayersVoteEnded())
-					return;
+				if (isPlayersVoteEnded()) return;
 			} catch (InterruptedException e) {
 			}
 		}
@@ -432,8 +497,7 @@ public class GameThread extends Thread {
 		@Override
 		public void run() {
 			try {
-				// nightTime 만큼 대기
-				sleep(nightTime);
+				if (isNightTimeEnded())	return;
 			} catch (InterruptedException e) { }
 		}
 	}

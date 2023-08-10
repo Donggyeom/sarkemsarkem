@@ -46,6 +46,7 @@ public class SystemMessage implements Serializable {
 		ROLE_ASSIGNED   , // 역할배정
 		OPTION_CHANGED	, // 게임방 설정 변경
 		JOB_DISCLOSE 	, // 직업 공개
+		REMAIN_TIME     , // 남은 시간
 		
 		// 에러 코드
 		ONLY_HOST_ACTION, // 방장이 아닌 사용자 액션
