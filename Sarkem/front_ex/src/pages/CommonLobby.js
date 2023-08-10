@@ -34,6 +34,7 @@ import ScPopup from '../components/games/ScPopup';
 import HelpButton from '../components/buttons/HelpButton';
 import Help from '../components/games/Help';
 import LoadingPage from './LoadingPage';
+import ingameClickSound from '../sound/ingameclick.mp3';
 
 const StyledContent = styled.div`
   display: flex;
@@ -154,7 +155,8 @@ const CommonLobby = ()=>{
   const { gameSession, setGameSession, getGameSession, handleGamePageClick, stompClient } = useGameContext();
 
   // const [ isLoaded, setIsLoaded ] = useState(false);
-
+  
+  const clickAudio = new Audio(ingameClickSound);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -219,6 +221,8 @@ const CommonLobby = ()=>{
         gameOption: gameOption,
       })
     });
+    
+    clickAudio.play(); // Play the ingameClickSound
   }
 
   // popup

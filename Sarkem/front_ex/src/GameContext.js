@@ -284,11 +284,12 @@ const GameProvider = ({ children }) => {
         
     case "PHASE_DAY":
         setphase("day");
-        navigate(`/${roomSession.roomId}/day`)
+        navigate(`/${roomSession.roomId}/day`);
         break;
 
     case "PHASE_TWILIGHT":
-        navigate(`/${roomSession.roomId}/sunset`)
+        setphase("twilight");
+        navigate(`/${roomSession.roomId}/sunset`);
         setThreatedTarget(false); // 저녁 되면 협박 풀림
         setHiddenMission(false);
         break;
@@ -300,14 +301,15 @@ const GameProvider = ({ children }) => {
         setPsychologist(false);
         setHiddenMission(false);// 밤이 되면 마피아 미션 끝
         console.log(phase);
-        navigate(`/${roomSession.roomId}/night`)
+        navigate(`/${roomSession.roomId}/night`);
         break;
 
     case "GAME_END":
-        navigate(`/${roomSession.roomId}/result`)
+        navigate(`/${roomSession.roomId}/result`);
         const nowWinner = sysMessage.param.winner;
         console.log(nowWinner);
         setWinner(nowWinner);
+        setphase("");
         break;
 
     case "TARGET_SELECTION":
@@ -399,9 +401,9 @@ const GameProvider = ({ children }) => {
         break;
     case "MISSION_START":
         console.log("미션시작");
-        console.log(hiddenMissionType[sysMessage.param.missionIdx]);
         setHiddenMission(true);
         setSelectMission(hiddenMissionType[sysMessage.param.missionIdx]);
+        console.log(selectMission);
         break;
 
     case "PHASE_NIGHT":
@@ -594,31 +596,36 @@ const GameProvider = ({ children }) => {
 
     // 
     const predictWebcam = async () => {
-      if (gestureRecognizer) {
-        const videoElement = player.stream.videos[1].video;
-        const nowInMs = Date.now();
-        const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
-  
-        if (results.gestures.length > 0) {
-          const detectedGestureName = results.gestures[0][0].categoryName;
-          if(selectMission===detectedGestureName){
-            console.log("미션성공한건가용");
-            missionConplete();
-            setHiddenMission(false);
+      try {
+        if (gestureRecognizer) {
+          const videoElement = player.stream.videos[1].video;
+          const nowInMs = Date.now();
+          const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
+    
+          if (results.gestures.length > 0) {
+            const detectedGestureName = results.gestures[0][0].categoryName;
+            if(selectMission===detectedGestureName){
+              console.log("미션성공한건가용");
+              missionConplete();
+              setHiddenMission(false);
+            }
           }
-        } 
+        }
         // Continue predicting frames from webcam
-        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 100));
-      }
-    };
+        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
 
-    const stopPredicting = () => {
-      cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
-      if(animationFrameId) {
-        clearTimeout(animationFrameId);
+      } catch (error) {
+        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
       }
-      setAnimationFrameId(null);
-    };
+  };
+
+  const stopPredicting = () => {
+    cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
+    if(animationFrameId) {
+      clearTimeout(animationFrameId);
+    }
+    setAnimationFrameId(null);
+  };
 
   // 변경된 게임 옵션을 redis 토픽에 전달
   const callChangeOption = () => {
@@ -650,7 +657,7 @@ const GameProvider = ({ children }) => {
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, 
-      voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp}}
+      voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer }}
     >
       {children}
     </GameContext.Provider>

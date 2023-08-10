@@ -23,6 +23,7 @@ import cPsychoImageSrc from '../../img/c_심리학자.png';
 import cDetectImageSrc from '../../img/c_탐정.png';
 import { useRoomContext } from '../../Context';
 import { useGameContext } from '../../GameContext';
+import ingameClickSound from '../../sound/ingameclick.mp3';
 
 
 // 직업마다 번호 같은 걸 부여받겠지?
@@ -99,7 +100,8 @@ const ScMini = () => {
   const role = player.role;
   
   const handleScMiniClick = () => {
-    
+    const clickAudio = new Audio(ingameClickSound);
+    clickAudio.play();
     setIsPopupOpen(true);
   };
   
@@ -171,8 +173,3 @@ const ScMini = () => {
 };
 
 export default ScMini;
-
-
-
-
-

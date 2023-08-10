@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import createRandomId from '../utils';
 import { useRoomContext } from '../Context';
 
+import logoSound from '../sound/mainstart.mp3';
+
 // 애니메이션 정의 - 등장할 때 페이드 인
 const fadeInAnimation = keyframes`
   from {
@@ -59,13 +61,31 @@ const StartButtonContainer = styled.div`
   margin-top: 30px;
 `;
 
+
 const StartPage = () => {
   const navigate = useNavigate();
   const [logoVisible, setLogoVisible] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
 
   // 로고가 화면에 나타날 때까지 대기하는 효과를 주기 위해 useEffect 사용
   useEffect(() => {
     setLogoVisible(true);
+
+    const audio = new Audio(logoSound);
+  
+    // Play the audio when the component mounts
+    audio.play();
+    audio.playbackRate = 0.79;
+  
+    // Update state to track audio playback
+    setAudioPlaying(true);
+  
+    // Clean up the audio object when the component unmounts
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+      setAudioPlaying(false);
+    };
   }, []);
 
   const goToCreateRoom = () => {

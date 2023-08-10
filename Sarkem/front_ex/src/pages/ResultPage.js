@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import createRandomId from '../utils';
+import resultSound from '../sound/result.mp3';
 
 const StyledSunsetPage = styled.div`
   display: flex;
@@ -98,16 +99,24 @@ const TableRow = styled.tr`
 
 const ResultPage = () => {
   const {
-    setPublisher,
-    setSubscribers,
-    setCamArray,
-    session,
-    setSession,
     roomSession, setPlayer, setPlayers
   } = useRoomContext();
-  const { roleAssignedArray, winner, stompClient } = useGameContext();
+  const { winner, stompClient } = useGameContext();
   const navigate = useNavigate();
-  console.log(roleAssignedArray);
+  // console.log(roleAssignedArray);
+
+  useEffect(() => {
+    // Play the resultSound when the page loads
+    const audio = new Audio(resultSound);
+    audio.play();
+
+    // Cleanup function to pause and reset the audio when the component unmounts
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
+
 // const callChangeOption = () => {
 //   if(stompClient.current.connected && token !== null) {
 //     stompClient.current.send("/pub/game/action", {}, 
@@ -127,8 +136,8 @@ const ResultPage = () => {
 // }, [peopleCount]);
 
 // const handlePeopleCountChange = () => {
-//   if (!isHost) return;
-//   if (stompClient.current.connect === undefined) return;
+//   // if (!isHost) return;
+//   // if (stompClient.current.connect === undefined) return;
   
 //   peopleCount.bullyCount=0
 //   peopleCount.sarkCount=0
@@ -169,8 +178,8 @@ const ResultPage = () => {
     navigate('/');
   };
 
-  const sarkPlayers = roleAssignedArray.filter(playerRole => playerRole.job === '삵');
-  const nonSarkPlayers = roleAssignedArray.filter(playerRole => playerRole.job !== '삵');
+  const sarkPlayers = players.filter(player => player.role === 'SARK');
+  const nonSarkPlayers = players.filter(player => player.role !== 'SARK');
 
   return (
     <div>

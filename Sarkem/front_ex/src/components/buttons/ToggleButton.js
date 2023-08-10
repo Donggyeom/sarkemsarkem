@@ -1,7 +1,8 @@
-// https://reactjsexample.com/a-heart-shaped-toggle-switch-component-for-react/
 import { useState } from 'react';
 import { HeartSwitch } from '@anatoliygatt/heart-switch';
 import styled from 'styled-components';
+import mute from '../../sound/mute.mp3';
+import unmute from '../../sound/unmute.mp3';
 
 const StyledToggleButton = styled.div`
   display: flex;
@@ -10,20 +11,26 @@ const StyledToggleButton = styled.div`
 `;
 
 const StyledHeartSwitch = styled(HeartSwitch)`
-  /* 여기에 원하는 스타일을 적용하세요 */
-  width: 60px; /* 크기 조정 */
-  height: 30px; /* 크기 조정 */
-  margin-right: 10px; /* 왼쪽으로 이동 */
+  /* Apply any styles you want here */
+  width: 60px; /* Resize */
+  height: 30px; /* Resize */
+  margin-right: 10px; /* Move left */
 `;
 
 export function ToggleButton({ checked, onChange }) {
   const [isChecked, setChecked] = useState(checked);
 
   const handleToggleChange = (event) => {
-    setChecked(event.target.checked);
+    const newCheckedState = event.target.checked;
+    setChecked(newCheckedState);
+
     if (onChange) {
-      onChange(event.target.checked);
+      onChange(newCheckedState);
     }
+
+    const sound = newCheckedState ? unmute : mute;
+    const audio = new Audio(sound);
+    audio.play();
   };
 
   return (

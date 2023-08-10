@@ -5,6 +5,8 @@ import makeRoomButtonSrc from '../../img/makebutton.png'
 import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../../Context';
 import { useGameContext } from '../../GameContext';
+import buttonclickSound from '../../sound/buttonclick.mp3';
+
 const GoroomButtonImage = styled.img`
   width: 28%;
   height : 76%;
@@ -21,7 +23,9 @@ const GoroomButton = (props) => {
   const navigate = useNavigate();
 
   const handleButtonClick = async () => {
-
+    // 문자열 연결을 사용하여 URL을 구성하고 state로 필요한 데이터를 전달합니다.
+    const sound = new Audio(buttonclickSound);
+    sound.play();
     let roomId = props.roomId;
     navigate("/loading");
     

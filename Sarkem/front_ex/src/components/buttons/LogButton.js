@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import logbutton from '../../img/logbutton.png';
-import logbuttonoff from '../../img/logbuttonoff.png';
+import logbuttonImageSrc from '../../img/logbutton.png';
+import logbuttonOffImageSrc from '../../img/logbuttonoff.png';
+import ingameClickSound from '../../sound/ingameclick.mp3';
 
 const LogButtonImage = styled.img`
   width: 60px;
@@ -16,15 +17,19 @@ const LogButtonImage = styled.img`
 
 
 const LogButton = ({ alt, onClick, isLogOn }) => {
+  const handleClick = () => {
+    const clickAudio = new Audio(ingameClickSound);
+    clickAudio.play();
+    onClick(); // Call the provided onClick handler from the parent component
+  };
+
   return (
     <LogButtonImage
-      src={isLogOn ? logbutton : logbuttonoff}
+      src={isLogOn ? logbuttonImageSrc : logbuttonOffImageSrc}
       alt={alt}
-      onClick={onClick} // 클릭 이벤트를 핸들링하는 함수 변경
+      onClick={handleClick} // Use the handleClick function
     />
   );
 };
 
 export default LogButton;
-
-

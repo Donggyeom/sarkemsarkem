@@ -8,6 +8,11 @@ import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
 
 
+const StyledVoteResultDiv = styled.div`
+  position: absolute;
+  top: 93%;
+  right : 31%;
+`;
 
 
 const Votefoot = styled.img`
@@ -59,10 +64,11 @@ const VotefootWrapper = styled.div`
 
 const VotefootImage = styled.img`
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 95%;
+  left: 60%;
   transform: translate(-50%, -50%);
 `;
+
 
 const calculateGrid = (camCount) => {
   const positions = [
@@ -110,7 +116,7 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr 1fr',
       top: '7.5%',
       width: '80%',
-      gridRowGap : '3%',
+      gridRowGap : '7%',
       bottom : '1%',
     };
   } else if (camCount === 7) {
@@ -125,14 +131,15 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: 'repeat(2, 1fr)',
       gridTemplateColumns: 'repeat(4, 1fr)',
       width: '85%',
-      gridRowGap : '3%',
-      bottom : '1%',
+      gridRowGap : '8%',
+      bottom : '17%',
     };
   } else if (camCount === 9) {
     return {
       gridTemplateRows: 'repeat(2, 1fr)',
       gridTemplateColumns: 'repeat(5, 1fr)',
       width: '95%',
+      gridRowGap : '7%',
       height: '70%',
     };
   } else if (camCount === 10) {
@@ -261,7 +268,7 @@ const DayNightCamera = React.memo(({ ids }) => {
     myVote, startVote, dayCount, predictWebcam, stopPredicting, 
     detectedGesture, voteSituation, phase,
     Roles, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, 
-    voteTargetId, deadIds, hiddenMission, setHiddenMission } = useGameContext();
+    voteTargetId, deadIds, hiddenMission, setHiddenMission, loadGestureRecognizer } = useGameContext();
 
   useEffect(() => {
     setIsConfirmed(false);
@@ -304,6 +311,7 @@ const DayNightCamera = React.memo(({ ids }) => {
     console.log("히든미션 바뀜", hiddenMission);
     if (hiddenMission) {
       console.log("미션시작이요~~");
+      loadGestureRecognizer();
       startHiddenMission();
     }else{
       stopHiddenMission();
@@ -332,25 +340,6 @@ const DayNightCamera = React.memo(({ ids }) => {
   //   return adjustedCamCount;
   // };
 
-  const getVoteResultForUser = (id) => {
-    if (phase === 'day') {
-      let player = players.get(id);
-      if (voteSituation && voteSituation[id] !== undefined) {
-        return `${player.nickName}: ${voteSituation[id]}, 미확정표`;
-      }
-      return `${player.nickName}: 0표`;
-    }
-    else if (phase === 'night') {
-      if (player.role === "SARK" || player.role === "OBSERVER") {
-        if (voteSituation[id]) {
-          return `${id}: 삵이 죽일 사람`;
-        }
-        return `${id}: 투표하지 않음`;
-      }
-      return ''; // sark나 observer가 아닌 경우
-    }
-    return ''; // day나 night가 아닌 경우
-  };
 
   const handleCamClick = (id) => {
     console.log(voteSituation, "투표 결과 확인합니다");
@@ -392,6 +381,7 @@ const DayNightCamera = React.memo(({ ids }) => {
     predictWebcam();
   }
   const stopHiddenMission = () => {
+    console.log("히든미션끝");
     stopPredicting();
   }
 
@@ -474,7 +464,6 @@ const DayNightCamera = React.memo(({ ids }) => {
     mixedMediaStreamRef.current = null;
   };
 
-
   return (
     <CamCatGrid style={gridStyles}>
       {ids && ids.map((id, index) => (
@@ -492,7 +481,6 @@ const DayNightCamera = React.memo(({ ids }) => {
           <VotefootWrapper show={clickedCamera === id && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
-          <div>{getVoteResultForUser(id)}</div>
         </CamCatWrapper>
       ))}
       <ButtonWrapper>

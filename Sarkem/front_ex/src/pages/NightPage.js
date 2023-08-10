@@ -6,7 +6,9 @@ import styled from 'styled-components';
 import Background from '../components/backgrounds/BackgroundNight';
 /* Code generated with AutoHTML Plugin for Figma */
 import CamButton from '../components/buttons/CamButton';
+import NoCamButton from '../components/buttons/NoCamButton';
 import MicButton from '../components/buttons/MicButton';
+import NoMicButton from '../components/buttons/NoMicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import NightPopup from '../components/games/NightPopup';
@@ -39,10 +41,6 @@ const TimeSecond = styled.text`
     top: 90px; /* 원하는 위치 값을 지정합니다. */
 `;
 
-const handleScMiniClick = () => {
-    // 버튼이 클릭되었을 때 실행되어야 할 작업을 여기에 정의
-    console.log('ScMini clicked!');
-};
 
 const NightPage = () => {
   const { roomSession, player, setPlayer, players } = useRoomContext(); 
@@ -78,15 +76,6 @@ const NightPage = () => {
     }
   };
   
-  const turnOffCams = () =>{
-    if (player.role === 'SARK' || player.role === 'OBSERVER') return;
-
-    console.log("꺼졌니?")
-    player.stream.publishVideo(false);
-    player.stream.publishAudio(false);
-  };
-  
-  
   const handleMicButtonClick = () => {
     const micOn = !player.isMicOn;
     setPlayer((prevState) => {
@@ -97,6 +86,14 @@ const NightPage = () => {
     if (player.stream) {
       player.stream.publishAudio(micOn);
     }
+  };
+
+  const turnOffCams = () =>{
+    if (player.role === 'SARK' || player.role === 'OBSERVER') return;
+
+    console.log("꺼졌니?")
+    player.stream.publishVideo(false);
+    player.stream.publishAudio(false);
   };
   
   const [isLogOn, setIsLogOn] = useState(true);
@@ -118,9 +115,16 @@ const NightPage = () => {
         {players && <DayNightCamera ids={Array.from(players.keys())} />}
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{remainTime}</TimeSecond>
-        {player.role === 'SARK' && <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />}
-        {/* {<CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />} */}
-        {player.role === 'SARK' && <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>}
+        {player.role === 'SARK' ? (
+          <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
+        ) : (
+          <NoCamButton alt="Cam Button" />
+        )}
+        {player.role === 'SARK' ? (
+          <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
+        ) : (
+          <NoMicButton alt="Mic Button" />
+        )}
         {/* {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>} */}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           {/* <NightPopup></NightPopup> */}

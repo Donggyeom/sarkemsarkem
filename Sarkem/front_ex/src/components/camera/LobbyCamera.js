@@ -9,7 +9,7 @@ const LeftSectionWrapper = styled.div`
   align-items: center;
   justify-content : center;
   position: relative;
-  // overflow : hidden;
+  overflow : hidden;
 `;
 
 const CamCatGrid = styled.div`

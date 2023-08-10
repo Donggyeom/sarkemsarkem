@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import buttonclickSound from '../../sound/buttonclick.mp3'
 
 const ReButtonStyle = styled.div`
   box-sizing: border-box;
@@ -36,7 +37,12 @@ const ReButtonStyle = styled.div`
 `;
 
 const ReButton = ({ onClick, ...props }) => {
-  return <ReButtonStyle onClick={onClick} {...props} />;
+  const handleClick = () => {
+    const sound = new Audio(buttonclickSound);
+    sound.play();
+    onClick(); // Call the provided onClick handler from the parent component
+  };
+  return <ReButtonStyle onClick={handleClick} {...props} />;
 };
 
 export default ReButton;

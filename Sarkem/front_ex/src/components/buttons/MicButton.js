@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import micButtonImageSrc from '../../img/micbutton.png';
 import micOffButtonImageSrc from '../../img/micoffbutton.png';
+import muteSound from '../../sound/mute.mp3';
+import unmuteSound from '../../sound/unmute.mp3';
 
 const MicButtonImage = styled.img`
   width: 60px;
@@ -14,16 +16,25 @@ const MicButtonImage = styled.img`
   z-index: 1;
 `;
 
-const MicButton = ({ alt, onClick, isMicOn }) => {
+const MicButton = ({ alt, isMicOn, onClick }) => {
+  const handleClick = () => {
+    if (isMicOn) {
+      const muteAudio = new Audio(muteSound);
+      muteAudio.play();
+    } else {
+      const unmuteAudio = new Audio(unmuteSound);
+      unmuteAudio.play();
+    }
+    onClick(); // Call the provided onToggle handler from the parent component
+  };
+
   return (
     <MicButtonImage
-      src={isMicOn ? micButtonImageSrc : micOffButtonImageSrc} // 이미지는 더 이상 상태에 따라 변경할 필요가 없으므로 삭제
+      src={isMicOn ? micButtonImageSrc : micOffButtonImageSrc}
       alt={alt}
-      onClick={onClick} // 클릭 이벤트를 핸들링하는 함수 변경
+      onClick={handleClick} // Use the handleClick function
     />
   );
 };
 
 export default MicButton;
-
-

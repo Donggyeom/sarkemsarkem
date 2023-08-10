@@ -18,7 +18,7 @@ const CamCat = ({id}) => {
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const {psyTarget} = useGameContext();
+  const { psyTarget, psychologist, voteSituation, phase } = useGameContext();
   const player = players.get(id);
   const stream = player.stream;
 
@@ -44,42 +44,95 @@ const CamCat = ({id}) => {
     stopFace(intervalId, setRunning, setBoxPosition);
   };
 
+  const getVoteResultForUser = (id) => {
+    if (phase === 'day') {
+      let player = players.get(id);
+      if (voteSituation && voteSituation[id] !== undefined) {
+        return `X  ${voteSituation[id]}`;
+      }
+      return `X 0`;
+
+    }
+    else if (phase === 'night') {
+      if (player.role === "SARK" || player.role === "OBSERVER") {
+        if (voteSituation[id]) {
+          return `삵이 죽일 사람`;
+        }
+        return `투표하지 않음`;
+      }
+      return ''; // sark나 observer가 아닌 경우
+    }
+    return ''; // day나 night가 아닌 경우
+  };
+
   return (
-    <div
-      style={{
-        position: 'relative',
-        overflow: 'visible', // 변경: streamcomponent 영역을 벗어난 부분도 보이게 함
-        display: 'flex',
-        justifyContent: 'center',
-        backgroundRepeat: 'no-repeat',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '90%',
-        height: '100%',
-      }}
-    >
-
-      <div className="streamcomponent" style={{ flex: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434', backgroundColor:'white',}}>
-        <div style={{ flex: 0.6 }}>
-          <OpenViduVideoComponent streamManager={stream} />
-        </div>
-        {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
-        <img
-          src={camcatImage}
-          alt="CamCat"
+      <div
+        style={{
+          position: 'relative',
+          overflow: 'visible',
+          display: 'flex',
+          justifyContent: 'center',
+          backgroundRepeat: 'no-repeat',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '90%',
+          height: '100%',
+        }}
+      >
+        <div
+          className="streamcomponent"
           style={{
-            position: 'absolute',
-            top: '-12%',
-            left: '-1.0%',
-            width: '101.5%',
-            height: '34%',
-            overflow: 'visible',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderStyle: 'solid',
+            borderRadius: '10%',
+            borderWidth: '0.7em',
+            borderColor: '#343434',
+            backgroundColor: 'white',
+            position: 'relative',
           }}
-        />
+        >
+          {/* 이미지 위치 변경 */}
+          <div
+            style={{
+              flex: 0.34,
+              position: 'absolute',
+              top: '-15%', // 이미지를 OpenVidu 위쪽으로 이동
+              left: '-3%',
+              width: '106%',
+              height: '34%',
+              overflow: 'visible',
+              display: 'flex',
+              justifyContent: 'center',
+              zIndex : '1',
+            }}
+          >
+            <img
+              src={camcatImage}
+              alt="CamCat"
+              style={{
+                width: '100%',
+                height: '100%',
+                // objectFit: 'contain', // 이미지 비율 유지
+              }}
+            />
+          </div>
+          <div style={{ flex: 0.6 }}>
+            <OpenViduVideoComponent streamManager={stream} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: '3px' }}>
+            <div style={{ flex: 1, textAlign: 'right' }}>
+              {player.nickName}
+            </div>
+            <div style={{ flex: 0.8, textAlign: 'center' }}>
+              {getVoteResultForUser(player.playerId, phase)}
+            </div>
+          </div>
+        </div>
       </div>
-
-    </div>
-  )
+  );
 }
 
 export default CamCat;

@@ -107,6 +107,7 @@ const calculateGrid = (camCount) => {
     };
   }
 };
+
 const CamCatWrapper = styled.div`
   ${({ camCount, index }) =>
 
@@ -531,18 +532,21 @@ const CamCatWrapper = styled.div`
 const SunsetPage = () => {
    
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
-  const { startVote, agreeExpulsion, disagreeExpulsion, targetId, chatVisible, remainTime, dayCount } = useGameContext();
+  const { startVote, agreeExpulsion, disagreeExpulsion, targetId, chatVisible, remainTime, dayCount, deadIds } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
   const navigate = useNavigate();
   
-  const assignedIndices = [];
-  const camCount = players.size; // camCount를 SunsetPage 내부에서 계산
+  // TODO: camcount 계산
+  const [camCount, setCamCount] = useState(players.size);
   const gridStyles = calculateGrid(camCount);
+
+  const adjustedCamCount = calculateAdjustedCamCount();
+
   console.log(targetId, "확인합시다");
 
   let displayCamCat = false;
-
+  let assignedIndices = [];
 
   useEffect(() => {
     if (roomSession.roomId === undefined){
@@ -557,9 +561,34 @@ const SunsetPage = () => {
     }
   }, []);
 
+
+  useEffect(() => {
+    setCamCount(adjustedCamCount);
+  }, [adjustedCamCount]);
+
+
+  ///   SunsetPage 함수 ///
+
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
     leaveSession();
+  }
+
+  const calculateAdjustedCamCount = () => {
+    const filteredCamArray = players.filter((player) => {
+      return !deadIds.includes(player.playerId);
+    });
+
+    let adjustedCamCount = filteredCamArray.length;
+
+    filteredCamArray.forEach((player) => {
+
+      if (deadIds.includes(player.playerId)) {
+        adjustedCamCount -= 1;
+      }
+    });
+
+    return adjustedCamCount;
   }
 
   const generateRandomPositionIndex = (maxIndex) => {
@@ -597,7 +626,91 @@ const SunsetPage = () => {
   };
   
 
+  const sortedCamArray = players
+    .filter((player) => {
+      return !deadIds.includes(player.playerId);
+    })
+    .map((player, index) => {
 
+      let targetIndex = null;
+      if (player.playerId === targetId) {
+        if (camCount === 3) {
+          targetIndex = 1;
+        } else if (camCount >= 4 && camCount <= 6) {
+          targetIndex = 2;
+        } else if (camCount === 7) {
+          targetIndex = 3;
+        } else if (camCount === 8) {
+          targetIndex = 6;
+        } else if (camCount === 9) {
+          targetIndex = 8;
+        } else if (camCount === 10) {
+          targetIndex = 8;
+        }
+      }
+
+      let positionIndex;
+
+      if (targetIndex === null) {
+        if (camCount === 3) {
+          const availableIndices = [0, 2].filter(i => !assignedIndices.includes(i));
+          positionIndex = Math.min(...availableIndices); 
+          assignedIndices.push(positionIndex);
+    
+        } else if (camCount === 4) {
+          const availableIndices = [0, 1, 3].filter(i => !assignedIndices.includes(i));
+          positionIndex = Math.min(...availableIndices); 
+          assignedIndices.push(positionIndex);
+  
+        }  else if (camCount === 5) {
+          const availableIndices = [0, 1, 3, 4].filter(i => !assignedIndices.includes(i));
+          positionIndex = Math.min(...availableIndices); 
+          assignedIndices.push(positionIndex);
+  
+        } else if (camCount === 6) {
+          const availableIndices = [0, 1, 3, 4, 5].filter(i => !assignedIndices.includes(i));
+          positionIndex = Math.min(...availableIndices); 
+          assignedIndices.push(positionIndex);
+  
+        } else if (camCount === 7) {
+          const availableIndices = [0, 1, 2, 4, 5, 6].filter(i => !assignedIndices.includes(i));
+          positionIndex = Math.min(...availableIndices); 
+          assignedIndices.push(positionIndex);
+  
+        } else if (camCount === 8) {
+          const availableIndices = [0, 1, 2, 3, 4, 5, 7].filter(i => !assignedIndices.includes(i));
+          positionIndex = Math.min(...availableIndices); 
+          assignedIndices.push(positionIndex);
+  
+        } else if (camCount === 9) {
+          const availableIndices = [0, 1, 2, 3, 4, 5, 6, 7].filter(i => !assignedIndices.includes(i));
+          positionIndex = Math.min(...availableIndices); 
+          assignedIndices.push(positionIndex);
+  
+        } else if (camCount === 10) {
+          const availableIndices = [0, 1, 2, 3, 4, 5, 6, 7, 9].filter(i => !assignedIndices.includes(i));
+          positionIndex = Math.min(...availableIndices); 
+          assignedIndices.push(positionIndex);
+      }
+      } else {
+        positionIndex = targetIndex;
+        assignedIndices.push(positionIndex);
+      }
+
+    console.log(`타겟아이디 : ${targetId}, User Id: ${player.playerId}, Target Index: ${targetIndex}, Position Index: ${positionIndex}`, "확인하세요");
+      
+      return {
+        positionIndex,
+        player: player,
+      };
+    })
+    .sort((a, b) => a.positionIndex - b.positionIndex);
+
+  if (assignedIndices.length === camCount) {
+    displayCamCat = true;
+  } else {
+    displayCamCat = false;
+  }
 
 
   return (
@@ -612,90 +725,20 @@ const SunsetPage = () => {
       <SunsetPopup dayCount={dayCount}></SunsetPopup>
 
       <CamCatGrid style={gridStyles}>
-  {players && Array.from(players.keys()).map((id, index) => {
-    let targetIndex = null;
-    if (id === targetId) {
-      if (camCount === 3) {
-        targetIndex = 1;
-      } else if (camCount >= 4 && camCount <= 6) {
-        targetIndex = 2;
-      } else if (camCount === 7) {
-        targetIndex = 3;
-      } else if (camCount === 8) {
-        targetIndex = 6;
-      } else if (camCount === 9) {
-        targetIndex = 8;
-      } else if (camCount === 10) {
-        targetIndex = 8;
-      }
-    }
+        {sortedCamArray.map(({ player, positionIndex }, index) => {
 
-    let positionIndex;
-
-    if (targetIndex === null) {
-      if (camCount === 3) {
-        const availableIndices = [0, 2].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); 
-
-      } else if (camCount === 4) {
-        const availableIndices = [0, 1, 3].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); 
-        assignedIndices.push(positionIndex);
-
-      }  else if (camCount === 5) {
-        const availableIndices = [0, 1, 3, 4].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); 
-        assignedIndices.push(positionIndex);
-
-      } else if (camCount === 6) {
-        const availableIndices = [0, 1, 3, 4, 5].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); 
-        assignedIndices.push(positionIndex);
-
-      } else if (camCount === 7) {
-        const availableIndices = [0, 1, 2, 4, 5, 6].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); 
-        assignedIndices.push(positionIndex);
-
-      } else if (camCount === 8) {
-        const availableIndices = [0, 1, 2, 3, 4, 5, 7].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); 
-        assignedIndices.push(positionIndex);
-
-      } else if (camCount === 9) {
-        const availableIndices = [0, 1, 2, 3, 4, 5, 6, 7].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); 
-        assignedIndices.push(positionIndex);
-
-      } else if (camCount === 10) {
-        const availableIndices = [0, 1, 2, 3, 4, 5, 6, 7, 9].filter(i => !assignedIndices.includes(i));
-        positionIndex = Math.min(...availableIndices); 
-        assignedIndices.push(positionIndex);
-    }
-    } else {
-      positionIndex = targetIndex; 
-      assignedIndices.push(positionIndex);
-    }
-
-    if (assignedIndices.length === camCount) {
-      displayCamCat = true;
-    } else {
-      displayCamCat = false;
-    }
-
-    console.log(`타겟아이디 : ${targetId}, User Token: ${id}, Target Index: ${targetIndex}, Position Index: ${positionIndex}`, "확인하세요");
-
-    return (
-      <CamCatWrapper
-        camCount={camCount}
-        // index={user.positionIndex} 이거로 들어가면 균일하게 들어감
-        index={positionIndex}
-      > 
-        <CamCat id={id} />
-      </CamCatWrapper>
-    );
-  })}
-</CamCatGrid>
+            return (
+              <CamCatWrapper
+                key={player.playerId}
+                index={positionIndex}
+                camCount={camCount}
+              > 
+                <CamCat id={player.playerId} />
+              </CamCatWrapper>
+            );
+          })
+        }
+      </CamCatGrid>
 
 <div>
   <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />

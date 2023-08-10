@@ -11,7 +11,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
-import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.gameroom.GameRoom;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.Player;
@@ -302,7 +301,7 @@ public class GameThread extends Thread {
 		
 		// 과반수 이상 찬성일 때 => 추방 대상자한테 메시지 보내기
 		if (gameSession.getExpulsionVoteCnt() >= (gameSession.getPlayers().size() + 1) / 2) {
-			gameManager.sendNoticeMessageToAll(roomId, target.getNickname() + "님이 추방 대상자로 선정되었습니다.", gameSession.getPhase());
+			gameManager.sendNoticeMessageToAll(roomId, target.getNickname() + "님이 추방되었습니다.", gameSession.getPhase());
 			return true;		
 		}
 		return false;
@@ -320,7 +319,14 @@ public class GameThread extends Thread {
 				message = "밤이 되었습니다.";
 				break;
 			case SARK: 
-				message = "밤이 되었습니다.\n회의를 통해 사냥할 고양이를 선택해주세요.";
+				// 히든미션이 발행됐는데 성공 못했으면
+				if(gameSession.isBHiddenMissionStatus() && !gameSession.isBHiddenMissionSuccess()) {
+					message = "밤이 되었습니다.\n히든미션을 실패해 고양이를 사냥할 수 없습니다.";
+				}else if(gameSession.getRolePlayers(GameRole.SARK).size()>1) { // 삵이 2명 이상일 때
+					message = "밤이 되었습니다.\n회의를 통해 사냥할 고양이를 선택해주세요.";
+				}else {
+					message = "밤이 되었습니다.\n사냥할 고양이를 선택해주세요.";
+				}
 				break;
 			case DOCTOR: 
 				message = "밤이 되었습니다.\n삵 퇴치제를 처방할 고양이를 선택해주세요.";
