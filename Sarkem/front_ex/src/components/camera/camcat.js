@@ -184,7 +184,7 @@ return (
     <div style={{ flex: 0.6 }}>
       <OpenViduVideoComponent streamManager={props.props} />
     </div>
-    <div style={{ flex: 0.4, textAlign: 'center', width: '100%' }}>
+    <div style={{ flex: 0.4, textAlign: 'center', width: '100%', margin:'3px' }}>
       {JSON.parse(props.props.stream.connection.data).nickname}
     </div>
   </div>
