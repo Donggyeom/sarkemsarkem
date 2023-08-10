@@ -9,7 +9,6 @@ import CamCat from '../components/camera/camcat';
 import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import TempButton from '../components/buttons/TempButton';
-import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import { useGameContext } from '../GameContext';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
@@ -533,7 +532,7 @@ const CamCatWrapper = styled.div`
 const SunsetPage = () => {
    
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
-  const { startVote, agreeExpulsion, disagreeExpulsion, targetId } = useGameContext();
+  const { startVote, agreeExpulsion, disagreeExpulsion, targetId, chatVisible } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
   const navigate = useNavigate();
@@ -557,16 +556,6 @@ const SunsetPage = () => {
     }
   }, []);
 
-
-  const chatVisible = () =>{
-  if (player.role === 'OBSERVER') {
-    return (
-      <>
-        <ChatButtonAndPopup />
-      </>
-    )
-  }
-}
 
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
@@ -598,9 +587,6 @@ const SunsetPage = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
   
-  
-  
-
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {

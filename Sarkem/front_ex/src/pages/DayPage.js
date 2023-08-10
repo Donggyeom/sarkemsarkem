@@ -12,7 +12,6 @@ import DayPopup from '../components/games/DayPopup';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
-import ChatButtonAndPopup from '../components/buttons/ChatButtonAndPopup';
 import DayNightCamera from '../components/camera/DayNightCamera';
 
 // log
@@ -44,7 +43,7 @@ const TimeSecond = styled.text`
 const DayPage = () => {
 
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
-  const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount } = useGameContext();
+  const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, chatVisible } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
@@ -129,18 +128,12 @@ const DayPage = () => {
   //   console.log('ScMini clicked!');
   // };
 
-  const chatVisible = () =>{
-    if (player.role === Roles.OBSERVER || player.role === Roles.CITIZEN) {
-      
-      return <ChatButtonAndPopup roomId={roomSession.roomId}/>;
-    }
-  };
+  
   
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
     leaveSession();
   }
-
   
 
   // const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가

@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
+import ChatButtonAndPopup from './components/buttons/ChatButtonAndPopup';
 import axios from "axios";
 
 const GameContext = createContext();
@@ -515,10 +516,21 @@ case "GAME_START":
     }
   };
 
+  const chatVisible = () =>{
+    // DEBUG:
+    // if (player.role === 'OBSERVER'){
+      return (
+        <>
+          <ChatButtonAndPopup />
+        </>
+      )
+    // }
+  }
+
   return (
     <GameContext.Provider value={{ stompClient, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, 
+      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles
     }}>
       {children}

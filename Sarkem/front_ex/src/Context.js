@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { OpenVidu } from 'openvidu-browser';
-import { useGameContext } from './GameContext';
 
 const RoomContext = createContext();
 
@@ -10,17 +9,6 @@ const RoomProvider = ({ children }) => {
   const [roomSession, setRoomSession] = useState({});
   const [player, setPlayer] = useState({});
   const [players, setPlayers] = useState(new Map());
-    // const [roomId, setRoomId] = useState('');
-    // const [isHost, setIsHost] = useState(false);
-    // const [nickName, setNickName] = useState('냥냥' + Math.floor(Math.random() * 100));
-    // const [publisher, setPublisher] = useState(undefined);
-    // const [subscribers, setSubscribers] = useState([]);
-    // const [camArray, setCamArray] = useState([]);
-    // const [session, setSession] = useState(undefined);
-    // const [token, setToken] = useState(null);
-    // const [isMicOn, setIsMicOn] = useState(true);
-    // const [isCamOn, setIsCamOn] = useState(true);
-    const [showImage, setShowImage] = useState(false);
 
   const OV = useRef(null);
   const navigate = useNavigate();
@@ -165,13 +153,6 @@ const RoomProvider = ({ children }) => {
 
     return newSession;
   }
-   useEffect(() => {
-        if (!player.isCamOn) {
-            setShowImage(true);
-        } else {
-            setShowImage(false);
-        }
-    }, [player.isCamOn]);
 
 
   const connectSession = async (response, roomId) => {

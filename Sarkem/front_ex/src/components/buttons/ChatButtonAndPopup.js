@@ -50,12 +50,7 @@ const ChatButtonAndPopup = ({roomId}) => {
     <>
       {showPopup && (
         <ChatPopup style={{ bottom: '100px', right: '200px' }}>
-            <Chatting
-            handleCloseButtonClick={handleCloseButtonClick}
-            messages={messages}
-            onSendMessage={handleSendMessage}
-            roomId={roomId}
-          />
+            <Chatting handleCloseButtonClick={handleCloseButtonClick} />
         </ChatPopup>
       )}
       <ChatButton
