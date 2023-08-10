@@ -531,7 +531,7 @@ const CamCatWrapper = styled.div`
 const SunsetPage = () => {
    
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
-  const { startVote, agreeExpulsion, disagreeExpulsion, targetId, chatVisible } = useGameContext();
+  const { startVote, agreeExpulsion, disagreeExpulsion, targetId, chatVisible, remainTime, dayCount } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
   const navigate = useNavigate();
@@ -539,7 +539,6 @@ const SunsetPage = () => {
   const assignedIndices = [];
   const camCount = players.size; // camCount를 SunsetPage 내부에서 계산
   const gridStyles = calculateGrid(camCount);
-  const location = useLocation();
   console.log(targetId, "확인합시다");
 
   let displayCamCat = false;
