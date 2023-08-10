@@ -6,7 +6,6 @@ const StartButtonImage = styled.img`
   width: 100%;
   height: 100%;
   cursor: pointer;
-  margin-top: 30px;
   &:hover {
     filter: brightness(0.8);
     
