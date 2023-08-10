@@ -337,7 +337,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
     console.log(startVote);
     console.log(dayCount);
     console.log(JSON.parse(user.stream.connection.data).token, "얘는 캠주인");
-    if (!startVote || dayCount === 0 || isConfirmed || isSkipped) {
+    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped) {
       return;
     }
 
