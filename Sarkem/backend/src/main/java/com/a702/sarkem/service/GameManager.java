@@ -25,6 +25,8 @@ import com.a702.sarkem.redis.ChatPublisher;
 import com.a702.sarkem.redis.ChatSubscriber;
 import com.a702.sarkem.redis.GamePublisher;
 import com.a702.sarkem.redis.SystemSubscriber;
+import com.a702.sarkem.repo.GameLogRepository;
+import com.a702.sarkem.repo.InGameRoleRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,9 @@ public class GameManager {
 	private final ChatPublisher chatPublisher;
 	// topic 관리
 	private Map<String, ChannelTopic> topics = new HashMap<>();
+	
+	private final GameLogRepository gameLogRepository;
+	private final InGameRoleRepository inGameRoleRepository;
 
 	public ChannelTopic getGameTopic(String roomId) {
 		return topics.get("GAME_" + roomId);
@@ -263,11 +268,13 @@ public class GameManager {
 	 */
 	public void gameStart(String roomId) {
 		// 게임 러너 생성 및 시작
+		
 		GameRoom gameRoom = gameRoomMap.get(roomId);
 		GameSession gameSession = getGameSession(roomId);
 		ChannelTopic gameTopic = topics.get("GAME_" + roomId);
 		ChannelTopic chatTopic = topics.get("CHAT_" + roomId);
-		GameThread gameThread = new GameThread(this, gameRoom, gameSession, gameTopic, chatTopic);
+		DBService dbService = new DBService(gameLogRepository, inGameRoleRepository);
+		GameThread gameThread = new GameThread(this, dbService, gameRoom, gameSession, gameTopic, chatTopic);
 		gameThread.run();
 	}
 
