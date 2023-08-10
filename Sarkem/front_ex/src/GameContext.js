@@ -62,6 +62,7 @@ const GameProvider = ({ children }) => {
     const [voteSituation, setVotesituation] = useState({});
     const [threatedTarget, setThreatedTarget] = useState(false);
     const [psyTarget, setPsyTarget] = useState("");
+    const [psychologist, setPsychologist] = useState(false);//심리학자 실행
     const [hiddenMission, setHiddenMission] = useState(false);//히든미션 실행
     const hiddenMissionType = ["Thumb_Up", "Thumb_Down", "Victory", "Pointing_Up", "Closed_Fist", "ILoveYou"];//히든미션 리스트
     const [selectMission, setSelectMission] = useState("");//히든 선택된 히든미션
@@ -248,7 +249,8 @@ const onSocketConnected = () => {
         case "PHASE_NIGHT":
             setphase("night");
             setThreatedTarget(false); // 밤 되면 협박 풀림
-            setPsyTarget("");
+            setPsyTarget("");//심리학자 끝
+            setPsychologist(false);
             setHiddenMission(false);// 밤이 되면 마피아 미션 끝
             console.log(phase);
             navigate(`/${roomId}/night`)
@@ -298,7 +300,7 @@ const onSocketConnected = () => {
             break;
 
         case "TWILIGHT_SELECTION":
-            alert("죽일지 살릴지 선택해주세요");
+            // alert("죽일지 살릴지 선택해주세요");
             setStartVote(true);
             break;
 
@@ -309,7 +311,7 @@ const onSocketConnected = () => {
 
         case "TWILIGHT_VOTE_END":
             setStartVote(false);
-            alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
+            // alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
             break;
 
         case "BE_EXCLUDED":
@@ -330,6 +332,7 @@ const onSocketConnected = () => {
             break;
         case "PSYCHOANALYSIS_START":
           setPsyTarget(sysMessage.param.targetId);
+          setPsychologist(true);
           break;
         case "MISSION_START":
           console.log("미션시작");
@@ -555,7 +558,7 @@ const onSocketConnected = () => {
     <GameContext.Provider value={{ stompClient, peopleCount, myRole, startVote, setPeopleCount, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage, playersRoles,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, roleAssignedArray, setRoleAssignedArray, sendMessage, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, winner, setWinner, 
-      voteTargetId, deadIds, threatedTarget, psyTarget, hiddenMission, setHiddenMission, remainTime}}>
+      voteTargetId, deadIds, threatedTarget, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist}}>
       {children}
     </GameContext.Provider>
   );

@@ -46,7 +46,9 @@ const DayPage = () => {
   const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount, currentSysMessage, remainTime  } = useGameContext();
 
   useEffect(() => {
-    daystatus();
+    if(isCamOn){
+      daystatus();
+    }
     threated();
   },[])
   const navigate = useNavigate();
