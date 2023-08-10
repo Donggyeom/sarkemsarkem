@@ -132,7 +132,7 @@ const NightPage = () => {
     return (   
     <Background>
       <StyledNightPage>
-         {!isLogOn && <Log top="60%" left="26%" />}
+         {!isLogOn && <Log />}
         <DayNightCamera camArray={camArray}/>
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{remainTime}s</TimeSecond>
