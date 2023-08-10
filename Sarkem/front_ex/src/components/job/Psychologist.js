@@ -33,10 +33,13 @@ const faceMyDetect = (videoRef, running, setRunning) => {
     }
 };
 //끄기
-const stopFace = (intervalId, setRunning) => {
+const stopFace = (intervalId, setIntervalId, setRunning) => {
     console.log("꺼짐?");
-    clearInterval(intervalId);
-    setRunning(false);
+    if (intervalId) {
+        clearInterval(intervalId);
+        setIntervalId(null);
+        setRunning(false);
+      }
 }
 export { loadModels, faceMyDetect, stopFace };
 

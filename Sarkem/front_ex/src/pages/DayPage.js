@@ -46,7 +46,9 @@ const DayPage = () => {
   const { myRole, peopleCount, systemMessages, threatedTarget, voteSituation, dayCount, currentSysMessage, remainTime  } = useGameContext();
 
   useEffect(() => {
-    daystatus();
+    if(isCamOn){
+      daystatus();
+    }
     threated();
   },[])
   const navigate = useNavigate();
@@ -136,7 +138,7 @@ const DayPage = () => {
   return (
     <Background>
       <StyledDayPage>
-        {!isLogOn && <Log top="60%" left="26%" />}
+        {!isLogOn && <Log />}
         <SunMoon alt="SunMoon" />
         <TimeSecond>{remainTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />

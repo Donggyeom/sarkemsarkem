@@ -11,23 +11,22 @@ const CamCat = (props) => {
 
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
-  const {psyTarget} = useGameContext();
+  const { psyTarget, psychologist } = useGameContext();
   // const nickName = JSON.parse(streamManager.stream.connection.data).userData;
   // console.log(props.props.videos[1].video);
   useEffect(() => {
     loadModels();
-    console.log(psyTarget==="");
-    if(psyTarget===""){
+    if (psychologist) {
+      startFaceDetection();
+    } else {
       stopFaceDetection();
-    }else{
-    startFaceDetection();
     }
-  }, [psyTarget]);
+  }, [psychologist]);
   // console.log(JSON.parse(props.props.stream.connection.data).token);
   //faceapi 실행
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
-    if(JSON.parse(props.props.stream.connection.data).token===psyTarget){
+    if (JSON.parse(props.props.stream.connection.data).token === psyTarget) {
       const id = faceMyDetect(props.props.videos[1].video, running, setRunning);
       setIntervalId(id);
     }
@@ -36,7 +35,7 @@ const CamCat = (props) => {
   const stopFaceDetection = () => {
     clearInterval(intervalId);
     setRunning(false);
-    stopFace(intervalId, setRunning);
+    stopFace(intervalId, setIntervalId, setRunning);
   };
 
 return (
@@ -96,7 +95,7 @@ return (
     <div style={{ flex: 0.6 }}>
       <OpenViduVideoComponent streamManager={props.props} />
     </div>
-    <div style={{ flex: 0.4, textAlign: 'center', width: '100%' }}>
+    <div style={{ flex: 0.4, textAlign: 'center', width: '100%', margin:'3px' }}>
       {JSON.parse(props.props.stream.connection.data).nickname}
     </div>
   </div>
