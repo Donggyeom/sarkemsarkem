@@ -53,6 +53,7 @@ const LogoWrapper = styled.div`
 `;
 
 const StartButtonContainer = styled.div`
+  top: 50%
   width: 15%;
   height: 10%;
 `;
