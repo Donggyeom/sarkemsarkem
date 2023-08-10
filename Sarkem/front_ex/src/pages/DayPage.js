@@ -129,6 +129,8 @@ const DayPage = () => {
     }
   };
 
+  console.log(dayCount, "데이카운트");
+
   // const sysMessage = systemMessages.find((message) => message.code === 'NOTICE_MESSAGE'); // sysMessage 변수 추가
   // console.log(currentSysMessage);
   return (

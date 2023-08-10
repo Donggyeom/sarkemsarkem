@@ -77,6 +77,7 @@ const GameProvider = ({ children }) => {
     const [deadIds, setDeadIds] = useState([]);
 
 
+
     const [phase, setphase] = useState("");
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
     const [detectedGesture, setDetectedGesture] = useState('');
@@ -298,7 +299,7 @@ const onSocketConnected = () => {
             break;
 
         case "TWILIGHT_SELECTION":
-            alert("죽일지 살릴지 선택해주세요");
+            // alert("죽일지 살릴지 선택해주세요");
             setStartVote(true);
             break;
 
@@ -309,7 +310,7 @@ const onSocketConnected = () => {
 
         case "TWILIGHT_VOTE_END":
             setStartVote(false);
-            alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
+            // alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
             break;
 
         case "BE_EXCLUDED":
