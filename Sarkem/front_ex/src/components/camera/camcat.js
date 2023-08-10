@@ -38,150 +38,69 @@ const CamCat = (props) => {
     stopFace(intervalId, setIntervalId, setRunning);
   };
 
-
-  //   return (
-  //     <div
-  //       style={{
-  //         position: 'relative',
-  //         overflow: 'visible', // 변경: streamcomponent 영역을 벗어난 부분도 보이게 함
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         backgroundRepeat: 'no-repeat',
-  //         flexDirection: 'column',
-  //         alignItems: 'center',
-  //         width: '100%',
-  //         height: '100%',
-  //       }}
-  //     >
-
-  //       <div className="streamcomponent" style={{ flex: 'auto' }}>
-  //         <div style={{ flex: 0.6, justifyContent: 'center' }}>
-  //           <OpenViduVideoComponent streamManager={props.props} />
-  //           {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
-  //           <img
-  //             src={camcatImage}
-  //             alt="CamCat"
-  //             style={{
-  //               position: 'absolute',
-  //               top: '-15%',
-  //               left: '-1.5%',
-  //               width: '96%',
-  //               height: '40%',
-  //               overflow: 'visible',
-  //             }}
-  //           />
-  //           {/* {running && (
-  //           )} */}
-  //         </div>
-
-  //         <div style={{ flex: 0.4, textAlign: 'center', width: '95%' }}>
-  //           {JSON.parse(props.props.stream.connection.data).nickname}
-  //         </div>
-  //         {/* <button onClick={startFaceDetection}>심리학자 시작</button>
-  //         <button onClick={stopFaceDetection}>심리학자 종료</button> */}
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
-  return (
-    // <div
-    //   style={{
-    //     position: 'relative',
-    //     overflow: 'visible', // 변경: streamcomponent 영역을 벗어난 부분도 보이게 함
-    //     display: 'flex',
-    //     justifyContent: 'center',
-    //     backgroundRepeat: 'no-repeat',
-    //     flexDirection: 'column',
-    //     alignItems: 'center',
-    //     width: '90%',
-    //     height: '100%',
-    //   }}
-    // >
-    //   <div className="streamcomponent" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434', backgroundColor:'white' }}>
-    //     <div style={{ flex: 0.6 }}>
-    //       <OpenViduVideoComponent streamManager={props.props} />
-    //     </div>
-    //     {/* cam on/off했을 때 귀 너비 수정해야 함 (어차피 sunset도 해야하니까...) */}
-    //     <img
-    //       src={camcatImage}
-    //       alt="CamCat"
-    //       style={{
-    //         position: 'absolute',
-    //         top: '-12%',
-    //         left: '-1.0%',
-    //         width: '101.5%',
-    //         height: '34%',
-    //         overflow: 'visible',
-    //       }}
-    //     />
-    //     <div style={{ flex: 0.4, textAlign: 'center', width: '100%', }}>
-    //       {JSON.parse(props.props.stream.connection.data).nickname}
-    //     </div>
-    //   </div>
-    // </div>
+return (
+<div
+  style={{
+    position: 'relative',
+    overflow: 'visible',
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundRepeat: 'no-repeat',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '90%',
+    height: '100%',
+  }}
+>
+  <div
+    className="streamcomponent"
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderStyle: 'solid',
+      borderRadius: '10%',
+      borderWidth: '0.7em',
+      borderColor: '#343434',
+      backgroundColor: 'white',
+      position: 'relative',
+    }}
+  >
+    {/* 이미지 위치 변경 */}
     <div
       style={{
-        position: 'relative',
+        flex: 0.34,
+        position: 'absolute',
+        top: '-15%', // 이미지를 OpenVidu 위쪽으로 이동
+        left: '-3%',
+        width: '106%',
+        height: '34%',
         overflow: 'visible',
         display: 'flex',
         justifyContent: 'center',
-        backgroundRepeat: 'no-repeat',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '90%',
-        height: '100%',
+        zIndex : '1',
       }}
     >
-      <div
-        className="streamcomponent"
+      <img
+        src={camcatImage}
+        alt="CamCat"
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderStyle: 'solid',
-          borderRadius: '10%',
-          borderWidth: '0.7em',
-          borderColor: '#343434',
-          backgroundColor: 'white',
-          position: 'relative',
+          width: '100%',
+          height: '100%',
+          // objectFit: 'contain', // 이미지 비율 유지
         }}
-      >
-        {/* 이미지 위치 변경 */}
-        <div
-          style={{
-            flex: 0.34,
-            position: 'absolute',
-            top: '-15%', // 이미지를 OpenVidu 위쪽으로 이동
-            left: '-3%',
-            width: '106%',
-            height: '34%',
-            overflow: 'visible',
-            display: 'flex',
-            justifyContent: 'center',
-            zIndex: '1',
-          }}
-        >
-          <img
-            src={camcatImage}
-            alt="CamCat"
-            style={{
-              width: '100%',
-              height: '100%',
-              // objectFit: 'contain', // 이미지 비율 유지
-            }}
-          />
-        </div>
-        <div style={{ flex: 0.6 }}>
-          <OpenViduVideoComponent streamManager={props.props} />
-        </div>
-        <div style={{ flex: 0.4, textAlign: 'center', width: '100%' }}>
-          {JSON.parse(props.props.stream.connection.data).nickname}
-        </div>
-      </div>
+      />
     </div>
-  );
-}
+    <div style={{ flex: 0.6 }}>
+      <OpenViduVideoComponent streamManager={props.props} />
+    </div>
+    <div style={{ flex: 0.4, textAlign: 'center', width: '100%', margin:'3px' }}>
+      {JSON.parse(props.props.stream.connection.data).nickname}
+    </div>
+  </div>
+</div>
+);
+      }
 
 export default CamCat;

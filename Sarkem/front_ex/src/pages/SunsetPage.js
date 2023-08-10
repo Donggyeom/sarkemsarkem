@@ -621,7 +621,7 @@ const SunsetPage = () => {
   return (
     <Background>
       <StyledContent>
-      {!isLogOn && <Log top="60%" left="26%" />}
+      {!isLogOn && <Log />}
       <SunMoon alt="SunMoon"></SunMoon>
       <TimeSecond>{remainTime}s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={isCamOn} />
