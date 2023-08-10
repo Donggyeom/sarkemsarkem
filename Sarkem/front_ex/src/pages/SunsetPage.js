@@ -541,6 +541,8 @@ const SunsetPage = () => {
   console.log(targetId, "확인합시다");
   const [targetIndex, setTargetIndex] = useState(null);
   const assignedIndices = [];
+
+
   let displayCamCat = false;
 
 

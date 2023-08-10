@@ -78,6 +78,7 @@ const GameProvider = ({ children }) => {
     const [deadIds, setDeadIds] = useState([]);
 
 
+
     const [phase, setphase] = useState("");
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
     const [detectedGesture, setDetectedGesture] = useState('');

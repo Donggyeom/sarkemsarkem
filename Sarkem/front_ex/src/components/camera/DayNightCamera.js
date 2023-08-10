@@ -252,14 +252,13 @@ const CamCatWrapper = styled.div`
   : ''};
   `;
 const DayNightCamera = React.memo(({ camArray }) => {
-  const camCount = camArray.length;
+  const [camCount, setCamCount] = useState(camArray.length);
   const gridStyles = calculateGrid(camCount);
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
   const { publisher } = useRoomContext();
   const { selectAction, selectConfirm, setSelectedTarget, myVote, startVote, dayCount, predictWebcam, stopPredicting, detectedGesture, voteSituation, playersRoles, myRole, phase, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, voteTargetId, deadIds, hiddenMission, setHiddenMission } = useGameContext();
-  // const jungleRefs = useRef([]);
 
   useEffect(() => {
     setIsConfirmed(false);
@@ -284,13 +283,7 @@ const DayNightCamera = React.memo(({ camArray }) => {
     }
   }, [startVote, phase]);
 
-
-  // const getVoteResultForUser = (userToken) => {
-  //   if (voteSituation && voteSituation[userToken] !== undefined) {
-  //     return `${userToken}: ${voteSituation[userToken]}, 미확정표`;
-  //   }
-  //   return `${userToken}: 0표`;
-  // };
+  
 
   const getVoteResultForUser = (userToken, phase) => {
     if (phase === "day") {
@@ -331,6 +324,10 @@ const DayNightCamera = React.memo(({ camArray }) => {
   };
 
   const adjustedCamCount = calculateAdjustedCamCount();
+  
+  useEffect(() => {
+    setCamCount(adjustedCamCount);
+  }, [adjustedCamCount]);
 
   const handleCamClick = (user) => {
     console.log(voteSituation, "투표 결과 확인합니다");
@@ -419,9 +416,6 @@ const DayNightCamera = React.memo(({ camArray }) => {
     mixedMediaStreamRef.current = getMixedMediaStream();
   }
 
-  // const mixedMediaStreamRef = useRef(null);
-  // const jungleRefs = useRef([]);
-  // const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
 
   // 삵들에 대해 음성변조 시작
   const getMixedMediaStream = () => {
@@ -455,12 +449,12 @@ const DayNightCamera = React.memo(({ camArray }) => {
         jungle.isConnected = false;
       }
     });
-    // setMafias([]);
     jungleRefs.current = [];
     mixedMediaStreamRef.current = null;
   };
 
-
+  console.log(adjustedCamCount, "어드저스트캠카운트");
+  console.log(camCount, "캠카운트");
 
 
   return (
@@ -512,13 +506,6 @@ const DayNightCamera = React.memo(({ camArray }) => {
             )}
           </>
         )}
-        {/* <ActionButton onClick={startHiddenMission}>
-          히든미션
-        </ActionButton>
-        <ActionButton onClick={stopHiddenMission}>
-          미션 종료
-        </ActionButton> */}
-        {/* <p>Detected Gesture: {detectedGesture}</p> */}
       </ButtonWrapper>
     </CamCatGrid>
   );

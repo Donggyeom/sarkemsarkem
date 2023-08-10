@@ -20,7 +20,13 @@ const faceMyDetect = (videoRef, running, setRunning) => {
                 .detectSingleFace(videoRef)
                 .withFaceLandmarks()
                 .withFaceExpressions();
-            console.log(detectionsWithExpressions.expressions);
+            console.log(detectionsWithExpressions.expressions, "심리학자");
+            console.log(detectionsWithExpressions.expressions.neutral, "화남");
+            console.log(detectionsWithExpressions.expressions.happy, "역겨움");
+            console.log(detectionsWithExpressions.expressions.neutral, "놀람");
+            console.log(detectionsWithExpressions.expressions.happy, "기쁨");
+            console.log(detectionsWithExpressions.expressions.neutral, "평온");
+            console.log(detectionsWithExpressions.expressions.happy, "기쁨");
         }, 1000);
         setRunning(true);
         return id;
