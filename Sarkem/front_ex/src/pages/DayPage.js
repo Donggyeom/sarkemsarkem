@@ -77,8 +77,8 @@ const DayPage = () => {
   const threated = () =>{
     console.log(threatedTarget);
     if(threatedTarget){
-      publisher.publishAudio(false);
-      // publisher.publishVideo(false);
+      player.stream.publishAudio(false);
+      // player.stream.publishVideo(false);
     }
 
   }

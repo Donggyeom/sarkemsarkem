@@ -1,9 +1,10 @@
-import React, { memo, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import camcatImage from '../../img/camcat2.png';
 import OpenViduVideoComponent from './OvVideo';
 import { loadModels, faceMyDetect, stopFace } from '../job/Psychologist';
 import styled from 'styled-components';
 import { useGameContext } from '../../GameContext';
+import { useRoomContext } from '../../Context';
 
 const Box = styled.div
   `

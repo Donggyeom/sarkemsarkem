@@ -106,22 +106,23 @@ const GameProvider = ({ children }) => {
 
   ////////////   GameContext 함수   ////////////
 
-    useEffect(()=>{
-      if(myRole){
-        console.log(camArray);
-        const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
-        console.log(sarks);
-        for (let i = 0; i < camArray.length; i++) {
-          console.log(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token));
-          if (sarks.includes(JSON.parse(camArray[i].stream.connection.data).token)) {
-            const mafia = camArray[i].stream.mediaStream;
-            console.log(mafia);
-            setMafias((mafias) => [...mafias, mafia]);
-          }
-        }
-        console.log(mafias);
-      }
-    },[myRole])
+  // 마피아 반환 함수
+    // useEffect(()=>{
+    //   if(myRole){
+    //     console.log(camArray);
+    //     const sarks = Object.keys(playersRoles).filter(playerId => playersRoles[playerId] === "SARK");
+    //     console.log(sarks);
+    //     for (let i = 0; i < camArray.length; i++) {
+    //       console.log(sarks.includes(JSON.parse(camArray[i].stream.connection.data).token));
+    //       if (sarks.includes(JSON.parse(camArray[i].stream.connection.data).token)) {
+    //         const mafia = camArray[i].stream.mediaStream;
+    //         console.log(mafia);
+    //         setMafias((mafias) => [...mafias, mafia]);
+    //       }
+    //     }
+    //     console.log(mafias);
+    //   }
+    // },[myRole])
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
@@ -303,7 +304,7 @@ const GameProvider = ({ children }) => {
         break;
 
     case "GAME_END":
-        navigate(`/${roomId}/result`)
+        navigate(`/${roomSession.roomId}/result`)
         const nowWinner = sysMessage.param.winner;
         console.log(nowWinner);
         setWinner(nowWinner);

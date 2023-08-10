@@ -295,9 +295,9 @@ const DayNightCamera = React.memo(({ ids }) => {
 
   }, [startVote, phase]);
 
-  useEffect(() => {
-    setCamCount(adjustedCamCount);
-  }, [adjustedCamCount]);
+  // useEffect(() => {
+  //   setCamCount(adjustedCamCount);
+  // }, [adjustedCamCount]);
 
 
   useEffect(() => {
@@ -313,24 +313,24 @@ const DayNightCamera = React.memo(({ ids }) => {
 
   /// DayNightCamera 함수 ////
 
-  const calculateAdjustedCamCount = () => {
-    const filteredCamArray = camArray.filter((user) => {
-      const userToken = JSON.parse(user.stream.connection.data).token;
-      return !deadIds.includes(userToken);
-    });
+  // const calculateAdjustedCamCount = () => {
+  //   const filteredCamArray = camArray.filter((user) => {
+  //     const userToken = JSON.parse(user.stream.connection.data).token;
+  //     return !deadIds.includes(userToken);
+  //   });
 
-    let adjustedCamCount = filteredCamArray.length;
+  //   let adjustedCamCount = filteredCamArray.length;
 
-    filteredCamArray.forEach((user) => {
-      const userToken = JSON.parse(user.stream.connection.data).token;
+  //   filteredCamArray.forEach((user) => {
+  //     const userToken = JSON.parse(user.stream.connection.data).token;
 
-      if (deadIds.includes(userToken)) {
-        adjustedCamCount -= 1;
-      }
-    });
+  //     if (deadIds.includes(userToken)) {
+  //       adjustedCamCount -= 1;
+  //     }
+  //   });
 
-    return adjustedCamCount;
-  };
+  //   return adjustedCamCount;
+  // };
 
   const getVoteResultForUser = (id) => {
     if (phase === 'day') {
