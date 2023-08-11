@@ -12,9 +12,12 @@ const StyledImg = styled.img`
 `;
 
 const HandImage = ({ handNumber }) => {
+  const { hiddenMission , missionNumber } = useGameContext();
   const { player } = useRoomContext();
   const role = player.role;
   
+
+
   const handImages = [
     require('../../img/hand_0.png'),
     require('../../img/hand_1.png'),
@@ -24,7 +27,7 @@ const HandImage = ({ handNumber }) => {
     require('../../img/hand_5.png')
   ];
 
-  const selectedHandImage = role === 'SARK' ? handImages[handNumber] || handImages[0] : null;
+  const selectedHandImage = role === 'SARK'&&hiddenMission ? handImages[missionNumber] || handImages[0] : null;
 
   return selectedHandImage ? <StyledImg src={selectedHandImage} alt={`Hand ${handNumber}`} /> : null;
 };

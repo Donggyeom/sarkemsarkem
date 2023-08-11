@@ -43,6 +43,7 @@ const GameProvider = ({ children }) => {
   const [psychologist, setPsychologist] = useState(false);//심리학자 실행
   const [hiddenMission, setHiddenMission] = useState(false);//히든미션 실행
   const hiddenMissionType = ["Thumb_Up", "Thumb_Down", "Victory", "Pointing_Up", "Closed_Fist", "ILoveYou"];//히든미션 리스트
+  const [missionNumber, setMissionNumber] = useState(0);
   const [selectMission, setSelectMission] = useState("");//히든 선택된 히든미션
   const [scMiniPopUp, setScMiniPopUp] = useState(true);//첫날만 직업 카드 자동으로 뜸
   
@@ -414,6 +415,7 @@ const GameProvider = ({ children }) => {
     case "MISSION_START":
         console.log("미션시작");
         setHiddenMission(true);
+        setMissionNumber(sysMessage.param.missionIdx);
         setSelectMission(hiddenMissionType[sysMessage.param.missionIdx]);
         console.log(selectMission);
         break;
@@ -670,7 +672,7 @@ const GameProvider = ({ children }) => {
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, 
-      voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer }}
+      voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber }}
     >
       {children}
     </GameContext.Provider>
