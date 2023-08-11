@@ -15,6 +15,8 @@ import GoroomButton from '../components/buttons/goroomButton';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import ToggleButton from '../components/buttons/ToggleButton';
+import HelpButton from '../components/buttons/HelpButton';
+import Help from '../components/games/Help';
 
 const StyledStartPage = styled.div`
 `;
@@ -106,7 +108,34 @@ const RightPart = styled.div`
   }
 `;
 
+const ButtonContainer = styled.div`
+  width: 60%;
+  height: 85%;
+`;
+const LeftPart2 = styled.div`
+  /* Left part of each RightDiv */
+  flex: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: 15vw;
+  background-position: center center;
+  // padding: 0px 10px 50px 10px;
+  background-repeat: no-repeat;
+  margin-left: 20px;
+`;
 
+const RightPart2 = styled.div`
+  /* Right part of each RightDiv */
+  flex: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: 15vw;
+  background-position: center center;
+  // padding: 0px 10px 50px 10px;
+  background-repeat: no-repeat;
+`;
 
 const Logo = styled.img`
   /* 로고 이미지 스타일 작성 */
@@ -114,6 +143,8 @@ const Logo = styled.img`
   height: auto; /* 세로 크기 자동으로 조정 */
   max-height: 100%; /* 세로 크기 100% */
 `;
+
+
 
 const CommonStart = ({onClick} ) => {
   const { player, setPlayer, getGameRoom } = useRoomContext();
@@ -254,9 +285,16 @@ const CommonStart = ({onClick} ) => {
     setNickName(event.target.value);
   };
 
+    //도움말
+    const [isHelpOn, setIsHelpOn] = useState(true);
+    const handleHelpButtonClick = () => {
+      setIsHelpOn((prevIsHelpOn) => !prevIsHelpOn);
+    };
+
 
   return (
     <Background>
+      {!isHelpOn && <Help top="43%" left="65%" />}
       <StyledStartPage>
         <StyledHeader>
           <Logo src={logoImage} alt="로고" />
@@ -326,8 +364,18 @@ const CommonStart = ({onClick} ) => {
               </RightPart>
             </DivWrapper>
             <DivWrapper>
-              {/* 조건부 렌더링을 사용하여 버튼 선택 */}
-              <GoroomButton onClick={onClick} roomId={roomId} />
+              <LeftPart2>
+                <ButtonContainer>
+                  <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />
+                </ButtonContainer>
+              </LeftPart2>
+              <RightPart2>
+                <ButtonContainer>
+                   {/* 조건부 렌더링을 사용하여 버튼 선택 */}
+                   <GoroomButton onClick={onClick} roomId={roomId} />
+                </ButtonContainer>
+              </RightPart2>
+              
             </DivWrapper>
           </RightSection>
         </StyledContent>
