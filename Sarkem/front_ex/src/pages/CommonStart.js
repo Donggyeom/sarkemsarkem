@@ -294,7 +294,7 @@ const CommonStart = ({onClick} ) => {
 
   return (
     <Background>
-      {!isHelpOn && <Help top="43%" left="80%" />}
+      {!isHelpOn && <Help top="43%" left="65%" />}
       <StyledStartPage>
         <StyledHeader>
           <Logo src={logoImage} alt="로고" />
