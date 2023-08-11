@@ -82,13 +82,20 @@ const GameProvider = ({ children }) => {
   useEffect(() => {
     console.log(`playerId : ${player.playerId}`);
     if (player.stream !== undefined) {
-      connectGameWS();
+
       setPlayers((prev) => {
         return new Map([...prev, [player.playerId, player]]);
       });
-      loadGestureRecognizer();
+      
     }
   }, [player.stream]);
+
+  useEffect(() => {
+    if (players.size>0) {
+      connectGameWS();
+      loadGestureRecognizer();
+    }
+  }, [players])
 
   useEffect(() => {
     console.log("GestureRecognizer 생성 완료");
@@ -126,12 +133,14 @@ const GameProvider = ({ children }) => {
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
+    if (stompClient.current === undefined) return;
     console.log("connectGameWS");
     let socket = new SockJS("http://localhost:8080/ws-stomp");
     stompClient.current = Stomp.over(socket);
     await stompClient.current.connect({}, () => {
       setTimeout(function() {
         // onSocketConnected();
+        console.log(players);
         connectGame();
         connectChat();
         sendChatPubMessage();
@@ -143,6 +152,7 @@ const GameProvider = ({ children }) => {
 
   // 게임룸 redis 구독
   const connectGame = () => {
+    if (!stompClient.current.connected) return;
     console.log('/sub/game/system/' + window.sessionStorage.getItem("roomId") + " redis 구독")
     stompClient.current.subscribe('/sub/game/system/' + window.sessionStorage.getItem("roomId"), receiveMessage)
   }
@@ -173,6 +183,7 @@ const GameProvider = ({ children }) => {
 
   // 채팅 연결할 때 //
   const connectChat = () => {
+    if (!stompClient.current.connected) return;
     console.log('/sub/chat/room/' + window.sessionStorage.getItem("roomId") + " redis 구독")
     stompClient.current.subscribe('/sub/chat/room/' + window.sessionStorage.getItem("roomId"), receiveChatMessage);
   };
@@ -240,7 +251,7 @@ const GameProvider = ({ children }) => {
     let sysMessage = JSON.parse(message.body);
 
     if (player.playerId === sysMessage.playerId || sysMessage.playerId === "ALL") {
-
+    console.log(players);
     switch (sysMessage.code) {
       // param에 phase, message
     case "NOTICE_MESSAGE":
