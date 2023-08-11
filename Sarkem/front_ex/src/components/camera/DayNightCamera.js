@@ -397,19 +397,12 @@ const DayNightCamera = React.memo(({ ids }) => {
       }
     }
     else if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
-<<<<<<< HEAD
-      for (let player of players.current) {
-        if (player.role != Roles.SARK) {
-          player.stream.subscribeToVideo(false);
-          player.stream.subscribeToAudio(false);
-=======
 
       for (let otherPlayer of players) {
         console.log(otherPlayer.stream)
         if (otherPlayer.role != Roles.SARK) {
           otherPlayer.stream.subscribeToVideo(false);
           otherPlayer.stream.subscribeToAudio(false);
->>>>>>> 249bf0e814c3b4d2ca03a1c7dc11f209aca5b244
         }
       }
     }
