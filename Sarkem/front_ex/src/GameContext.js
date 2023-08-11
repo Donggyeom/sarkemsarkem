@@ -609,9 +609,10 @@ const GameProvider = ({ children }) => {
 
     // 
     const predictWebcam = async () => {
+      console.log(selectMission);
       try {
         if (gestureRecognizer) {
-          const videoElement = player.stream.videos[1].video;
+          const videoElement = player.stream.videos[player.stream.videos.length-1].video;
           const nowInMs = Date.now();
           const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
     
@@ -621,6 +622,7 @@ const GameProvider = ({ children }) => {
               console.log("미션성공한건가용");
               missionConplete();
               setHiddenMission(false);
+              stopPredicting();
             }
           }
         }
