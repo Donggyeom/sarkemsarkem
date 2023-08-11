@@ -14,6 +14,15 @@ import { useGameContext } from '../GameContext';
 import createRandomId from '../utils';
 import resultSound from '../sound/result.mp3';
 
+//icon
+import achiIcon from '../img/icon/o_achi.png'
+import citizenIcon from '../img/icon/o_citizen.png'
+import detectorIcon from '../img/icon/o_detector.png'
+import doctorIcon from '../img/icon/o_doctor.png'
+import policeIcon from '../img/icon/o_police.png'
+import psychoIcon from '../img/icon/o_psycho.png'
+import sarkIcon from '../img/icon/o_sark.png'
+
 const StyledSunsetPage = styled.div`
   display: flex;
   position: relative;
@@ -83,16 +92,34 @@ const TableCell = styled.td`
   }
 `;
 
-const TableHeader = styled.th`
-  font-size: 35px; /* Adjust the font size as needed */
-  background-color: #f2f2f2;
-  padding: 10px;
+const TableCell2 = styled.td`
+  width: 20%; /* Adjust the width as needed */
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+  &:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
 `;
+
 
 const TableRow = styled.tr`
   background-color: ${(props) => (props.even ? '#f2f2f2' : 'white')};
   
 `;
+
+const roleInfoMapping = {
+  PSYCHOLOGIST: { icon: psychoIcon, displayName: '심리학자' },
+  POLICE: { icon: policeIcon, displayName: '경찰' },
+  DOCTOR: { icon: doctorIcon, displayName: '의사' },
+  DETECTOR: { icon: detectorIcon, displayName: '탐정' },
+  CITIZEN: { icon: citizenIcon, displayName: '시민' },
+  BULLY: { icon: achiIcon, displayName: '냥아치' },
+  SARK: { icon: sarkIcon, displayName: '삵' }
+};
+
 
 // const TableCell = styled.td`
 //   font-size: 20px; /* Adjust the font size as needed */
@@ -123,9 +150,9 @@ const ResultPage = () => {
     console.log("세션 해제중입니다.....");
     if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
 
-    console.log("세션 해제중입니다.....")
-    // 세션 연결 종료
-    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
+    // console.log("세션 해제중입니다.....")
+    // // 세션 연결 종료
+    // if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
     
     // 데이터 초기화
     setPlayer({});
@@ -149,7 +176,10 @@ const ResultPage = () => {
     navigate('/');
   };
 
+
+
   const sarkPlayers = Array.from(players.current.values()).filter(player => player.role === 'SARK');
+  console.log(sarkPlayers);
   const nonSarkPlayers = Array.from(players.current.values()).filter(player => player.role !== 'SARK');
 
   return (
@@ -168,14 +198,33 @@ const ResultPage = () => {
           <tbody>
             {nonSarkPlayers.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#f25282" }}>
-                <TableCell>{playerRole.nickname}</TableCell>
-                <TableCell>{playerRole.job}</TableCell>
+                 <TableCell2>
+                   {roleInfoMapping[playerRole.role].icon && (
+                      <img
+                        src={roleInfoMapping[playerRole.role].icon}
+                        alt={`${roleInfoMapping[playerRole.role].displayName} Icon`}
+                        style={{ width: '40px', height: '40px' }}
+                      />
+                    )}
+                  </TableCell2>
+                <TableCell>{playerRole.nickName}</TableCell>
+                <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
+
               </TableRow>
             ))}
             {sarkPlayers.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#ff9cb9" }}>
-                <TableCell>{playerRole.nickname}</TableCell>
-                <TableCell>{playerRole.job}</TableCell>
+                 <TableCell2>
+                    {roleInfoMapping[playerRole.role].icon && (
+                      <img
+                        src={roleInfoMapping[playerRole.role].icon}
+                        alt={`${roleInfoMapping[playerRole.role].displayName} Icon`}
+                        style={{ width: '40px', height: '40px' }}
+                      />
+                    )}
+                  </TableCell2>
+                <TableCell>{playerRole.nickName}</TableCell>
+                <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
               </TableRow>
             ))}
             
@@ -197,14 +246,32 @@ const ResultPage = () => {
         <tbody>
           {sarkPlayers.map((playerRole, index) => (
             <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#9ed8ff" }}>
-              <TableCell>{playerRole.nickname}</TableCell>
-              <TableCell>{playerRole.job}</TableCell>
+               <TableCell2>
+                   {roleInfoMapping[playerRole.role].icon && (
+                      <img
+                        src={roleInfoMapping[playerRole.role].icon}
+                        alt={`${roleInfoMapping[playerRole.role].displayName} Icon`}
+                        style={{ width: '40px', height: '40px' }}
+                      />
+                    )}
+                  </TableCell2>
+              <TableCell>{playerRole.nickName}</TableCell>
+              <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
             </TableRow>
           ))}
           {nonSarkPlayers.map((playerRole, index) => (
             <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#7db1d4" }}>
-              <TableCell>{playerRole.nickname}</TableCell>
-              <TableCell>{playerRole.job}</TableCell>
+               <TableCell2>
+                  {roleInfoMapping[playerRole.role].icon && (
+                      <img
+                        src={roleInfoMapping[playerRole.role].icon}
+                        alt={`${roleInfoMapping[playerRole.role].displayName} Icon`}
+                        style={{ width: '40px', height: '40px' }}
+                      />
+                    )}
+                  </TableCell2>
+              <TableCell>{playerRole.nickName}</TableCell>
+              <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
             </TableRow>
           ))}
         </tbody>

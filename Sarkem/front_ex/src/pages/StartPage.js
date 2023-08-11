@@ -74,14 +74,17 @@ const StartPage = () => {
     const audio = new Audio(logoSound);
   
     // Play the audio when the component mounts
+    console.log('틀기전');
     audio.play();
     audio.playbackRate = 0.79;
+    console.log('튼후');
   
     // Update state to track audio playback
     setAudioPlaying(true);
   
     // Clean up the audio object when the component unmounts
     return () => {
+      console.log('멈춰');
       audio.pause();
       audio.currentTime = 0;
       setAudioPlaying(false);
@@ -89,6 +92,7 @@ const StartPage = () => {
   }, []);
 
   const goToCreateRoom = () => {
+    console.log('커신이다~')
     navigate(`/${createRandomId()}`);
   };
 

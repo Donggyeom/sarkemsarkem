@@ -1,10 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import hand0 from '../../img/hand_0.png';
-import hand1 from '../../img/hand_1.png';
-import hand2 from '../../img/hand_2.png';
-import hand3 from '../../img/hand_3.png';
-import hand4 from '../../img/hand_4.png';
-import hand5 from '../../img/hand_5.png';
+import { useRoomContext } from '../../Context';
+import { useGameContext } from '../../GameContext';
 
+const StyledImg = styled.img`
+  width: 175px;
+  z-index: 2;
+  position: absolute;
+  top: 13%;
+  right: 2%;
+`;
 
+const HandImage = ({ handNumber }) => {
+  const { player } = useRoomContext();
+  const role = player.role;
+  
+  const handImages = [
+    require('../../img/hand_0.png'),
+    require('../../img/hand_1.png'),
+    require('../../img/hand_2.png'),
+    require('../../img/hand_3.png'),
+    require('../../img/hand_4.png'),
+    require('../../img/hand_5.png')
+  ];
+
+  const selectedHandImage = role === 'SARK' ? handImages[handNumber] || handImages[0] : null;
+
+  return selectedHandImage ? <StyledImg src={selectedHandImage} alt={`Hand ${handNumber}`} /> : null;
+};
+
+export default HandImage;

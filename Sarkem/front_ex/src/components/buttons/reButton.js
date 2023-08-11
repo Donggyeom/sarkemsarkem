@@ -27,7 +27,17 @@ const ReButtonImage = styled.img`
 const ReButton = ({ src, onClick, ...props }) => {
   const handleClick = () => {
     const sound = new Audio(buttonclickSound);
-    sound.play();
+    var playPromise = sound.play();
+    if (playPromise !== undefined) {
+    playPromise.then(_ => {
+      sound.pause();
+    })
+    .catch(error => {
+      console.log("Qkznb")
+    });}
+
+
+    
     onClick(); // Call the provided onClick handler from the parent component
   };
   return (

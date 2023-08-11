@@ -8,6 +8,7 @@ import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
+import SarkMission from '../components/job/SarkMission';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
@@ -49,6 +50,9 @@ const DayPage = () => {
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
   const [isLogOn, setIsLogOn] = useState(true);
+  const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
+
+
   const handleLogButtonClick = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
@@ -91,7 +95,7 @@ const DayPage = () => {
     setPlayer((prev) => {
       return ({
         ...prev,
-        isCamon: camOn
+        isCamOn: camOn
       });
     });
   };
@@ -143,6 +147,7 @@ const DayPage = () => {
         {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         {players.current && <DayNightCamera ids={Array.from(players.current.keys())} />}
         <ScMini />
+        <SarkMission handNumber={currentHandNumber} />
         </StyledDayPage>
         <TempButton url={`/${roomSession.roomId}/sunset`} onClick={() => navigate(`/${roomSession.roomId}/sunset`)} alt="Start Game" />
         {chatVisible()}

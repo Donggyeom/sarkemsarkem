@@ -398,7 +398,7 @@ const DayNightCamera = React.memo(({ ids }) => {
     }
     else if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
 
-      for (let otherPlayer of players) {
+      for (let otherPlayer of players.current) {
         console.log(otherPlayer.stream)
         if (otherPlayer.role != Roles.SARK) {
           otherPlayer.stream.subscribeToVideo(false);
@@ -408,7 +408,7 @@ const DayNightCamera = React.memo(({ ids }) => {
     }
     else {
       // 마피아, 탐정, 관전자를 제외한 나머지 플레이어의 화면에서 모두의 캠, 오디오를 끈다.
-      for (let otherPlayer of players) {
+      for (let otherPlayer of players.current) {
         if (otherPlayer[1].stream == Subscriber){ 
           console.log("여기까진 오니");
           console.log(otherPlayer[1].stream);
