@@ -39,6 +39,7 @@ const GoroomButton = (props) => {
     
     // 게임방이 없을 경우 게임방 생성
     if (player.isHost) {
+      console.log(roomId);
       const response = await createGameRoom(roomId);
 
       if (response.status != '200') {
