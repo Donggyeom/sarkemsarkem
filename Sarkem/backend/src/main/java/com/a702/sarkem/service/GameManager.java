@@ -570,6 +570,7 @@ public class GameManager {
 	 * @param code
 	 * @param param
 	 */
+	// TODO
 	public void sendSystemMessage(String roomId, List<String> targets, SystemCode code, Object param) {
 		ChannelTopic gameTopic = getGameTopic(roomId);
 		for (String target : targets) {
@@ -585,9 +586,9 @@ public class GameManager {
 	 * @param param
 	 */
 	public void sendSystemMessageToAll(String roomId, SystemCode code, Object param) {
-		GameRoom gameRoom = gameRoomMap.get(roomId);
-		List<String> players = gameRoom.getPlayersId();
-		sendSystemMessage(roomId, players, code, param);
+//		GameRoom gameRoom = gameRoomMap.get(roomId);
+//		List<String> players = gameRoom.getPlayersId();
+		sendSystemMessage(roomId, "ALL", code, param);
 	}
 
 	// 0. 공통기능

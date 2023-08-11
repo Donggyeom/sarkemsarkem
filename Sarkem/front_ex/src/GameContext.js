@@ -239,7 +239,7 @@ const GameProvider = ({ children }) => {
     // 시스템 메시지 처리
     let sysMessage = JSON.parse(message.body);
 
-    if (player.playerId === sysMessage.playerId) {
+    if (player.playerId === sysMessage.playerId || systemMessages.playerId === "ALL") {
 
     switch (sysMessage.code) {
       // param에 phase, message
