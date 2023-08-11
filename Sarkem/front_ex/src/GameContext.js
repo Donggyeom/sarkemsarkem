@@ -468,28 +468,28 @@ const GameProvider = ({ children }) => {
 
       // 역할 저장을 위해 넣었음 //
       switch (sysMessage.code) {
-      case "ROLE_ASSIGNED":
-          const assignedRole = Roles.get(sysMessage.param.role);
-          if (assignedRole == null) {
-            alert("직업배정에 오류가 발생했습니다.", assignedRole);
-            return;
-          }
-          let player = players.get(sysMessage.playerId);
-          if (player == null) {
-            alert("ROLE_ASSIGNED - 플레이어 정보를 불러오는데 실패했습니다.", sysMessage.playerId);
-            return;
-          }
-          player = {
-            ...player,
-            role: assignedRole,
-          };
-          setPlayers((prev) => {
-            return new Map([
-              ...prev,
-              [player.playerId, player],
-            ]);
-          });
-          break;
+      // case "ROLE_ASSIGNED":
+      //     const assignedRole = Roles.get(sysMessage.param.role);
+      //     if (assignedRole == null) {
+      //       alert("직업배정에 오류가 발생했습니다.", assignedRole);
+      //       return;
+      //     }
+      //     let player = players.get(sysMessage.playerId);
+      //     if (player == null) {
+      //       alert("ROLE_ASSIGNED - 플레이어 정보를 불러오는데 실패했습니다.", sysMessage.playerId);
+      //       return;
+      //     }
+      //     player = {
+      //       ...player,
+      //       role: assignedRole,
+      //     };
+      //     setPlayers((prev) => {
+      //       return new Map([
+      //         ...prev,
+      //         [player.playerId, player],
+      //       ]);
+      //     });
+      //     break;
       case "BE_HUNTED":
           const newDeadId = sysMessage.param.deadPlayerId;
           setDeadIds(prevDeadIds => [...prevDeadIds, newDeadId]);

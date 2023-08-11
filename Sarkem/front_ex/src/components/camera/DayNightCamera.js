@@ -91,15 +91,15 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width: '59%',
-      gridRowGap : '5%',
-      gridColumnGap : '5%'
+      gridRowGap : '6%',
+      gridColumnGap : '5%',
     };
   } else if (camCount === 4) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width: '55%',
-      gridRowGap : '5%',
+      gridRowGap : '7%',
       gridColumnGap : '5%',
     };
   } else if (camCount === 5) {
@@ -174,7 +174,7 @@ const CamCatWrapper = styled.div`
     camCount === 3 && index === 1
     ? `
     position: relative;
-    top : 110%;
+    top : 112.5%;
     `
     :
     camCount === 3 && index === 2
