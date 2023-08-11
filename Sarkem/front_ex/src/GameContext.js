@@ -127,7 +127,7 @@ const GameProvider = ({ children }) => {
   // WebSocket 연결
   const connectGameWS = async (event) => {
     console.log("connectGameWS");
-    let socket = new SockJS("http://localhost:8080/ws-stomp");
+    let socket = new SockJS("https://i9a702.p.ssafy.io/ws-stomp");
     stompClient.current = Stomp.over(socket);
     await stompClient.current.connect({}, () => {
       setTimeout(function() {
