@@ -92,11 +92,11 @@ const ChatInputWrapper = styled.div`
 const ChatInput = styled.input`
   flex : 0.85;
   background-color: transparent;
-  margin-left: 2%;
+  margin-left: 5%;
   background-image: url(${chatinputboxImage});
   background-repeat : no-repeat;
-  background-size: cover;
-  width : 100%;
+  background-size: auto 100%;
+  // width : 95%;
   height : 100%;
   border: none;
   position : relative;
@@ -106,7 +106,7 @@ const ChatButton = styled.button`
   flex : 0.09;
   background-color: transparent;
   background-image: url(${chatsendbuttonImage});
-  background-size: cover;
+  background-size:  95% auto;
   background-repeat: no-repeat;
   margin-right : 5%;
   border: none;
@@ -197,7 +197,7 @@ const ChatCloseButton = styled.button`
             onKeyPress={handleInputKeyPress}
             placeholder="메세지를 입력하세요..."
           />
-          <ChatButton onClick={handleSendMessage}>send message</ChatButton>
+          <ChatButton onClick={handleSendMessage}></ChatButton>
         </ChatInputWrapper>
       </ChatContainer>
     );

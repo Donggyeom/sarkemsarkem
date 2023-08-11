@@ -6,6 +6,8 @@ import ReButton from '../components/buttons/reButton';
 import ResultBox from '../components/games/ResultBox';
 import ResultBox2 from '../components/games/ResultBox2';
 import logoImage from '../img/logo.png';
+import outImage from '../img/btn_out.png';
+import againImage from '../img/btn_again.png';
 import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
@@ -27,7 +29,7 @@ const Logo = styled.img`
   height: auto;
   max-height: 100%;
   position: absolute;
-  top: -30%;
+  top: -40%;
   left: 55%;
   transform: translate(-50%, -50%);
   z-index: 1;
@@ -117,39 +119,6 @@ const ResultPage = () => {
     };
   }, []);
 
-// const callChangeOption = () => {
-//   if(stompClient.current.connected && token !== null) {
-//     stompClient.current.send("/pub/game/action", {}, 
-//         JSON.stringify({
-//             code:'OPTION_CHANGE', 
-//             roomId: roomId, 
-//             playerId: token,
-//             param: peopleCount
-//         }))
-//         console.log(peopleCount)
-//   }
-// }
-
-// useEffect(() => {
-//   if (!isHost) return;
-//   callChangeOption();
-// }, [peopleCount]);
-
-// const handlePeopleCountChange = () => {
-//   // if (!isHost) return;
-//   // if (stompClient.current.connect === undefined) return;
-  
-//   peopleCount.bullyCount=0
-//   peopleCount.sarkCount=0
-//   peopleCount.citizenCount=0
-//   peopleCount.doctorCount=0
-//   peopleCount.policeCount=0
-//   peopleCount.detectiveCount=0
-//   peopleCount.psychologistCount=0
-//   peopleCount.meetingTime=60
-
-// };
-
   const handleAgainButtonClick = () => {
     console.log("세션 해제중입니다.....");
     if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
@@ -189,8 +158,8 @@ const ResultPage = () => {
         <ResultBox> </ResultBox>
           <ButtonContainer>
             <Logo src={logoImage} alt="로고" />
-            <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
-            <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
+            <ReButton src={againImage} onClick={handleAgainButtonClick}></ReButton>
+            <ReButton src={outImage} onClick={handleExitButtonClick}></ReButton>
           </ButtonContainer>
           <Title> 냥냥이팀 승리!</Title>
           <Table >
@@ -218,8 +187,8 @@ const ResultPage = () => {
         <ResultBox2> </ResultBox2>
         <ButtonContainer>
           <Logo src={logoImage} alt="로고" />
-          <ReButton onClick={handleAgainButtonClick}>다시하기</ReButton>
-          <ReButton onClick={handleExitButtonClick}>나가기</ReButton>
+          <ReButton src={againImage} onClick={handleAgainButtonClick}></ReButton>
+          <ReButton src={outImage} onClick={handleExitButtonClick}></ReButton>
         </ButtonContainer>
         <Title> 삵팀 승리!</Title>
         <Table>

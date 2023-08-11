@@ -83,17 +83,28 @@ const DayPage = () => {
 
   }
 
+  // const handleCamButtonClick = () => {
+  //   const camOn = !player.isCamOn;
+  //   if (player.stream) {
+  //     player.stream.publishVideo(camOn);
+  //   }
+  //   setPlayer((prev) => {
+  //     return ({
+  //       ...prev,
+  //       isCamon: camOn
+  //     });
+  //   });
+  // };
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
+    setPlayer((prevState) => {
+      return {...prevState,
+        isCamOn: camOn,
+      };
+    });
     if (player.stream) {
       player.stream.publishVideo(camOn);
     }
-    setPlayer((prev) => {
-      return ({
-        ...prev,
-        isCamon: camOn
-      });
-    });
   };
 
   const handleMicButtonClick = () => {

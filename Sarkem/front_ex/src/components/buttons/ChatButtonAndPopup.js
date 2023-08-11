@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Chatting from '../../pages/Chatting';
 import chatbuttonImage from '../../img/chatbutton.png';
 import chatoffbuttonImage from '../../img/chatoffbutton.png';
+import ingameClickSound from '../../sound/ingameclick.mp3';
 
 const ChatButton = styled.button`
   width: 60px;
@@ -34,6 +35,8 @@ const ChatButtonAndPopup = ({roomId}) => {
   const [messages, setMessages] = useState([]);
 
   const handleChatButtonClick = () => {
+    const clickAudio = new Audio(ingameClickSound);
+    clickAudio.play();
     setShowPopup((prevShowPopup) => !prevShowPopup);
   };
 
