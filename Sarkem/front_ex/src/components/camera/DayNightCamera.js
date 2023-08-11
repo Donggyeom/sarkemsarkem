@@ -398,7 +398,7 @@ const DayNightCamera = React.memo(({ ids }) => {
     }
     else if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
 
-      for (let otherPlayer of players) {
+      for (let otherPlayer of players.current) {
         console.log(otherPlayer.stream)
         if (otherPlayer.role != Roles.SARK) {
           otherPlayer.stream.subscribeToVideo(false);
