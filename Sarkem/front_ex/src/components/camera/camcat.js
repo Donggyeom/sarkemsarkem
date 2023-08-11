@@ -99,7 +99,7 @@ const CamCat = ({id}) => {
             style={{
               flex: 0.34,
               position: 'absolute',
-              top: '-15%', // 이미지를 OpenVidu 위쪽으로 이동
+              top: '-15%',
               left: '-3%',
               width: '106%',
               height: '34%',
@@ -115,7 +115,6 @@ const CamCat = ({id}) => {
               style={{
                 width: '100%',
                 height: '100%',
-                // objectFit: 'contain', // 이미지 비율 유지
               }}
             />
           </div>
