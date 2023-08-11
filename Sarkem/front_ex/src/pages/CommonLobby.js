@@ -144,7 +144,7 @@ const ButtonContainer = styled.div`
 `;
 const ButtonContainer2 = styled.div`
   width: auto;
-  height: 80%;
+  height: 65%;
 `;
 
 

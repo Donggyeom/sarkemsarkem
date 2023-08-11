@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import helpbutton from '../../img/helpbutton.png';
 import helpbuttonoff from '../../img/helpbuttonoff.png';
+import buttonclickSound from '../../sound/buttonclick.mp3'
 
 const HelpButtonImage = styled.img`
   width: 80%;
@@ -15,11 +16,17 @@ const HelpButtonImage = styled.img`
 
 
 const HelpButton = ({ alt, onClick, isHelpOn }) => {
+  const handleClick = () => {
+    const sound = new Audio(buttonclickSound);
+    sound.play();
+    onClick(); 
+  };
+
   return (
     <HelpButtonImage
       src={isHelpOn ? helpbutton : helpbuttonoff}
       alt={alt}
-      onClick={onClick} // 클릭 이벤트를 핸들링하는 함수 변경
+      onClick={handleClick} // 클릭 이벤트를 핸들링하는 함수 변경
     />
   );
 };
