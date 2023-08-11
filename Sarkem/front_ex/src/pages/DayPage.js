@@ -9,6 +9,7 @@ import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
 import SarkMission from '../components/job/SarkMission';
+import PsychologistBox from '../components/job/PsychologistBox';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
@@ -148,6 +149,7 @@ const DayPage = () => {
         {players.current && <DayNightCamera ids={Array.from(players.current.keys())} />}
         <ScMini />
         <SarkMission handNumber={currentHandNumber} />
+        <PsychologistBox></PsychologistBox>
         </StyledDayPage>
         <TempButton url={`/${roomSession.roomId}/sunset`} onClick={() => navigate(`/${roomSession.roomId}/sunset`)} alt="Start Game" />
         {chatVisible()}

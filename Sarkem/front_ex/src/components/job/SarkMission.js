@@ -5,7 +5,7 @@ import { useGameContext } from '../../GameContext';
 
 const StyledImg = styled.img`
   width: 175px;
-  z-index: 2;
+  z-index: 5;
   position: absolute;
   top: 13%;
   right: 2%;

@@ -111,7 +111,7 @@ const TableRow = styled.tr`
 `;
 
 const roleInfoMapping = {
-  PSYCHOLOGIST: { icon: psychoIcon, displayName: '심리학자' },
+  PSYCHO: { icon: psychoIcon, displayName: '심리학자' },
   POLICE: { icon: policeIcon, displayName: '경찰' },
   DOCTOR: { icon: doctorIcon, displayName: '의사' },
   DETECTOR: { icon: detectorIcon, displayName: '탐정' },
