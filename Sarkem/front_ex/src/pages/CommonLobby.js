@@ -31,8 +31,6 @@ import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
-import HelpButton from '../components/buttons/HelpButton';
-import Help from '../components/games/Help';
 import LoadingPage from './LoadingPage';
 import ingameClickSound from '../sound/ingameclick.mp3';
 
@@ -277,11 +275,7 @@ const CommonLobby = ()=>{
     setShowNyangachiPopup(false);
   };
 
-  //도움말
-  const [isHelpOn, setIsHelpOn] = useState(true);
-  const handleHelpButtonClick = () => {
-    setIsHelpOn((prevIsHelpOn) => !prevIsHelpOn);
-  };
+
 
   //업다운 버튼
   const buttonStyle = {
@@ -296,7 +290,7 @@ const CommonLobby = ()=>{
   return (
     <>
     { gameSession?.gameOption ? (<Background>
-      {!isHelpOn && <Help top="50%" left="77.5%" />}
+      
       {showSarkPopup && <ScPopup src={c_sark} top="20%" left="50%" />}
       {showVetPopup && <ScPopup src={c_vet} top="40%" left="50%" />}
       {showPolicePopup && <ScPopup src={c_police} top="40%" left="72.5%" />}
@@ -512,7 +506,6 @@ const CommonLobby = ()=>{
             )}
         
         </RightSection>
-        <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />
       </StyledContent>
     </Background>):<LoadingPage/>}
     </>

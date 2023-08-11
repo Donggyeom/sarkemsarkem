@@ -8,12 +8,14 @@ import { useGameContext } from '../../GameContext';
 import buttonclickSound from '../../sound/buttonclick.mp3';
 
 const GoroomButtonImage = styled.img`
-  width: 28%;
-  height : 76%;
+  width: 80%;
+  // display: block; 
+  margin-right: 40%; 
   cursor: pointer;
   &:hover {
     filter: brightness(0.8);
   }
+  align-items: center;
 `;
 
 const GoroomButton = (props) => {
