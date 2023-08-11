@@ -39,12 +39,12 @@ const RoomProvider = ({ children }) => {
   }, [player]);
 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    console.log('players 변경');
-    console.log(players);
+  //   console.log('players 변경');
+  //   console.log(players);
 
-  }, [players]);
+  // }, [players]);
 
   // TODO: showImage 기능
   // useEffect(() => {
