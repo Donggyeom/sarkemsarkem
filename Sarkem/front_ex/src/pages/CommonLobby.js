@@ -199,7 +199,7 @@ const CommonLobby = ()=>{
   
   // Function to handle the click event when the user wants to invite others
   const handleInviteClick = async () => {
-    await navigator.clipboard.writeText("localhost:3000/"+roomSession.roomId).then(alert("게임 링크가 복사되었습니다."));
+    await navigator.clipboard.writeText("i9a702.p.ssafy.io/"+roomSession.roomId).then(alert("게임 링크가 복사되었습니다."));
     console.log('Invite functionality for hosts');
   };
   
