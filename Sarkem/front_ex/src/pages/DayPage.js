@@ -58,7 +58,7 @@ const DayPage = () => {
   };
 
   
-  useEffect(() => {
+  useEffect((currentSysMessage) => {
     if (roomSession.roomId === undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
@@ -75,7 +75,7 @@ const DayPage = () => {
     return () => {
         window.removeEventListener('beforeunload', onbeforeunload);
     }
-  }, []);
+  }, [currentSysMessage]);
 
 
   const threated = () =>{
