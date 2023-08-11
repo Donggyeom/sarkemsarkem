@@ -23,6 +23,12 @@ const GoroomButton = (props) => {
   const navigate = useNavigate();
 
   const handleButtonClick = async () => {
+
+    if (player.nickName === "ALL") {
+      alert("해당 닉네임은 사용할 수 없습니다.");
+      return;
+    }
+
     // 문자열 연결을 사용하여 URL을 구성하고 state로 필요한 데이터를 전달합니다.
     const sound = new Audio(buttonclickSound);
     sound.play();
