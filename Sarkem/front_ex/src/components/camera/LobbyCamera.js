@@ -62,9 +62,9 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
-      width: '90%',
+      width: '88%',
       gridRowGap : '4%',
-      bottom : '2%',
+      bottom : '2.5%',
     };
   } else if (camCount === 6) {
     return {
@@ -119,188 +119,188 @@ const calculateGrid = (camCount) => {
 };
 
 const CamCatWrapper = styled.div`
-  ${({ camCount, index }) =>
-  camCount === 3 && index === 0
+  ${({ camcount, index }) =>
+  camcount === 3 && index === 0
   ? `
     position: relative;
     left : 50%;
   `
   :
-  camCount === 3 && index === 1
+  camcount === 3 && index === 1
   ? `
     position: relative;
     top : 116%;
   `
   :
-  camCount === 5 && index === 0
+  camcount === 5 && index === 0
   ? `
     position: relative;
     width : 75%;
     left : 50%;
   `
   :
-  camCount === 5 && index === 1
+  camcount === 5 && index === 1
   ? `
     position: relative;
     width : 75%;
     top : 112%;
   `
   :
-  camCount === 5 && index === 2
+  camcount === 5 && index === 2
   ? `
     position: relative;
     width : 75%;
   `
   :
-  camCount === 5 && index === 3
+  camcount === 5 && index === 3
   ? `
     position: relative;
     width : 75%;
     top : 112%;
   `
   :
-  camCount === 5 && index === 4
+  camcount === 5 && index === 4
   ? `
     position: relative;
     width : 75%;
   `
   :
-  camCount === 7 && index === 0
+  camcount === 7 && index === 0
   ? `
     position: relative;
     left : 100%;
   `
   :
-  camCount === 7 && index === 1
+  camcount === 7 && index === 1
   ? `
     position: relative;
     top : 100%;
   `
   :
-  camCount === 7 && index === 2
+  camcount === 7 && index === 2
   ? `
     position: relative;
     top : 100%;
   `
   :
-  camCount === 7 && index === 3
+  camcount === 7 && index === 3
   ? `
     position: relative;
   `
   :
-  camCount === 7 && index === 4
-  ? `
-    position: relative;
-    top : 100%;
-  `
-  :
-  camCount === 7 && index === 5
+  camcount === 7 && index === 4
   ? `
     position: relative;
     top : 100%;
   `
   :
-  camCount === 7 && index === 6
+  camcount === 7 && index === 5
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camcount === 7 && index === 6
   ? `
     position: relative;
   `
   :
-  camCount === 8 && index === 0
+  camcount === 8 && index === 0
   ? `
     position: relative;
     left : 50%;
   `
   :
-  camCount === 8 && index === 1
+  camcount === 8 && index === 1
   ? `
     position: relative;
     left : 50%;
   `
   :
-  camCount === 8 && index === 2
+  camcount === 8 && index === 2
   ? `
     position: relative;
     top : 100%;
   `
   :
-  camCount === 8 && index === 3
+  camcount === 8 && index === 3
   ? `
     position: relative;
   `
   :
-  camCount === 8 && index === 4
+  camcount === 8 && index === 4
   ? `
     position: relative;
   `
   :
-  camCount === 8 && index === 5
+  camcount === 8 && index === 5
   ? `
     position: relative;
     top : 100%;
   `
   :
-  camCount === 8 && index === 6
+  camcount === 8 && index === 6
   ? `
     position: relative;
   `
   :
-  camCount === 8 && index === 7
+  camcount === 8 && index === 7
   ? `
     position: relative;
   `
   :
-  camCount === 10 && index === 0
+  camcount === 10 && index === 0
   ? `
     position: relative;
     left : 100%;
   `
   :
-  camCount === 10 && index === 1
+  camcount === 10 && index === 1
   ? `
     position: relative;
     left : 100%;
   `
   :
-  camCount === 10 && index === 2
+  camcount === 10 && index === 2
   ? `
     position: relative;
     top : 100%;
   `
   :
-  camCount === 10 && index === 3
+  camcount === 10 && index === 3
   ? `
     position: relative;
     top : 100%;
   `
   :
-  camCount === 10 && index === 4
+  camcount === 10 && index === 4
   ? `
     position: relative;
   `
   :
-  camCount === 10 && index === 5
+  camcount === 10 && index === 5
   ? `
     position: relative;
   `
   :
-  camCount === 10 && index === 6
-  ? `
-    position: relative;
-    top : 100%;
-  `
-  :
-  camCount === 10 && index === 7
+  camcount === 10 && index === 6
   ? `
     position: relative;
     top : 100%;
   `
   :
-  camCount === 10 && index === 8
+  camcount === 10 && index === 7
+  ? `
+    position: relative;
+    top : 100%;
+  `
+  :
+  camcount === 10 && index === 8
   ? `
     position: relative;
   `
   :
-  camCount === 10 && index === 9
+  camcount === 10 && index === 9
   ? `
     position: relative;
   `

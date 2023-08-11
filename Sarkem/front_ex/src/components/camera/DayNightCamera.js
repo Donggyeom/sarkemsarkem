@@ -91,15 +91,15 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width: '59%',
-      gridRowGap : '5%',
-      gridColumnGap : '5%'
+      gridRowGap : '6%',
+      gridColumnGap : '5%',
     };
   } else if (camCount === 4) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width: '55%',
-      gridRowGap : '5%',
+      gridRowGap : '7%',
       gridColumnGap : '5%',
     };
   } else if (camCount === 5) {
@@ -107,7 +107,7 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr',
       width: '75%',
-      gridRowGap : '7%',
+      gridRowGap: '7%',
 
     };
   } else if (camCount === 6) {
@@ -116,30 +116,30 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr 1fr',
       top: '7.5%',
       width: '80%',
-      gridRowGap : '7%',
-      bottom : '1%',
+      gridRowGap: '7%',
+      bottom: '1%',
     };
   } else if (camCount === 7) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: 'repeat(4, 1fr)',
       width: '90%',
-      gridRowGap : '7%',
+      gridRowGap: '7%',
     };
   } else if (camCount === 8) {
     return {
       gridTemplateRows: 'repeat(2, 1fr)',
       gridTemplateColumns: 'repeat(4, 1fr)',
       width: '85%',
-      gridRowGap : '8%',
-      bottom : '17%',
+      gridRowGap: '8%',
+      bottom: '17%',
     };
   } else if (camCount === 9) {
     return {
       gridTemplateRows: 'repeat(2, 1fr)',
       gridTemplateColumns: 'repeat(5, 1fr)',
       width: '95%',
-      gridRowGap : '7%',
+      gridRowGap: '7%',
       height: '70%',
     };
   } else if (camCount === 10) {
@@ -149,8 +149,8 @@ const calculateGrid = (camCount) => {
       left: '5%',
       width: '90%',
       height: '70%',
-      gridRowGap : '3%',
-      bottom : '1%',
+      gridRowGap: '3%',
+      bottom: '1%',
     };
   } else {
     // Add more cases as needed
@@ -166,97 +166,97 @@ const CamCatWrapper = styled.div`
   ${({ camCount, index }) =>
 
     camCount === 3 && index === 0
-    ? `
+      ? `
     position: relative;
     left : 56.5%;
     `
-    :
-    camCount === 3 && index === 1
-    ? `
+      :
+      camCount === 3 && index === 1
+        ? `
     position: relative;
-    top : 110%;
+    top : 112.5%;
     `
-    :
-    camCount === 3 && index === 2
-    ? `
+        :
+        camCount === 3 && index === 2
+          ? `
     position: relative;
     `
-    :
-    camCount === 5 && index === 0
-    ? `
-    position: relative;
-    left : 50%;
-    `
-    :
-    camCount === 5 && index === 1
-    ? `
+          :
+          camCount === 5 && index === 0
+            ? `
     position: relative;
     left : 50%;
     `
-    :
-    camCount === 5 && index === 2
-    ? `
+            :
+            camCount === 5 && index === 1
+              ? `
+    position: relative;
+    left : 50%;
+    `
+              :
+              camCount === 5 && index === 2
+                ? `
     position: relative;
     top : 114%;
     `
-    :
-    camCount === 7 && index === 0
-    ? `
+                :
+                camCount === 7 && index === 0
+                  ? `
     position: relative;
     left : 50%;
     `
-    :
-    camCount === 7 && index === 1
-    ? `
+                  :
+                  camCount === 7 && index === 1
+                    ? `
     position: relative;
     left : 50%;
     `
-    :
-    camCount === 7 && index === 2
-    ? `
+                    :
+                    camCount === 7 && index === 2
+                      ? `
     position: relative;
     left : 50%;
     `
 
-    :
-    camCount === 7 && index === 3
-    ? `
+                      :
+                      camCount === 7 && index === 3
+                        ? `
     position: relative;
     top : 114%;
     `
-    :
-    camCount === 9 && index === 0
-    ? `
+                        :
+                        camCount === 9 && index === 0
+                          ? `
     position: relative;
     left : 50%;
     `
-    :
-    camCount === 9 && index === 1
-    ? `
+                          :
+                          camCount === 9 && index === 1
+                            ? `
     position: relative;
     left : 50%;
     `
-    :
-    camCount === 9 && index === 2
-    ? `
+                            :
+                            camCount === 9 && index === 2
+                              ? `
     position: relative;
     left : 50%;
     `
-    :
-    camCount === 9 && index === 3
-    ? `
+                              :
+                              camCount === 9 && index === 3
+                                ? `
     position: relative;
     left : 50%;
     `
-    :
-    camCount === 9 && index === 4
-    ? `
+                                :
+                                camCount === 9 && index === 4
+                                  ? `
     position: relative;
     top : 100%;
     `
-  : ''};
+                                  : ''};
   `;
-     
+
 const DayNightCamera = React.memo(({ ids }) => {
   const { player, players } = useRoomContext();
   const camCount = ids.length;
@@ -264,10 +264,10 @@ const DayNightCamera = React.memo(({ ids }) => {
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
-  const { selectAction, selectConfirm, setSelectedTarget, 
-    myVote, startVote, dayCount, predictWebcam, stopPredicting, 
+  const { selectAction, selectConfirm, setSelectedTarget,
+    myVote, startVote, dayCount, predictWebcam, stopPredicting,
     detectedGesture, voteSituation, phase,
-    Roles, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext, 
+    Roles, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext,
     voteTargetId, deadIds, hiddenMission, setHiddenMission, loadGestureRecognizer } = useGameContext();
 
   useEffect(() => {
@@ -282,14 +282,14 @@ const DayNightCamera = React.memo(({ ids }) => {
 
       // 마피아 넣는 작업
       let sarkArray = [];
-      for (let player of players) {
+      for (let player of players.current) {
         if (player.role === Roles.SARK) sarkArray.push(player);
       }
 
       if (player.role === Roles.DETECTIVE) {
         changeVoice(sarkArray);
       }
-    } 
+    }
     else if (phase === "day") {
       dayCamAudio();
       stopVoiceChange();
@@ -313,7 +313,7 @@ const DayNightCamera = React.memo(({ ids }) => {
       console.log("미션시작이요~~");
       loadGestureRecognizer();
       startHiddenMission();
-    }else{
+    } else {
       stopHiddenMission();
     }
   }, [hiddenMission])
@@ -353,7 +353,7 @@ const DayNightCamera = React.memo(({ ids }) => {
     if (clickedCamera === id) {
       setClickedCamera(null);
       selectAction({ playerId: null });
-    } 
+    }
     else {
       selectAction({ playerId: id });
       setClickedCamera(id);
@@ -388,7 +388,7 @@ const DayNightCamera = React.memo(({ ids }) => {
   const nightCamAudio = () => {
     if (player.role == Roles.DETECTIVE) {
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
-      for (let player of players) {
+      for (let player of players.current) {
         player.stream.subscribeToVideo(false);
 
         if (player.role != Roles.SARK) {
@@ -397,23 +397,31 @@ const DayNightCamera = React.memo(({ ids }) => {
       }
     }
     else if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
-      for (let player of players) {
-        if (player.role != Roles.SARK) {
-          player.stream.subscribeToVideo(false);
-          player.stream.subscribeToAudio(false);
+
+      for (let otherPlayer of players.current) {
+        console.log(otherPlayer.stream)
+        if (otherPlayer.role != Roles.SARK) {
+          otherPlayer.stream.subscribeToVideo(false);
+          otherPlayer.stream.subscribeToAudio(false);
         }
       }
     }
     else {
       // 마피아, 탐정, 관전자를 제외한 나머지 플레이어의 화면에서 모두의 캠, 오디오를 끈다.
-      player.stream.subscribeToVideo(false);
-      player.stream.subscribeToAudio(false);
-    } 
+      for (let otherPlayer of players.current) {
+        if (otherPlayer[1].stream == Subscriber){ 
+          console.log("여기까진 오니");
+          console.log(otherPlayer[1].stream);
+          otherPlayer[1].stream.subscribeToVideo(false);
+          otherPlayer[1].stream.subscribeToAudio(false);
+        }
+      }
+    }
   }
 
 
   const dayCamAudio = () => {
-    for (let otherPlayer of players) {
+    for (let otherPlayer of players.current) {
       if (player.playerId == otherPlayer.playerId) continue;  // 내가 아닌 경우에만 설정
       if (otherPlayer.role == Roles.OBSERVER) continue;            // 관전자가 아닌 경우에만 설정
 

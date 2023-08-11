@@ -8,7 +8,7 @@ const RoomContext = createContext();
 const RoomProvider = ({ children }) => {
   const [roomSession, setRoomSession] = useState({});
   const [player, setPlayer] = useState({});
-  const [players, setPlayers] = useState(new Map());
+  const players = useRef(new Map());
   const [showImage, setShowImage] = useState(false);
 
   const OV = useRef(null);
@@ -33,18 +33,19 @@ const RoomProvider = ({ children }) => {
 
     console.log('player 변경');
     console.log(player);
-    setPlayers((prev) => {
-      return new Map(prev).set(player.playerId, player);
-    });
+    // setPlayers((prev) => {
+    //   return new Map(prev).set(player.playerId, player);
+    // });
+    players.current.set(player.playerId, player);
   }, [player]);
 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    console.log('players 변경');
-    console.log(players);
+  //   console.log('players 변경');
+  //   console.log(players);
 
-  }, [players]);
+  // }, [players]);
 
   // TODO: showImage 기능
   // useEffect(() => {
@@ -100,7 +101,8 @@ const RoomProvider = ({ children }) => {
       window.sessionStorage.removeItem("playerId");
       // 데이터 초기화
       // setSession(undefined);
-      setPlayers(new Map());
+      // setPlayers(new Map());
+      players.current = new Map();
       setPlayer({});
       navigate(`/${roomSession.roomId}`)
   }
@@ -124,10 +126,10 @@ const RoomProvider = ({ children }) => {
         ...JSON.parse(event.stream.streamManager.stream.connection.data),
         stream: subscriber,
       };
-      setPlayers((prev) => {
-        return new Map(prev).set(newPlayer.playerId, newPlayer);
-      });
-      
+      // setPlayers((prev) => {
+      //   return new Map(prev).set(newPlayer.playerId, newPlayer);
+      // });
+      players.current.set(newPlayer.playerId, newPlayer);
       console.log(newPlayer.nickName, "님이 접속했습니다.");
     });
 
@@ -135,11 +137,12 @@ const RoomProvider = ({ children }) => {
     newSession.on('streamDestroyed', (event) => {
       const targetId = JSON.parse(event.stream.streamManager.stream.connection.data).playerId;
       const targetNickname = JSON.parse(event.stream.streamManager.stream.connection.data).nickName;
-      setPlayers((prev) => {
-        const players = new Map(prev);
-        players.delete(targetId);
-        return players;
-      });
+      // setPlayers((prev) => {
+      //   const players = new Map(prev);
+      //   players.delete(targetId);
+      //   return players;
+      // });
+      players.current.removeItem(targetId);
       console.log(targetNickname, "님이 접속을 종료했습니다.");
     });
 
@@ -261,7 +264,7 @@ const RoomProvider = ({ children }) => {
   return (
     <RoomContext.Provider value={{ roomSession, setRoomSession, createGameRoom, getGameRoom,
       OV, initSession, connectSession, leaveSession, getToken,  
-      player, setPlayer, players, setPlayers }}>
+      player, setPlayer, players }}>
       {children}
     </RoomContext.Provider>
   );

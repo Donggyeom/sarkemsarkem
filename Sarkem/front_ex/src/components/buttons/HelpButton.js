@@ -4,14 +4,13 @@ import helpbutton from '../../img/helpbutton.png';
 import helpbuttonoff from '../../img/helpbuttonoff.png';
 
 const HelpButtonImage = styled.img`
-  width: 60px;
-  height: 60px;
+  width: 80%;
+  margin-left: 30%; 
   cursor: pointer;
-  position: absolute;
-  right: 4%;
-  top: 4.5%;
-  overflow: visible;
-  z-index: 1;
+  &:hover {
+    filter: brightness(0.8);
+  }
+  align-items: center;
 `;
 
 

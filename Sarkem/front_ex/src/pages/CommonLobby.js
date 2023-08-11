@@ -31,8 +31,6 @@ import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
-import HelpButton from '../components/buttons/HelpButton';
-import Help from '../components/games/Help';
 import LoadingPage from './LoadingPage';
 import ingameClickSound from '../sound/ingameclick.mp3';
 
@@ -66,7 +64,7 @@ const DivWrapper = styled.div`
 const DivWrapper2 = styled.div`
 
   display: flex;
-  height: 15%;
+  height: 11.5%;
   justify-content: space-around;
   
 `;
@@ -277,11 +275,7 @@ const CommonLobby = ()=>{
     setShowNyangachiPopup(false);
   };
 
-  //도움말
-  const [isHelpOn, setIsHelpOn] = useState(true);
-  const handleHelpButtonClick = () => {
-    setIsHelpOn((prevIsHelpOn) => !prevIsHelpOn);
-  };
+
 
   //업다운 버튼
   const buttonStyle = {
@@ -296,7 +290,7 @@ const CommonLobby = ()=>{
   return (
     <>
     { gameSession?.gameOption ? (<Background>
-      {!isHelpOn && <Help top="50%" left="77.5%" />}
+      
       {showSarkPopup && <ScPopup src={c_sark} top="20%" left="50%" />}
       {showVetPopup && <ScPopup src={c_vet} top="40%" left="50%" />}
       {showPolicePopup && <ScPopup src={c_police} top="40%" left="72.5%" />}
@@ -306,7 +300,7 @@ const CommonLobby = ()=>{
       {showNyangachiPopup && <ScPopup src={c_nyangachi} top="80%" left="50%" />}
       <BackButton/>
       <StyledContent>
-         <LobbyCamera ids={Array.from(players.keys())} />
+         <LobbyCamera ids={Array.from(players.current.keys())} />
         <RightSection>
           <DivWrapper
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}/>
@@ -512,7 +506,6 @@ const CommonLobby = ()=>{
             )}
         
         </RightSection>
-        <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />
       </StyledContent>
     </Background>):<LoadingPage/>}
     </>
