@@ -238,6 +238,7 @@ const GameProvider = ({ children }) => {
   const receiveMessage = async (message) => {
     // 시스템 메시지 처리
     let sysMessage = JSON.parse(message.body);
+    console.log(sysMessage.code, sysMessage.playerId);
     if (player.playerId === sysMessage.playerId || sysMessage.playerId === "ALL") {
 
     switch (sysMessage.code) {
