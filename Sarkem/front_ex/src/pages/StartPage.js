@@ -74,10 +74,12 @@ const StartPage = () => {
     const audio = new Audio(logoSound);
   
     // Play the audio when the component mounts
-    audio.muted = true;
-    audio.play();
-    audio.muted = false;
-    audio.playbackRate = 0.79;
+    try{
+      audio.play();
+      audio.playbackRate = 0.79;
+    } catch {
+      console.log("크롬 정책 문제로 배경 음악 재생에 실패했습니다.");
+    }
   
     // Update state to track audio playback
     setAudioPlaying(true);
