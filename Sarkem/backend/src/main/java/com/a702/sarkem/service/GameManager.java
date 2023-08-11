@@ -142,6 +142,7 @@ public class GameManager {
 			// 방장 변경하기
 			setHostId(roomId, nextHost);
 			sendChangeHostMessage(roomId, nextHost);
+			sendNoticeMessageToPlayer(roomId, nextHost, "호스트 귀하로 변경되었습니다.", PhaseType.READY);
 			System.out.println("방장이 변경되었습니다." + playerId + " " + getHostId(roomId));
 		}
 	}

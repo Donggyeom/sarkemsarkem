@@ -50,7 +50,7 @@ public class GameController {
 			} 
 			else if (!gameManager.checkStartable(roomId)){
 				// 시작 가능 여부 확인
-				gameManager.sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.", PhaseType.DAY);
+				gameManager.sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.", PhaseType.READY);
 			}
 			// 게임 실행
 			else gameManager.gameStart(roomId);
