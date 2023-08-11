@@ -19,7 +19,7 @@ const CamCat = ({id}) => {
   const [intervalId, setIntervalId] = useState(null);
   const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const { psyTarget, psychologist, voteSituation, phase } = useGameContext();
-  const player = players.get(id);
+  const player = players.current.get(id);
   const stream = player.stream;
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const CamCat = ({id}) => {
 
   const getVoteResultForUser = (id) => {
     if (phase === 'day') {
-      let player = players.get(id);
+      let player = players.current.get(id);
       if (voteSituation && voteSituation[id] !== undefined) {
         return `X  ${voteSituation[id]}`;
       }

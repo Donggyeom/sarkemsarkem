@@ -112,7 +112,7 @@ const NightPage = () => {
     <Background>
       <StyledNightPage>
         {!isLogOn && <Log />}
-        {players && <DayNightCamera ids={Array.from(players.keys())} />}
+        {players.current && <DayNightCamera ids={Array.from(players.current.keys())} />}
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{remainTime}</TimeSecond>
         {player.role === 'SARK' ? (

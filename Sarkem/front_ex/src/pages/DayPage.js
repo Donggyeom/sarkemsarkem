@@ -83,28 +83,17 @@ const DayPage = () => {
 
   }
 
-  // const handleCamButtonClick = () => {
-  //   const camOn = !player.isCamOn;
-  //   if (player.stream) {
-  //     player.stream.publishVideo(camOn);
-  //   }
-  //   setPlayer((prev) => {
-  //     return ({
-  //       ...prev,
-  //       isCamon: camOn
-  //     });
-  //   });
-  // };
   const handleCamButtonClick = () => {
     const camOn = !player.isCamOn;
-    setPlayer((prevState) => {
-      return {...prevState,
-        isCamOn: camOn,
-      };
-    });
     if (player.stream) {
       player.stream.publishVideo(camOn);
     }
+    setPlayer((prev) => {
+      return ({
+        ...prev,
+        isCamon: camOn
+      });
+    });
   };
 
   const handleMicButtonClick = () => {
@@ -152,7 +141,7 @@ const DayPage = () => {
         <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
         {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
-        {players && <DayNightCamera ids={Array.from(players.keys())} />}
+        {players.current && <DayNightCamera ids={Array.from(players.current.keys())} />}
         <ScMini />
         </StyledDayPage>
         <TempButton url={`/${roomSession.roomId}/sunset`} onClick={() => navigate(`/${roomSession.roomId}/sunset`)} alt="Start Game" />

@@ -129,7 +129,8 @@ const ResultPage = () => {
     
     // 데이터 초기화
     setPlayer({});
-    setPlayers(new Map());
+    // setPlayers(new Map());
+    players.current = new Map();
     console.log("새로운 방 만들기")
     navigate(`/${createRandomId()}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
@@ -142,13 +143,14 @@ const ResultPage = () => {
     // 데이터 초기화
     // setSession(undefined);
     setPlayer({});
-    setPlayers(new Map());
+    // setPlayers(new Map());
+    players.current = new Map();
     console.log("홈으로 나가기")
     navigate('/');
   };
 
-  const sarkPlayers = Array.from(players.values()).filter(player => player.role === 'SARK');
-  const nonSarkPlayers = Array.from(players.values()).filter(player => player.role !== 'SARK');
+  const sarkPlayers = Array.from(players.current.values()).filter(player => player.role === 'SARK');
+  const nonSarkPlayers = Array.from(players.current.values()).filter(player => player.role !== 'SARK');
 
   return (
     <div>

@@ -306,7 +306,7 @@ const CommonLobby = ()=>{
       {showNyangachiPopup && <ScPopup src={c_nyangachi} top="80%" left="50%" />}
       <BackButton/>
       <StyledContent>
-         <LobbyCamera ids={Array.from(players.keys())} />
+         <LobbyCamera ids={Array.from(players.current.keys())} />
         <RightSection>
           <DivWrapper
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}/>
