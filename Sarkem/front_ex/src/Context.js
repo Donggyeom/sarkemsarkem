@@ -142,13 +142,13 @@ const RoomProvider = ({ children }) => {
       //   players.delete(targetId);
       //   return players;
       // });
-      players.current.removeItem(targetId);
+      players.current.delete(targetId);
       console.log(targetNickname, "님이 접속을 종료했습니다.");
     });
 
     newSession.on('sessionDisconnected', (event) => {
       console.log("openvidu 세션 연결이 끊겼습니다.");
-      leaveSession();
+      // leaveSession();
     })
 
     // stream 예외 이벤트 발생 시 에러 출력
