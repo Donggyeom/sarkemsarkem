@@ -1,0 +1,29 @@
+server.port: 8081
+server.ssl.enabled: false
+
+# openvidu setting
+OPENVIDU_URL: "https://localhost:8443/"
+
+
+# sarkem
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/sarkem?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: sarkem
+    password: sarkem
+  data:
+    redis:
+      host: localhost
+      port: 4000
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql : true
+
+logging:
+  level:
+    com.a702.sarkem: debug
