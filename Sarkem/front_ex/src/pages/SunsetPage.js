@@ -541,12 +541,11 @@ const SunsetPage = () => {
   const [camCount, setCamCount] = useState(players.size);
   const gridStyles = calculateGrid(camCount);
 
-  const adjustedCamCount = calculateAdjustedCamCount();
-
   console.log(targetId, "확인합시다");
 
   let displayCamCat = false;
   let assignedIndices = [];
+  let adjustedCamCount = 0;
 
   useEffect(() => {
     if (roomSession.roomId === undefined){
@@ -563,6 +562,8 @@ const SunsetPage = () => {
 
 
   useEffect(() => {
+    adjustedCamCount = calculateAdjustedCamCount();
+
     setCamCount(adjustedCamCount);
   }, [adjustedCamCount]);
 
@@ -575,7 +576,7 @@ const SunsetPage = () => {
   }
 
   const calculateAdjustedCamCount = () => {
-    const filteredCamArray = players.filter((player) => {
+    const filteredCamArray = Array.from(players.values()).filter((player) => {
       return !deadIds.includes(player.playerId);
     });
 
@@ -626,7 +627,7 @@ const SunsetPage = () => {
   };
   
 
-  const sortedCamArray = players
+  const sortedCamArray = Array.from(players.values())
     .filter((player) => {
       return !deadIds.includes(player.playerId);
     })

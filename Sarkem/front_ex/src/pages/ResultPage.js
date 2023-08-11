@@ -99,7 +99,7 @@ const TableRow = styled.tr`
 
 const ResultPage = () => {
   const {
-    roomSession, setPlayer, setPlayers
+    roomSession, setPlayer, setPlayers, players
   } = useRoomContext();
   const { winner, stompClient } = useGameContext();
   const navigate = useNavigate();
@@ -152,7 +152,7 @@ const ResultPage = () => {
 
   const handleAgainButtonClick = () => {
     console.log("세션 해제중입니다.....");
-    if (session) session.disconnect();
+    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
 
     console.log("세션 해제중입니다.....")
     // 세션 연결 종료
@@ -178,8 +178,8 @@ const ResultPage = () => {
     navigate('/');
   };
 
-  const sarkPlayers = players.filter(player => player.role === 'SARK');
-  const nonSarkPlayers = players.filter(player => player.role !== 'SARK');
+  const sarkPlayers = Array.from(players.values()).filter(player => player.role === 'SARK');
+  const nonSarkPlayers = Array.from(players.values()).filter(player => player.role !== 'SARK');
 
   return (
     <div>

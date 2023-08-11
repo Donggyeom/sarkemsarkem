@@ -44,7 +44,7 @@ const TimeSecond = styled.text`
 
 const NightPage = () => {
   const { roomSession, player, setPlayer, players } = useRoomContext(); 
-  const { currentSysMessage, dayCount, chatVisible } = useGameContext();
+  const { currentSysMessage, dayCount, chatVisible, remainTime } = useGameContext();
   const navigate = useNavigate();
   
 
