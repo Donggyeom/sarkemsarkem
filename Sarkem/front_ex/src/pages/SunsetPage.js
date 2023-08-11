@@ -538,7 +538,7 @@ const SunsetPage = () => {
   const navigate = useNavigate();
   
   // TODO: camcount 계산
-  const [camCount, setCamCount] = useState(players.size);
+  const [camCount, setCamCount] = useState(players.current.size);
   const gridStyles = calculateGrid(camCount);
 
   console.log(targetId, "확인합시다");
@@ -576,7 +576,7 @@ const SunsetPage = () => {
   }
 
   const calculateAdjustedCamCount = () => {
-    const filteredCamArray = Array.from(players.values()).filter((player) => {
+    const filteredCamArray = Array.from(players.current.values()).filter((player) => {
       return !deadIds.includes(player.playerId);
     });
 
@@ -627,7 +627,7 @@ const SunsetPage = () => {
   };
   
 
-  const sortedCamArray = Array.from(players.values())
+  const sortedCamArray = Array.from(players.current.values())
     .filter((player) => {
       return !deadIds.includes(player.playerId);
     })

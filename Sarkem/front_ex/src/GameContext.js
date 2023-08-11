@@ -13,7 +13,7 @@ import nightCamAudio from './components/camera/DayNightCamera';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-  const { roomSession, player, setPlayer, players, setPlayers } = useRoomContext();
+  const { roomSession, player, setPlayer, players } = useRoomContext();
   const [ gameSession, setGameSession ] = useState({});
   // 현재 시스템 메시지를 저장할 상태 추가
   const [currentSysMessage, setCurrentSysMessage] = useState(null);
@@ -83,19 +83,20 @@ const GameProvider = ({ children }) => {
     console.log(`playerId : ${player.playerId}`);
     if (player.stream !== undefined) {
 
-      setPlayers((prev) => {
-        return new Map([...prev, [player.playerId, player]]);
-      });
-      
-    }
-  }, [player.stream]);
-
-  useEffect(() => {
-    if (players.size>0) {
+      // setPlayers((prev) => {
+      //   return new Map([...prev, [player.playerId, player]]);
+      // });
+      players.current.set(player.playerId, player);
       connectGameWS();
       loadGestureRecognizer();
     }
-  }, [players])
+  }, [player.stream]);
+
+  // useEffect(() => {
+  //   if (players.size>0) {
+      
+  //   }
+  // }, [players])
 
   useEffect(() => {
     console.log("GestureRecognizer 생성 완료");
@@ -474,7 +475,7 @@ const GameProvider = ({ children }) => {
             alert("직업배정에 오류가 발생했습니다.", assignedRole);
             return;
           }
-          let player = players.get(sysMessage.playerId);
+          let player = players.current.get(sysMessage.playerId);
           if (player == null) {
             alert("ROLE_ASSIGNED - 플레이어 정보를 불러오는데 실패했습니다.", sysMessage.playerId);
             return;
@@ -483,12 +484,13 @@ const GameProvider = ({ children }) => {
             ...player,
             role: assignedRole,
           };
-          setPlayers((prev) => {
-            return new Map([
-              ...prev,
-              [player.playerId, player],
-            ]);
-          });
+          // setPlayers((prev) => {
+          //   return new Map([
+          //     ...prev,
+          //     [player.playerId, player],
+          //   ]);
+          // });
+          players.current.set(player.playerId, player);
           break;
       case "BE_HUNTED":
           const newDeadId = sysMessage.param.deadPlayerId;

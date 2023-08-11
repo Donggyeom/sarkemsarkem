@@ -91,16 +91,16 @@ const calculateGrid = (camCount) => {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width: '59%',
-      gridRowGap: '5%',
-      gridColumnGap: '5%'
+      gridRowGap : '6%',
+      gridColumnGap : '5%',
     };
   } else if (camCount === 4) {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width: '55%',
-      gridRowGap: '5%',
-      gridColumnGap: '5%',
+      gridRowGap : '7%',
+      gridColumnGap : '5%',
     };
   } else if (camCount === 5) {
     return {
@@ -174,7 +174,7 @@ const CamCatWrapper = styled.div`
       camCount === 3 && index === 1
         ? `
     position: relative;
-    top : 110%;
+    top : 112.5%;
     `
         :
         camCount === 3 && index === 2
@@ -282,7 +282,7 @@ const DayNightCamera = React.memo(({ ids }) => {
 
       // 마피아 넣는 작업
       let sarkArray = [];
-      for (let player of players) {
+      for (let player of players.current) {
         if (player.role === Roles.SARK) sarkArray.push(player);
       }
 
@@ -388,7 +388,7 @@ const DayNightCamera = React.memo(({ ids }) => {
   const nightCamAudio = () => {
     if (player.role == Roles.DETECTIVE) {
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
-      for (let player of players) {
+      for (let player of players.current) {
         player.stream.subscribeToVideo(false);
 
         if (player.role != Roles.SARK) {
@@ -421,7 +421,7 @@ const DayNightCamera = React.memo(({ ids }) => {
 
 
   const dayCamAudio = () => {
-    for (let otherPlayer of players) {
+    for (let otherPlayer of players.current) {
       if (player.playerId == otherPlayer.playerId) continue;  // 내가 아닌 경우에만 설정
       if (otherPlayer.role == Roles.OBSERVER) continue;            // 관전자가 아닌 경우에만 설정
 

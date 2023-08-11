@@ -80,8 +80,8 @@ const GoroomButton = (props) => {
         });
       }
     });
-    setPlayers(players);
-
+    // setPlayers(players);
+    players.current = players;
     // 게임 세션 갱신
     const isEnterable = await getGameSession(gameRoom.roomId);
     if (!isEnterable) {
