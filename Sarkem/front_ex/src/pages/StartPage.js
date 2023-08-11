@@ -74,9 +74,7 @@ const StartPage = () => {
     const audio = new Audio(logoSound);
   
     // Play the audio when the component mounts
-    video.muted = true;
-    video.play();
-    video.muted = false;
+    audio.play();
     audio.playbackRate = 0.79;
   
     // Update state to track audio playback
