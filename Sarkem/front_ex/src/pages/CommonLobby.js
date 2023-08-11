@@ -64,7 +64,7 @@ const DivWrapper = styled.div`
 const DivWrapper2 = styled.div`
 
   display: flex;
-  height: 15%;
+  height: 11.5%;
   justify-content: space-around;
   
 `;
