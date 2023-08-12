@@ -259,7 +259,7 @@ const CamCatWrapper = styled.div`
 
 const DayNightCamera = React.memo(({ players }) => {
   const { player } = useRoomContext();
-  const camCount = players.length;
+  const [camCount, setCamCount] = useState(players.length);
   const gridStyles = calculateGrid(camCount);
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -321,30 +321,28 @@ const DayNightCamera = React.memo(({ players }) => {
 
   /// DayNightCamera 함수 ////
 
-  // const calculateAdjustedCamCount = () => {
-  //   const filteredCamArray = camArray.filter((user) => {
-  //     const userToken = JSON.parse(user.stream.connection.data).token;
-  //     return !deadIds.includes(userToken);
-  //   });
+  const calculateAdjustedCamCount = () => {
+    const filteredPlayers = players.filter((id) => {
+      return !deadIds.includes(player.playerId);
+    });
 
-  //   let adjustedCamCount = filteredCamArray.length;
+    let adjustedCamCount = filteredPlayers.length;
 
-  //   filteredCamArray.forEach((user) => {
-  //     const userToken = JSON.parse(user.stream.connection.data).token;
+    filteredPlayers.forEach((id) => {
 
-  //     if (deadIds.includes(userToken)) {
-  //       adjustedCamCount -= 1;
-  //     }
-  //   });
+      if (deadIds.includes(player.playerId)) {
+        adjustedCamCount -= 1;
+      }
+    });
 
-  //   return adjustedCamCount;
-  // };
+    return adjustedCamCount;
+  };
 
-  // const adjustedCamCount = calculateAdjustedCamCount();
+  const adjustedCamCount = calculateAdjustedCamCount();
   
-  // useEffect(() => {
-  //   setCamCount(adjustedCamCount);
-  // }, [adjustedCamCount]);
+  useEffect(() => {
+    setCamCount(adjustedCamCount);
+  }, [adjustedCamCount]);
 
 // 위의 함수를 받아와서 아래처럼 사용했음
 
@@ -502,9 +500,17 @@ const DayNightCamera = React.memo(({ players }) => {
     mixedMediaStreamRef.current = null;
   };
 
+  console.log(deadIds, "죽읍");
+
   return (
     <CamCatGrid style={gridStyles}>
-      {players && players.map((otherPlayer, index) => (
+      {players && players
+      .filter((otherplayer) => {
+        console.log(deadIds, "죽음");
+        console.log(otherplayer, "얘도");
+        return !deadIds.includes(otherplayer.playerId);
+      })
+      .map((otherPlayer, index) => (
         <CamCatWrapper
           key={index}
           camCount={camCount}
