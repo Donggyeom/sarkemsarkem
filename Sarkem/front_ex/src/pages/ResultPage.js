@@ -114,7 +114,7 @@ const roleInfoMapping = {
   PSYCHO: { icon: psychoIcon, displayName: '심리학자' },
   POLICE: { icon: policeIcon, displayName: '경찰' },
   DOCTOR: { icon: doctorIcon, displayName: '의사' },
-  DETECTOR: { icon: detectorIcon, displayName: '탐정' },
+  DETECTIVE: { icon: detectorIcon, displayName: '탐정' },
   CITIZEN: { icon: citizenIcon, displayName: '시민' },
   BULLY: { icon: achiIcon, displayName: '냥아치' },
   SARK: { icon: sarkIcon, displayName: '삵' }
