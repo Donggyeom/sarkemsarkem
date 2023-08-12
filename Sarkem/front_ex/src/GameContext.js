@@ -406,6 +406,12 @@ const GameProvider = ({ children }) => {
         break;
 
     case "BE_HUNTED":
+        const newDeadId = sysMessage.param.deadPlayerId;
+        console.log(sysMessage.param.deadPlayerId, "여김다");
+        console.log(newDeadId, "여김다");
+        setDeadIds(prevDeadIds => [...prevDeadIds, newDeadId]);
+        players.current.get(newDeadId).isAlive = false;
+        
         if (sysMessage.param && sysMessage.param.deadPlayerId === player.playerId) {
           setPlayer((prev) => {
             return ({
@@ -494,6 +500,7 @@ const GameProvider = ({ children }) => {
       // 역할 저장을 위해 넣었음 //
       switch (sysMessage.code) {
       case "ROLE_ASSIGNED":
+          console.log("안녕하십니ㅏ");
           const assignedRole = Roles.get(sysMessage.param.role);
           if (assignedRole == null) {
             alert("직업배정에 오류가 발생했습니다.", assignedRole);
@@ -516,11 +523,7 @@ const GameProvider = ({ children }) => {
           // });
           players.current.set(player.playerId, player);
           break;
-      case "BE_HUNTED":
-          const newDeadId = sysMessage.param.deadPlayerId;
-          setDeadIds(prevDeadIds => [...prevDeadIds, newDeadId]);
-          players.current.get(newDeadId).isAlive = false;
-          break;
+
       }
     }
     handleSystemMessage(message);

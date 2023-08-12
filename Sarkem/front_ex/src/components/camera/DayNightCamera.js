@@ -259,7 +259,7 @@ const CamCatWrapper = styled.div`
 
 const DayNightCamera = React.memo(({ players }) => {
   const { player } = useRoomContext();
-  const camCount = players.length;
+  const [camCount, setCamCount] = useState(players.length);
   const gridStyles = calculateGrid(camCount);
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -319,62 +319,12 @@ const DayNightCamera = React.memo(({ players }) => {
   }, [hiddenMission])
 
 
-  /// DayNightCamera 함수 ////
-
-  // const calculateAdjustedCamCount = () => {
-  //   const filteredCamArray = camArray.filter((user) => {
-  //     const userToken = JSON.parse(user.stream.connection.data).token;
-  //     return !deadIds.includes(userToken);
-  //   });
-
-  //   let adjustedCamCount = filteredCamArray.length;
-
-  //   filteredCamArray.forEach((user) => {
-  //     const userToken = JSON.parse(user.stream.connection.data).token;
-
-  //     if (deadIds.includes(userToken)) {
-  //       adjustedCamCount -= 1;
-  //     }
-  //   });
-
-  //   return adjustedCamCount;
-  // };
-
-  // const adjustedCamCount = calculateAdjustedCamCount();
-  
-  // useEffect(() => {
-  //   setCamCount(adjustedCamCount);
-  // }, [adjustedCamCount]);
-
-// 위의 함수를 받아와서 아래처럼 사용했음
-
-// <CamCatGrid style={gridStyles}>
-//     {camArray
-//       .filter((user) => {
-//         const userToken = JSON.parse(user.stream.connection.data).token;
-//         return !deadIds.includes(userToken);
-//       })
-//       .map((user, index) => (
-//         <CamCatWrapper
-//           key={index}
-//           camCount={adjustedCamCount}
-//           user={user}
-//           index={index}
-//           onClick={() => handleCamClick(user)}
-//         >
-//           <CamCat props={user} user={user} />
-//           <VotefootWrapper show={clickedCamera === user && startVote}>
-//             <VotefootImage src={voteImage} alt="Vote" />
-//           </VotefootWrapper>
-//         </CamCatWrapper>
-
-
   const handleCamClick = (id) => {
     console.log(voteSituation, "투표 결과 확인합니다");
     console.log(startVote);
     console.log(dayCount);
     console.log(id, "얘는 캠주인");
-    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped) {
+    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped || player.role === "OBSERVER") {
       return;
     }
 
@@ -389,14 +339,14 @@ const DayNightCamera = React.memo(({ players }) => {
   };
 
   const handleConfirmClick = () => {
-    if (clickedCamera && !isConfirmed) {
+    if (clickedCamera && !isConfirmed || player.role === "OBSERVER") {
       setIsConfirmed(true);
       selectConfirm();
     }
   };
 
   const handleSkipClick = () => {
-    if (!isConfirmed && !isSkipped && startVote) {
+    if (!isConfirmed && !isSkipped && startVote || player.role == "OBSERVER") {
       setIsSkipped(true);
       setClickedCamera(null);
       setSelectedTarget("");
@@ -502,6 +452,8 @@ const DayNightCamera = React.memo(({ players }) => {
     mixedMediaStreamRef.current = null;
   };
 
+  console.log(deadIds, "죽읍");
+
   return (
     <CamCatGrid style={gridStyles}>
       {players && players.map((otherPlayer, index) => (
@@ -513,9 +465,6 @@ const DayNightCamera = React.memo(({ players }) => {
           onClick={() => handleCamClick(otherPlayer.playerId)}
         >
           <CamCat id={otherPlayer.playerId} />
-          {/* {clickedCameras.includes(index) && (
-              <Votefoot src={voteImage} alt="Vote" />
-            )} */}
           <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
@@ -524,8 +473,8 @@ const DayNightCamera = React.memo(({ players }) => {
       <ButtonWrapper>
         {dayCount === 1 && phase === 'day' ? (
           <>
-            {startVote && (
-              <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+            {startVote && !isSkipped && (
+              <ActionButton onClick={handleSkipClick} disabled={isConfirmed}>
                 {isSkipped ? '스킵됨' : '스킵하기'}
               </ActionButton>
             )}
@@ -535,26 +484,19 @@ const DayNightCamera = React.memo(({ players }) => {
             {isConfirmed ? (
               <ActionButton disabled>확정됨</ActionButton>
             ) : (
-              startVote && (
-                <ActionButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
+              startVote && !isSkipped && player.role !== "OBSERVER" && (
+                <ActionButton onClick={handleConfirmClick} disabled={!clickedCamera}>
                   {clickedCamera ? '확정하기' : '투표할 사람을 선택하세요'}
                 </ActionButton>
               )
             )}
-            {startVote && (
-              <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+            {startVote && !isSkipped && player.role !== "OBSERVER" && (
+              <ActionButton onClick={handleSkipClick} disabled={isConfirmed}>
                 {isSkipped ? '스킵됨' : '스킵하기'}
               </ActionButton>
             )}
           </>
         )}
-        {/* <ActionButton onClick={startHiddenMission}>
-          히든미션
-        </ActionButton>
-        <ActionButton onClick={stopHiddenMission}>
-          미션 종료
-        </ActionButton>
-        <p>Detected Gesture: {detectedGesture}</p> */}
       </ButtonWrapper>
     </CamCatGrid>
   );
