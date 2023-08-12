@@ -418,9 +418,10 @@ public class GameThread extends Thread {
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		// 남은 시간 보내기
 		while (true) {
-			if(idx%2==0) {
-				remainTime.put("time", time--);
+			if(idx%10==0) {
+				remainTime.put("time", time);
 				gameManager.sendRemainTime(roomId, remainTime);
+				time -= 5;
 			}
 			idx++;
 			confirmCnt = 0;
@@ -442,8 +443,11 @@ public class GameThread extends Thread {
 		int time = gameSession.getMeetingTime();
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		while (true) {
-			remainTime.put("time", time--);
-			gameManager.sendRemainTime(roomId, remainTime);
+			if(time % 5 == 0) {
+				remainTime.put("time", time);
+				gameManager.sendRemainTime(roomId, remainTime);
+			}
+			time--;
 			if (time <= 0) break;
 			sleep(1000);
 		}
