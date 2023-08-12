@@ -7,6 +7,13 @@ import { useRoomContext } from '../../Context';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
 
+import skipImg from '../../img/btn_스킵하기.png';
+import skipClearImg from '../../img/tb_endskip.png';
+import voteImg from '../../img/btn_투표확정.png';
+import voteClearImg from '../../img/tb_endvote.png';
+
+
+
 
 const StyledVoteResultDiv = styled.div`
   position: absolute;
@@ -43,9 +50,21 @@ const ActionButton = styled.button`
   cursor: pointer;
 `;
 
+const VoteButton = styled.button`
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  top: 30%;
+`;
+
+const VoteImage = styled.img`
+  width: 80%;
+  // height: 60%;
+`;
+
 const ButtonWrapper = styled.div`
   position: absolute;
-  bottom: 10px;
+  bottom: -45px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -478,26 +497,28 @@ const DayNightCamera = React.memo(({ players }) => {
         {dayCount === 1 && phase === 'day' ? (
           <>
             {startVote && (
-              <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
-                {isSkipped ? '스킵됨' : '스킵하기'}
-              </ActionButton>
+            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
+            </VoteButton>
             )}
           </>
         ) : (
           <>
             {isConfirmed ? (
-              <ActionButton disabled>확정됨</ActionButton>
+              <VoteButton disabled >
+                <VoteImage src={voteClearImg} alt="Vote" />
+              </VoteButton>
             ) : (
               startVote && (
-                <ActionButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
-                  {clickedCamera ? '확정하기' : '투표할 사람을 선택하세요'}
-                </ActionButton>
+              <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
+                <VoteImage src={clickedCamera ? voteImg : voteImg} alt="Vote" />
+              </VoteButton>
               )
             )}
             {startVote && (
-              <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
-                {isSkipped ? '스킵됨' : '스킵하기'}
-              </ActionButton>
+            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
+            </VoteButton>
             )}
           </>
         )}
