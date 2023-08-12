@@ -536,7 +536,8 @@ const CamCatWrapper = styled.div`
 const SunsetPage = () => {
    
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
-  const { startVote, agreeExpulsion, disagreeExpulsion, targetId, chatVisible, remainTime, dayCount, deadIds } = useGameContext();
+  const { startVote, agreeExpulsion, disagreeExpulsion, targetId, 
+    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
   const navigate = useNavigate();
@@ -631,8 +632,7 @@ const SunsetPage = () => {
   };
   
 
-  const sortedCamArray = Array.from(players.current.values())
-    .filter((player) => {
+  const sortedCamArray = getAlivePlayers().filter((player) => {
       return !deadIds.includes(player.playerId);
     })
     .map((player, index) => {

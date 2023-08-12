@@ -238,6 +238,7 @@ const GameProvider = ({ children }) => {
     }
   }
 
+  // 게임 시작 버튼 클릭
   const handleGamePageClick = () => {
     stompClient.current.send("/pub/game/action", {}, 
       JSON.stringify({
@@ -247,6 +248,14 @@ const GameProvider = ({ children }) => {
       })
       );
   };
+
+
+  const getAlivePlayers = () => {
+    console.log(players.current.values(), "getAlivePlayers");
+    console.log(Array.from(players.current.values()).filter((player) => player.isAlive === true), "getAlivePlayers");
+    return Array.from(players.current.values()).filter((player) => player.isAlive === true);
+  }
+
 
   const receiveMessage = async (message) => {
     // 시스템 메시지 처리
@@ -264,6 +273,13 @@ const GameProvider = ({ children }) => {
         // console.log(currentSysMessage);
         break;
     case "GAME_START":   
+    
+        // 게임상태 초기화
+        for (let player of players.current.values()) {
+          console.log(player, "handleGamePageClick");
+          player.isAlive = true;
+        }
+        
         navigate(`/${roomSession.roomId}/day`);
         break;
     case "ONLY_HOST_ACTION":
@@ -672,7 +688,7 @@ const GameProvider = ({ children }) => {
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, 
-      voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber }}
+      voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers }}
     >
       {children}
     </GameContext.Provider>

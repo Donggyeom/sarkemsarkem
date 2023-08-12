@@ -257,9 +257,9 @@ const CamCatWrapper = styled.div`
   : ''};
   `;
 
-const DayNightCamera = React.memo(({ ids }) => {
-  const { player, players } = useRoomContext();
-  const camCount = ids.length;
+const DayNightCamera = React.memo(({ players }) => {
+  const { player } = useRoomContext();
+  const camCount = players.length;
   const gridStyles = calculateGrid(camCount);
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -282,7 +282,7 @@ const DayNightCamera = React.memo(({ ids }) => {
 
       // 마피아 넣는 작업
       let sarkArray = [];
-      for (let player of players.current) {
+      for (let player of players) {
         if (player.role === Roles.SARK) sarkArray.push(player);
       }
 
@@ -416,17 +416,17 @@ const DayNightCamera = React.memo(({ ids }) => {
   const nightCamAudio = () => {
     if (player.role == Roles.DETECTIVE) {
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
-      for (let player of players.current) {
-        player.stream.subscribeToVideo(false);
+      for (let otherPlayer of players) {
+        otherPlayer.stream.subscribeToVideo(false);
 
-        if (player.role != Roles.SARK) {
-          player.stream.subscribeToAudio(false);
+        if (otherPlayer.role != Roles.SARK) {
+          otherPlayer.stream.subscribeToAudio(false);
         }
       }
     }
     else if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
 
-      for (let otherPlayer of players.current) {
+      for (let otherPlayer of players) {
         console.log(otherPlayer.stream)
         if (otherPlayer.role != Roles.SARK) {
           otherPlayer.stream.subscribeToVideo(false);
@@ -436,7 +436,7 @@ const DayNightCamera = React.memo(({ ids }) => {
     }
     else {
       // 마피아, 탐정, 관전자를 제외한 나머지 플레이어의 화면에서 모두의 캠, 오디오를 끈다.
-      for (let otherPlayer of players.current.values()) {
+      for (let otherPlayer of players) {
         if (otherPlayer.stream == Subscriber){ 
           console.log("여기까진 오니");
           otherPlayer.stream.subscribeToVideo(false);
@@ -448,7 +448,7 @@ const DayNightCamera = React.memo(({ ids }) => {
 
 
   const dayCamAudio = () => {
-    for (let otherPlayer of players.current) {
+    for (let otherPlayer of players) {
       if (player.playerId == otherPlayer.playerId) continue;  // 내가 아닌 경우에만 설정
       if (otherPlayer.role == Roles.OBSERVER) continue;            // 관전자가 아닌 경우에만 설정
 
@@ -501,19 +501,19 @@ const DayNightCamera = React.memo(({ ids }) => {
 
   return (
     <CamCatGrid style={gridStyles}>
-      {ids && ids.map((id, index) => (
+      {players && players.map((otherPlayer, index) => (
         <CamCatWrapper
           key={index}
           camCount={camCount}
-          user={id}
+          user={otherPlayer.playerId}
           index={index}
-          onClick={() => handleCamClick(id)}
+          onClick={() => handleCamClick(otherPlayer.playerId)}
         >
-          <CamCat id={id} />
+          <CamCat id={otherPlayer.playerId} />
           {/* {clickedCameras.includes(index) && (
               <Votefoot src={voteImage} alt="Vote" />
             )} */}
-          <VotefootWrapper show={clickedCamera === id && startVote}>
+          <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
         </CamCatWrapper>

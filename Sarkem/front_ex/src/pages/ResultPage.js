@@ -181,7 +181,7 @@ const ResultPage = () => {
   const sarkPlayers = Array.from(players.current.values()).filter(player => player.role === 'SARK');
   console.log(sarkPlayers);
   const nonSarkPlayers = Array.from(players.current.values()).filter(player => player.role !== 'SARK');
-
+  console.log(nonSarkPlayers, "nonSarkPlayers");
   return (
     <div>
     {winner === 'CITIZEN' ? (
