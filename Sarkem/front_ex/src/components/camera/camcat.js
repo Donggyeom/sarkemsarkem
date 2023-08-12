@@ -58,10 +58,11 @@ const CamCat = ({id}) => {
           if (voteSituation[id]) {
             return `삵이 죽일 사람`;
           }
-          return `투표하지 않음`;
+          return '';
         }
         return ''; // sark나 observer가 아닌 경우
       }
+    
       return ''; // day나 night가 아닌 경우
     };
 
