@@ -413,15 +413,14 @@ public class GameThread extends Thread {
 	private boolean isPlayersVoteEnded() throws InterruptedException {
 		List<RolePlayer> players = gameSession.getPlayers();
 		int confirmCnt = 0;
-		int time = gameSession.getMeetingTime();
+		int time = gameSession.getMeetingTime() + 5;
 		int idx = 0;
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		// 남은 시간 보내기
 		while (true) {
 			if(idx%10==0) {
-				remainTime.put("time", time);
+				remainTime.put("time", time -= 5);
 				gameManager.sendRemainTime(roomId, remainTime);
-				time -= 5;
 			}
 			idx++;
 			confirmCnt = 0;
