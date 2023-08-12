@@ -128,9 +128,11 @@ const ChatCloseButton = styled.button`
 
   const Chatting = ({ handleCloseButtonClick }) => {
     const { chatMessages, sendMessage} = useGameContext();
-    const { token } = useRoomContext();
+    const { player } = useRoomContext();
     const [inputMessage, setInputMessage] = useState('');
     const chatMessagesRef = useRef();
+    console.log(player, "플레이어");
+    
   
     const scrollToBottom = () => {
       chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
@@ -170,9 +172,8 @@ const ChatCloseButton = styled.button`
         <ChatMessages ref={chatMessagesRef}>
   {chatMessages.map((messageObj, index) => {
     console.log('messageObj.playerId:', messageObj.playerId);
-    console.log('token:', token);
     return (
-      messageObj.playerId === token ? (
+      messageObj.playerId === player.playerId ? (
         <ChatMessage key={index}>
           {messageObj.message}
         </ChatMessage>
