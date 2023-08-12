@@ -416,7 +416,7 @@ public class GameThread extends Thread {
 		int time = gameSession.getMeetingTime();
 		int idx = 0;
 		HashMap<String, Integer> remainTime = new HashMap<>();
-		// TODO: 남은 시간 쏘는 곳 작성 중....
+		// 남은 시간 보내기
 		while (true) {
 			if(idx%2==0) {
 				remainTime.put("time", time--);

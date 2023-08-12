@@ -142,7 +142,7 @@ public class GameManager {
 			// 방장 변경하기
 			setHostId(roomId, nextHost);
 			sendChangeHostMessage(roomId, nextHost);
-			sendNoticeMessageToPlayer(roomId, nextHost, "호스트가 귀하로 변경되었습니다.", PhaseType.READY);
+			sendNoticeMessageToPlayer(roomId, nextHost, "호스트가 귀하로 변경되었습니다.", PhaseType.NIGHT); // TODO ready페이즈로 변경해야함
 			System.out.println("방장이 변경되었습니다." + playerId + " " + getHostId(roomId));
 		}
 	}
@@ -241,7 +241,7 @@ public class GameManager {
 		// 회의 시간 변경
 		int meetingTime = option.getMeetingTime();
 		if (meetingTime < 15 || meetingTime > 180) {
-			sendNoticeMessageToPlayer(roomId, hostId, "회의 시간은 15s ~ 180s 사이로 설정 가능합니다.", PhaseType.READY);
+			sendNoticeMessageToPlayer(roomId, hostId, "회의 시간은 15s ~ 180s 사이로 설정 가능합니다.", PhaseType.NIGHT); // TODO ready페이즈로 변경해야함
 			return;
 		}
 
@@ -283,7 +283,7 @@ public class GameManager {
 
 
 		if (playerCount != optionRoleCount) {
-			sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.", PhaseType.READY);
+			sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.", PhaseType.NIGHT);// TODO ready페이즈로 변경해야함
 			return false;
 		} 
 		// TODO: 테스트를 위해 아래 elif문 일단 주석, 나중에 주석 풀어야함
@@ -293,17 +293,17 @@ public class GameManager {
 //		}
 		// 삵이 한명인데 탐정이 있으면 안됨
 		else if(gameSession.getSarkCount()==1&&gameSession.getDetectiveCount()>0) { 
-			sendNoticeMessageToPlayer(roomId, playerId, "삵이 2명 이상일 때 탐정 직업을 가질 수 있습니다.", PhaseType.READY);
+			sendNoticeMessageToPlayer(roomId, playerId, "삵이 2명 이상일 때 탐정 직업을 가질 수 있습니다.", PhaseType.NIGHT);// TODO ready페이즈로 변경해야함
 			return false;
 		}
 		// 삵이 아예 없으면 안됨
 		else if(gameSession.getSarkCount()==0) { 
-			sendNoticeMessageToPlayer(roomId, playerId, "삵이 1명 이상 있어야합니다.", PhaseType.READY);
+			sendNoticeMessageToPlayer(roomId, playerId, "삵이 1명 이상 있어야합니다.", PhaseType.NIGHT);// TODO ready페이즈로 변경해야함
 			return false;
 		}
 		// 삵이 시민팀 수보다 많거나 같으면 안됨
 		else if(gameSession.getSarkCount()>=(playerCount+1)/2) { 
-			sendNoticeMessageToPlayer(roomId, playerId, "삵은 시민팀 수보다 적어야합니다.", PhaseType.READY);
+			sendNoticeMessageToPlayer(roomId, playerId, "삵은 시민팀 수보다 적어야합니다.", PhaseType.NIGHT);// TODO ready페이즈로 변경해야함
 			return false;
 		}
 		return true;
@@ -513,35 +513,44 @@ public class GameManager {
 		GameSession gameSession = getGameSession(roomId);
 		List<String> nickname = new ArrayList<>();
 		List<String> job = new ArrayList<>();
+		List<String> role = new ArrayList<>();
 		Map<String, List<String>> param = new HashMap<>();
 		for (RolePlayer rp : gameSession.getPlayers()) {
 			nickname.add(rp.getNickname());
 			switch (rp.getRole()) {
 			case CITIZEN: 
 				job.add("시민");
+				role.add("CITIZEN");
 				break;
 			case SARK: 
 				job.add("삵");
+				role.add("SARK");
 				break;
 			case DOCTOR: 
 				job.add("수의사");
+				role.add("DOCTOR");
 				break;
 			case POLICE: 
 				job.add("경찰");
+				role.add("POLICE");
 				break;
 			case PSYCHO: 
 				job.add("심리학자");
+				role.add("PSYCHO");
 				break;
 			case BULLY: 
 				job.add("냥아치");
+				role.add("BULLY");
 				break;
 			case DETECTIVE: 
 				job.add("탐정");
+				role.add("DETECTIVE");
 				break;
 			}
 		}
 		param.put("nickname", nickname);
 		param.put("job", job);
+		param.put("role", role);
 		log.debug(param.toString());
 		sendJobDiscloseMessage(roomId, param);
 	}

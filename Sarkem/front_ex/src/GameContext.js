@@ -56,6 +56,9 @@ const GameProvider = ({ children }) => {
   
   // 캠 배열에서 제거하기 위함
   const [deadIds, setDeadIds] = useState([]);
+
+  // 게임 결과 출력을 위한 직업 저장
+  const roleAssignedArray = useRef([]);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -238,6 +241,7 @@ const GameProvider = ({ children }) => {
     }
   }
 
+  // 게임 시작 버튼 클릭
   const handleGamePageClick = () => {
     stompClient.current.send("/pub/game/action", {}, 
       JSON.stringify({
@@ -247,6 +251,14 @@ const GameProvider = ({ children }) => {
       })
       );
   };
+
+
+  const getAlivePlayers = () => {
+    console.log(players.current.values(), "getAlivePlayers");
+    console.log(Array.from(players.current.values()).filter((player) => player.isAlive === true), "getAlivePlayers");
+    return Array.from(players.current.values()).filter((player) => player.isAlive === true);
+  }
+
 
   const receiveMessage = async (message) => {
     // 시스템 메시지 처리
@@ -264,6 +276,13 @@ const GameProvider = ({ children }) => {
         // console.log(currentSysMessage);
         break;
     case "GAME_START":   
+    
+        // 게임상태 초기화
+        for (let player of players.current.values()) {
+          console.log(player, "handleGamePageClick");
+          player.isAlive = true;
+        }
+
         navigate(`/${roomSession.roomId}/day`);
         break;
     case "ONLY_HOST_ACTION":
@@ -373,13 +392,15 @@ const GameProvider = ({ children }) => {
     case "TWILIGHT_VOTE_END":
         setStartVote(false);
         // alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
+        players.current.get(sysMessage.param.targetId).isAlive = false;
         break;
 
     case "BE_EXCLUDED":
         setPlayer((prev) => {
           return ({
             ...prev,
-            role: Roles.OBSERVER,
+            role: "OBSERVER",
+            isAlive: false,
           });
         });
         break;
@@ -389,7 +410,7 @@ const GameProvider = ({ children }) => {
           setPlayer((prev) => {
             return ({
               ...prev,
-              role: Roles.OBSERVER,
+              role: "OBSERVER",
             });
           });
         }
@@ -446,6 +467,7 @@ const GameProvider = ({ children }) => {
         for (let i = 0; i < disclosedRoles.job.length; i++) {
           const nickname = disclosedRoles.nickname[i];
           const job = disclosedRoles.job[i];
+          const role = disclosedRoles.role[i];
           let team = "";
     
           if (job === "삵") {
@@ -458,10 +480,12 @@ const GameProvider = ({ children }) => {
             team: team,
             nickname: nickname,
             job: job,
+            role: role,
           });
         }
         // TODO: 게임 종료됐을 때, 직업 구성 받기
-        // setRoleAssignedArray((prevArray) => [...prevArray, ...newRoleAssignedArray]);
+        roleAssignedArray.current = newRoleAssignedArray;
+        console.log(roleAssignedArray, "roleAssignedArray");
         break;
       }
     }
@@ -495,6 +519,7 @@ const GameProvider = ({ children }) => {
       case "BE_HUNTED":
           const newDeadId = sysMessage.param.deadPlayerId;
           setDeadIds(prevDeadIds => [...prevDeadIds, newDeadId]);
+          players.current.get(newDeadId).isAlive = false;
           break;
       }
     }
@@ -671,8 +696,8 @@ const GameProvider = ({ children }) => {
     <GameContext.Provider value={{ stompClient, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
-      Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, 
-      voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber }}
+      Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
+      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray }}
     >
       {children}
     </GameContext.Provider>
