@@ -369,6 +369,7 @@ const DayNightCamera = React.memo(({ players }) => {
       console.log("player.role == DETECTIVE");
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
       for (let otherPlayer of players) {
+        if (player === otherPlayer) continue;
         otherPlayer.stream.subscribeToVideo(false);
 
         if (otherPlayer.role != "SARK") {
