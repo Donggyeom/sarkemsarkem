@@ -62,6 +62,12 @@ public class GameSession {
 		this.gameId = gameId;
 		this.players = new ArrayList<>(10);
 		this.phase = PhaseType.READY;
+		this.citizenCount = 1;
+		this.sarkCount = 1;
+		this.policeCount = 1;
+		this.doctorCount = 1;
+		this.bullyCount = 1;
+		this.psychologistCount = 1;
 		this.meetingTime = 60;
 		this.day = 0;
 		this.winTeam = 0;
