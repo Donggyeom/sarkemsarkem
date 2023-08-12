@@ -64,7 +64,7 @@ const VotefootWrapper = styled.div`
 
 const VotefootImage = styled.img`
   position: absolute;
-  top: 95%;
+  top: 93%;
   left: 60%;
   transform: translate(-50%, -50%);
 `;
