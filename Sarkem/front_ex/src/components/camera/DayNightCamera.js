@@ -165,96 +165,96 @@ const CamCatWrapper = styled.div`
   position : relative;
   ${({ camCount, index }) =>
 
-    camCount === 3 && index === 0
-      ? `
-    position: relative;
-    left : 56.5%;
-    `
-      :
-      camCount === 3 && index === 1
-        ? `
-    position: relative;
-    top : 112.5%;
-    `
-        :
-        camCount === 3 && index === 2
-          ? `
-    position: relative;
-    `
-          :
-          camCount === 5 && index === 0
-            ? `
-    position: relative;
-    left : 50%;
-    `
-            :
-            camCount === 5 && index === 1
-              ? `
-    position: relative;
-    left : 50%;
-    `
-              :
-              camCount === 5 && index === 2
-                ? `
-    position: relative;
-    top : 114%;
-    `
-                :
-                camCount === 7 && index === 0
-                  ? `
-    position: relative;
-    left : 50%;
-    `
-                  :
-                  camCount === 7 && index === 1
-                    ? `
-    position: relative;
-    left : 50%;
-    `
-                    :
-                    camCount === 7 && index === 2
-                      ? `
-    position: relative;
-    left : 50%;
-    `
+  camCount === 3 && index === 0
+  ? `
+  position: relative;
+  left : 56.5%;
+  `
+  :
+  camCount === 3 && index === 1
+  ? `
+  position: relative;
+  top : 112.5%;
+  `
+  :
+  camCount === 3 && index === 2
+  ? `
+  position: relative;
+  `
+  :
+  camCount === 5 && index === 0
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 5 && index === 1
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 5 && index === 2
+  ? `
+  position: relative;
+  top : 114%;
+  `
+  :
+  camCount === 7 && index === 0
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 7 && index === 1
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 7 && index === 2
+  ? `
+  position: relative;
+  left : 50%;
+  `
 
-                      :
-                      camCount === 7 && index === 3
-                        ? `
-    position: relative;
-    top : 114%;
-    `
-                        :
-                        camCount === 9 && index === 0
-                          ? `
-    position: relative;
-    left : 50%;
-    `
-                          :
-                          camCount === 9 && index === 1
-                            ? `
-    position: relative;
-    left : 50%;
-    `
-                            :
-                            camCount === 9 && index === 2
-                              ? `
-    position: relative;
-    left : 50%;
-    `
-                              :
-                              camCount === 9 && index === 3
-                                ? `
-    position: relative;
-    left : 50%;
-    `
-                                :
-                                camCount === 9 && index === 4
-                                  ? `
-    position: relative;
-    top : 100%;
-    `
-                                  : ''};
+  :
+  camCount === 7 && index === 3
+  ? `
+  position: relative;
+  top : 114%;
+  `
+  :
+  camCount === 9 && index === 0
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 9 && index === 1
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 9 && index === 2
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 9 && index === 3
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 9 && index === 4
+  ? `
+  position: relative;
+  top : 100%;
+  `
+  : ''};
   `;
 
 const DayNightCamera = React.memo(({ ids }) => {
@@ -339,6 +339,34 @@ const DayNightCamera = React.memo(({ ids }) => {
 
   //   return adjustedCamCount;
   // };
+
+  // const adjustedCamCount = calculateAdjustedCamCount();
+  
+  // useEffect(() => {
+  //   setCamCount(adjustedCamCount);
+  // }, [adjustedCamCount]);
+
+// 위의 함수를 받아와서 아래처럼 사용했음
+
+// <CamCatGrid style={gridStyles}>
+//     {camArray
+//       .filter((user) => {
+//         const userToken = JSON.parse(user.stream.connection.data).token;
+//         return !deadIds.includes(userToken);
+//       })
+//       .map((user, index) => (
+//         <CamCatWrapper
+//           key={index}
+//           camCount={adjustedCamCount}
+//           user={user}
+//           index={index}
+//           onClick={() => handleCamClick(user)}
+//         >
+//           <CamCat props={user} user={user} />
+//           <VotefootWrapper show={clickedCamera === user && startVote}>
+//             <VotefootImage src={voteImage} alt="Vote" />
+//           </VotefootWrapper>
+//         </CamCatWrapper>
 
 
   const handleCamClick = (id) => {

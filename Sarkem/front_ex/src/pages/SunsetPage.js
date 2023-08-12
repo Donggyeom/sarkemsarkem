@@ -66,11 +66,14 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 4) {
     return {
+      marginTop : '5%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 5) {
     return {
+      marginTop : '4%',
+      marginLeft : '2%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
     };
@@ -128,7 +131,6 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 70%;
-    // top : 22.5%;
   `
   :
   camCount === 3 && index === 1
@@ -142,7 +144,6 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 70%;
-    // top : 22.5%;
   `
   :
   camCount === 4 && index === 0
@@ -150,6 +151,7 @@ const CamCatWrapper = styled.div`
     position: relative;
     width : 70%;
     left : 20%;
+    bottom : 25%;
   `
   :
   camCount === 4 && index === 1
@@ -157,7 +159,7 @@ const CamCatWrapper = styled.div`
     position: relative;
     width : 70%;
     right : 80%;
-    top : 55%;
+    top : 30%;
   `
   :
   camCount === 4 && index === 2
@@ -172,7 +174,7 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 70%;
-    top : 25%;
+    top : 5%;
     right : 10%;
   `
   :
@@ -180,37 +182,39 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 90%;
-    left : 45%;
+    left : 35%;
+    bottom : 25%;
   `
   :
   camCount === 5 && index === 1
   ? `
     position: relative;
     width : 90%;
-    right : 55%;
-    top : 50%;
+    right : 65%;
+    top : 25%;  
   `
   :
   camCount === 5 && index === 2
   ? `
     position: relative;
     width : 250%;
-    left : center;
+    left : 3%;
   `
   :
   camCount === 5 && index === 3
   ? `
     position: relative;
     width : 90%;
-    left : 45%;
+    left : 55%;
+    bottom : 25%;
   `
   :
   camCount === 5 && index === 4
   ? `
     position: relative;
     width : 90%;
-    right : 55%;
-    top : 50%;
+    right : 45%;
+    top : 25%;
   `
   :
   camCount === 6 && index === 0
