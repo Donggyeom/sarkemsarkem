@@ -324,7 +324,7 @@ const DayNightCamera = React.memo(({ players }) => {
     console.log(startVote);
     console.log(dayCount);
     console.log(id, "얘는 캠주인");
-    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped) {
+    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped || player.role === "OBSERVER") {
       return;
     }
 
@@ -339,14 +339,14 @@ const DayNightCamera = React.memo(({ players }) => {
   };
 
   const handleConfirmClick = () => {
-    if (clickedCamera && !isConfirmed) {
+    if (clickedCamera && !isConfirmed || player.role === "OBSERVER") {
       setIsConfirmed(true);
       selectConfirm();
     }
   };
 
   const handleSkipClick = () => {
-    if (!isConfirmed && !isSkipped && startVote) {
+    if (!isConfirmed && !isSkipped && startVote || player.role == "OBSERVER") {
       setIsSkipped(true);
       setClickedCamera(null);
       setSelectedTarget("");
@@ -456,8 +456,7 @@ const DayNightCamera = React.memo(({ players }) => {
 
   return (
     <CamCatGrid style={gridStyles}>
-      {players && players
-      .map((otherPlayer, index) => (
+      {players && players.map((otherPlayer, index) => (
         <CamCatWrapper
           key={index}
           camCount={camCount}
@@ -466,9 +465,6 @@ const DayNightCamera = React.memo(({ players }) => {
           onClick={() => handleCamClick(otherPlayer.playerId)}
         >
           <CamCat id={otherPlayer.playerId} />
-          {/* {clickedCameras.includes(index) && (
-              <Votefoot src={voteImage} alt="Vote" />
-            )} */}
           <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
@@ -477,8 +473,8 @@ const DayNightCamera = React.memo(({ players }) => {
       <ButtonWrapper>
         {dayCount === 1 && phase === 'day' ? (
           <>
-            {startVote && (
-              <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+            {startVote && !isSkipped && (
+              <ActionButton onClick={handleSkipClick} disabled={isConfirmed}>
                 {isSkipped ? '스킵됨' : '스킵하기'}
               </ActionButton>
             )}
@@ -488,26 +484,19 @@ const DayNightCamera = React.memo(({ players }) => {
             {isConfirmed ? (
               <ActionButton disabled>확정됨</ActionButton>
             ) : (
-              startVote && (
-                <ActionButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
+              startVote && !isSkipped && player.role !== "OBSERVER" && (
+                <ActionButton onClick={handleConfirmClick} disabled={!clickedCamera}>
                   {clickedCamera ? '확정하기' : '투표할 사람을 선택하세요'}
                 </ActionButton>
               )
             )}
-            {startVote && (
-              <ActionButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+            {startVote && !isSkipped && player.role !== "OBSERVER" && (
+              <ActionButton onClick={handleSkipClick} disabled={isConfirmed}>
                 {isSkipped ? '스킵됨' : '스킵하기'}
               </ActionButton>
             )}
           </>
         )}
-        {/* <ActionButton onClick={startHiddenMission}>
-          히든미션
-        </ActionButton>
-        <ActionButton onClick={stopHiddenMission}>
-          미션 종료
-        </ActionButton>
-        <p>Detected Gesture: {detectedGesture}</p> */}
       </ButtonWrapper>
     </CamCatGrid>
   );

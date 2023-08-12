@@ -745,10 +745,19 @@ const SunsetPage = () => {
         }
       </CamCatGrid>
 
-<div>
-  <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
-  <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
-</div>
+      <div>
+      {player.role === "OBSERVER" ? (
+        <>
+          <AgreeButton onClick={null} disabled />
+          <DisagreeButton onClick={null} disabled />
+        </>
+      ) : (
+        <>
+          <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
+          <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
+        </>
+      )}
+    </div>
 <ScMini />
 </StyledContent>
 <TempButton url={`/${roomSession.roomId}/night`} onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
