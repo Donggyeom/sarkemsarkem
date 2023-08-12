@@ -513,35 +513,44 @@ public class GameManager {
 		GameSession gameSession = getGameSession(roomId);
 		List<String> nickname = new ArrayList<>();
 		List<String> job = new ArrayList<>();
+		List<String> role = new ArrayList<>();
 		Map<String, List<String>> param = new HashMap<>();
 		for (RolePlayer rp : gameSession.getPlayers()) {
 			nickname.add(rp.getNickname());
 			switch (rp.getRole()) {
 			case CITIZEN: 
 				job.add("시민");
+				role.add("CITIZEN");
 				break;
 			case SARK: 
 				job.add("삵");
+				role.add("SARK");
 				break;
 			case DOCTOR: 
 				job.add("수의사");
+				role.add("DOCTOR");
 				break;
 			case POLICE: 
 				job.add("경찰");
+				role.add("POLICE");
 				break;
 			case PSYCHO: 
 				job.add("심리학자");
+				role.add("PSYCHO");
 				break;
 			case BULLY: 
 				job.add("냥아치");
+				role.add("BULLY");
 				break;
 			case DETECTIVE: 
 				job.add("탐정");
+				role.add("DETECTIVE");
 				break;
 			}
 		}
 		param.put("nickname", nickname);
 		param.put("job", job);
+		param.put("role", role);
 		log.debug(param.toString());
 		sendJobDiscloseMessage(roomId, param);
 	}

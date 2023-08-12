@@ -283,10 +283,10 @@ const DayNightCamera = React.memo(({ players }) => {
       // 마피아 넣는 작업
       let sarkArray = [];
       for (let player of players) {
-        if (player.role === Roles.SARK) sarkArray.push(player);
+        if (player.role === "SARK") sarkArray.push(player);
       }
 
-      if (player.role === Roles.DETECTIVE) {
+      if (player.role === "DETECTIVE") {
         changeVoice(sarkArray);
       }
     }
@@ -414,21 +414,21 @@ const DayNightCamera = React.memo(({ players }) => {
   }
 
   const nightCamAudio = () => {
-    if (player.role == Roles.DETECTIVE) {
+    if (player.role == "DETECTIVE") {
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
       for (let otherPlayer of players) {
         otherPlayer.stream.subscribeToVideo(false);
 
-        if (otherPlayer.role != Roles.SARK) {
+        if (otherPlayer.role != "SARK") {
           otherPlayer.stream.subscribeToAudio(false);
         }
       }
     }
-    else if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
+    else if (player.role == "SARK" || player.role == "OBSERVER") {
 
       for (let otherPlayer of players) {
         console.log(otherPlayer.stream)
-        if (otherPlayer.role != Roles.SARK) {
+        if (otherPlayer.role != "SARK") {
           otherPlayer.stream.subscribeToVideo(false);
           otherPlayer.stream.subscribeToAudio(false);
         }
@@ -450,7 +450,7 @@ const DayNightCamera = React.memo(({ players }) => {
   const dayCamAudio = () => {
     for (let otherPlayer of players) {
       if (player.playerId == otherPlayer.playerId) continue;  // 내가 아닌 경우에만 설정
-      if (otherPlayer.role == Roles.OBSERVER) continue;            // 관전자가 아닌 경우에만 설정
+      if (otherPlayer.role == "OBSERVER") continue;            // 관전자가 아닌 경우에만 설정
 
       otherPlayer.stream.subscribeToVideo(true);
       otherPlayer.stream.subscribeToAudio(true);
