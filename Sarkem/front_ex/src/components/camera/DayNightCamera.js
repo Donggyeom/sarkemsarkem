@@ -343,7 +343,7 @@ const DayNightCamera = React.memo(({ players }) => {
     console.log(startVote);
     console.log(dayCount);
     console.log(id, "얘는 캠주인");
-    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped) {
+    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped || player.role === "OBSERVER") {
       return;
     }
 
@@ -358,14 +358,14 @@ const DayNightCamera = React.memo(({ players }) => {
   };
 
   const handleConfirmClick = () => {
-    if (clickedCamera && !isConfirmed) {
+    if (clickedCamera && !isConfirmed || player.role === "OBSERVER") {
       setIsConfirmed(true);
       selectConfirm();
     }
   };
 
   const handleSkipClick = () => {
-    if (!isConfirmed && !isSkipped && startVote) {
+    if (!isConfirmed && !isSkipped && startVote || player.role == "OBSERVER") {
       setIsSkipped(true);
       setClickedCamera(null);
       setSelectedTarget("");
@@ -388,6 +388,7 @@ const DayNightCamera = React.memo(({ players }) => {
       console.log("player.role == DETECTIVE");
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
       for (let otherPlayer of players) {
+        if (player === otherPlayer) continue;
         otherPlayer.stream.subscribeToVideo(false);
 
         if (otherPlayer.role != "SARK") {
@@ -475,8 +476,7 @@ const DayNightCamera = React.memo(({ players }) => {
 
   return (
     <CamCatGrid style={gridStyles}>
-      {players && players
-      .map((otherPlayer, index) => (
+      {players && players.map((otherPlayer, index) => (
         <CamCatWrapper
           key={index}
           camCount={camCount}
@@ -485,9 +485,6 @@ const DayNightCamera = React.memo(({ players }) => {
           onClick={() => handleCamClick(otherPlayer.playerId)}
         >
           <CamCat id={otherPlayer.playerId} />
-          {/* {clickedCameras.includes(index) && (
-              <Votefoot src={voteImage} alt="Vote" />
-            )} */}
           <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
@@ -522,13 +519,6 @@ const DayNightCamera = React.memo(({ players }) => {
             )}
           </>
         )}
-        {/* <ActionButton onClick={startHiddenMission}>
-          히든미션
-        </ActionButton>
-        <ActionButton onClick={stopHiddenMission}>
-          미션 종료
-        </ActionButton>
-        <p>Detected Gesture: {detectedGesture}</p> */}
       </ButtonWrapper>
     </CamCatGrid>
   );
