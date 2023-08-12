@@ -48,12 +48,10 @@ public class GameController {
 				// 방장이 아닌 사용자에게 에러 메세지 전송
 				gameManager.sendSystemMessage(roomId, playerId, SystemCode.ONLY_HOST_ACTION, null);
 			} 
-			else if (!gameManager.checkStartable(roomId)){
-				// 시작 가능 여부 확인
-				gameManager.sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.", PhaseType.READY);
+			else if (gameManager.checkStartable(roomId, playerId)){
+				// 시작 가능 여부 확인 수 게임 실행(시작 불가 경우 checkStartable에서 메시지 보냄)
+				gameManager.gameStart(roomId);
 			}
-			// 게임 실행
-			else gameManager.gameStart(roomId);
 			break;
 		// 추방투표
 		case EXPULSION_VOTE:

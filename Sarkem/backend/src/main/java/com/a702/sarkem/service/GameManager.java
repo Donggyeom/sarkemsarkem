@@ -142,7 +142,7 @@ public class GameManager {
 			// 방장 변경하기
 			setHostId(roomId, nextHost);
 			sendChangeHostMessage(roomId, nextHost);
-			sendNoticeMessageToPlayer(roomId, nextHost, "호스트 귀하로 변경되었습니다.", PhaseType.READY);
+			sendNoticeMessageToPlayer(roomId, nextHost, "호스트가 귀하로 변경되었습니다.", PhaseType.READY);
 			System.out.println("방장이 변경되었습니다." + playerId + " " + getHostId(roomId));
 		}
 	}
@@ -265,7 +265,7 @@ public class GameManager {
 	 * @param roomId
 	 * @return
 	 */
-	public boolean checkStartable(String roomId) {
+	public boolean checkStartable(String roomId, String playerId) {
 		// 플레이어 수와 역할 수 일치 여부 확인
 		GameRoom room = gameRoomMap.get(roomId);
 		GameSession gameSession = getGameSession(roomId);
@@ -282,8 +282,30 @@ public class GameManager {
 		log.debug("플레이어 수 : " + playerCount + "\n 설정된 직업 수 : " + optionRoleCount);
 
 
-		if (playerCount != optionRoleCount)
+		if (playerCount != optionRoleCount) {
+			sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.", PhaseType.READY);
 			return false;
+		} 
+		// TODO: 테스트를 위해 아래 elif문 일단 주석, 나중에 주석 풀어야함
+//		else if(playerCount<6) {
+//			sendNoticeMessageToPlayer(roomId, playerId, "최소 6명 이상 플레이 가능합니다.", PhaseType.READY);
+//			return false;
+//		}
+		// 삵이 한명인데 탐정이 있으면 안됨
+		else if(gameSession.getSarkCount()==1&&gameSession.getDetectiveCount()>0) { 
+			sendNoticeMessageToPlayer(roomId, playerId, "삵이 2명 이상일 때 탐정 직업을 가질 수 있습니다.", PhaseType.READY);
+			return false;
+		}
+		// 삵이 아예 없으면 안됨
+		else if(gameSession.getSarkCount()==0) { 
+			sendNoticeMessageToPlayer(roomId, playerId, "삵이 1명 이상 있어야합니다.", PhaseType.READY);
+			return false;
+		}
+		// 삵이 시민팀 수보다 많거나 같으면 안됨
+		else if(gameSession.getSarkCount()>=(playerCount+1)/2) { 
+			sendNoticeMessageToPlayer(roomId, playerId, "삵은 시민팀 수보다 적어야합니다.", PhaseType.READY);
+			return false;
+		}
 		return true;
 	}
 
