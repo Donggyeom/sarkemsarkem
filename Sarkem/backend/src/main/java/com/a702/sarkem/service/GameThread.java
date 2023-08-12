@@ -413,13 +413,13 @@ public class GameThread extends Thread {
 	private boolean isPlayersVoteEnded() throws InterruptedException {
 		List<RolePlayer> players = gameSession.getPlayers();
 		int confirmCnt = 0;
-		int time = gameSession.getMeetingTime();
+		int time = gameSession.getMeetingTime() + 5;
 		int idx = 0;
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		// 남은 시간 보내기
 		while (true) {
-			if(idx%2==0) {
-				remainTime.put("time", time--);
+			if(idx%10==0) {
+				remainTime.put("time", time -= 5);
 				gameManager.sendRemainTime(roomId, remainTime);
 			}
 			idx++;
@@ -442,8 +442,11 @@ public class GameThread extends Thread {
 		int time = gameSession.getMeetingTime();
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		while (true) {
-			remainTime.put("time", time--);
-			gameManager.sendRemainTime(roomId, remainTime);
+			if(time % 5 == 0) {
+				remainTime.put("time", time);
+				gameManager.sendRemainTime(roomId, remainTime);
+			}
+			time--;
 			if (time <= 0) break;
 			sleep(1000);
 		}
