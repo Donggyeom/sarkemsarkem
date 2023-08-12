@@ -339,7 +339,7 @@ const GameProvider = ({ children }) => {
         if (sysMessage.param.hasOwnProperty("target")) {
             // setVotesituation(sysMessage.param.target);
             console.log(sysMessage.param.target, "타겟저장");
-            setVotesituation({ [sysMessage.param.target]: sysMessage.param.target });
+            setVotesituation({ [sysMessage.param.target]: 1 });
         } else {
             setVotesituation(sysMessage.param);
             setVoteTargetId("");

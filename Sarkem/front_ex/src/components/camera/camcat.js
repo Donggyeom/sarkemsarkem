@@ -45,27 +45,21 @@ const CamCat = ({id}) => {
   };
 
   const getVoteResultForUser = (id) => {
-    console.log(id);
+    let player = players.current.get(id);
     if (phase === 'day') {
-      let player = players.current.get(id);
       if (voteSituation && voteSituation[id] !== undefined) {
         return `X  ${voteSituation[id]}`;
       }
       return `X 0`;
 
     }
-    else if (phase === 'night') {
-      if (player.role === "SARK" || player.role === "OBSERVER") {
-        if (voteSituation[id]) {
+    else if (phase === 'night'){
+      console.log(player.role, "직업");
+        if (voteSituation && voteSituation[id]) {
           return `삵이 죽일 사람`;
-        }
-        return `투표하지 않음`;
       }
-      return ''; // sark나 observer가 아닌 경우
     }
-    return ''; // day나 night가 아닌 경우
-  };
-
+  }
   return (
       <div
         style={{
