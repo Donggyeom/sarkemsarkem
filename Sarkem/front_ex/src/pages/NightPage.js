@@ -65,35 +65,37 @@ const NightPage = () => {
 
 
   const handleCamButtonClick = () => {
-    const camOn = !player.isCamOn;
-    setPlayer((prevState) => {
-      return {...prevState,
-        isCamOn: camOn,
-      };
-    });
-    if (player.stream) {
-      player.stream.publishVideo(camOn);
+    const camOn = !player.current.isCamOn;
+    // setPlayer((prevState) => {
+    //   return {...prevState,
+    //     isCamOn: camOn,
+    //   };
+    // });
+    setPlayer([{key: 'isCamOn', value: camOn}]);
+    if (player.current.stream) {
+      player.current.stream.publishVideo(camOn);
     }
   };
   
   const handleMicButtonClick = () => {
-    const micOn = !player.isMicOn;
-    setPlayer((prevState) => {
-      return {...prevState,
-        isMicOn: micOn,
-      };
-    });
-    if (player.stream) {
-      player.stream.publishAudio(micOn);
+    const micOn = !player.current.isMicOn;
+    // setPlayer((prevState) => {
+    //   return {...prevState,
+    //     isMicOn: micOn,
+    //   };
+    // });
+    setPlayer([{key: 'isMicOn', value: micOn}]);
+    if (player.current.stream) {
+      player.current.stream.publishAudio(micOn);
     }
   };
 
   const turnOffCams = () =>{
-    if (player.role === 'SARK' || player.role === 'OBSERVER') return;
+    if (player.current.role === 'SARK' || player.current.role === 'OBSERVER') return;
 
     console.log("꺼졌니?")
-    player.stream.publishVideo(false);
-    player.stream.publishAudio(false);
+    player.current.stream.publishVideo(false);
+    player.current.stream.publishAudio(false);
   };
   
   const [isLogOn, setIsLogOn] = useState(true);
@@ -115,17 +117,17 @@ const NightPage = () => {
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{remainTime}</TimeSecond>
-        {player.role === 'SARK' ? (
-          <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
+        {player.current.role === 'SARK' ? (
+          <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
         ) : (
           <NoCamButton alt="Cam Button" />
         )}
-        {player.role === 'SARK' ? (
-          <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
+        {player.current.role === 'SARK' ? (
+          <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
         ) : (
           <NoMicButton alt="Mic Button" />
         )}
-        {/* {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>} */}
+        {/* {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>} */}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
           {/* <NightPopup></NightPopup> */}
           {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={dayCount}/>}

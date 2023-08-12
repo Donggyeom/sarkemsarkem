@@ -154,7 +154,7 @@ const ResultPage = () => {
     // if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
     
     // 데이터 초기화
-    setPlayer({});
+    setPlayer.current = {};
     // setPlayers(new Map());
     players.current = new Map();
     console.log("새로운 방 만들기")
@@ -168,7 +168,7 @@ const ResultPage = () => {
     
     // 데이터 초기화
     // setSession(undefined);
-    setPlayer({});
+    setPlayer.current = {};
     // setPlayers(new Map());
     players.current = new Map();
     console.log("홈으로 나가기")

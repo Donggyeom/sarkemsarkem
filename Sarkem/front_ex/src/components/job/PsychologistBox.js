@@ -30,7 +30,7 @@ const Psychologistboxdiv = styled.div`
 const PsychologistBox = () => {
     // const { 심리학자어쩌구 } = useGameContext();
     const { player } = useRoomContext(); //target도 추가해야 함
-    const role = player.role;
+    const role = player.current.role;
     console.log('ㅇㅇ됨');
 
     if (role === 'PSYCHO') { //&&  target===true

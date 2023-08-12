@@ -97,7 +97,7 @@ const ScMini = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(scMiniPopUp);
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state
 
-  const role = player.role;
+  const role = player.current.role;
   
   const handleScMiniClick = () => {
     const clickAudio = new Audio(ingameClickSound);

@@ -54,7 +54,7 @@ const CamCat = ({id}) => {
 
     }
       else if (phase === 'night') {
-        if (player.role === "SARK" || player.role === "OBSERVER") {
+        if (player.current.role === "SARK" || player.current.role === "OBSERVER") {
           if (voteSituation[id]) {
             return `삵이 죽일 사람`;
           }

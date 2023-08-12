@@ -7,6 +7,13 @@ import { useRoomContext } from '../../Context';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
 
+import skipImg from '../../img/btn_스킵하기.png';
+import skipClearImg from '../../img/tb_endskip.png';
+import voteImg from '../../img/btn_투표확정.png';
+import voteClearImg from '../../img/tb_endvote.png';
+
+
+
 
 const StyledVoteResultDiv = styled.div`
   position: absolute;
@@ -43,9 +50,21 @@ const ActionButton = styled.button`
   cursor: pointer;
 `;
 
+const VoteButton = styled.button`
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  top: 30%;
+`;
+
+const VoteImage = styled.img`
+  width: 80%;
+  // height: 60%;
+`;
+
 const ButtonWrapper = styled.div`
   position: absolute;
-  bottom: 10px;
+  bottom: -45px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -259,8 +278,7 @@ const CamCatWrapper = styled.div`
 
 const DayNightCamera = React.memo(({ players }) => {
   const { player } = useRoomContext();
-  const [camCount, setCamCount] = useState(players.length);
-  const gridStyles = calculateGrid(camCount);
+  const gridStyles = calculateGrid(players.length);
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
@@ -269,7 +287,7 @@ const DayNightCamera = React.memo(({ players }) => {
     detectedGesture, voteSituation, phase,
     Roles, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext,
     voteTargetId, deadIds, hiddenMission, setHiddenMission, loadGestureRecognizer } = useGameContext();
-
+    
   useEffect(() => {
     setIsConfirmed(false);
     setClickedCamera(null);
@@ -289,6 +307,16 @@ const DayNightCamera = React.memo(({ players }) => {
       if (player.role === "DETECTIVE") {
         changeVoice(sarkArray);
       }
+
+      return () => {
+        for (let otherPlayer of players) {
+          if (player.current === otherPlayer) continue;
+          
+          if (otherPlayer.role === 'SARK'){
+            otherPlayer.stream.off('streamPropertyChanged', handleSarksCam);
+          }
+        }
+      };
     }
     else if (phase === "day") {
       dayCamAudio();
@@ -300,6 +328,7 @@ const DayNightCamera = React.memo(({ players }) => {
       // }
     }
 
+    
   }, [startVote, phase]);
 
   // useEffect(() => {
@@ -363,23 +392,35 @@ const DayNightCamera = React.memo(({ players }) => {
     stopPredicting();
   }
 
+  const handleSarksCam = (sark) => {
+    console.log("삵의 properties 변화가 감지되었습니다.");
+    console.log(sark);
+    sark.target.subscribeToVideo(false);
+    if (player.role !== "DETECTIVE") {
+      sark.target.subscribeToAudio(false);
+    }
+  }
+
   const nightCamAudio = () => {
-    console.log(player.role, "nightCamAudio");
-    if (player.role == "DETECTIVE") {
-      console.log("player.role == DETECTIVE");
+    if (player.current.role == "DETECTIVE") {
+      console.log("player.current.role == DETECTIVE");
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
       for (let otherPlayer of players) {
-        if (player === otherPlayer) continue;
+        if (player.current === otherPlayer) continue;
+
         otherPlayer.stream.subscribeToVideo(false);
 
         if (otherPlayer.role != "SARK") {
           otherPlayer.stream.subscribeToAudio(false);
+        } else {
+          otherPlayer.stream.on('streamPropertyChanged', handleSarksCam);
         }
       }
     }
-    else if (player.role == "SARK" || player.role == "OBSERVER") {
-      console.log("player.role == SARK OBSERVER");
+    else if (player.current.role == "SARK" || player.current.role == "OBSERVER") {
+      console.log("player.current.role == SARK OBSERVER");
       for (let otherPlayer of players) {
+        if (player.current === otherPlayer) continue;
         console.log(otherPlayer.stream)
         if (otherPlayer.role != "SARK") {
           otherPlayer.stream.subscribeToVideo(false);
@@ -389,13 +430,14 @@ const DayNightCamera = React.memo(({ players }) => {
     }
     else {
       // 마피아, 탐정, 관전자를 제외한 나머지 플레이어의 화면에서 모두의 캠, 오디오를 끈다.
-      console.log("player.role == others");
+      console.log("player.current.role == others");
       console.log(players);
       for (let otherPlayer of players) {
-        if (player === otherPlayer) continue;
+        if (player.current === otherPlayer) continue;
         console.log("여기까진 오니");
         otherPlayer.stream.subscribeToVideo(false);
         otherPlayer.stream.subscribeToAudio(false);
+        if (otherPlayer.role === 'SARK') otherPlayer.stream.on('streamPropertyChanged', handleSarksCam);
       }
     }
   }
@@ -403,7 +445,7 @@ const DayNightCamera = React.memo(({ players }) => {
 
   const dayCamAudio = () => {
     for (let otherPlayer of players) {
-      if (player.playerId == otherPlayer.playerId) continue;  // 내가 아닌 경우에만 설정
+      if (player.current === otherPlayer) continue;  // 내가 아닌 경우에만 설정
       if (otherPlayer.role == "OBSERVER") continue;            // 관전자가 아닌 경우에만 설정
 
       otherPlayer.stream.subscribeToVideo(true);
@@ -460,7 +502,7 @@ const DayNightCamera = React.memo(({ players }) => {
       {players && players.map((otherPlayer, index) => (
         <CamCatWrapper
           key={index}
-          camCount={camCount}
+          camCount={players.length}
           user={otherPlayer.playerId}
           index={index}
           onClick={() => handleCamClick(otherPlayer.playerId)}
@@ -474,27 +516,29 @@ const DayNightCamera = React.memo(({ players }) => {
       <ButtonWrapper>
         {dayCount === 1 && phase === 'day' ? (
           <>
-            {startVote && !isSkipped && (
-              <ActionButton onClick={handleSkipClick} disabled={isConfirmed}>
-                {isSkipped ? '스킵됨' : '스킵하기'}
-              </ActionButton>
+            {startVote && (
+            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
+            </VoteButton>
             )}
           </>
         ) : (
           <>
             {isConfirmed ? (
-              <ActionButton disabled>확정됨</ActionButton>
+              <VoteButton disabled >
+                <VoteImage src={voteClearImg} alt="Vote" />
+              </VoteButton>
             ) : (
-              startVote && !isSkipped && player.role !== "OBSERVER" && (
-                <ActionButton onClick={handleConfirmClick} disabled={!clickedCamera}>
-                  {clickedCamera ? '확정하기' : '투표할 사람을 선택하세요'}
-                </ActionButton>
+              startVote && (
+              <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
+                <VoteImage src={clickedCamera ? voteImg : voteImg} alt="Vote" />
+              </VoteButton>
               )
             )}
-            {startVote && !isSkipped && player.role !== "OBSERVER" && (
-              <ActionButton onClick={handleSkipClick} disabled={isConfirmed}>
-                {isSkipped ? '스킵됨' : '스킵하기'}
-              </ActionButton>
+            {startVote && (
+            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
+              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
+            </VoteButton>
             )}
           </>
         )}
