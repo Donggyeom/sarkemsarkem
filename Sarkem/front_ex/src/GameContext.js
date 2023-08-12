@@ -313,6 +313,7 @@ const GameProvider = ({ children }) => {
         setPsyTarget("");//심리학자 끝
         setPsychologist(false);
         setHiddenMission(false);// 밤이 되면 마피아 미션 끝
+        setVotesituation({});
         console.log(phase);
         navigate(`/${roomSession.roomId}/night`);
         break;
@@ -328,8 +329,6 @@ const GameProvider = ({ children }) => {
     case "TARGET_SELECTION":
         // alert('투표가 시작됐습니다');
         setStartVote(true);
-        setVotesituation({});
-    
         if (sysMessage.param && sysMessage.param.day !== undefined && sysMessage.param.day !== null) {
             setDayCount(sysMessage.param.day);
         }

@@ -545,13 +545,13 @@ const DayNightCamera = React.memo(({ ids }) => {
             )}
           </>
         )}
-        <ActionButton onClick={startHiddenMission}>
+        {/* <ActionButton onClick={startHiddenMission}>
           히든미션
         </ActionButton>
         <ActionButton onClick={stopHiddenMission}>
           미션 종료
         </ActionButton>
-        <p>Detected Gesture: {detectedGesture}</p>
+        <p>Detected Gesture: {detectedGesture}</p> */}
       </ButtonWrapper>
     </CamCatGrid>
   );

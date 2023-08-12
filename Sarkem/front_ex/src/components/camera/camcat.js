@@ -14,13 +14,14 @@ const Box = styled.div
 
 
 const CamCat = ({id}) => {
-  const { players } = useRoomContext();
+  const { players, player } = useRoomContext();
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const { psyTarget, psychologist, voteSituation, phase } = useGameContext();
-  const player = players.current.get(id);
-  const stream = player.stream;
+  const current = players.current.get(id);
+  const stream = current.stream;
+
 
   useEffect(() => {
     loadModels();
@@ -34,7 +35,7 @@ const CamCat = ({id}) => {
   //faceapi 실행
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
-    if(player.playerId===psyTarget){
+    if(current.playerId===psyTarget){
       const id = faceMyDetect(stream.videos[1].video, setBoxPosition, running, setRunning);
       setIntervalId(id);
     }
@@ -45,7 +46,6 @@ const CamCat = ({id}) => {
   };
 
   const getVoteResultForUser = (id) => {
-    let player = players.current.get(id);
     if (phase === 'day') {
       if (voteSituation && voteSituation[id] !== undefined) {
         return `X  ${voteSituation[id]}`;
@@ -53,13 +53,18 @@ const CamCat = ({id}) => {
       return `X 0`;
 
     }
-    else if (phase === 'night'){
-      console.log(player.role, "직업");
-        if (voteSituation && voteSituation[id]) {
-          return `삵이 죽일 사람`;
+      else if (phase === 'night') {
+        if (player.role === "SARK" || player.role === "OBSERVER") {
+          if (voteSituation[id]) {
+            return `삵이 죽일 사람`;
+          }
+          return `투표하지 않음`;
+        }
+        return ''; // sark나 observer가 아닌 경우
       }
-    }
-  }
+      return ''; // day나 night가 아닌 경우
+    };
+
   return (
       <div
         style={{
@@ -118,10 +123,10 @@ const CamCat = ({id}) => {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: '3px' }}>
             <div style={{ flex: 1, textAlign: 'right' }}>
-              {player.nickName}
+              {current.nickName}
             </div>
             <div style={{ flex: 0.8, textAlign: 'center' }}>
-              {getVoteResultForUser(player.playerId)}
+              {getVoteResultForUser(current.playerId)}
             </div>
           </div>
         </div>
