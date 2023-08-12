@@ -26,7 +26,7 @@ const GoroomButton = (props) => {
 
   const handleButtonClick = async () => {
 
-    if (player.nickName === "ALL") {
+    if (player.current.nickName === "ALL") {
       alert("해당 닉네임은 사용할 수 없습니다.");
       return;
     }
@@ -38,7 +38,7 @@ const GoroomButton = (props) => {
     navigate("/loading");
     
     // 게임방이 없을 경우 게임방 생성
-    if (player.isHost) {
+    if (player.current.isHost) {
       const response = await createGameRoom(roomId);
 
       if (response.status != '200') {
@@ -70,18 +70,23 @@ const GoroomButton = (props) => {
     console.log("sessionStorage에 gameId를 갱신합니다.")
     window.sessionStorage.setItem("gameId", gameRoom.gameId);
 
-    let players = new Map();
+    // let players = new Map();
     gameRoom.players.forEach(element => {
-      var p = players.get(element.playerId);
+      var p = players.current.get(element.playerId);
       if (p == null) {
-        players.set(element.playerId, {
+        setPlayers({
           playerId: element.playerId,
           nickName: element.nickname
         });
       }
+      else {
+        setPlayers({
+          playerId: p.playerId,
+          nickName: p.nickname
+        });
+      }
     });
     // setPlayers(players);
-    players.current = players;
     // 게임 세션 갱신
     const isEnterable = await getGameSession(gameRoom.roomId);
     if (!isEnterable) {
@@ -95,7 +100,7 @@ const GoroomButton = (props) => {
     navigate(`/${roomId}/lobby`);
   };
 
-  return <GoroomButtonImage src={player.isHost ? makeRoomButtonSrc : goroomButtonSrc} alt={player.isHost ? "방 만들기" : "입장하기"} onClick={handleButtonClick} />;
+  return <GoroomButtonImage src={player.current.isHost ? makeRoomButtonSrc : goroomButtonSrc} alt={player.current.isHost ? "방 만들기" : "입장하기"} onClick={handleButtonClick} />;
 };
 
 

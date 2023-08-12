@@ -7,7 +7,7 @@ const RoomContext = createContext();
 
 const RoomProvider = ({ children }) => {
   const [roomSession, setRoomSession] = useState({});
-  const [player, setPlayer] = useState({});
+  const player = useRef({});
   const players = useRef(new Map());
   const [showImage, setShowImage] = useState(false);
 
@@ -25,19 +25,20 @@ const RoomProvider = ({ children }) => {
   }, []);
 
 
-  useEffect(() => {
-    console.log(`useEffect player`);
-    console.log(player);
-    console.log(player.stream);
-    if (player.stream == undefined) return;
+  // useEffect(() => {
+  //   console.log(`useEffect player`);
+  //   console.log(player);
+  //   console.log(player.stream);
+  //   if (player.stream == undefined) return;
 
-    console.log('player 변경');
-    console.log(player);
-    // setPlayers((prev) => {
-    //   return new Map(prev).set(player.playerId, player);
-    // });
-    players.current.set(player.playerId, player);
-  }, [player]);
+  //   console.log('player 변경');
+  //   console.log(player);
+  //   // setPlayers((prev) => {
+  //   //   return new Map(prev).set(player.playerId, player);
+  //   // });
+  //   players.current.set(player.playerId, player);
+  // }, [player]);
+
 
 
   // useEffect(() => {
@@ -58,6 +59,24 @@ const RoomProvider = ({ children }) => {
 
 
   ////////////   RoomContext 함수   ////////////
+  
+  const setPlayer = (props) => {
+    if (!player.current) return;
+
+    for (let prop of props) {
+      player.current[prop.key] = prop.value;
+    }
+    
+    if (player.current.playerId === undefined) return;
+    console.log('setPlayer', props);
+    setPlayers(player.current);
+  }
+
+  const setPlayers = (player) => {
+    if (!players.current) return;
+    players.current.set(player.playerId, player);
+    console.log('setPlayers', players.current);
+  }
 
   const getGameRoom = async (roomId) => {
     // 게임방 정보 획득
@@ -103,7 +122,7 @@ const RoomProvider = ({ children }) => {
       // setSession(undefined);
       // setPlayers(new Map());
       players.current = new Map();
-      setPlayer({});
+      player.current = {};
       navigate(`/${roomSession.roomId}`)
   }
 
@@ -129,7 +148,8 @@ const RoomProvider = ({ children }) => {
       // setPlayers((prev) => {
       //   return new Map(prev).set(newPlayer.playerId, newPlayer);
       // });
-      players.current.set(newPlayer.playerId, newPlayer);
+      // players.current.set(newPlayer.playerId, newPlayer);
+      setPlayers(newPlayer);
       console.log(newPlayer.nickName, "님이 접속했습니다.");
     });
 
@@ -177,17 +197,17 @@ const RoomProvider = ({ children }) => {
       await session.connect(data.token, {
         nickName: data.nickName, 
         playerId: data.playerId,
-        isMicOn: player.isMicOn,
-        isCamOn: player.isCamOn,
-        isHost: player.isHost,
+        isMicOn: player.current.isMicOn,
+        isCamOn: player.current.isCamOn,
+        isHost: player.current.isHost,
       });
 
       // 내 퍼블리셔 객체 생성
       let publisher = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
-        publishAudio: player.isMicOn,
-        publishVideo: player.isCamOn,
+        publishAudio: player.current.isMicOn,
+        publishVideo: player.current.isCamOn,
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
@@ -197,15 +217,16 @@ const RoomProvider = ({ children }) => {
       session.publish(publisher);
 
       // 내 디바이스 on/off 상태 게시
-      publisher.publishVideo(player.isCamOn);
-      publisher.publishAudio(player.isMicOn);
+      publisher.publishVideo(player.current.isCamOn);
+      publisher.publishAudio(player.current.isMicOn);
       // 퍼블리셔 useState 갱신
-      setPlayer((prevState) => {
-        return ({
-          ...prevState,
-          stream: publisher,
-        });
-      });
+      // setPlayer((prevState) => {
+      //   return ({
+      //     ...prevState,
+      //     stream: publisher,
+      //   });
+      // });
+      setPlayer([{key: 'stream', value: publisher}]);
     }
     catch (error) {
       console.error(error);
@@ -221,7 +242,7 @@ const RoomProvider = ({ children }) => {
     console.log(`${roomId} 세션을 생성합니다.`);
     const response = await axios.post('/api/game', { 
       customSessionId: roomId, 
-      nickName: player.nickName,
+      nickName: player.current.nickName,
     }, 
     {
       headers: { 'Content-Type': 'application/json;charset=utf-8', },
@@ -236,19 +257,24 @@ const RoomProvider = ({ children }) => {
   // 서버에 요청하여 토큰 생성하는 함수
   const getToken = async (roomId) => {
     console.log("세션에 연결을 시도합니다.")
-    console.log(player.nickName);
-    const response = await axios.post(`/api/game/${roomId}/player`, player.nickName, {
+    console.log(player.current.nickName);
+    const response = await axios.post(`/api/game/${roomId}/player`, player.current.nickName, {
       headers: { 'Content-Type': 'application/json;charset=utf-8', },
     });
     
     console.log('createToken ' + response.data.playerId);
-    setPlayer((prevState => {
-      return ({
-        ...prevState,
-        playerId: response.data.playerId,
-        nickName: response.data.nickName,
-      });
-    }));
+    // setPlayer((prevState => {
+    //   return ({
+    //     ...prevState,
+    //     playerId: response.data.playerId,
+    //     nickName: response.data.nickName,
+    //   });
+    // }));
+    try {
+      setPlayer([{key: 'playerId', value: response.data.playerId}, {key: 'nickName', value: response.data.nickName}]);
+    } catch(err) {
+      console.log(err);
+    }
     // sessionStorage에 playerId 갱신
     console.log("sessionStorage에 playerId를 갱신합니다.")
     window.sessionStorage.setItem("playerId", response.data.playerId);
@@ -264,7 +290,7 @@ const RoomProvider = ({ children }) => {
   return (
     <RoomContext.Provider value={{ roomSession, setRoomSession, createGameRoom, getGameRoom,
       OV, initSession, connectSession, leaveSession, getToken,  
-      player, setPlayer, players }}>
+      player, setPlayer, players, setPlayers }}>
       {children}
     </RoomContext.Provider>
   );

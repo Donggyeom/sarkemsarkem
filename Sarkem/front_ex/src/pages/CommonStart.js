@@ -185,13 +185,13 @@ const CommonStart = ({onClick} ) => {
   useEffect(() => {
 
     // 플레이어 닉네임 설정
-    setPlayer((prevState => {
-      return {
-        ...prevState,
-        nickName: nickName
-      };
-    }));
-
+    // setPlayer((prevState => {
+    //   return {
+    //     ...prevState,
+    //     nickName: nickName
+    //   };
+    // }));
+    setPlayer([{key: 'nickName', value: nickName}]);
   }, [nickName]);
 
   ////////////  CommonStart 함수  ////////////
@@ -201,21 +201,23 @@ const CommonStart = ({onClick} ) => {
     var gameRoom = await getGameRoom(roomId);
     if (gameRoom == null) {
       // 방을 생성할 경우, 방장으로 설정
-      setPlayer((prev) => {
-        return ({
-          ...prev,
-          isHost: true,
-        });
-      });
+      // setPlayer((prev) => {
+      //   return ({
+      //     ...prev,
+      //     isHost: true,
+      //   });
+      // });
+      setPlayer([{key: 'isHost', value: true}]);
     }
     else {
       // 방을 이미 있을 경우 방장 X
-      setPlayer((prev) => {
-        return ({
-          ...prev,
-          isHost: false,
-        });
-      });
+      // setPlayer((prev) => {
+      //   return ({
+      //     ...prev,
+      //     isHost: false,
+      //   });
+      // });
+      setPlayer([{key: 'isHost', value: false}]);
     }
   };
 
@@ -225,12 +227,13 @@ const CommonStart = ({onClick} ) => {
       videoRef.current.srcObject = stream;
 
       videoRef.current.style.transform = 'scaleX(-1)';
-      setPlayer((prevState) => {
-        console.log(`setPlayer - isCamOn true`);
-        return {...prevState,
-          isCamOn: true,
-        };
-      });
+      // setPlayer((prevState) => {
+      //   console.log(`setPlayer - isCamOn true`);
+      //   return {...prevState,
+      //     isCamOn: true,
+      //   };
+      // });
+      setPlayer([{key: 'isCamOn', value: true}]);
     }
     catch (error) {
       console.error("Failed to start video: ", error);
@@ -241,12 +244,13 @@ const CommonStart = ({onClick} ) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioRef.current.srcObject = stream;
-      setPlayer((prevState) => {
-        console.log(`setPlayer - isMicOn true`);
-        return {...prevState,
-          isMicOn: true,
-        };
-      });
+      // setPlayer((prevState) => {
+      //   console.log(`setPlayer - isMicOn true`);
+      //   return {...prevState,
+      //     isMicOn: true,
+      //   };
+      // });
+      setPlayer([{key: 'isMicOn', value: true}]);
     }
     catch (error) {
       console.error("Failed to start audio: ", error);
@@ -254,13 +258,14 @@ const CommonStart = ({onClick} ) => {
   };
 
   const handleMicToggle = () => {
-    const micOn = !player.isMicOn;
+    const micOn = !player.current.isMicOn;
     // setIsMicOn(micOn);
-    setPlayer((prevState) => {
-      return {...prevState,
-        isMicOn: micOn,
-      };
-    });
+    // setPlayer((prevState) => {
+    //   return {...prevState,
+    //     isMicOn: micOn,
+    //   };
+    // });
+    setPlayer([{key: 'isMicOn', value: micOn}]);
     const tracks = audioRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = micOn;
@@ -268,12 +273,13 @@ const CommonStart = ({onClick} ) => {
   };
 
   const handleCamToggle = () => {
-    const camOn = !player.isCamOn;
-    setPlayer((prevState) => {
-      return {...prevState,
-        isCamOn: camOn,
-      };
-    });
+    const camOn = !player.current.isCamOn;
+    // setPlayer((prevState) => {
+    //   return {...prevState,
+    //     isCamOn: camOn,
+    //   };
+    // });
+    setPlayer([{key: 'isCamOn', value: camOn}]);
     const tracks = videoRef.current.srcObject.getTracks();
     tracks.forEach((track) => {
       track.enabled = camOn;

@@ -66,7 +66,7 @@ const DayPage = () => {
       return;
     }
     
-    if(player.isCamOn){
+    if(player.current.isCamOn){
       daystatus();
     }
     threated();
@@ -82,41 +82,43 @@ const DayPage = () => {
   const threated = () =>{
     console.log(threatedTarget);
     if(threatedTarget){
-      player.stream.publishAudio(false);
-      // player.stream.publishVideo(false);
+      player.current.stream.publishAudio(false);
+      // player.current.stream.publishVideo(false);
     }
 
   }
 
   const handleCamButtonClick = () => {
-    const camOn = !player.isCamOn;
-    if (player.stream) {
-      player.stream.publishVideo(camOn);
+    const camOn = !player.current.isCamOn;
+    if (player.current.stream) {
+      player.current.stream.publishVideo(camOn);
     }
-    setPlayer((prev) => {
-      return ({
-        ...prev,
-        isCamOn: camOn
-      });
-    });
+    // setPlayer((prev) => {
+    //   return ({
+    //     ...prev,
+    //     isCamOn: camOn
+    //   });
+    // });
+    setPlayer([{key: 'isCamOn', value: camOn}]);
   };
 
   const handleMicButtonClick = () => {
-    const micOn = !player.isMicOn;
-    if (player.stream) {
-      player.stream.publishAudio(micOn);
+    const micOn = !player.current.isMicOn;
+    if (player.current.stream) {
+      player.current.stream.publishAudio(micOn);
       // 버튼 클릭 이벤트를 threatedTarget이 못하게
       console.log('냥아치 협박 대상인가?');
-      if (player.stream !== threatedTarget) {
-        player.stream.publishAudio(micOn);
+      if (player.current.stream !== threatedTarget) {
+        player.current.stream.publishAudio(micOn);
         console.log('냥아치 협박 대상 아님! 마이크 버튼 클릭!');
       }
-      setPlayer((prev) => {
-        return ({
-          ...prev,
-          isMicOn: micOn
-        });
-      });
+      // setPlayer((prev) => {
+      //   return ({
+      //     ...prev,
+      //     isMicOn: micOn
+      //   });
+      // });
+      setPlayer([{key: 'isMicOn', value: micOn}]);
     };
   }
 
@@ -130,9 +132,9 @@ const DayPage = () => {
   }
   
   const daystatus = () =>{
-    if(player.role !== 'OBSERVER') {
-      player.stream.publishVideo(true);
-      player.stream.publishAudio(true);
+    if(player.current.role !== 'OBSERVER') {
+      player.current.stream.publishVideo(true);
+      player.current.stream.publishAudio(true);
     }
   };
 
@@ -142,8 +144,8 @@ const DayPage = () => {
         {!isLogOn && <Log />}
         <SunMoon alt="SunMoon" />
         <TimeSecond>{remainTime}s</TimeSecond>
-        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
+        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
+        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
         {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         {players.current && <DayNightCamera players={getAlivePlayers()} />}

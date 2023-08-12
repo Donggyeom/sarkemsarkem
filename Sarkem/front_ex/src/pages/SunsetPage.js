@@ -602,27 +602,29 @@ const SunsetPage = () => {
   };
 
   const handleCamButtonClick = () => {
-    const camOn = !player.isCamOn;
-    setPlayer((prevState) => {
-      return {...prevState,
-        isCamOn: camOn,
-      };
-    });
-    if (player.stream) {
-      player.stream.publishVideo(camOn);
+    const camOn = !player.current.isCamOn;
+    // setPlayer((prevState) => {
+    //   return {...prevState,
+    //     isCamOn: camOn,
+    //   };
+    // });
+    setPlayer([{key: 'isCamOn', value: camOn}]);
+    if (player.current.stream) {
+      player.current.stream.publishVideo(camOn);
     }
   };
   
   
   const handleMicButtonClick = () => {
-    const micOn = !player.isMicOn;
-    setPlayer((prevState) => {
-      return {...prevState,
-        isMicOn: micOn,
-      };
-    });
-    if (player.stream) {
-      player.stream.publishAudio(micOn);
+    const micOn = !player.current.isMicOn;
+    // setPlayer((prevState) => {
+    //   return {...prevState,
+    //     isMicOn: micOn,
+    //   };
+    // });
+    setPlayer([{key: 'isMicOn', value: micOn}]);
+    if (player.current.stream) {
+      player.current.stream.publishAudio(micOn);
     }
   };
 
@@ -724,8 +726,8 @@ const SunsetPage = () => {
       {!isLogOn && <Log />}
       <SunMoon alt="SunMoon"></SunMoon>
       <TimeSecond>{remainTime}s</TimeSecond>
-      <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
-      <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
+      <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
+      <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
       <SunsetPopup dayCount={dayCount}></SunsetPopup>
 

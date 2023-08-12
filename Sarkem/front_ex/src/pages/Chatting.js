@@ -169,7 +169,7 @@ const Chatting = ({ handleCloseButtonClick }) => {
             console.log('messageObj.playerId:', messageObj.playerId);
             // console.log('token:', token);
             return (
-              messageObj.playerId === player.playerId ? (
+              messageObj.playerId === player.current.playerId ? (
                 <ChatMessage key={index}>
                   {messageObj.message}
                 </ChatMessage>

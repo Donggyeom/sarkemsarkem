@@ -13,7 +13,7 @@ import nightCamAudio from './components/camera/DayNightCamera';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-  const { roomSession, player, setPlayer, players } = useRoomContext();
+  const { roomSession, player, setPlayer, players, setPlayers } = useRoomContext();
   const [ gameSession, setGameSession ] = useState({});
   // 현재 시스템 메시지를 저장할 상태 추가
   const [currentSysMessage, setCurrentSysMessage] = useState(null);
@@ -83,18 +83,18 @@ const GameProvider = ({ children }) => {
     jungleRefs.current = [];
   }, []);
 
-  useEffect(() => {
-    console.log(`playerId : ${player.playerId}`);
-    if (player.stream !== undefined) {
+  // useEffect(() => {
+    console.log(`playerId : ${player.current.playerId}`);
+    if (player.current.stream !== undefined) {
 
       // setPlayers((prev) => {
-      //   return new Map([...prev, [player.playerId, player]]);
+      //   return new Map([...prev, [player.current.playerId, player]]);
       // });
-      players.current.set(player.playerId, player);
-      connectGameWS();
-      loadGestureRecognizer();
+      // players.current.set(player.current.playerId, player);
+      // connectGameWS();
+      // loadGestureRecognizer();
     }
-  }, [player.stream]);
+  // }, [player.current.stream]);
 
   // useEffect(() => {
   //   if (players.size>0) {
@@ -109,7 +109,7 @@ const GameProvider = ({ children }) => {
   // 게임 옵션이 변경되면, callChangeOption 호출
   useEffect(()=> {
 
-    if(!player.isHost) return;
+    if(!player.current.isHost) return;
 
     callChangeOption();
 
@@ -175,11 +175,11 @@ const GameProvider = ({ children }) => {
 
   const sendChatPubMessage = (message) => {
     console.log("chat publish 들어감"); 
-    if (stompClient.current.connected && player.playerId !== null) {
+    if (stompClient.current.connected && player.current.playerId !== null) {
       console.log("stompclient 연결됨"); 
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'ENTER',
-        playerId:player.playerId, 
+        playerId:player.current.playerId, 
         roomId: roomSession.roomId,
         message: message
       }));
@@ -194,13 +194,13 @@ const GameProvider = ({ children }) => {
   };
 
   const sendMessage = (message) => {
-    if (stompClient.current.connected && player.playerId !== null) {
+    if (stompClient.current.connected && player.current.playerId !== null) {
       console.log("Talk 타입 메시지 들간다"); 
       console.log("메시지: ", message); 
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'TALK', 
         roomId: roomSession.roomId,
-        playerId:player.playerId,
+        playerId:player.current.playerId,
         message: message
       }));
     }
@@ -247,7 +247,7 @@ const GameProvider = ({ children }) => {
       JSON.stringify({
           code:'GAME_START', 
           roomId: roomSession.roomId, 
-          playerId: player.playerId
+          playerId: player.current.playerId
       })
       );
   };
@@ -264,8 +264,7 @@ const GameProvider = ({ children }) => {
     // 시스템 메시지 처리
     let sysMessage = JSON.parse(message.body);
 
-    if (player.playerId === sysMessage.playerId || sysMessage.playerId === "ALL") {
-    console.log(players);
+    if (sysMessage.playerId === "ALL" || player.current.playerId === sysMessage.playerId) {
     switch (sysMessage.code) {
       // param에 phase, message
     case "NOTICE_MESSAGE":
@@ -273,24 +272,24 @@ const GameProvider = ({ children }) => {
         setCurrentSysMessage(()=>sysMessage);
         setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
           { ...sysMessage, dayCount: sysMessage.param.day }]);
-        // console.log(currentSysMessage);
         break;
+
     case "GAME_START":   
-    
         // 게임상태 초기화
         for (let player of players.current.values()) {
           console.log(player, "handleGamePageClick");
           player.isAlive = true;
         }
-
         navigate(`/${roomSession.roomId}/day`);
         break;
+
     case "ONLY_HOST_ACTION":
         console.log(sysMessage);
         // alert('방장만 실행 가능합니다.');
         break;
+
     case "OPTION_CHANGED":
-        if(player.isHost) return;
+        if(player.current.isHost) return;
         setGameSession((prev) => {
           return ({
             ...prev,
@@ -298,6 +297,7 @@ const GameProvider = ({ children }) => {
           });
         });
         break;
+
     // 역할 저장을 위해 넣었음 //
     case "ROLE_ASSIGNED":
         const assignedRole = Roles.get(sysMessage.param.role);
@@ -306,12 +306,13 @@ const GameProvider = ({ children }) => {
           return;
         }
         console.log(`당신은 ${assignedRole} 입니다.`);
-        setPlayer((prev) => {
-          return ({
-            ...prev,
-            role: assignedRole,
-          });
-        });
+        // setPlayer((prev) => {
+        //   return ({
+        //     ...prev,
+        //     role: assignedRole,
+        //   });
+        // });
+        setPlayer([{key: 'role', value: assignedRole}]);
         break;
         
     case "PHASE_DAY":
@@ -396,13 +397,14 @@ const GameProvider = ({ children }) => {
         break;
 
     case "BE_EXCLUDED":
-        setPlayer((prev) => {
-          return ({
-            ...prev,
-            role: "OBSERVER",
-            isAlive: false,
-          });
-        });
+        // setPlayer((prev) => {
+        //   return ({
+        //     ...prev,
+        //     role: "OBSERVER",
+        //     isAlive: false,
+        //   });
+        // });
+        setPlayer([{key: 'role', value: 'OBSERVER'}, {key: 'isAlive', value: false}]);
         break;
 
     case "BE_HUNTED":
@@ -412,13 +414,14 @@ const GameProvider = ({ children }) => {
         setDeadIds(prevDeadIds => [...prevDeadIds, newDeadId]);
         players.current.get(newDeadId).isAlive = false;
         
-        if (sysMessage.param && sysMessage.param.deadPlayerId === player.playerId) {
-          setPlayer((prev) => {
-            return ({
-              ...prev,
-              role: "OBSERVER",
-            });
-          });
+        if (sysMessage.param && sysMessage.param.deadPlayerId === player.current.playerId) {
+          // setPlayer((prev) => {
+          //   return ({
+          //     ...prev,
+          //     role: "OBSERVER",
+          //   });
+          // });
+          setPlayer([{key: 'role', value: 'OBSERVER'}]);
         }
         break;
 
@@ -451,12 +454,13 @@ const GameProvider = ({ children }) => {
 
     case "CHANGE_HOST":
       console.log(`지금부터 당신이 방장입니다.`);
-      setPlayer((prev) => {
-        return ({
-          ...prev,
-          isHost: true
-        });
-      });
+      // setPlayer((prev) => {
+      //   return ({
+      //     ...prev,
+      //     isHost: true
+      //   });
+      // });
+      setPlayer([{key: 'isHost', value: true}]);
       break;
 
     case "REMAIN_TIME":
@@ -511,17 +515,15 @@ const GameProvider = ({ children }) => {
             alert("ROLE_ASSIGNED - 플레이어 정보를 불러오는데 실패했습니다.", sysMessage.playerId);
             return;
           }
-          player = {
-            ...player,
-            role: assignedRole,
-          };
+          player.role = assignedRole;
+          setPlayers(player);
           // setPlayers((prev) => {
           //   return new Map([
           //     ...prev,
-          //     [player.playerId, player],
+          //     [player.current.playerId, player],
           //   ]);
           // });
-          players.current.set(player.playerId, player);
+          // players.current.set(player.current.playerId, player);
           break;
 
       }
@@ -540,12 +542,12 @@ const GameProvider = ({ children }) => {
           setSelectedTarget(target.playerId)
       }
       console.log("다른 플레이어 선택 " + target.playerId);
-      if (stompClient.current.connected && player.playerId !== null) {
+      if (stompClient.current.connected && player.current.playerId !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECT',
                   roomId: roomSession.roomId,
-                  playerId: player.playerId,
+                  playerId: player.current.playerId,
                   param: {
                       target: target.playerId
                   }
@@ -557,12 +559,12 @@ const GameProvider = ({ children }) => {
   const selectConfirm = () => {
 
       // console.log(voteTargetId, "여기에요");
-      if (stompClient.current.connected && player.playerId !== null) {
+      if (stompClient.current.connected && player.current.playerId !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
                   roomId: roomSession.roomId,
-                  playerId: player.playerId,
+                  playerId: player.current.playerId,
                   param: {
                       // target: selectedTarget
                   }
@@ -576,7 +578,7 @@ const GameProvider = ({ children }) => {
           JSON.stringify({
               code: 'EXPULSION_VOTE',
               roomId: roomSession.roomId, 
-              playerId: player.playerId,
+              playerId: player.current.playerId,
               param: {
                   result: true
               }
@@ -590,7 +592,7 @@ const GameProvider = ({ children }) => {
           JSON.stringify({
               code: 'EXPULSION_VOTE',
               roomId: roomSession.roomId, 
-              playerId: player.playerId,
+              playerId: player.current.playerId,
               param: {
                   result: false
               }
@@ -622,12 +624,12 @@ const GameProvider = ({ children }) => {
     // 미션성공
     const missionConplete = () => {
         console.log("미션 성공");
-        if (stompClient.current.connected && player.playerId !== undefined) {
+        if (stompClient.current.connected && player.current.playerId !== undefined) {
             stompClient.current.send("/pub/game/action", {},
                 JSON.stringify({
                     code: 'HIDDENMISSION_SUCCESS ', // 스킵했을 때도 얘도 보내달라
                     roomId: roomSession.roomId,
-                    playerId: player.playerId,
+                    playerId: player.current.playerId,
                     param: {
                         // target: selectedTarget
                     }
@@ -640,7 +642,7 @@ const GameProvider = ({ children }) => {
       console.log(selectMission);
       try {
         if (gestureRecognizer) {
-          const videoElement = player.stream.videos[player.stream.videos.length-1].video;
+          const videoElement = player.current.stream.videos[player.current.stream.videos.length-1].video;
           const nowInMs = Date.now();
           const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
     
@@ -677,7 +679,7 @@ const GameProvider = ({ children }) => {
           JSON.stringify({
               code:'OPTION_CHANGE', 
               roomId: roomSession.roomId,
-              playerId: player.playerId,
+              playerId: player.current.playerId,
               param: gameSession.gameOption
       }));
       console.log(gameSession.gameOption);
@@ -686,7 +688,7 @@ const GameProvider = ({ children }) => {
 
   const chatVisible = () =>{
     // DEBUG:
-    // if (player.role === 'OBSERVER'){
+    // if (player.current.role === 'OBSERVER'){
       return (
         <>
           <ChatButtonAndPopup />
@@ -696,7 +698,7 @@ const GameProvider = ({ children }) => {
   }
 
   return (
-    <GameContext.Provider value={{ stompClient, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, 
+    <GameContext.Provider value={{ stompClient, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, connectGameWS,
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 

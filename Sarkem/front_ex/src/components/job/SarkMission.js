@@ -14,7 +14,7 @@ const StyledImg = styled.img`
 const HandImage = ({ handNumber }) => {
   const { hiddenMission , missionNumber } = useGameContext();
   const { player } = useRoomContext();
-  const role = player.role;
+  const role = player.current.role;
   
 
 
