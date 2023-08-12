@@ -319,54 +319,6 @@ const DayNightCamera = React.memo(({ players }) => {
   }, [hiddenMission])
 
 
-  /// DayNightCamera 함수 ////
-
-  const calculateAdjustedCamCount = () => {
-    const filteredPlayers = players.filter((id) => {
-      return !deadIds.includes(player.playerId);
-    });
-
-    let adjustedCamCount = filteredPlayers.length;
-
-    filteredPlayers.forEach((id) => {
-
-      if (deadIds.includes(player.playerId)) {
-        adjustedCamCount -= 1;
-      }
-    });
-
-    return adjustedCamCount;
-  };
-
-  const adjustedCamCount = calculateAdjustedCamCount();
-  
-  useEffect(() => {
-    setCamCount(adjustedCamCount);
-  }, [adjustedCamCount]);
-
-// 위의 함수를 받아와서 아래처럼 사용했음
-
-// <CamCatGrid style={gridStyles}>
-//     {camArray
-//       .filter((user) => {
-//         const userToken = JSON.parse(user.stream.connection.data).token;
-//         return !deadIds.includes(userToken);
-//       })
-//       .map((user, index) => (
-//         <CamCatWrapper
-//           key={index}
-//           camCount={adjustedCamCount}
-//           user={user}
-//           index={index}
-//           onClick={() => handleCamClick(user)}
-//         >
-//           <CamCat props={user} user={user} />
-//           <VotefootWrapper show={clickedCamera === user && startVote}>
-//             <VotefootImage src={voteImage} alt="Vote" />
-//           </VotefootWrapper>
-//         </CamCatWrapper>
-
-
   const handleCamClick = (id) => {
     console.log(voteSituation, "투표 결과 확인합니다");
     console.log(startVote);
@@ -505,11 +457,6 @@ const DayNightCamera = React.memo(({ players }) => {
   return (
     <CamCatGrid style={gridStyles}>
       {players && players
-      .filter((otherplayer) => {
-        console.log(deadIds, "죽음");
-        console.log(otherplayer, "얘도");
-        return !deadIds.includes(otherplayer.playerId);
-      })
       .map((otherPlayer, index) => (
         <CamCatWrapper
           key={index}
