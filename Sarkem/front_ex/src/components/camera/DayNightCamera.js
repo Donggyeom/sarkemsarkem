@@ -414,7 +414,9 @@ const DayNightCamera = React.memo(({ players }) => {
   }
 
   const nightCamAudio = () => {
+    console.log(player.role, "nightCamAudio");
     if (player.role == "DETECTIVE") {
+      console.log("player.role == DETECTIVE");
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
       for (let otherPlayer of players) {
         otherPlayer.stream.subscribeToVideo(false);
@@ -425,7 +427,7 @@ const DayNightCamera = React.memo(({ players }) => {
       }
     }
     else if (player.role == "SARK" || player.role == "OBSERVER") {
-
+      console.log("player.role == SARK OBSERVER");
       for (let otherPlayer of players) {
         console.log(otherPlayer.stream)
         if (otherPlayer.role != "SARK") {
@@ -436,12 +438,13 @@ const DayNightCamera = React.memo(({ players }) => {
     }
     else {
       // 마피아, 탐정, 관전자를 제외한 나머지 플레이어의 화면에서 모두의 캠, 오디오를 끈다.
+      console.log("player.role == others");
+      console.log(players);
       for (let otherPlayer of players) {
-        if (otherPlayer.stream == Subscriber){ 
-          console.log("여기까진 오니");
-          otherPlayer.stream.subscribeToVideo(false);
-          otherPlayer.stream.subscribeToAudio(false);
-        }
+        if (player === otherPlayer) continue;
+        console.log("여기까진 오니");
+        otherPlayer.stream.subscribeToVideo(false);
+        otherPlayer.stream.subscribeToAudio(false);
       }
     }
   }
