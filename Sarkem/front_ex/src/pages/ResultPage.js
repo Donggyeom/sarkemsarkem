@@ -114,7 +114,7 @@ const roleInfoMapping = {
   PSYCHO: { icon: psychoIcon, displayName: '심리학자' },
   POLICE: { icon: policeIcon, displayName: '경찰' },
   DOCTOR: { icon: doctorIcon, displayName: '의사' },
-  DETECTOR: { icon: detectorIcon, displayName: '탐정' },
+  DETECTIVE: { icon: detectorIcon, displayName: '탐정' },
   CITIZEN: { icon: citizenIcon, displayName: '시민' },
   BULLY: { icon: achiIcon, displayName: '냥아치' },
   SARK: { icon: sarkIcon, displayName: '삵' }
@@ -130,9 +130,8 @@ const ResultPage = () => {
   const {
     roomSession, setPlayer, setPlayers, players
   } = useRoomContext();
-  const { winner, stompClient } = useGameContext();
+  const { roleAssignedArray, winner, stompClient } = useGameContext();
   const navigate = useNavigate();
-  // console.log(roleAssignedArray);
 
   useEffect(() => {
     // Play the resultSound when the page loads
@@ -178,10 +177,10 @@ const ResultPage = () => {
 
 
 
-  const sarkPlayers = Array.from(players.current.values()).filter(player => player.role === 'SARK');
-  console.log(sarkPlayers);
-  const nonSarkPlayers = Array.from(players.current.values()).filter(player => player.role !== 'SARK');
-
+  const sarkPlayers = roleAssignedArray.current.filter(playerRole => playerRole.job === '삵');
+  console.log(sarkPlayers, "sarkPlayers");
+  const nonSarkPlayers = roleAssignedArray.current.filter(playerRole => playerRole.job !== '삵');
+  console.log(nonSarkPlayers, "nonSarkPlayers");
   return (
     <div>
     {winner === 'CITIZEN' ? (
@@ -207,7 +206,7 @@ const ResultPage = () => {
                       />
                     )}
                   </TableCell2>
-                <TableCell>{playerRole.nickName}</TableCell>
+                <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
 
               </TableRow>
@@ -223,7 +222,7 @@ const ResultPage = () => {
                       />
                     )}
                   </TableCell2>
-                <TableCell>{playerRole.nickName}</TableCell>
+                <TableCell>{playerRole.nickname}</TableCell>
                 <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
               </TableRow>
             ))}
@@ -255,7 +254,7 @@ const ResultPage = () => {
                       />
                     )}
                   </TableCell2>
-              <TableCell>{playerRole.nickName}</TableCell>
+              <TableCell>{playerRole.nickname}</TableCell>
               <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
             </TableRow>
           ))}
@@ -270,7 +269,7 @@ const ResultPage = () => {
                       />
                     )}
                   </TableCell2>
-              <TableCell>{playerRole.nickName}</TableCell>
+              <TableCell>{playerRole.nickname}</TableCell>
               <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
             </TableRow>
           ))}

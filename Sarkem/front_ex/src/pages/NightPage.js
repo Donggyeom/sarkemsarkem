@@ -44,7 +44,7 @@ const TimeSecond = styled.text`
 
 const NightPage = () => {
   const { roomSession, player, setPlayer, players } = useRoomContext(); 
-  const { currentSysMessage, dayCount, chatVisible, remainTime } = useGameContext();
+  const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers } = useGameContext();
   const navigate = useNavigate();
   
 
@@ -112,7 +112,7 @@ const NightPage = () => {
     <Background>
       <StyledNightPage>
         {!isLogOn && <Log />}
-        {players.current && <DayNightCamera ids={Array.from(players.current.keys())} />}
+        {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <SunMoon alt="SunMoon"></SunMoon>
         <TimeSecond>{remainTime}</TimeSecond>
         {player.role === 'SARK' ? (

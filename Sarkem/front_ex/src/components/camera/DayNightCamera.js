@@ -64,7 +64,7 @@ const VotefootWrapper = styled.div`
 
 const VotefootImage = styled.img`
   position: absolute;
-  top: 95%;
+  top: 93%;
   left: 60%;
   transform: translate(-50%, -50%);
 `;
@@ -165,101 +165,101 @@ const CamCatWrapper = styled.div`
   position : relative;
   ${({ camCount, index }) =>
 
-    camCount === 3 && index === 0
-      ? `
-    position: relative;
-    left : 56.5%;
-    `
-      :
-      camCount === 3 && index === 1
-        ? `
-    position: relative;
-    top : 112.5%;
-    `
-        :
-        camCount === 3 && index === 2
-          ? `
-    position: relative;
-    `
-          :
-          camCount === 5 && index === 0
-            ? `
-    position: relative;
-    left : 50%;
-    `
-            :
-            camCount === 5 && index === 1
-              ? `
-    position: relative;
-    left : 50%;
-    `
-              :
-              camCount === 5 && index === 2
-                ? `
-    position: relative;
-    top : 114%;
-    `
-                :
-                camCount === 7 && index === 0
-                  ? `
-    position: relative;
-    left : 50%;
-    `
-                  :
-                  camCount === 7 && index === 1
-                    ? `
-    position: relative;
-    left : 50%;
-    `
-                    :
-                    camCount === 7 && index === 2
-                      ? `
-    position: relative;
-    left : 50%;
-    `
+  camCount === 3 && index === 0
+  ? `
+  position: relative;
+  left : 56.5%;
+  `
+  :
+  camCount === 3 && index === 1
+  ? `
+  position: relative;
+  top : 112.5%;
+  `
+  :
+  camCount === 3 && index === 2
+  ? `
+  position: relative;
+  `
+  :
+  camCount === 5 && index === 0
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 5 && index === 1
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 5 && index === 2
+  ? `
+  position: relative;
+  top : 114%;
+  `
+  :
+  camCount === 7 && index === 0
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 7 && index === 1
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 7 && index === 2
+  ? `
+  position: relative;
+  left : 50%;
+  `
 
-                      :
-                      camCount === 7 && index === 3
-                        ? `
-    position: relative;
-    top : 114%;
-    `
-                        :
-                        camCount === 9 && index === 0
-                          ? `
-    position: relative;
-    left : 50%;
-    `
-                          :
-                          camCount === 9 && index === 1
-                            ? `
-    position: relative;
-    left : 50%;
-    `
-                            :
-                            camCount === 9 && index === 2
-                              ? `
-    position: relative;
-    left : 50%;
-    `
-                              :
-                              camCount === 9 && index === 3
-                                ? `
-    position: relative;
-    left : 50%;
-    `
-                                :
-                                camCount === 9 && index === 4
-                                  ? `
-    position: relative;
-    top : 100%;
-    `
-                                  : ''};
+  :
+  camCount === 7 && index === 3
+  ? `
+  position: relative;
+  top : 114%;
+  `
+  :
+  camCount === 9 && index === 0
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 9 && index === 1
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 9 && index === 2
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 9 && index === 3
+  ? `
+  position: relative;
+  left : 50%;
+  `
+  :
+  camCount === 9 && index === 4
+  ? `
+  position: relative;
+  top : 100%;
+  `
+  : ''};
   `;
 
-const DayNightCamera = React.memo(({ ids }) => {
-  const { player, players } = useRoomContext();
-  const camCount = ids.length;
+const DayNightCamera = React.memo(({ players }) => {
+  const { player } = useRoomContext();
+  const camCount = players.length;
   const gridStyles = calculateGrid(camCount);
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -282,11 +282,11 @@ const DayNightCamera = React.memo(({ ids }) => {
 
       // 마피아 넣는 작업
       let sarkArray = [];
-      for (let player of players.current) {
-        if (player.role === Roles.SARK) sarkArray.push(player);
+      for (let player of players) {
+        if (player.role === "SARK") sarkArray.push(player);
       }
 
-      if (player.role === Roles.DETECTIVE) {
+      if (player.role === "DETECTIVE") {
         changeVoice(sarkArray);
       }
     }
@@ -340,6 +340,34 @@ const DayNightCamera = React.memo(({ ids }) => {
   //   return adjustedCamCount;
   // };
 
+  // const adjustedCamCount = calculateAdjustedCamCount();
+  
+  // useEffect(() => {
+  //   setCamCount(adjustedCamCount);
+  // }, [adjustedCamCount]);
+
+// 위의 함수를 받아와서 아래처럼 사용했음
+
+// <CamCatGrid style={gridStyles}>
+//     {camArray
+//       .filter((user) => {
+//         const userToken = JSON.parse(user.stream.connection.data).token;
+//         return !deadIds.includes(userToken);
+//       })
+//       .map((user, index) => (
+//         <CamCatWrapper
+//           key={index}
+//           camCount={adjustedCamCount}
+//           user={user}
+//           index={index}
+//           onClick={() => handleCamClick(user)}
+//         >
+//           <CamCat props={user} user={user} />
+//           <VotefootWrapper show={clickedCamera === user && startVote}>
+//             <VotefootImage src={voteImage} alt="Vote" />
+//           </VotefootWrapper>
+//         </CamCatWrapper>
+
 
   const handleCamClick = (id) => {
     console.log(voteSituation, "투표 결과 확인합니다");
@@ -386,21 +414,23 @@ const DayNightCamera = React.memo(({ ids }) => {
   }
 
   const nightCamAudio = () => {
-    if (player.role == Roles.DETECTIVE) {
+    console.log(player.role, "nightCamAudio");
+    if (player.role == "DETECTIVE") {
+      console.log("player.role == DETECTIVE");
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
-      for (let player of players.current) {
-        player.stream.subscribeToVideo(false);
+      for (let otherPlayer of players) {
+        otherPlayer.stream.subscribeToVideo(false);
 
-        if (player.role != Roles.SARK) {
-          player.stream.subscribeToAudio(false);
+        if (otherPlayer.role != "SARK") {
+          otherPlayer.stream.subscribeToAudio(false);
         }
       }
     }
-    else if (player.role == Roles.SARK || player.role == Roles.OBSERVER) {
-
-      for (let otherPlayer of players.current) {
+    else if (player.role == "SARK" || player.role == "OBSERVER") {
+      console.log("player.role == SARK OBSERVER");
+      for (let otherPlayer of players) {
         console.log(otherPlayer.stream)
-        if (otherPlayer.role != Roles.SARK) {
+        if (otherPlayer.role != "SARK") {
           otherPlayer.stream.subscribeToVideo(false);
           otherPlayer.stream.subscribeToAudio(false);
         }
@@ -408,21 +438,22 @@ const DayNightCamera = React.memo(({ ids }) => {
     }
     else {
       // 마피아, 탐정, 관전자를 제외한 나머지 플레이어의 화면에서 모두의 캠, 오디오를 끈다.
-      for (let otherPlayer of players.current.values()) {
-        if (otherPlayer.stream == Subscriber){ 
-          console.log("여기까진 오니");
-          otherPlayer.stream.subscribeToVideo(false);
-          otherPlayer.stream.subscribeToAudio(false);
-        }
+      console.log("player.role == others");
+      console.log(players);
+      for (let otherPlayer of players) {
+        if (player === otherPlayer) continue;
+        console.log("여기까진 오니");
+        otherPlayer.stream.subscribeToVideo(false);
+        otherPlayer.stream.subscribeToAudio(false);
       }
     }
   }
 
 
   const dayCamAudio = () => {
-    for (let otherPlayer of players.current) {
+    for (let otherPlayer of players) {
       if (player.playerId == otherPlayer.playerId) continue;  // 내가 아닌 경우에만 설정
-      if (otherPlayer.role == Roles.OBSERVER) continue;            // 관전자가 아닌 경우에만 설정
+      if (otherPlayer.role == "OBSERVER") continue;            // 관전자가 아닌 경우에만 설정
 
       otherPlayer.stream.subscribeToVideo(true);
       otherPlayer.stream.subscribeToAudio(true);
@@ -473,19 +504,19 @@ const DayNightCamera = React.memo(({ ids }) => {
 
   return (
     <CamCatGrid style={gridStyles}>
-      {ids && ids.map((id, index) => (
+      {players && players.map((otherPlayer, index) => (
         <CamCatWrapper
           key={index}
           camCount={camCount}
-          user={id}
+          user={otherPlayer.playerId}
           index={index}
-          onClick={() => handleCamClick(id)}
+          onClick={() => handleCamClick(otherPlayer.playerId)}
         >
-          <CamCat id={id} />
+          <CamCat id={otherPlayer.playerId} />
           {/* {clickedCameras.includes(index) && (
               <Votefoot src={voteImage} alt="Vote" />
             )} */}
-          <VotefootWrapper show={clickedCamera === id && startVote}>
+          <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
         </CamCatWrapper>
@@ -517,13 +548,13 @@ const DayNightCamera = React.memo(({ ids }) => {
             )}
           </>
         )}
-        <ActionButton onClick={startHiddenMission}>
+        {/* <ActionButton onClick={startHiddenMission}>
           히든미션
         </ActionButton>
         <ActionButton onClick={stopHiddenMission}>
           미션 종료
         </ActionButton>
-        <p>Detected Gesture: {detectedGesture}</p>
+        <p>Detected Gesture: {detectedGesture}</p> */}
       </ButtonWrapper>
     </CamCatGrid>
   );

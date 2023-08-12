@@ -33,6 +33,8 @@ import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
 import LoadingPage from './LoadingPage';
 import ingameClickSound from '../sound/ingameclick.mp3';
+import DayPopup from "../components/games/DayPopup";
+import NightPopup from "../components/games/NightPopup";
 
 const StyledContent = styled.div`
   display: flex;
@@ -150,7 +152,7 @@ const ButtonContainer2 = styled.div`
 
 const CommonLobby = ()=>{
   const { roomSession, player, players, leaveSession } = useRoomContext();
-  const { gameSession, setGameSession, getGameSession, handleGamePageClick, stompClient } = useGameContext();
+  const { gameSession, setGameSession, getGameSession, handleGamePageClick, stompClient, currentSysMessage, dayCount } = useGameContext();
 
   // const [ isLoaded, setIsLoaded ] = useState(false);
   
@@ -505,7 +507,9 @@ const CommonLobby = ()=>{
               </>
             )}
         
-        </RightSection>
+          </RightSection>
+          {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={0}/>}
+          {/* {currentSysMessage && <DayPopup sysMessage={currentSysMessage} dayCount={0}/>} */}
       </StyledContent>
     </Background>):<LoadingPage/>}
     </>
