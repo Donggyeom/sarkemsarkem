@@ -307,6 +307,16 @@ const DayNightCamera = React.memo(({ players }) => {
       if (player.role === "DETECTIVE") {
         changeVoice(sarkArray);
       }
+
+      return () => {
+        for (let otherPlayer of players) {
+          if (player.current === otherPlayer) continue;
+          
+          if (otherPlayer.role === 'SARK'){
+            otherPlayer.stream.off('streamPropertyChanged', handleSarksCam);
+          }
+        }
+      };
     }
     else if (phase === "day") {
       dayCamAudio();
@@ -318,6 +328,7 @@ const DayNightCamera = React.memo(({ players }) => {
       // }
     }
 
+    
   }, [startVote, phase]);
 
   // useEffect(() => {
@@ -381,6 +392,15 @@ const DayNightCamera = React.memo(({ players }) => {
     stopPredicting();
   }
 
+  const handleSarksCam = (sark) => {
+    console.log("삵의 properties 변화가 감지되었습니다.");
+    console.log(sark);
+    sark.target.subscribeToVideo(false);
+    if (player.role !== "DETECTIVE") {
+      sark.target.subscribeToAudio(false);
+    }
+  }
+
   const nightCamAudio = () => {
     if (player.current.role == "DETECTIVE") {
       console.log("player.current.role == DETECTIVE");
@@ -392,6 +412,8 @@ const DayNightCamera = React.memo(({ players }) => {
 
         if (otherPlayer.role != "SARK") {
           otherPlayer.stream.subscribeToAudio(false);
+        } else {
+          otherPlayer.stream.on('streamPropertyChanged', handleSarksCam);
         }
       }
     }
@@ -415,6 +437,7 @@ const DayNightCamera = React.memo(({ players }) => {
         console.log("여기까진 오니");
         otherPlayer.stream.subscribeToVideo(false);
         otherPlayer.stream.subscribeToAudio(false);
+        if (otherPlayer.role === 'SARK') otherPlayer.stream.on('streamPropertyChanged', handleSarksCam);
       }
     }
   }
