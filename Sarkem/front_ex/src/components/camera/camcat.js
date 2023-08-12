@@ -45,6 +45,7 @@ const CamCat = ({id}) => {
   };
 
   const getVoteResultForUser = (id) => {
+    console.log(id);
     if (phase === 'day') {
       let player = players.current.get(id);
       if (voteSituation && voteSituation[id] !== undefined) {
@@ -126,7 +127,7 @@ const CamCat = ({id}) => {
               {player.nickName}
             </div>
             <div style={{ flex: 0.8, textAlign: 'center' }}>
-              {getVoteResultForUser(player.playerId, phase)}
+              {getVoteResultForUser(player.playerId)}
             </div>
           </div>
         </div>

@@ -340,7 +340,6 @@ const GameProvider = ({ children }) => {
             // setVotesituation(sysMessage.param.target);
             console.log(sysMessage.param.target, "타겟저장");
             setVotesituation({ [sysMessage.param.target]: sysMessage.param.target });
-            
         } else {
             setVotesituation(sysMessage.param);
             setVoteTargetId("");
@@ -514,12 +513,12 @@ const GameProvider = ({ children }) => {
           setSelectedTarget(target.playerId)
       }
       console.log("다른 플레이어 선택 " + target.playerId);
-      if (stompClient.current.connected && player.playerid !== null) {
+      if (stompClient.current.connected && player.playerId !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECT',
                   roomId: roomSession.roomId,
-                  playerId: player.playerid,
+                  playerId: player.playerId,
                   param: {
                       target: target.playerId
                   }
@@ -531,12 +530,12 @@ const GameProvider = ({ children }) => {
   const selectConfirm = () => {
 
       // console.log(voteTargetId, "여기에요");
-      if (stompClient.current.connected && player.playerid !== null) {
+      if (stompClient.current.connected && player.playerId !== null) {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
                   roomId: roomSession.roomId,
-                  playerId: player.playerid,
+                  playerId: player.playerId,
                   param: {
                       // target: selectedTarget
                   }
@@ -550,7 +549,7 @@ const GameProvider = ({ children }) => {
           JSON.stringify({
               code: 'EXPULSION_VOTE',
               roomId: roomSession.roomId, 
-              playerId: player.playerid,
+              playerId: player.playerId,
               param: {
                   result: true
               }
@@ -564,7 +563,7 @@ const GameProvider = ({ children }) => {
           JSON.stringify({
               code: 'EXPULSION_VOTE',
               roomId: roomSession.roomId, 
-              playerId: player.playerid,
+              playerId: player.playerId,
               param: {
                   result: false
               }

@@ -23,16 +23,13 @@ const ChatContainer = styled.div`
   position : relative;
 `;
 
-const headerWrapper = styled.div`
-  position: relative;
-`;
 
 const ChatWrapper = styled.div`
   top : 48px;
   max-height : 300px;
   padding : 20px;
   max-width : 530px;
-  position: relative; // Add this to enable positioning of ChatCloseButton
+  position: relative;
 `;
 
 const ChatMessage = styled.div`
