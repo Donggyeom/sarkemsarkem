@@ -126,79 +126,75 @@ const ChatCloseButton = styled.button`
   z-index: 1;
 `;
 
-  const Chatting = ({ handleCloseButtonClick }) => {
-    const { chatMessages, sendMessage} = useGameContext();
-    const { player } = useRoomContext();
-    const [inputMessage, setInputMessage] = useState('');
-    const chatMessagesRef = useRef();
-    console.log(player, "플레이어");
+const Chatting = ({ handleCloseButtonClick }) => {
+  const { chatMessages, sendMessage } = useGameContext();
+  const { player } = useRoomContext();
+  const [inputMessage, setInputMessage] = useState('');
+  const chatMessagesRef = useRef();
+  console.log(player, "플레이어");
     
+  const scrollToBottom = () => {
+    chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+  };
   
-    const scrollToBottom = () => {
-      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
-    };
-  
-    useEffect(() => {
-      scrollToBottom();
-    }, [chatMessages]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
 
-  
-    const handleSendMessage = () => {
-      console.log("메세지보내는중");
+  const handleSendMessage = () => {
+    if (inputMessage.trim() !== '') {
       sendMessage(inputMessage);
-      console.log(inputMessage);
-      console.log(chatMessages);
       setInputMessage('');
-    };
+    }
+  };
   
-    const handleInputChange = (e) => {
-      setInputMessage(e.target.value);
-    };
+  const handleInputChange = (e) => {
+    setInputMessage(e.target.value);
+  };
   
-    const handleInputKeyPress = (e) => {
-      console.log('handleInputKeyPress');
-      console.log(e);
-      if (e.key === 'TALK') {
-        handleSendMessage();
-      }
-    };
+  const handleInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
 
-    return (
-      <ChatContainer>
-        <headerWrapper>
-          <ChatCloseButton onClick={handleCloseButtonClick}></ChatCloseButton>
-        </headerWrapper>
-        <ChatWrapper>
+  return (
+    <ChatContainer>
+      <headerWrapper>
+        <ChatCloseButton onClick={handleCloseButtonClick}></ChatCloseButton>
+      </headerWrapper>
+      <ChatWrapper>
         <ChatMessages ref={chatMessagesRef}>
-  {chatMessages.map((messageObj, index) => {
-    console.log('messageObj.playerId:', messageObj.playerId);
-    return (
-      messageObj.playerId === player.playerId ? (
-        <ChatMessage key={index}>
-          {messageObj.message}
-        </ChatMessage>
-      ) : (
-        <ChatReceiverMessage key={index}>
-          {messageObj.message}
-        </ChatReceiverMessage>
-      )
-    );
-  })}
-</ChatMessages>
-        </ChatWrapper>
-        <ChatInputWrapper>
-          <ChatInput
-            type="text"
-            img={chatinputboxImage}
-            value={inputMessage}
-            onChange={handleInputChange}
-            onKeyPress={handleInputKeyPress}
-            placeholder="메세지를 입력하세요..."
-          />
-          <ChatButton onClick={handleSendMessage}></ChatButton>
-        </ChatInputWrapper>
-      </ChatContainer>
-    );
+          {chatMessages.map((messageObj, index) => {
+            console.log('messageObj.playerId:', messageObj.playerId);
+            // console.log('token:', token);
+            return (
+              messageObj.playerId === player.playerId ? (
+                <ChatMessage key={index}>
+                  {messageObj.message}
+                </ChatMessage>
+              ) : (
+                <ChatReceiverMessage key={index}>
+                  {messageObj.message}
+                </ChatReceiverMessage>
+              )
+            );
+          })}
+        </ChatMessages>
+      </ChatWrapper>
+      <ChatInputWrapper>
+        <ChatInput
+          type="text"
+          img={chatinputboxImage}
+          value={inputMessage}
+          onChange={handleInputChange}
+          onKeyPress={handleInputKeyPress}
+          placeholder="메세지를 입력하세요..."
+        />
+        <ChatButton onClick={handleSendMessage}></ChatButton>
+      </ChatInputWrapper>
+    </ChatContainer>
+  );
 }
 
 export default Chatting;
