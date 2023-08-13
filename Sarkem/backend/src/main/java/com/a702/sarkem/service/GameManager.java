@@ -462,7 +462,7 @@ public class GameManager {
 			gameSession.addExpulsionVoteCnt();
 		}
 		// 추방 투표 현황 전송
-		sendTwilightSelectionEndMessage(roomId, playerId);
+		sendTwilightSelectionEndMessage(roomId, playerId, voteOX);
 	}
 
 	/**
@@ -777,8 +777,8 @@ public class GameManager {
 	}
 
 	// "추방 투표 종료(개인)" 메시지 전송
-	public void sendTwilightSelectionEndMessage(String roomId, String playerId) {
-		sendSystemMessage(roomId, playerId, SystemCode.TWILIGHT_SELECTION_END, null);
+	public void sendTwilightSelectionEndMessage(String roomId, String playerId, Map<String, Boolean> param) {
+		sendSystemMessage(roomId, playerId, SystemCode.TWILIGHT_SELECTION_END, param);
 	}
 	// "저녁 투표 종료" 메시지 전송
 	public void sendEndTwilightVoteMessage(String roomId, Map<String, String> param) {
