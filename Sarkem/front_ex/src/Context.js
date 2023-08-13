@@ -81,9 +81,18 @@ const RoomProvider = ({ children }) => {
   const getGameRoom = async (roomId) => {
     // 게임방 정보 획득
     console.log(`getGameRoom`);
-    const response = await axios.get('/api/game/' + roomId, {
-      headers: { 'Content-Type': 'application/json;charset=utf-8', },
-    });
+    let response;
+    try{
+      response = await axios.get('/api/game/' + roomId, {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
+      });
+    } catch (error) {
+      console.log("서버와 연결이 원활하지 않습니다.", error);
+      alert("서버와 연결이 원활하지 않습니다.");
+      leaveSession(); // 바꿔야할 수도;
+      navigate("/");
+      return;
+    }
     
     if (response.status == '204') {
       console.log('gameRoom null');
@@ -109,11 +118,16 @@ const RoomProvider = ({ children }) => {
       // 세션 연결 종료
       if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
       // game 퇴장 요청
-      const response = await axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`,
-        {
-          headers: { 'Content-Type': 'application/json;charset=utf-8', },
-        }
-      )
+      let response;
+      try{
+        response = axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`,
+          {
+            headers: { 'Content-Type': 'application/json;charset=utf-8', },
+          }
+        )
+      } catch(error){
+        console.log("서버와 연결이 원활하지 않습니다.", error);
+      }
       // 세션 스토리지에 저장된 데이터 삭제
       window.sessionStorage.removeItem("roomId");
       window.sessionStorage.removeItem("gameId");
@@ -123,7 +137,7 @@ const RoomProvider = ({ children }) => {
       // setPlayers(new Map());
       players.current = new Map();
       player.current = {};
-      navigate(`/${roomSession.roomId}`)
+      // navigate(`/${roomSession.roomId}`)
   }
 
 
@@ -168,7 +182,7 @@ const RoomProvider = ({ children }) => {
 
     newSession.on('sessionDisconnected', (event) => {
       console.log("openvidu 세션 연결이 끊겼습니다.");
-      // leaveSession();
+      leaveSession();
     })
 
     // stream 예외 이벤트 발생 시 에러 출력
@@ -240,14 +254,22 @@ const RoomProvider = ({ children }) => {
   // 서버에 요청하여 화상 채팅 세션 생성하는 함수
   const createGameRoom = async (roomId) => {
     console.log(`${roomId} 세션을 생성합니다.`);
-    const response = await axios.post('/api/game', { 
-      customSessionId: roomId, 
-      nickName: player.current.nickName,
-    }, 
-    {
-      headers: { 'Content-Type': 'application/json;charset=utf-8', },
-    });
-    
+    let response;
+    try{
+      response = await axios.post('/api/game', { 
+        customSessionId: roomId, 
+        nickName: player.current.nickName,
+      }, 
+      {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
+      });
+    } catch(error) {
+      console.log("서버와 연결이 원활하지 않습니다.", error);
+      alert("서버와 연결이 원활하지 않습니다.");
+      leaveSession();
+      navigate("/");
+      return;
+    }
     console.log('세션 생성됨');
     console.log(response);
     return response; // The sessionId
@@ -258,9 +280,18 @@ const RoomProvider = ({ children }) => {
   const getToken = async (roomId) => {
     console.log("세션에 연결을 시도합니다.")
     console.log(player.current.nickName);
-    const response = await axios.post(`/api/game/${roomId}/player`, player.current.nickName, {
-      headers: { 'Content-Type': 'application/json;charset=utf-8', },
-    });
+    let response;
+    try{
+      response = await axios.post(`/api/game/${roomId}/player`, player.current.nickName, {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
+      });
+    } catch(error) {
+      console.log("서버와 연결이 원활하지 않습니다.", error);
+      alert("서버와 연결이 원활하지 않습니다.");
+      leaveSession();
+      navigate("/");
+      return;
+    }
     
     console.log('createToken ' + response.data.playerId);
     // setPlayer((prevState => {
