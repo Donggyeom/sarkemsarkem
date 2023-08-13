@@ -128,7 +128,7 @@ const roleInfoMapping = {
 
 const ResultPage = () => {
   const {
-    roomSession, setPlayer, setPlayers, players
+    roomSession, setRoomSession, setPlayer, setPlayers, players
   } = useRoomContext();
   const { roleAssignedArray, winner, stompClient } = useGameContext();
   const navigate = useNavigate();
@@ -157,6 +157,12 @@ const ResultPage = () => {
     setPlayer.current = {};
     // setPlayers(new Map());
     players.current = new Map();
+    setRoomSession((prev) => {
+      return ({
+        ...prev,
+        gameId: null,
+      });
+    });
     console.log("새로운 방 만들기")
     navigate(`/${createRandomId()}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
@@ -171,6 +177,12 @@ const ResultPage = () => {
     setPlayer.current = {};
     // setPlayers(new Map());
     players.current = new Map();
+    setRoomSession((prev) => {
+      return ({
+        ...prev,
+        gameId: null,
+      });
+    });
     console.log("홈으로 나가기")
     navigate('/');
   };

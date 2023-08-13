@@ -1,8 +1,10 @@
 package com.a702.sarkem.model.game;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,12 +18,14 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Setter
 @Getter
 @Builder
 @ToString
 @AllArgsConstructor
+@Slf4j
 public class GameSession {
 
 	public enum PhaseType {
@@ -102,6 +106,19 @@ public class GameSession {
 			}
 		}
 		return null;
+	}
+	public List<RolePlayer> getPlayers() {
+		LocalDateTime tenSecondsBefore = LocalDateTime.now().minusSeconds(10);
+		for (Iterator<RolePlayer> itr = players.iterator(); itr.hasNext();) {
+			RolePlayer p = itr.next();
+			if (p.getLastUpdateTime().isBefore(tenSecondsBefore)) {
+				log.debug("tenSecondsBefore" + tenSecondsBefore.toString());
+				log.debug("p.getLastUpdateTime()" + p.getLastUpdateTime().toString());
+				log.debug(p.toString() + " is Removed");
+				itr.remove();
+			}
+		}
+		return this.players;
 	}
 
 	// 살아있는 플레이어만 반환하는 함수

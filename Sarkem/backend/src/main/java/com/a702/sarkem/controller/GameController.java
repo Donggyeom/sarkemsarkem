@@ -10,6 +10,7 @@ import com.a702.sarkem.model.chat.ChatMessage.MessageType;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.game.message.ActionMessage;
+import com.a702.sarkem.model.game.message.ActionMessage.ActionCode;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.service.GameManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,13 +31,17 @@ public class GameController {
      */
 	@MessageMapping("/game/action")
 	public void message(ActionMessage actionMessage) {
-		log.debug(actionMessage.toString());
+		if (actionMessage.getCode() != ActionCode.PING)
+			log.debug(actionMessage.toString());
 		String roomId = actionMessage.getRoomId();
 		String gameId = actionMessage.getGameId();
 		String playerId = actionMessage.getPlayerId();
 		Object param = actionMessage.getParam();
 		
 		switch(actionMessage.getCode()) {
+		case PING:
+			gameManager.updatePlayerSession(roomId, playerId);
+			break;
 		case ENTER:
 			if ( gameManager.isHost(roomId, playerId) ) break;
 			// 방장이 아닌 사용자 입장 시 게임 옵션 전송

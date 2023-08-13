@@ -1,6 +1,6 @@
 package com.a702.sarkem.controller;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +132,7 @@ public class MainController {
 		// 토큰 발급
 		String token = getConnectionToken(session, paramMap);
 		String playerId = token.split("token=")[1]; // 토큰 앞부분 삭제
-		Player player = new Player(playerId, nickName);
+		Player player = new Player(playerId, nickName, LocalDateTime.now());
 
 		log.debug(player.toString());
 

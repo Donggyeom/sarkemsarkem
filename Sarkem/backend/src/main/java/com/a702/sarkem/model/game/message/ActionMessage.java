@@ -15,6 +15,7 @@ public class ActionMessage implements Serializable {
 
 	// 액션 코드
 	public enum ActionCode {
+		PING,					// 연결 유지 알림
 		ENTER,					// 게임방 입장
 		OPTION_CHANGE,			// 게임 설정 변경 
 		GAME_START,             // 게임시작

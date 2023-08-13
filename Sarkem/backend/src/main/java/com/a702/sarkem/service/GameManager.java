@@ -1,5 +1,6 @@
 package com.a702.sarkem.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +76,17 @@ public class GameManager {
 			}
 		}
 		return new String(tmp);
+	}
+	
+	/**
+	 * 플레이어 연결 여부 업데이트
+	 */
+	public void updatePlayerSession(String roomId, String playerId) {
+		GameSession gameSession = getGameSession(roomId);
+		if (gameSession == null) return;
+		Player player = gameSession.getPlayer(playerId);
+		if (player == null) return;
+		player.setLastUpdateTime(LocalDateTime.now());
 	}
 
 	/**

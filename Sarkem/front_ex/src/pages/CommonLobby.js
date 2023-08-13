@@ -181,7 +181,6 @@ const CommonLobby = ()=>{
       return;
     }
 
-    
     connectGameWS();
     loadGestureRecognizer();
 
