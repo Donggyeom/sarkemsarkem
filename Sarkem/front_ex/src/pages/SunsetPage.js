@@ -559,7 +559,7 @@ const SunsetPage = () => {
   // let adjustedCamCount = 0;
 
   useEffect(() => {
-    if (roomSession.roomId === undefined){
+    if (roomSession == undefined || roomSession.roomId == undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
