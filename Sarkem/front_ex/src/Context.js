@@ -204,6 +204,7 @@ const RoomProvider = ({ children }) => {
 
   const connectSession = async (response, roomId) => {
     console.log(`connectSession`);
+    console.log(player.current);
     try {
       const session = response;
       // 오픈비두 토큰 발급
@@ -292,20 +293,11 @@ const RoomProvider = ({ children }) => {
       navigate("/");
       return;
     }
-    
-    console.log('createToken ' + response.data.playerId);
-    // setPlayer((prevState => {
-    //   return ({
-    //     ...prevState,
-    //     playerId: response.data.playerId,
-    //     nickName: response.data.nickName,
-    //   });
-    // }));
-    try {
-      setPlayer([{key: 'playerId', value: response.data.playerId}, {key: 'nickName', value: response.data.nickName}]);
-    } catch(err) {
-      console.log(err);
-    }
+    setPlayer([
+      {key: 'playerId', value: response.data.playerId}, 
+      {key: 'nickName', value: response.data.nickName},  
+      {key: 'isHost', value: response.data.playerId === response.data.hostId}
+    ]);
     // sessionStorage에 playerId 갱신
     console.log("sessionStorage에 playerId를 갱신합니다.")
     window.sessionStorage.setItem("playerId", response.data.playerId);
