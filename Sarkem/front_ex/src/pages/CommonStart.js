@@ -147,7 +147,7 @@ const Logo = styled.img`
 
 
 const CommonStart = ({onClick} ) => {
-  const { player, setPlayer, getGameRoom } = useRoomContext();
+  const { player, setPlayer, roomSession, setRoomSession, getGameRoom } = useRoomContext();
   const [ roomId, setRoomId ] = useState("");
   const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
   const navigate = useNavigate();
@@ -204,6 +204,13 @@ const CommonStart = ({onClick} ) => {
     }
     else {
       setPlayer([{key: 'isHost', value: false}]);
+      setRoomSession((prev) => {
+        return ({
+          ...prev,
+          roomId: gameRoom.roomId,
+          gameId: gameRoom.gameId
+        });
+      });
     }
   };
 

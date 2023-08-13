@@ -84,18 +84,13 @@ const GameProvider = ({ children }) => {
     jungleRefs.current = [];
   }, []);
 
-  // useEffect(() => {
-    console.log(`playerId : ${player.current.playerId}`);
-    if (player.current.stream !== undefined) {
 
-      // setPlayers((prev) => {
-      //   return new Map([...prev, [player.current.playerId, player]]);
-      // });
-      // players.current.set(player.current.playerId, player);
-      // connectGameWS();
-      // loadGestureRecognizer();
-    }
-  // }, [player.current.stream]);
+  useEffect(() => {
+    setCurrentSysMessage(null);
+    setCurrentSysMessagesArray([]);
+    
+  }, [gameSession.gameId]);
+
 
   // useEffect(() => {
   //   if (players.size>0) {

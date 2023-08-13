@@ -124,9 +124,11 @@ public class GameManager {
 	public boolean createGameSession(String roomId) {
 		GameRoom gameRoom = getGameRoom(roomId);
 		if (gameRoom == null) return false;
-		
 		String newGameId = gameCodeGenerate(); // 새 게임 코드 획득
-		GameSession newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
+		GameSession prevGame = gameSessionMap.get(gameRoom.getGameId());
+		GameSession newGame = null;
+		if (prevGame != null) newGame = new GameSession(roomId, newGameId, prevGame.getGameOption()); // 새 게임 세션 생성
+		else newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
 		gameRoom.setGameId(newGameId);
 		gameSessionMap.put(newGameId, newGame);
 		log.debug("createGameRoom - GameSession : " + newGame);

@@ -113,6 +113,7 @@ public class MainController {
 
 		if (gameSession.getPhase() != GameSession.PhaseType.READY) {
 			log.debug("이미 게임이 실행 중입니다 roomId : " + roomId);
+			log.debug(gameSession.toString());
 			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 		}
 

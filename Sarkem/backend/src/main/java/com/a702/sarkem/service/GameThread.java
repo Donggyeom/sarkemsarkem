@@ -132,6 +132,9 @@ public class GameThread extends Thread {
 		// 게임 결과 DB저장
 		dbService.InsertGameResult(gameSession);
 		
+		gameManager.createGameSession(roomId);
+		
+		return; 
 	}
 
 	// 역할배정

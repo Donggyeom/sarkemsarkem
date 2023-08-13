@@ -160,11 +160,11 @@ const ResultPage = () => {
     setRoomSession((prev) => {
       return ({
         ...prev,
-        gameId: null,
+        gameId: undefined,
       });
     });
-    console.log("새로운 방 만들기")
-    navigate(`/${createRandomId()}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
+    console.log("새로운 방 만들기", roomSession.roomId);
+    navigate(`/${roomSession.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
 
   const handleExitButtonClick = () => {
@@ -180,7 +180,8 @@ const ResultPage = () => {
     setRoomSession((prev) => {
       return ({
         ...prev,
-        gameId: null,
+        roomId: undefined,
+        gameId: undefined
       });
     });
     console.log("홈으로 나가기")
