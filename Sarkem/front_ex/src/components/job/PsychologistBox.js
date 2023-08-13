@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import psychologistBox from '../../img/psychologistbox.png'
 import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
-
 
 const Psychologistboxdiv = styled.div`
   background-image: url(${psychologistBox});
@@ -27,21 +26,38 @@ const Psychologistboxdiv = styled.div`
 `;
 
 
-const PsychologistBox = () => {
-    // const { 심리학자어쩌구 } = useGameContext();
-    const { player } = useRoomContext(); //target도 추가해야 함
+const PsychologistBox = ({detectExpressions}) => {
+    console.log(detectExpressions);
+    let happy = 0;
+    let sad = 0;
+    let disgusted = 0;
+    let neutral = 0;
+    let angry = 0;
+    let surprised = 0;
+    let fearful = 0;
+    if((detectExpressions!==undefined)&&(detectExpressions!==null)){
+      happy = Math.round(detectExpressions.expressions.happy * 100) / 10;
+      sad = Math.round(detectExpressions.expressions.sad * 100) / 10;
+      disgusted = Math.round(detectExpressions.expressions.disgusted * 100) / 10;
+      neutral = Math.round(detectExpressions.expressions.neutral * 100) / 10;
+      angry = Math.round(detectExpressions.expressions.angry * 100) / 10;
+      surprised = Math.round(detectExpressions.expressions.surprised * 100) / 10;
+      fearful = Math.round(detectExpressions.expressions.fearful * 100) / 10;
+    }
+    const { player } = useRoomContext();
     const role = player.current.role;
-    console.log('ㅇㅇ됨');
 
     if (role === 'PSYCHO') { //&&  target===true
-        console.log('조건됨')
     return (
       <Psychologistboxdiv>
         {/* {Psychologist} */}
-        <div>happy</div>
-        <div>sad</div>
-        <div>disgusting</div>
-        <div>go home</div>
+        <div>happy : {happy}</div>
+        <div>sad : {sad}</div>
+        <div>disgusted : {disgusted}</div>
+        <div>neutral : {neutral}</div>
+        <div>angry : {angry}</div>
+        <div>surprised: {surprised}</div>
+        <div>fearful : {fearful}</div>
       </Psychologistboxdiv>
     );
   }

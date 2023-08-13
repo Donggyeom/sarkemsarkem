@@ -12,21 +12,15 @@ const loadModels = () => {
     ])
 }
 
-//켜기
-const faceMyDetect = (videoRef, running, setRunning) => {
+
+const faceMyDetect = (videoRef, running, setRunning, setDetectExpressions) => {
     if (!running) {
         const id = setInterval(async () => {
             const detectionsWithExpressions = await faceapi
                 .detectSingleFace(videoRef)
                 .withFaceLandmarks()
                 .withFaceExpressions();
-            console.log(detectionsWithExpressions.expressions, "심리학자");
-            console.log(detectionsWithExpressions.expressions.neutral, "화남");
-            console.log(detectionsWithExpressions.expressions.happy, "역겨움");
-            console.log(detectionsWithExpressions.expressions.neutral, "놀람");
-            console.log(detectionsWithExpressions.expressions.happy, "기쁨");
-            console.log(detectionsWithExpressions.expressions.neutral, "평온");
-            console.log(detectionsWithExpressions.expressions.happy, "기쁨");
+            setDetectExpressions(detectionsWithExpressions);
         }, 1000);
         setRunning(true);
         return id;
@@ -41,6 +35,6 @@ const stopFace = (intervalId, setIntervalId, setRunning) => {
         setRunning(false);
       }
 }
-export { loadModels, faceMyDetect, stopFace };
+export { loadModels, faceMyDetect, stopFace};
 
 

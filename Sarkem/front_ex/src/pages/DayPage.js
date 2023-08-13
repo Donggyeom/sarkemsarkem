@@ -15,7 +15,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import DayNightCamera from '../components/camera/DayNightCamera';
-
+import { loadModels, faceMyDetect, stopFace } from '../components/job/Psychologist';
 // log
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
@@ -46,18 +46,32 @@ const DayPage = () => {
 
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
   const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, 
-    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers } = useGameContext();
+    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers, psychologist, psyTarget } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
   const [isLogOn, setIsLogOn] = useState(true);
   const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
+  const [running, setRunning] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
 
+  // useEffect(()=>{
+  //   console.log(detectExpressions);
+  // },[detectExpressions])
+
+  useEffect(() => {
+    loadModels();
+  }, []);
 
   const handleLogButtonClick = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
-
+  useEffect(()=>{
+    console.log(psychologist);
+    if (psychologist) startFaceDetection();
+    else stopFaceDetection();
+  },[psychologist])
   
   useEffect((currentSysMessage) => {
     if (roomSession == undefined || roomSession.roomId == undefined){
@@ -78,6 +92,25 @@ const DayPage = () => {
     }
   }, [currentSysMessage]);
 
+
+    //faceapi 실행
+  //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
+  const startFaceDetection = () => {
+    if (players.current.get(psyTarget) === undefined) return;
+    console.log(players.current.get(psyTarget).stream);
+      const id = faceMyDetect(players.current.get(psyTarget).stream.videos[players.current.get(psyTarget).stream.videos.length-1].video, running, setRunning, setDetectExpressions);
+      setIntervalId(id);
+    }
+  //끄는거 
+  const stopFaceDetection = () => {
+    console.log("꺼짐?");
+    if (intervalId) {
+        clearInterval(intervalId);
+        setIntervalId(null);
+        setRunning(false);
+      }
+    stopFace(intervalId, setIntervalId, setRunning);
+  };
 
   const threated = () =>{
     console.log(threatedTarget);
@@ -151,7 +184,7 @@ const DayPage = () => {
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <ScMini />
         <SarkMission handNumber={currentHandNumber} />
-        <PsychologistBox></PsychologistBox>
+        {psychologist&&<PsychologistBox detectExpressions={detectExpressions}></PsychologistBox>}
         </StyledDayPage>
         <TempButton url={`/${roomSession.roomId}/sunset`} onClick={() => navigate(`/${roomSession.roomId}/sunset`)} alt="Start Game" />
         {chatVisible()}
