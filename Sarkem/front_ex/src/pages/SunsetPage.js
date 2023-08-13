@@ -548,14 +548,15 @@ const SunsetPage = () => {
   const navigate = useNavigate();
   
   // TODO: camcount 계산
-  const [camCount, setCamCount] = useState(players.current.size);
+  const [camCount, setCamCount] = useState(getAlivePlayers().length);
+  console.log(getAlivePlayers(), "여기");
   const gridStyles = calculateGrid(camCount);
 
   console.log(targetId, "확인합시다");
 
   let displayCamCat = false;
   let assignedIndices = [];
-  let adjustedCamCount = 0;
+  // let adjustedCamCount = 0;
 
   useEffect(() => {
     if (roomSession.roomId === undefined){
@@ -585,26 +586,26 @@ const SunsetPage = () => {
     leaveSession();
   }
 
-  const calculateAdjustedCamCount = () => {
-    const filteredCamArray = Array.from(players.current.values()).filter((player) => {
-      return !deadIds.includes(player.playerId);
-    });
+  // const calculateAdjustedCamCount = () => {
+  //   const filteredCamArray = Array.from(players.current.values()).filter((player) => {
+  //     return !deadIds.includes(player.playerId);
+  //   });
 
-    let adjustedCamCount = filteredCamArray.length;
+  //   let adjustedCamCount = filteredCamArray.length;
 
-    filteredCamArray.forEach((player) => {
+  //   filteredCamArray.forEach((player) => {
 
-      if (deadIds.includes(player.playerId)) {
-        adjustedCamCount -= 1;
-      }
-    });
+  //     if (deadIds.includes(player.playerId)) {
+  //       adjustedCamCount -= 1;
+  //     }
+  //   });
 
-    return adjustedCamCount;
-  }
+  //   return adjustedCamCount;
+  // }
 
-  const generateRandomPositionIndex = (maxIndex) => {
-    return Math.floor(Math.random() * maxIndex);
-  };
+  // const generateRandomPositionIndex = (maxIndex) => {
+  //   return Math.floor(Math.random() * maxIndex);
+  // };
 
   const handleCamButtonClick = () => {
     const camOn = !player.current.isCamOn;
