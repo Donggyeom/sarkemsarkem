@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import agreeButtonImage from '../../img/찬성.png';
 import disagreeButtonImage from '../../img/반대.png';
+import completeagreeButtonImage from '../../img/tb_endok.png';
+import completeDisagreeButtonImage from '../../img/tb_endno.png';
 import buttonclickSound from '../../sound/buttonclick.mp3'
 
 const SmallButton = styled.button`
@@ -30,22 +32,31 @@ const ButtonWithSound = ({ onClick, imageSrc, alt, disabled }) => {
   );
 };
 
-const AgreeButton = ({ onClick, disabled }) => (
-  <ButtonWithSound
-    onClick={onClick}
-    imageSrc={agreeButtonImage}
-    alt="찬성"
-    disabled={disabled}
-  />
-);
+const AgreeButton = ({ onClick, disabled, isComplete }) => {
+  const imageSrc = isComplete ? completeagreeButtonImage : agreeButtonImage;
 
-const DisagreeButton = ({ onClick, disabled }) => (
-  <ButtonWithSound
-    onClick={onClick}
-    imageSrc={disagreeButtonImage}
-    alt="반대"
-    disabled={disabled}
-  />
-);
+  return (
+    <ButtonWithSound
+      onClick={onClick}
+      imageSrc={imageSrc}
+      alt="찬성"
+      disabled={disabled}
+    />
+  );
+};
+
+const DisagreeButton = ({ onClick, disabled, isComplete }) => {
+  const imageSrc = isComplete ? completeDisagreeButtonImage : disagreeButtonImage;
+  
+  return (
+    <ButtonWithSound
+      onClick={onClick}
+      imageSrc={imageSrc}
+      alt="반대"
+      disabled={disabled}
+    />
+  );
+};
+
 
 export { AgreeButton, DisagreeButton };

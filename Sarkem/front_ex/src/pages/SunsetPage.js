@@ -15,6 +15,8 @@ import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
 import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
 import loadingimage from '../img/loading1.jpg';
+import agreeButtonImage from '../img/찬성.png';
+import disagreeButtonImage from '../img/반대.png';
 
 
 
@@ -540,6 +542,9 @@ const SunsetPage = () => {
     chatVisible, remainTime, dayCount, deadIds, getAlivePlayers } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
+  const [isAgree, setIsAgree] = useState(false);
+  const [disAgree, setDisAgree] = useState(false);
+
   const navigate = useNavigate();
   
   // TODO: camcount 계산
@@ -566,11 +571,11 @@ const SunsetPage = () => {
   }, []);
 
 
-  useEffect(() => {
-    adjustedCamCount = calculateAdjustedCamCount();
+  // useEffect(() => {
+  //   adjustedCamCount = calculateAdjustedCamCount();
 
-    setCamCount(adjustedCamCount);
-  }, [adjustedCamCount]);
+  //   setCamCount(adjustedCamCount);
+  // }, [adjustedCamCount]);
 
 
   ///   SunsetPage 함수 ///
@@ -750,16 +755,36 @@ const SunsetPage = () => {
       <div>
       {player.role === "OBSERVER" ? (
         <>
-          <AgreeButton onClick={null} disabled />
-          <DisagreeButton onClick={null} disabled />
+          <AgreeButton onClick={null} disabled={isAgree} />
+          <DisagreeButton onClick={null} disabled={disAgree} />
         </>
       ) : (
         <>
-          <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
-          <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
-        </>
-      )}
-    </div>
+          {/* <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} /> */}
+          {/* <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} /> */}
+          <AgreeButton
+        onClick={() => {
+          if (!disAgree && !isAgree) {
+            agreeExpulsion();
+            setIsAgree(true);
+          }
+        }}
+        disabled={isAgree || !startVote || disAgree}
+        isComplete={isAgree}
+      />
+      <DisagreeButton
+        onClick={() => {
+          if (!isAgree && !disAgree) {
+            disagreeExpulsion();
+            setDisAgree(true);
+          }
+        }}
+        disabled={disAgree || !startVote || isAgree}
+        isComplete={disAgree}
+      />
+    </>
+  )}
+</div>
 <ScMini />
 </StyledContent>
 <TempButton url={`/${roomSession.roomId}/night`} onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
