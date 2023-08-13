@@ -6,7 +6,7 @@ import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
-
+import { VoteButton, SkipButton } from '../buttons/VoteButton.js';
 import skipImg from '../../img/btn_스킵하기.png';
 import skipClearImg from '../../img/tb_endskip.png';
 import voteImg from '../../img/btn_투표확정.png';
@@ -50,12 +50,12 @@ const ActionButton = styled.button`
   cursor: pointer;
 `;
 
-const VoteButton = styled.button`
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  top: 30%;
-`;
+// const VoteButton = styled.button`
+//   border: none;
+//   background: transparent;
+//   cursor: pointer;
+//   top: 30%;
+// `;
 
 const VoteImage = styled.img`
   width: 80%;
@@ -518,15 +518,38 @@ const DayNightCamera = React.memo(({ players }) => {
       <ButtonWrapper>
         {dayCount === 1 && phase === 'day' ? (
           <>
-            {startVote && (
+            {/* {startVote && (
             <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
               <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
             </VoteButton>
-            )}
+            )} */}
+            {isSkipped ? (
+                <VoteImage src={skipClearImg} alt="skip end" />
+                ) : (
+                  <>
+                    {startVote && (
+                      <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                    )}
+                  </>
+                )
+              }
           </>
         ) : (
-          <>
-            {isConfirmed ? (
+            <>
+              {isConfirmed || isSkipped ? (
+                <VoteImage src={isSkipped ? skipClearImg:voteClearImg} alt="스킵이나보트끝난이미지" />
+                ) : (
+                  <>
+                    {startVote && (
+                      <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped} />
+                    )}
+                    {startVote && (
+                      <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                    )}
+                  </>
+                )
+              }
+            {/* {isConfirmed ? (
               <VoteButton disabled >
                 <VoteImage src={voteClearImg} alt="Vote" />
               </VoteButton>
@@ -541,7 +564,7 @@ const DayNightCamera = React.memo(({ players }) => {
             <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
               <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
             </VoteButton>
-            )}
+            )} */}
           </>
         )}
       </ButtonWrapper>

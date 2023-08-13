@@ -14,6 +14,8 @@ import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
 import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
+import completeagreeButtonImage from '../img/tb_endok.png';
+import completeDisagreeButtonImage from '../img/tb_endno.png';
 import loadingimage from '../img/loading1.jpg';
 import agreeButtonImage from '../img/찬성.png';
 import disagreeButtonImage from '../img/반대.png';
@@ -29,6 +31,10 @@ const StyledContent = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
+`;
+const VoteImage = styled.img`
+  width: 50%;
+  // height: 60%;
 `;
 
 const CamCatGrid = styled.div`
@@ -639,6 +645,21 @@ const SunsetPage = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
   
+  const handleAgreeClick = () => {
+    if (!disAgree && !isAgree) {
+      agreeExpulsion();
+      setIsAgree(true);
+      setDisAgree(false);
+    }
+  };
+
+  const handleDisagreeClick = () => {
+    if (!isAgree && !disAgree) {
+      disagreeExpulsion();
+      setDisAgree(true);
+      setIsAgree(false);
+    }
+  };
 
   const sortedCamArray = getAlivePlayers().filter((player) => {
       return !deadIds.includes(player.playerId);
@@ -759,11 +780,29 @@ const SunsetPage = () => {
           <AgreeButton onClick={null} disabled={isAgree} />
           <DisagreeButton onClick={null} disabled={disAgree} />
         </>
-      ) : (
-        <>
+          ) : (
+              
+              <>
+                {isAgree || disAgree ? (
+                  <VoteImage src={isAgree ? completeagreeButtonImage : completeDisagreeButtonImage} alt="찬반완료" />
+                ) : (
+                  <>
+                    <AgreeButton
+                      onClick={handleAgreeClick}
+                      disabled={isAgree || disAgree || !startVote}
+                      isComplete={isAgree}
+                    />
+                    <DisagreeButton
+                      onClick={handleDisagreeClick}
+                      disabled={disAgree || isAgree || !startVote}
+                      isComplete={disAgree}
+                    />
+                  </>
+                )
+                }
           {/* <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} /> */}
           {/* <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} /> */}
-          <AgreeButton
+          {/* <AgreeButton
         onClick={() => {
           if (!disAgree && !isAgree) {
             agreeExpulsion();
@@ -782,7 +821,7 @@ const SunsetPage = () => {
         }}
         disabled={disAgree || !startVote || isAgree}
         isComplete={disAgree}
-      />
+      /> */}
     </>
   )}
 </div>

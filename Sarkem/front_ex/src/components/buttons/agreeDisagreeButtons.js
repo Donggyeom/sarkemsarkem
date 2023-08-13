@@ -7,15 +7,17 @@ import completeDisagreeButtonImage from '../../img/tb_endno.png';
 import buttonclickSound from '../../sound/buttonclick.mp3'
 
 const SmallButton = styled.button`
-  padding: 0;
+  // padding: 0;
   background: url(${props => props.imageSrc}) no-repeat center center;
   background-size: cover;
   cursor: pointer;
   border: none;
-  position: relative; 
+  // position: relative; 
   z-index: 1;
-  width: 9vw;
-  height: 10vh;
+  // width: 9vw;
+  // height: 10vh;
+  width: 50%;
+  height: 50%; 
   &:hover {
     filter: brightness(0.8);
   }
@@ -36,8 +38,8 @@ const ButtonWithSound = ({ onClick, imageSrc, alt, disabled }) => {
 };
 
 const AgreeButton = ({ onClick, disabled, isComplete }) => {
-  const imageSrc = isComplete ? completeagreeButtonImage : agreeButtonImage;
-
+  // const imageSrc = isComplete ? completeagreeButtonImage : agreeButtonImage;
+  const imageSrc = agreeButtonImage;
   return (
     <ButtonWithSound
       onClick={onClick}
@@ -49,8 +51,8 @@ const AgreeButton = ({ onClick, disabled, isComplete }) => {
 };
 
 const DisagreeButton = ({ onClick, disabled, isComplete }) => {
-  const imageSrc = isComplete ? completeDisagreeButtonImage : disagreeButtonImage;
-  
+  // const imageSrc = isComplete ? completeDisagreeButtonImage : disagreeButtonImage;
+  const imageSrc = disagreeButtonImage;
   return (
     <ButtonWithSound
       onClick={onClick}
