@@ -64,6 +64,7 @@ const StartButtonContainer = styled.div`
 
 const StartPage = () => {
   const navigate = useNavigate();
+  const {setPlayer} = useRoomContext();
   const [logoVisible, setLogoVisible] = useState(false);
   const audio = new Audio(logoSound);
 
@@ -94,7 +95,7 @@ const StartPage = () => {
   }
 
   const goToCreateRoom = () => {
-    console.log('커신이다~')
+    setPlayer([{key: 'isHost', value: true}]);
     navigate(`/${createRandomId()}`);
   };
 

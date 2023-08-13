@@ -200,23 +200,9 @@ const CommonStart = ({onClick} ) => {
     console.log('checkGameRoom');
     var gameRoom = await getGameRoom(roomId);
     if (gameRoom == null) {
-      // 방을 생성할 경우, 방장으로 설정
-      // setPlayer((prev) => {
-      //   return ({
-      //     ...prev,
-      //     isHost: true,
-      //   });
-      // });
       setPlayer([{key: 'isHost', value: true}]);
     }
     else {
-      // 방을 이미 있을 경우 방장 X
-      // setPlayer((prev) => {
-      //   return ({
-      //     ...prev,
-      //     isHost: false,
-      //   });
-      // });
       setPlayer([{key: 'isHost', value: false}]);
     }
   };
