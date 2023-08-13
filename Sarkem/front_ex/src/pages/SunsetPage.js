@@ -15,6 +15,8 @@ import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
 import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
 import loadingimage from '../img/loading1.jpg';
+import agreeButtonImage from '../img/찬성.png';
+import disagreeButtonImage from '../img/반대.png';
 
 
 
@@ -540,20 +542,24 @@ const SunsetPage = () => {
     chatVisible, remainTime, dayCount, deadIds, getAlivePlayers } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
+  const [isAgree, setIsAgree] = useState(false);
+  const [disAgree, setDisAgree] = useState(false);
+
   const navigate = useNavigate();
   
   // TODO: camcount 계산
-  const [camCount, setCamCount] = useState(players.current.size);
+  const [camCount, setCamCount] = useState(getAlivePlayers().length);
+  console.log(getAlivePlayers(), "여기");
   const gridStyles = calculateGrid(camCount);
 
   console.log(targetId, "확인합시다");
 
   let displayCamCat = false;
   let assignedIndices = [];
-  let adjustedCamCount = 0;
+  // let adjustedCamCount = 0;
 
   useEffect(() => {
-    if (roomSession.roomId === undefined){
+    if (roomSession == undefined || roomSession.roomId == undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
@@ -566,11 +572,11 @@ const SunsetPage = () => {
   }, []);
 
 
-  useEffect(() => {
-    adjustedCamCount = calculateAdjustedCamCount();
+  // useEffect(() => {
+  //   adjustedCamCount = calculateAdjustedCamCount();
 
-    setCamCount(adjustedCamCount);
-  }, [adjustedCamCount]);
+  //   setCamCount(adjustedCamCount);
+  // }, [adjustedCamCount]);
 
 
   ///   SunsetPage 함수 ///
@@ -580,26 +586,26 @@ const SunsetPage = () => {
     leaveSession();
   }
 
-  const calculateAdjustedCamCount = () => {
-    const filteredCamArray = Array.from(players.current.values()).filter((player) => {
-      return !deadIds.includes(player.playerId);
-    });
+  // const calculateAdjustedCamCount = () => {
+  //   const filteredCamArray = Array.from(players.current.values()).filter((player) => {
+  //     return !deadIds.includes(player.playerId);
+  //   });
 
-    let adjustedCamCount = filteredCamArray.length;
+  //   let adjustedCamCount = filteredCamArray.length;
 
-    filteredCamArray.forEach((player) => {
+  //   filteredCamArray.forEach((player) => {
 
-      if (deadIds.includes(player.playerId)) {
-        adjustedCamCount -= 1;
-      }
-    });
+  //     if (deadIds.includes(player.playerId)) {
+  //       adjustedCamCount -= 1;
+  //     }
+  //   });
 
-    return adjustedCamCount;
-  }
+  //   return adjustedCamCount;
+  // }
 
-  const generateRandomPositionIndex = (maxIndex) => {
-    return Math.floor(Math.random() * maxIndex);
-  };
+  // const generateRandomPositionIndex = (maxIndex) => {
+  //   return Math.floor(Math.random() * maxIndex);
+  // };
 
   const handleCamButtonClick = () => {
     const camOn = !player.current.isCamOn;
@@ -750,16 +756,36 @@ const SunsetPage = () => {
       <div>
       {player.role === "OBSERVER" ? (
         <>
-          <AgreeButton onClick={null} disabled />
-          <DisagreeButton onClick={null} disabled />
+          <AgreeButton onClick={null} disabled={isAgree} />
+          <DisagreeButton onClick={null} disabled={disAgree} />
         </>
       ) : (
         <>
-          <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} />
-          <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} />
-        </>
-      )}
-    </div>
+          {/* <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} /> */}
+          {/* <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} /> */}
+          <AgreeButton
+        onClick={() => {
+          if (!disAgree && !isAgree) {
+            agreeExpulsion();
+            setIsAgree(true);
+          }
+        }}
+        disabled={isAgree || !startVote || disAgree}
+        isComplete={isAgree}
+      />
+      <DisagreeButton
+        onClick={() => {
+          if (!isAgree && !disAgree) {
+            disagreeExpulsion();
+            setDisAgree(true);
+          }
+        }}
+        disabled={disAgree || !startVote || isAgree}
+        isComplete={disAgree}
+      />
+    </>
+  )}
+</div>
 <ScMini />
 </StyledContent>
 <TempButton url={`/${roomSession.roomId}/night`} onClick={() => navigate(`/${roomSession.roomId}/night`)}/>

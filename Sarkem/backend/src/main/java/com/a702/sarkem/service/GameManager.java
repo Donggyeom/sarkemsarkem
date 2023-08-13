@@ -1,5 +1,6 @@
 package com.a702.sarkem.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +76,17 @@ public class GameManager {
 			}
 		}
 		return new String(tmp);
+	}
+	
+	/**
+	 * 플레이어 연결 여부 업데이트
+	 */
+	public void updatePlayerSession(String roomId, String playerId) {
+		GameSession gameSession = getGameSession(roomId);
+		if (gameSession == null) return;
+		Player player = gameSession.getPlayer(playerId);
+		if (player == null) return;
+		player.setLastUpdateTime(LocalDateTime.now());
 	}
 
 	/**
@@ -462,7 +474,7 @@ public class GameManager {
 			gameSession.addExpulsionVoteCnt();
 		}
 		// 추방 투표 현황 전송
-		sendTwilightSelectionEndMessage(roomId, playerId);
+		sendTwilightSelectionEndMessage(roomId, playerId, voteOX);
 	}
 
 	/**
@@ -777,8 +789,8 @@ public class GameManager {
 	}
 
 	// "추방 투표 종료(개인)" 메시지 전송
-	public void sendTwilightSelectionEndMessage(String roomId, String playerId) {
-		sendSystemMessage(roomId, playerId, SystemCode.TWILIGHT_SELECTION_END, null);
+	public void sendTwilightSelectionEndMessage(String roomId, String playerId, Map<String, Boolean> param) {
+		sendSystemMessage(roomId, playerId, SystemCode.TWILIGHT_SELECTION_END, param);
 	}
 	// "저녁 투표 종료" 메시지 전송
 	public void sendEndTwilightVoteMessage(String roomId, Map<String, String> param) {

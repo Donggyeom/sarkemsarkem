@@ -15,35 +15,10 @@ const Box = styled.div
 
 const CamCat = ({id}) => {
   const { players, player } = useRoomContext();
-  const [running, setRunning] = useState(false);
-  const [intervalId, setIntervalId] = useState(null);
-  const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const { psyTarget, psychologist, voteSituation, phase } = useGameContext();
+  const { voteSituation, phase } = useGameContext();
   const current = players.current.get(id);
   const stream = current.stream;
 
-
-  useEffect(() => {
-    loadModels();
-  }, []);
-
-  useEffect(() => {
-    loadModels();
-    startFaceDetection();
-  }, [psyTarget]);
-
-  //faceapi 실행
-  //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
-  const startFaceDetection = () => {
-    if(current.playerId===psyTarget){
-      const id = faceMyDetect(stream.videos[1].video, setBoxPosition, running, setRunning);
-      setIntervalId(id);
-    }
-  };
-  //끄는거 
-  const stopFaceDetection = () => {
-    stopFace(intervalId, setRunning, setBoxPosition);
-  };
 
   const getVoteResultForUser = (id) => {
     if (phase === 'day') {

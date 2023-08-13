@@ -347,13 +347,15 @@ const DayNightCamera = React.memo(({ players }) => {
     }
   }, [hiddenMission])
 
+  console.log(player.current.role, "롤확인");
+
 
   const handleCamClick = (id) => {
     console.log(voteSituation, "투표 결과 확인합니다");
     console.log(startVote);
     console.log(dayCount);
     console.log(id, "얘는 캠주인");
-    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped || player.role === "OBSERVER") {
+    if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped || player.current.role === "OBSERVER") {
       return;
     }
 
@@ -368,14 +370,14 @@ const DayNightCamera = React.memo(({ players }) => {
   };
 
   const handleConfirmClick = () => {
-    if (clickedCamera && !isConfirmed || player.role === "OBSERVER") {
+    if (clickedCamera && !isConfirmed || player.current.role === "OBSERVER") {
       setIsConfirmed(true);
       selectConfirm();
     }
   };
 
   const handleSkipClick = () => {
-    if (!isConfirmed && !isSkipped && startVote || player.role == "OBSERVER") {
+    if (!isConfirmed && !isSkipped && startVote || player.current.role == "OBSERVER") {
       setIsSkipped(true);
       setClickedCamera(null);
       setSelectedTarget("");
