@@ -148,6 +148,7 @@ const GameProvider = ({ children }) => {
 
     sendPing();
   }
+  
 
   const sendPing = () => {
     if (pingSession.current) clearInterval(pingSession.current);
@@ -196,6 +197,7 @@ const GameProvider = ({ children }) => {
         playerId:player.current.playerId, 
       }));
     }, 5000);
+  }
 
   // 게임룸 redis 구독
   const connectGame = () => {
