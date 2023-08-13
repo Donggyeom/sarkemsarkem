@@ -8,11 +8,14 @@ import buttonclickSound from '../../sound/buttonclick.mp3'
 
 const SmallButton = styled.button`
   padding: 0;
-  background: none;
+  background: url(${props => props.imageSrc}) no-repeat center center;
+  background-size: cover;
   cursor: pointer;
   border: none;
   position: relative; 
   z-index: 1;
+  width: 9vw;
+  height: 10vh;
   &:hover {
     filter: brightness(0.8);
   }
@@ -27,7 +30,7 @@ const ButtonWithSound = ({ onClick, imageSrc, alt, disabled }) => {
 
   return (
     <SmallButton onClick={handleClick} disabled={disabled}>
-      <img src={imageSrc} alt={alt} style={{ width: '50%', height: '100%' }} />
+      <img src={imageSrc} alt={alt} style={{ width: '100%', height: '100%' }} />
     </SmallButton>
   );
 };
