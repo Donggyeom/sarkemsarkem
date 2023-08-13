@@ -13,7 +13,7 @@ import nightCamAudio from './components/camera/DayNightCamera';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-  const { roomSession, player, setPlayer, players, setPlayers, leaveSession } = useRoomContext();
+  const { roomSession, player, setPlayer, players, setPlayers } = useRoomContext();
   const [ gameSession, setGameSession ] = useState({});
   // 현재 시스템 메시지를 저장할 상태 추가
   const [currentSysMessage, setCurrentSysMessage] = useState(null);
@@ -63,7 +63,6 @@ const GameProvider = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   let stompClient = useRef({});
-  const pingSession = useRef();
 
   
   const Roles = new Map(Object.entries({
@@ -139,9 +138,6 @@ const GameProvider = ({ children }) => {
 
   // WebSocket 연결
   const connectGameWS = async (event) => {
-
-    if (pingSession.current) clearInterval(pingSession.current);
-
     if (stompClient.current === undefined) return;
     console.log("connectGameWS");
     let socket = new SockJS("http://localhost:8080/ws-stomp");
@@ -154,77 +150,16 @@ const GameProvider = ({ children }) => {
         connectChat();
         sendChatPubMessage();
         // onConnected();
-        console.log(stompClient.current.connected);
-      }, 500);
-    });
-    socket.onclose = () => {
-      leaveSession();
-      if (pingSession.current) clearInterval(pingSession.current);
-      alert("socket error");
-      navigate("/");
-    }
-
-    sendPing();
+       console.log(stompClient.current.connected);
+    }, 500);
+    })
   }
 
   // 게임룸 redis 구독
-  const connectGame = async () => {
+  const connectGame = () => {
     if (!stompClient.current.connected) return;
-
-    console.log('/sub/game/system/' + window.sessionStorage.getItem("roomId") + " redis 구독");
-    await stompClient.current.subscribe('/sub/game/system/' + window.sessionStorage.getItem("roomId"), receiveMessage);
-
-    
-  }
-
-
-  const sendPing = () => {
-    if (pingSession.current) clearInterval(pingSession.current);
-    
-    // 연결되어 있음을 알리는 메시지 전송
-    pingSession.current = setInterval(() => {
-      if (!stompClient.current.connected) {
-        console.log('sendPing');
-        console.log('stompClient.current null');
-        if (pingSession.current) clearInterval(pingSession.current);
-        if (roomSession.roomId !== undefined) {
-          navigate(`/${roomSession.roomId}`);
-        }
-        else {
-          navigate(`/`);
-        }
-      }
-
-      if (player.current.playerId === undefined) {
-        console.log('sendPing');
-        console.log('player.current.playerId null');
-        if (pingSession.current) clearInterval(pingSession.current);
-        if (roomSession.roomId !== undefined) {
-          navigate(`/${roomSession.roomId}`);
-        }
-        else {
-          navigate(`/`);
-        }
-      }
-      
-      if (roomSession.gameId === undefined) {
-        console.log('sendPing');
-        console.log('roomSession.gameId null');
-        if (pingSession.current) clearInterval(pingSession.current);
-      }
-
-      console.log('send ping');
-      if (!stompClient.current.connected) {
-        if (pingSession.current) clearInterval(pingSession.current);
-        return;
-      }
-      stompClient.current.send('/pub/game/action', {}, JSON.stringify({
-        code:'PING',
-        roomId: roomSession.roomId,
-        gameId: roomSession.gameId,
-        playerId:player.current.playerId, 
-      }));
-    }, 5000);
+    console.log('/sub/game/system/' + window.sessionStorage.getItem("roomId") + " redis 구독")
+    stompClient.current.subscribe('/sub/game/system/' + window.sessionStorage.getItem("roomId"), receiveMessage)
   }
 
 
@@ -319,8 +254,8 @@ const GameProvider = ({ children }) => {
 
 
   const getAlivePlayers = () => {
-    // console.log(players.current.values(), "getAlivePlayers");
-    // console.log(Array.from(players.current.values()).filter((player) => player.isAlive === true), "getAlivePlayers");
+    console.log(players.current.values(), "getAlivePlayers");
+    console.log(Array.from(players.current.values()).filter((player) => player.isAlive === true), "getAlivePlayers");
     return Array.from(players.current.values()).filter((player) => player.isAlive === true);
   }
 
@@ -335,9 +270,14 @@ const GameProvider = ({ children }) => {
     case "NOTICE_MESSAGE":
         console.log(sysMessage.param);
         setCurrentSysMessage(()=>sysMessage);
-        setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
+        console.log(sysMessage.param.phase);
+        console.log(sysMessage.param.phase==="DAY");
+        if(sysMessage.param.phase==="DAY"){
+          console.log("들어간다");
+          setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
           { ...sysMessage, dayCount: sysMessage.param.day }]);
-        break;
+        }
+    break;
 
     case "GAME_START":   
         // 게임상태 초기화
@@ -398,6 +338,7 @@ const GameProvider = ({ children }) => {
         setPsyTarget("");//심리학자 끝
         setPsychologist(false);
         setHiddenMission(false);// 밤이 되면 마피아 미션 끝
+        setCurrentSysMessagesArray([]);
         console.log(phase);
         navigate(`/${roomSession.roomId}/night`);
         break;
