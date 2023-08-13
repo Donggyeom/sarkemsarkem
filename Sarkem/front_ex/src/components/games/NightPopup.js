@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const fadeInOut = keyframes`
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
-  }
-`;
+// const fadeInOut = keyframes`
+//   0% {
+//     opacity: 1;
+//   }
+//   100% {
+//     opacity: 0;
+//     display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
+//   }
+// `;
 
 const StyledPopupContainer = styled.div`
   position: fixed;
@@ -28,8 +28,8 @@ const StyledPopupContainer = styled.div`
   box-shadow: 0px 5.16px 5.16px 0px rgba(0, 0, 0, 0.25), 10.31px 10.31px 0px 0px rgba(0, 0, 0, 1);
   z-index: 9999;
   opacity: ${({ showPopup }) => (showPopup ? 1 : 0)};
-  animation: ${fadeInOut} 4s ease-in-out forwards;
-`;
+  `;
+  // animation: ${fadeInOut} 4s ease-in-out forwards;
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
@@ -52,16 +52,18 @@ const NightPopup = ({sysMessage, dayCount}) => {
   }
   }, [sysMessage]);
 
-  useEffect(() => {
-    let fadeOutTimeout;
-    if (showPopup) {
-      fadeOutTimeout = setTimeout(() => {
-        setShowPopup(false);
-      }, 3500);
-    }
-    return () => clearTimeout(fadeOutTimeout);
-  }, [showPopup])
-
+  // useEffect(() => {
+  //   let fadeOutTimeout;
+  //   if (showPopup) {
+  //     fadeOutTimeout = setTimeout(() => {
+  //       setShowPopup(false);
+  //     }, 3500);
+  //   }
+  //   return () => clearTimeout(fadeOutTimeout);
+  // }, [showPopup])
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
   const formattedMessage = sysMessage?.param?.message
   ? sysMessage.param.message.split('.').map((sentence, index) => (
       <React.Fragment key={index}>
@@ -113,6 +115,7 @@ const NightPopup = ({sysMessage, dayCount}) => {
         </div>
 
         <StyledPopupTitle>{formattedMessage}</StyledPopupTitle>
+        <button onClick={handleClosePopup}>확인</button>
       </StyledPopupContainer>
       )}
     </>
