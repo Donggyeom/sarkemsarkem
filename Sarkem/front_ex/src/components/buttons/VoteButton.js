@@ -8,8 +8,21 @@ const ButtonImage = styled.button`
     padding: 0;
     background: url(${props => props.imageSrc}) no-repeat center center;
     background-size: cover;
-    width: 80%;
-    height: 80%;
+    width: 20%;
+    height: 20%;
+    border : none;
+    cursor: pointer;
+    &:hover {
+        filter: brightness(0.8);
+}
+`;
+
+const SmallButtonImage = styled.button`
+    padding: 0;
+    background: url(${props => props.imageSrc}) no-repeat center center;
+    background-size: cover;
+    width: 40%;
+    height: 40%;
     border : none;
     cursor: pointer;
     // z-index: 1;
@@ -33,8 +46,31 @@ const ButtonWithSound = ({ onClick, imageSrc, alt, disabled }) => {
     );
 };
 
+const SmallButtonWithSound = ({ onClick, imageSrc, alt, disabled }) => {
+    const handleClick = () => {
+    const sound = new Audio(buttonclickSound);
+    sound.play();
+      onClick(); // Call the provided onClick handler from the parent component
+    };
+
+    return (
+        <SmallButtonImage onClick={handleClick} disabled={disabled}>
+            <img src={imageSrc} alt={alt} style={{ width: '100%', height: '100%' }} />
+        </SmallButtonImage>
+    );
+};
+
 const VoteButton = ({ onClick , disabled}) => {
     return <ButtonWithSound
+            onClick={onClick}
+            imageSrc={voteImg}
+            alt="vote"
+            disabled={disabled}
+        />;
+};
+
+const SmallVoteButton = ({ onClick , disabled}) => {
+    return <SmallButtonWithSound
             onClick={onClick}
             imageSrc={voteImg}
             alt="vote"
@@ -51,4 +87,13 @@ const SkipButton = ({ onClick, disabled}) => {
             />;
 };
 
-export {VoteButton, SkipButton} ;
+const SmallSkipButton = ({ onClick, disabled}) => {
+    return <SmallButtonWithSound
+            onClick={onClick}
+            imageSrc={skipImg}
+            alt="skip"
+            disabled={disabled}
+            />;
+};
+
+export {VoteButton, SkipButton, SmallVoteButton, SmallSkipButton} ;

@@ -114,6 +114,48 @@ const GameProvider = ({ children }) => {
 
   ////////////   GameContext 함수   ////////////
 
+  const initGameSession = () => {
+    console.log("initGameSession");
+    setGameSession({});
+    setCurrentSysMessage(null);
+    setCurrentSysMessagesArray([]);
+    setChatMessages([]);
+    setChatConnected(false);
+    setMessage("");
+    setWinner(null);
+    jungleRefs.current = [];
+    mixedMediaStreamRef.current = null;
+    // const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
+    
+    setMyVote(0);
+    setDayCount(0);
+    setStartVote(false);
+    setSelectedTarget("");
+    setExpulsionTarget("");
+    setVotesituation({});
+    setThreatedTarget("");
+    setTargetId("");
+    setRemainTime("");
+    
+    setPsyTarget("");
+    setPsychologist(false);
+    setHiddenMission(false);
+    setMissionNumber(0);
+    setSelectMission("");
+    setScMiniPopUp(true);
+    
+    setVoteTargetId("");
+    setphase("");
+    setGestureRecognizer(null);
+    setDetectedGesture('');
+    setAnimationFrameId(null);
+    
+    setDeadIds([]);
+
+    // 게임 결과 출력을 위한 직업 저장
+    roleAssignedArray.current = [];
+  }
+
   // WebSocket 연결
   const connectGameWS = async (event) => {
     
@@ -218,18 +260,22 @@ const GameProvider = ({ children }) => {
 
   const receiveChatMessage = async (message) => {
     const parsedMessage = JSON.parse(message.body);
+    console.log(parsedMessage, "parsedMessage");
     const chatMessage = parsedMessage.message;
     const playerId = parsedMessage.playerId;
+    const nickName = parsedMessage.nickName;
     
     console.log(chatMessage, "메세지 수신2"); // 메시지 수신 여부 확인을 위한 로그
-    setChatMessages((prevMessages) => [...prevMessages, { message: chatMessage, playerId }]);
+    console.log(nickName, "메세지 수신3");
+    setChatMessages((prevMessages) => [...prevMessages, { message: chatMessage, playerId, nickName }]);
   };
   
 
   const sendChatPubMessage = (message) => {
     console.log("chat publish 들어감"); 
     if (stompClient.current.connected && player.current.playerId !== null) {
-      console.log("Enter 메시지 보냄, roomId", roomSession.roomId); 
+      console.log("Enter 메시지 보냄, roomId", roomSession.roomId);
+      console.log(player.current.nickName, "playernickname");
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'ENTER',
         playerId:player.current.playerId,
@@ -255,6 +301,7 @@ const GameProvider = ({ children }) => {
         type:'TALK', 
         roomId: roomSession.roomId,
         playerId:player.current.playerId,
+        nickName : player.current.nickName,
         message: message
       }));
     }
@@ -451,10 +498,12 @@ const GameProvider = ({ children }) => {
         break;
 
     case "TWILIGHT_VOTE_END":
-        setStartVote(false);
-        // alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
-        players.current.get(sysMessage.param.targetId).isAlive = false;
-        break;
+      setStartVote(false);
+
+      if (sysMessage.param.result === "true") {
+          players.current.get(sysMessage.param.targetId).isAlive = false;
+      }
+      break;
 
     case "BE_EXCLUDED":
         // setPlayer((prev) => {
@@ -683,7 +732,10 @@ const GameProvider = ({ children }) => {
 
     // 미션성공
     const missionConplete = () => {
-        console.log("미션 성공");
+      console.log("미션 성공");
+      setHiddenMission(false);
+      setSelectMission("");
+      stopPredicting();
         if (stompClient.current.connected && player.current.playerId !== undefined) {
             stompClient.current.send("/pub/game/action", {},
                 JSON.stringify({
@@ -698,39 +750,54 @@ const GameProvider = ({ children }) => {
     };
 
     // 
-    const predictWebcam = async () => {
-      console.log(selectMission);
-      try {
+    const predictWebcam = () => {
         if (gestureRecognizer) {
           const videoElement = player.current.stream.videos[player.current.stream.videos.length-1].video;
           const nowInMs = Date.now();
-          const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
-    
+          const results = gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
           if (results.gestures.length > 0) {
             const detectedGestureName = results.gestures[0][0].categoryName;
+            console.log(detectedGestureName);
             if(selectMission===detectedGestureName){
-              console.log("미션성공한건가용");
               missionConplete();
               setHiddenMission(false);
-              stopPredicting();
             }
           }
         }
-        // Continue predicting frames from webcam
         setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
-
-      } catch (error) {
-        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
-      }
   };
 
   const stopPredicting = () => {
-    cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
-    if(animationFrameId) {
-      clearTimeout(animationFrameId);
+    // cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
+    // if(animationFrameId) {
+    //   clearTimeout(animationFrameId);
+    // }
+    // setAnimationFrameId(null);
+    if (animationFrameId !== null) {
+      console.log("미션 끝");
+      cancelAnimationFrame(animationFrameId); // Cancel the animation frame
+      clearTimeout(animationFrameId); // Clear the timeout
+      setAnimationFrameId(null);
     }
-    setAnimationFrameId(null);
   };
+
+    // 중복 제거 함수 정의
+const removeDuplicateVideosFromStream = (player) => {
+  player.stream.videos = player.stream.videos.filter((video, index, self) => {
+    const firstIndex = self.findIndex(v => v.id === video.id && v.name === video.name);
+    const lastIndex = self.lastIndexOf(v => v.id === video.id && v.name === video.name);
+    return index === firstIndex || index === lastIndex;
+  });
+}
+
+const uniquePlayers = () => {
+  // Map의 각 요소에 대해 중복 제거 함수 적용
+  console.log("중복값제거")
+  players.current.forEach((player) => {
+    console.log("중복 제거", player);
+    removeDuplicateVideosFromStream(player);
+  });
+}
 
   // 변경된 게임 옵션을 redis 토픽에 전달
   const callChangeOption = () => {
@@ -747,22 +814,21 @@ const GameProvider = ({ children }) => {
   };
 
   const chatVisible = () =>{
-    // DEBUG:
-    // if (player.current.role === 'OBSERVER'){
+    if (player.current.role === 'OBSERVER'){
       return (
         <>
           <ChatButtonAndPopup />
         </>
       )
-    // }
-  }
+    }
+  };
 
   return (
     <GameContext.Provider value={{ stompClient, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, connectGameWS,
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
-      voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
+      voteSituation, currentSysMessage, currentSysMessagesArray, setCurrentSysMessagesArray,phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
-      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic }}
+      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers }}
     >
       {children}
     </GameContext.Provider>
