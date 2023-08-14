@@ -229,7 +229,7 @@ const GameProvider = ({ children }) => {
   const sendChatPubMessage = (message) => {
     console.log("chat publish 들어감"); 
     if (stompClient.current.connected && player.current.playerId !== null) {
-      console.log("stompclient 연결됨"); 
+      console.log("Enter 메시지 보냄, roomId", roomSession.roomId); 
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'ENTER',
         playerId:player.current.playerId,

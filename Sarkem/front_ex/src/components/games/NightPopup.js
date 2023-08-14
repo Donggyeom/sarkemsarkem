@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import closeBtn from '../../img/btn_close.png';
 
 // const fadeInOut = keyframes`
 //   0% {
@@ -19,7 +20,9 @@ const StyledPopupContainer = styled.div`
   background: #8E9EC9;
   border-radius: 30.94px;
   border: 5.16px solid #000000;
+  height: 180px; /* Set a fixed height for the popup box */
   padding: 61.87px;
+  width: 650px;
   display: flex;
   flex-direction: column;
   gap: 12.89px;
@@ -33,13 +36,30 @@ const StyledPopupContainer = styled.div`
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
-  font-size: 42px;
+  font-size: 35px;
   font-family: "RixInooAriDuriR", sans-serif;
   text-align: center;
   text-shadow: 1px 1px black;
   -webkit-text-stroke: 1px black; /* For webkit-based browsers like Chrome, Safari */
   text-stroke: 1px black; /* Standard property for future compatibility */
   padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
+`;
+
+const CloseBtn = styled.img`
+  width: 15%;
+  position: fixed;
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const StyledButton = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 const NightPopup = ({sysMessage, dayCount}) => {
@@ -106,7 +126,7 @@ const NightPopup = ({sysMessage, dayCount}) => {
               width: '229.44px',
               height: '45px',
               position: 'relative',
-              bottom: 'calc(50% + 100px)',
+               top: '-120px',
               right: '110px',
             }}
           >
@@ -115,7 +135,7 @@ const NightPopup = ({sysMessage, dayCount}) => {
         </div>
 
         <StyledPopupTitle>{formattedMessage}</StyledPopupTitle>
-        <button onClick={handleClosePopup}>확인</button>
+        <StyledButton onClick={handleClosePopup}><CloseBtn src={closeBtn} alt="Close" /></StyledButton>
       </StyledPopupContainer>
       )}
     </>
