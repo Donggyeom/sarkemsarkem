@@ -6,7 +6,7 @@ import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
-import { VoteButton, SkipButton } from '../buttons/VoteButton.js';
+import { VoteButton, SkipButton, SmallSkipButton, SmallVoteButton } from '../buttons/VoteButton.js';
 import skipImg from '../../img/btn_스킵하기.png';
 import skipClearImg from '../../img/tb_endskip.png';
 import voteImg from '../../img/btn_투표확정.png';
@@ -58,18 +58,18 @@ const ActionButton = styled.button`
 // `;
 
 const VoteImage = styled.img`
-  width: 80%;
+  width: 35%;
   // height: 60%;
 `;
 
 const ButtonWrapper = styled.div`
-  position: absolute;
-  bottom: -45px;
+  position: fixed;
+  bottom: 20px; /* Adjust the value as needed */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 10px;
-
+  justify-content: center;
 `;
 
 const VotefootWrapper = styled.div`
@@ -169,7 +169,7 @@ const calculateGrid = (camCount) => {
       width: '90%',
       height: '70%',
       gridRowGap: '3%',
-      bottom: '1%',
+      bottom: '15%',
     };
   } else {
     // Add more cases as needed
@@ -271,7 +271,7 @@ const CamCatWrapper = styled.div`
   camCount === 9 && index === 4
   ? `
   position: relative;
-  top : 100%;
+  top : 115%;
   `
   : ''};
   `;
@@ -517,59 +517,39 @@ const DayNightCamera = React.memo(({ players }) => {
           </VotefootWrapper>
         </CamCatWrapper>
       ))}
-      <ButtonWrapper>
-        {dayCount === 1 && phase === 'day' ? (
-          <>
-            {/* {startVote && (
-            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
-              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
-            </VoteButton>
-            )} */}
-            {isSkipped ? (
+      
+      {player.current.role !== "OBSERVER" && (
+        <ButtonWrapper>
+          {dayCount === 1 && phase === 'day' ? (
+            <>
+              {isSkipped ? (
                 <VoteImage src={skipClearImg} alt="skip end" />
-                ) : (
-                  <>
-                    {startVote && (
-                      <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
-                    )}
-                  </>
-                )
-              }
-          </>
-        ) : (
+              ) : (
+                <>
+                  {startVote && (
+                    <SmallSkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                  )}
+                </>
+              )}
+            </>
+          ) : (
             <>
               {isConfirmed || isSkipped ? (
-                <VoteImage src={isSkipped ? skipClearImg:voteClearImg} alt="스킵이나보트끝난이미지" />
-                ) : (
-                  <>
-                    {startVote && (
-                      <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped} />
-                    )}
-                    {startVote && (
-                      <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
-                    )}
-                  </>
-                )
-              }
-            {/* {isConfirmed ? (
-              <VoteButton disabled >
-                <VoteImage src={voteClearImg} alt="Vote" />
-              </VoteButton>
-            ) : (
-              startVote && (
-              <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
-                <VoteImage src={clickedCamera ? voteImg : voteImg} alt="Vote" />
-              </VoteButton>
-              )
-            )}
-            {startVote && (
-            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
-              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
-            </VoteButton>
-            )} */}
-          </>
-        )}
-      </ButtonWrapper>
+                <VoteImage src={isSkipped ? skipClearImg : voteClearImg} alt="Skipped or voted over image" />
+              ) : (
+                <>
+                  {startVote && (
+                    <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped} />
+                  )}
+                  {startVote && (
+                    <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </ButtonWrapper>
+      )}
     </CamCatGrid>
   );
 });

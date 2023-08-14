@@ -33,8 +33,8 @@ const StyledContent = styled.div`
   overflow: hidden;
 `;
 const VoteImage = styled.img`
-  width: 50%;
-  // height: 60%;
+  width: 30%;
+  margin-right: 25px;
 `;
 
 const CamCatGrid = styled.div`
@@ -50,6 +50,13 @@ const CamCatGrid = styled.div`
     top : ${style.top};
     // margin-top : ${style.marginTop};
   `}
+`;
+const AbsoluteContainer = styled.div`
+  position: absolute;
+  top: 92%; /* Adjust the top value as needed */
+  right: 15%; /* Adjust the right value as needed */
+  transform: translateY(-50%);
+  z-index: 100; /* Adjust the z-index if needed */
 `;
 
 const calculateGrid = (camCount) => {
@@ -71,17 +78,17 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr 1fr',
       width: '100%',
       left: '4%',
-      marginTop : '5%',
+      // marginTop : '5%',
     };
   } else if (camCount === 4) {
     return {
-      marginTop : '5%',
+      // marginTop : '5%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 5) {
     return {
-      marginTop : '4%',
+      // marginTop : '4%',
       marginLeft : '2%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
@@ -101,7 +108,7 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
-      marginTop : '-15%',
+      marginBottom : '15%',
       width : '100%',
     };
   } else if (camCount === 9) {
@@ -788,13 +795,13 @@ const SunsetPage = () => {
       </CamCatGrid>
 
       <div>
-      {player.role === "OBSERVER" ? (
+        <AbsoluteContainer>
+        {player.role === "OBSERVER" ? (
         <>
           <AgreeButton onClick={null} disabled={isAgree} />
           <DisagreeButton onClick={null} disabled={disAgree} />
         </>
           ) : (
-              
               <>
                 {isAgree || disAgree ? (
                   <VoteImage src={isAgree ? completeagreeButtonImage : completeDisagreeButtonImage} alt="찬반완료" />
@@ -837,6 +844,9 @@ const SunsetPage = () => {
       /> */}
     </>
   )}
+          
+        </AbsoluteContainer>
+      
 </div>
 <ScMini />
 </StyledContent>
