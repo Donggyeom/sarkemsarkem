@@ -11,18 +11,23 @@ const Psychologistboxdiv = styled.div`
   background-repeat: no-repeat;
   width: 175px;
   height: 175px; 
-  justify-content: center;
+  justify-content: flex-start; // Align content vertically to the start
   display: flex;
   flex-direction: column;
   font-family: 'NeoDunggeunmoPro-Regular', sans-serif;
-  font-size: 20px;
+  font-size: 19px;
   color: #723a00;
   position: absolute;
   top: 13%;
   right: 2%;
 //   transform: translate(-50%, -50%);
   z-index: 5;
-  align-items: center;
+  align-items: left;
+  text-align: left;
+  > div {
+    padding-left: 15px; /* Add left padding */
+    padding-top: 5px; /* Add top padding */
+  }
 `;
 
 
@@ -51,13 +56,13 @@ const PsychologistBox = ({detectExpressions}) => {
     return (
       <Psychologistboxdiv>
         {/* {Psychologist} */}
-        <div>happy : {happy}</div>
-        <div>sad : {sad}</div>
-        <div>disgusted : {disgusted}</div>
-        <div>neutral : {neutral}</div>
-        <div>angry : {angry}</div>
-        <div>surprised: {surprised}</div>
-        <div>fearful : {fearful}</div>
+        <div>행복 : {happy}</div>
+        <div>슬픔 : {sad}</div>
+        <div>보통 : {neutral}</div>
+        <div>화남 : {angry}</div>
+        <div>놀람: {surprised}</div>
+        <div>공포 : {fearful}</div>
+        <div>역겹 : {disgusted}</div>
       </Psychologistboxdiv>
     );
   }
