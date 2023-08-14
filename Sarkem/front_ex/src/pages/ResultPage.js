@@ -130,7 +130,7 @@ const ResultPage = () => {
   const {
     roomSession, setRoomSession, setPlayer, setPlayers, players
   } = useRoomContext();
-  const { roleAssignedArray, winner, unsubscribeRedisTopic } = useGameContext();
+  const { roleAssignedArray, winner, unsubscribeRedisTopic, initGameSession } = useGameContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -185,6 +185,7 @@ const ResultPage = () => {
         gameId: undefined
       });
     });
+    initGameSession()
     console.log("홈으로 나가기")
     unsubscribeRedisTopic();
     navigate('/');

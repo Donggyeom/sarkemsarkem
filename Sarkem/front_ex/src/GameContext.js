@@ -114,6 +114,48 @@ const GameProvider = ({ children }) => {
 
   ////////////   GameContext 함수   ////////////
 
+  const initGameSession = () => {
+    console.log("initGameSession");
+    setGameSession({});
+    setCurrentSysMessage(null);
+    setCurrentSysMessagesArray([]);
+    setChatMessages([]);
+    setChatConnected(false);
+    setMessage("");
+    setWinner(null);
+    jungleRefs.current = [];
+    mixedMediaStreamRef.current = null;
+    // const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
+    
+    setMyVote(0);
+    setDayCount(0);
+    setStartVote(false);
+    setSelectedTarget("");
+    setExpulsionTarget("");
+    setVotesituation({});
+    setThreatedTarget("");
+    setTargetId("");
+    setRemainTime("");
+    
+    setPsyTarget("");
+    setPsychologist(false);
+    setHiddenMission(false);
+    setMissionNumber(0);
+    setSelectMission("");
+    setScMiniPopUp(true);
+    
+    setVoteTargetId("");
+    setphase("");
+    setGestureRecognizer(null);
+    setDetectedGesture('');
+    setAnimationFrameId(null);
+    
+    setDeadIds([]);
+
+    // 게임 결과 출력을 위한 직업 저장
+    roleAssignedArray.current = [];
+  }
+
   // WebSocket 연결
   const connectGameWS = async (event) => {
     
@@ -763,7 +805,7 @@ const GameProvider = ({ children }) => {
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
-      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic }}
+      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession }}
     >
       {children}
     </GameContext.Provider>
