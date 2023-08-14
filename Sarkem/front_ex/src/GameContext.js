@@ -452,6 +452,7 @@ const GameProvider = ({ children }) => {
 
     case "TWILIGHT_VOTE_END":
       setStartVote(false);
+
       if (sysMessage.param.result === "true") {
           players.current.get(sysMessage.param.targetId).isAlive = false;
       }
@@ -748,15 +749,14 @@ const GameProvider = ({ children }) => {
   };
 
   const chatVisible = () =>{
-    // DEBUG:
-    // if (player.current.role === 'OBSERVER'){
+    if (player.current.role === 'OBSERVER'){
       return (
         <>
           <ChatButtonAndPopup />
         </>
       )
-    // }
-  }
+    }
+  };
 
   return (
     <GameContext.Provider value={{ stompClient, startVote, selectAction, setSelectedTarget, selectConfirm, handleGamePageClick, connectGameWS,
