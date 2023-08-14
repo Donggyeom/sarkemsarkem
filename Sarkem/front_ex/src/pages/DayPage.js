@@ -182,7 +182,7 @@ const DayPage = () => {
           <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
         )}
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
-        <DayPopup sysMessage={currentSysMessagesArray}  dayCount={dayCount}/> {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
+        {currentSysMessagesArray.length>0 && <DayPopup sysMessage={currentSysMessagesArray}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <ScMini />
         <SarkMission handNumber={currentHandNumber} />

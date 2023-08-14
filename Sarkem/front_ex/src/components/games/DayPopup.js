@@ -62,6 +62,7 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
   const [showPopup, setShowPopup] = useState(false);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const totalMessages = Array.isArray(sysMessage) ? sysMessage.length : 0;
+  const {setCurrentSysMessagesArray } = useGameContext();
 
   useEffect(() => {
     if (sysMessage) {
@@ -102,6 +103,7 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
 
   const handleClosePopup = () => {
     setShowPopup(false);
+    setCurrentSysMessagesArray([]);
   };
   // console.log(sysMessage);
   return (
