@@ -14,10 +14,10 @@ const SmallButton = styled.button`
   border: none;
   // position: relative; 
   z-index: 1;
-  // width: 9vw;
-  // height: 10vh;
-  width: 50%;
-  height: 50%; 
+  width: 9vw;
+  height: 10vh;
+  // width: 50%;
+  // height: 40%;
   &:hover {
     filter: brightness(0.8);
   }
