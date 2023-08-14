@@ -33,8 +33,8 @@ const StyledContent = styled.div`
   overflow: hidden;
 `;
 const VoteImage = styled.img`
-  width: 50%;
-  // height: 60%;
+  width: 30%;
+  margin-right: 25px;
 `;
 
 const CamCatGrid = styled.div`
@@ -50,6 +50,13 @@ const CamCatGrid = styled.div`
     top : ${style.top};
     // margin-top : ${style.marginTop};
   `}
+`;
+const AbsoluteContainer = styled.div`
+  position: absolute;
+  top: 92%; /* Adjust the top value as needed */
+  right: 15%; /* Adjust the right value as needed */
+  transform: translateY(-50%);
+  z-index: 100; /* Adjust the z-index if needed */
 `;
 
 const calculateGrid = (camCount) => {
@@ -788,13 +795,13 @@ const SunsetPage = () => {
       </CamCatGrid>
 
       <div>
-      {player.role === "OBSERVER" ? (
+        <AbsoluteContainer>
+        {player.role === "OBSERVER" ? (
         <>
           <AgreeButton onClick={null} disabled={isAgree} />
           <DisagreeButton onClick={null} disabled={disAgree} />
         </>
           ) : (
-              
               <>
                 {isAgree || disAgree ? (
                   <VoteImage src={isAgree ? completeagreeButtonImage : completeDisagreeButtonImage} alt="찬반완료" />
@@ -837,6 +844,9 @@ const SunsetPage = () => {
       /> */}
     </>
   )}
+          
+        </AbsoluteContainer>
+      
 </div>
 <ScMini />
 </StyledContent>

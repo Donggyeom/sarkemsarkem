@@ -7,19 +7,15 @@ import completeDisagreeButtonImage from '../../img/tb_endno.png';
 import buttonclickSound from '../../sound/buttonclick.mp3'
 
 const SmallButton = styled.button`
-  // padding: 0;
+  padding: 0;
   background: url(${props => props.imageSrc}) no-repeat center center;
   background-size: cover;
+  width: 20%;
+  height: 20%;
+  border : none;
   cursor: pointer;
-  border: none;
-  // position: relative; 
-  z-index: 1;
-  width: 9vw;
-  height: 10vh;
-  // width: 50%;
-  // height: 40%;
   &:hover {
-    filter: brightness(0.8);
+      filter: brightness(0.8);
   }
 `;
 
