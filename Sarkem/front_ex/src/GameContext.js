@@ -683,7 +683,10 @@ const GameProvider = ({ children }) => {
 
     // 미션성공
     const missionConplete = () => {
-        console.log("미션 성공");
+      console.log("미션 성공");
+      setHiddenMission(false);
+      setSelectMission("");
+      stopPredicting();
         if (stompClient.current.connected && player.current.playerId !== undefined) {
             stompClient.current.send("/pub/game/action", {},
                 JSON.stringify({
@@ -698,39 +701,54 @@ const GameProvider = ({ children }) => {
     };
 
     // 
-    const predictWebcam = async () => {
-      console.log(selectMission);
-      try {
+    const predictWebcam = () => {
         if (gestureRecognizer) {
           const videoElement = player.current.stream.videos[player.current.stream.videos.length-1].video;
           const nowInMs = Date.now();
-          const results = await gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
-    
+          const results = gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
           if (results.gestures.length > 0) {
             const detectedGestureName = results.gestures[0][0].categoryName;
+            console.log(detectedGestureName);
             if(selectMission===detectedGestureName){
-              console.log("미션성공한건가용");
               missionConplete();
               setHiddenMission(false);
-              stopPredicting();
             }
           }
         }
-        // Continue predicting frames from webcam
         setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
-
-      } catch (error) {
-        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
-      }
   };
 
   const stopPredicting = () => {
-    cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
-    if(animationFrameId) {
-      clearTimeout(animationFrameId);
+    // cancelAnimationFrame(animationFrameId); // requestAnimationFrame 중지
+    // if(animationFrameId) {
+    //   clearTimeout(animationFrameId);
+    // }
+    // setAnimationFrameId(null);
+    if (animationFrameId !== null) {
+      console.log("미션 끝");
+      cancelAnimationFrame(animationFrameId); // Cancel the animation frame
+      clearTimeout(animationFrameId); // Clear the timeout
+      setAnimationFrameId(null);
     }
-    setAnimationFrameId(null);
   };
+
+    // 중복 제거 함수 정의
+const removeDuplicateVideosFromStream = (player) => {
+  player.stream.videos = player.stream.videos.filter((video, index, self) => {
+    const firstIndex = self.findIndex(v => v.id === video.id && v.name === video.name);
+    const lastIndex = self.lastIndexOf(v => v.id === video.id && v.name === video.name);
+    return index === firstIndex || index === lastIndex;
+  });
+}
+
+const uniquePlayers = () => {
+  // Map의 각 요소에 대해 중복 제거 함수 적용
+  console.log("중복값제거")
+  players.current.forEach((player) => {
+    console.log("중복 제거", player);
+    removeDuplicateVideosFromStream(player);
+  });
+}
 
   // 변경된 게임 옵션을 redis 토픽에 전달
   const callChangeOption = () => {
@@ -762,7 +780,7 @@ const GameProvider = ({ children }) => {
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, setCurrentSysMessagesArray,phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
-      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic }}
+      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, uniquePlayers }}
     >
       {children}
     </GameContext.Provider>
