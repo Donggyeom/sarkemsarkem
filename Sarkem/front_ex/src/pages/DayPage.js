@@ -20,8 +20,10 @@ import { loadModels, faceMyDetect, stopFace } from '../components/job/Psychologi
 // log
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
+import Sound from '../sound/daystart.mp3';
 
 import TempButton from '../components/buttons/TempButton';
+
 
 const StyledDayPage = styled.div`
   display: flex;
@@ -55,6 +57,7 @@ const DayPage = () => {
   const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
+  const audio = new Audio(Sound);
   const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
     console.log(currentSysMessagesArray);
   useEffect(() => {
@@ -88,6 +91,29 @@ const DayPage = () => {
         window.removeEventListener('beforeunload', onbeforeunload);
     }
   }, [currentSysMessage]);
+
+
+  useEffect(() => {
+    window.addEventListener("mousemove", playBGM);
+  }, []);
+
+  const playBGM = () => {
+  
+    // Play the audio when the component mounts
+    // console.log('틀기전');
+    audio.play();
+    audio.playbackRate = 0.9;
+    audio.volume = 0.7;
+    // console.log('튼후');
+  
+    // Update state to track audio playback
+    window.removeEventListener("mousemove", playBGM);
+    return () => {
+      console.log('멈춰');
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }
 
 
     //faceapi 실행
