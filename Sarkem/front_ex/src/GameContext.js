@@ -451,10 +451,11 @@ const GameProvider = ({ children }) => {
         break;
 
     case "TWILIGHT_VOTE_END":
-        setStartVote(false);
-        // alert("저녁 투표 완료 \n 투표 결과: " + sysMessage.param.result);
-        players.current.get(sysMessage.param.targetId).isAlive = false;
-        break;
+      setStartVote(false);
+      if (sysMessage.param.result === "true") {
+          players.current.get(sysMessage.param.targetId).isAlive = false;
+      }
+      break;
 
     case "BE_EXCLUDED":
         // setPlayer((prev) => {
