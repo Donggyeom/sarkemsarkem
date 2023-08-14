@@ -78,17 +78,17 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr 1fr',
       width: '100%',
       left: '4%',
-      marginTop : '5%',
+      // marginTop : '5%',
     };
   } else if (camCount === 4) {
     return {
-      marginTop : '5%',
+      // marginTop : '5%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 5) {
     return {
-      marginTop : '4%',
+      // marginTop : '4%',
       marginLeft : '2%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
@@ -108,7 +108,7 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
-      marginTop : '-15%',
+      marginBottom : '15%',
       width : '100%',
     };
   } else if (camCount === 9) {
