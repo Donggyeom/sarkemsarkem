@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import closeBtn from '../../img/btn_close.png';
 
 // const fadeInOut = keyframes`
 //   0% {
@@ -40,6 +41,20 @@ const StyledPopupTitle = styled.div`
   -webkit-text-stroke: 1px black; /* For webkit-based browsers like Chrome, Safari */
   text-stroke: 1px black; /* Standard property for future compatibility */
   padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
+`;
+
+const CloseBtn = styled.img`
+  width: 80%;
+  // height: 60%;
+`;
+
+const StyledButton = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 const NightPopup = ({sysMessage, dayCount}) => {
@@ -115,7 +130,7 @@ const NightPopup = ({sysMessage, dayCount}) => {
         </div>
 
         <StyledPopupTitle>{formattedMessage}</StyledPopupTitle>
-        <button onClick={handleClosePopup}>확인</button>
+        <StyledButton onClick={handleClosePopup}><CloseBtn src={closeBtn} alt="Close" /></StyledButton>
       </StyledPopupContainer>
       )}
     </>

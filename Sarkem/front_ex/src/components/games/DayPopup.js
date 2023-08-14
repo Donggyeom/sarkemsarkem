@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useGameContext } from '../../GameContext';
+import closeBtn from '../../img/btn_close.png';
 
 // const fadeInOut = keyframes`
 //   0% {
@@ -40,6 +41,20 @@ const StyledPopupTitle = styled.div`
   -webkit-text-stroke: 1px black;
   text-stroke: 1px black;
   padding: 10px;
+`;
+
+const CloseBtn = styled.img`
+  width: 80%;
+  // height: 60%;
+`;
+
+const StyledButton = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받도록 수정
@@ -125,15 +140,17 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
       <StyledPopupTitle>{formattedMessages[currentPageIndex]}</StyledPopupTitle>
       {Array.isArray(sysMessage) && totalMessages > 1 && (
         <div>
-          <button onClick={handlePreviousPage} disabled={currentPageIndex === 0}>
-            이전 메시지
-          </button>
-          <button onClick={handleNextPage} disabled={currentPageIndex === totalMessages - 1}>
-            다음 메시지
-          </button>
+      <StyledButton onClick={() => {
+        if (currentPageIndex === totalMessages - 1) {
+          handleClosePopup(); // Execute handleClosePopup if it's the last message
+        } else {
+          handleNextPage(); // Otherwise, go to the next message
+        }
+      }}>
+        <CloseBtn src={closeBtn} alt="Close" />
+      </StyledButton>
         </div>
       )}
-      <button onClick={handleClosePopup}>확인</button>
     </StyledPopupContainer>
   );
 };
