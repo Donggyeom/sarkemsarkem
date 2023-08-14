@@ -16,7 +16,7 @@ const Psychologistboxdiv = styled.div`
   flex-direction: column;
   font-family: 'NeoDunggeunmoPro-Regular', sans-serif;
   font-size: 19px;
-  color: #723a00;
+  
   position: absolute;
   top: 13%;
   right: 2%;
@@ -25,8 +25,9 @@ const Psychologistboxdiv = styled.div`
   align-items: left;
   text-align: left;
   > div {
-    padding-left: 15px; /* Add left padding */
-    padding-top: 5px; /* Add top padding */
+    padding-left: 45px; /* Add left padding */
+    padding-top: 5.5px; /* Add top padding */
+    color: #723a00;
   }
 `;
 

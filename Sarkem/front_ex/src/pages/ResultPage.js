@@ -74,7 +74,7 @@ const Table = styled.table`
   z-index: 1;
   margin: 0 auto;
   margin-left: -63%;
-  margin-top: -10%;
+  margin-top: 0%;
   borderCollapse: 'separate',
 `;
 
