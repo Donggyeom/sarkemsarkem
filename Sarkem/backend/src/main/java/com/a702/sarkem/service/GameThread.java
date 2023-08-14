@@ -444,16 +444,14 @@ public class GameThread extends Thread {
 
 	// 밤투표 시간 보내기
 	private boolean isNightTimeEnded() throws InterruptedException {
-		int time = gameSession.getMeetingTime();
+		int time = 30;
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		while (true) {
-			if(time % 5 == 0) {
-				remainTime.put("time", time);
-				gameManager.sendRemainTime(roomId, remainTime);
-			}
-			time--;
+			remainTime.put("time", time);
+			gameManager.sendRemainTime(roomId, remainTime);
+			time-=5;
 			if (time <= 0) break;
-			sleep(1000);
+			sleep(5000);
 		}
 		return true;
 	}
