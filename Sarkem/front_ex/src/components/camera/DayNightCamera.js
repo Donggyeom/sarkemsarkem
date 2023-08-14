@@ -169,7 +169,7 @@ const calculateGrid = (camCount) => {
       width: '90%',
       height: '70%',
       gridRowGap: '3%',
-      bottom: '1%',
+      bottom: '15%',
     };
   } else {
     // Add more cases as needed
@@ -271,7 +271,7 @@ const CamCatWrapper = styled.div`
   camCount === 9 && index === 4
   ? `
   position: relative;
-  top : 100%;
+  top : 115%;
   `
   : ''};
   `;
