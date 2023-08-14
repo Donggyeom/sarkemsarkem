@@ -30,7 +30,7 @@ const StyledPopupContainer = styled.div`
   z-index: 9999;
   opacity: ${({ showPopup }) => (showPopup ? 1 : 0)};
   `;
-  // animation: ${fadeInOut} 4s ease-in-out forwards;
+// animation: ${fadeInOut} 4s ease-in-out forwards;
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
@@ -138,17 +138,17 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
         </div>
       </div>
       <StyledPopupTitle>{formattedMessages[currentPageIndex]}</StyledPopupTitle>
-      {Array.isArray(sysMessage) && totalMessages > 1 && (
+      {Array.isArray(sysMessage) && totalMessages > 0 && (
         <div>
-      <StyledButton onClick={() => {
-        if (currentPageIndex === totalMessages - 1) {
-          handleClosePopup(); // Execute handleClosePopup if it's the last message
-        } else {
-          handleNextPage(); // Otherwise, go to the next message
-        }
-      }}>
-        <CloseBtn src={closeBtn} alt="Close" />
-      </StyledButton>
+          <StyledButton onClick={() => {
+            if (currentPageIndex === totalMessages - 1) {
+              handleClosePopup(); // Execute handleClosePopup if it's the last message
+            } else {
+              handleNextPage(); // Otherwise, go to the next message
+            }
+          }}>
+            <CloseBtn src={closeBtn} alt="Close" />
+          </StyledButton>
         </div>
       )}
     </StyledPopupContainer>
