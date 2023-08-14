@@ -72,10 +72,18 @@ const Table = styled.table`
   border-spacing: 0px 4px; /* Remove default border spacing */
   text-align: center;
   z-index: 1;
-  margin: 0 auto;
-  margin-left: -63%;
-  margin-top: -10%;
-  borderCollapse: 'separate',
+  margin: 0 auto; /* Center the table horizontally */
+  
+  // width: 70%;
+  // max-height: 62%;
+  // overflow-x: auto;
+  // border-spacing: 0px 4px; /* Remove default border spacing */
+  // text-align: center;
+  // z-index: 1;
+  // margin: 0 auto;
+  // margin-left: -63%;
+  // margin-top: -10%;
+  // borderCollapse: 'separate',
 `;
 
 const TableCell = styled.td`
