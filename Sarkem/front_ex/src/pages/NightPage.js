@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import DayNightCamera from '../components/camera/DayNightCamera';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
+import Sound from '../sound/nightstart.mp3';
 import TempButton from '../components/buttons/TempButton';
 
 
@@ -46,6 +47,7 @@ const NightPage = () => {
   const { roomSession, player, setPlayer, players } = useRoomContext(); 
   const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers, unsubscribeRedisTopic } = useGameContext();
   const navigate = useNavigate();
+  const audio = new Audio(Sound);
   
 
   useEffect(() => {
@@ -62,6 +64,28 @@ const NightPage = () => {
             window.removeEventListener('beforeunload', onbeforeunload);
         }
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", playBGM);
+  }, []);
+
+  const playBGM = () => {
+  
+    // Play the audio when the component mounts
+    // console.log('틀기전');
+    audio.play();
+    audio.playbackRate = 0.9;
+    audio.volume = 0.7;
+    // console.log('튼후');
+  
+    // Update state to track audio playback
+    window.removeEventListener("mousemove", playBGM);
+    return () => {
+      console.log('멈춰');
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }
 
 
   const handleCamButtonClick = () => {
