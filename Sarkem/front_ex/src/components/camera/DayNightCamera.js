@@ -58,7 +58,7 @@ const ActionButton = styled.button`
 // `;
 
 const VoteImage = styled.img`
-  width: 40%;
+  width: 35%;
   // height: 60%;
 `;
 
@@ -515,59 +515,39 @@ const DayNightCamera = React.memo(({ players }) => {
           </VotefootWrapper>
         </CamCatWrapper>
       ))}
-      <ButtonWrapper>
-        {dayCount === 1 && phase === 'day' ? (
-          <>
-            {/* {startVote && (
-            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
-              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
-            </VoteButton>
-            )} */}
-            {isSkipped ? (
+      
+      {player.role !== "OBSERVER" && (
+        <ButtonWrapper>
+          {dayCount === 1 && phase === 'day' ? (
+            <>
+              {isSkipped ? (
                 <VoteImage src={skipClearImg} alt="skip end" />
-                ) : (
-                  <>
-                    {startVote && (
-                      <SmallSkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
-                    )}
-                  </>
-                )
-              }
-          </>
-        ) : (
+              ) : (
+                <>
+                  {startVote && (
+                    <SmallSkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                  )}
+                </>
+              )}
+            </>
+          ) : (
             <>
               {isConfirmed || isSkipped ? (
-                <VoteImage src={isSkipped ? skipClearImg:voteClearImg} alt="스킵이나보트끝난이미지" />
-                ) : (
-                  <>
-                    {startVote && (
-                      <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped} />
-                    )}
-                    {startVote && (
-                      <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
-                    )}
-                  </>
-                )
-              }
-            {/* {isConfirmed ? (
-              <VoteButton disabled >
-                <VoteImage src={voteClearImg} alt="Vote" />
-              </VoteButton>
-            ) : (
-              startVote && (
-              <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
-                <VoteImage src={clickedCamera ? voteImg : voteImg} alt="Vote" />
-              </VoteButton>
-              )
-            )}
-            {startVote && (
-            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
-              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
-            </VoteButton>
-            )} */}
-          </>
-        )}
-      </ButtonWrapper>
+                <VoteImage src={isSkipped ? skipClearImg : voteClearImg} alt="Skipped or voted over image" />
+              ) : (
+                <>
+                  {startVote && (
+                    <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped} />
+                  )}
+                  {startVote && (
+                    <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </ButtonWrapper>
+      )}
     </CamCatGrid>
   );
 });
