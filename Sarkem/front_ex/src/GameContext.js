@@ -232,7 +232,8 @@ const GameProvider = ({ children }) => {
       console.log("stompclient 연결됨"); 
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'ENTER',
-        playerId:player.current.playerId, 
+        playerId:player.current.playerId,
+        nickName:player.current.nickName,
         roomId: roomSession.roomId,
         message: message
       }));
