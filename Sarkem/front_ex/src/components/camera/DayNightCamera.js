@@ -286,9 +286,10 @@ const DayNightCamera = React.memo(({ players }) => {
     myVote, startVote, dayCount, predictWebcam, stopPredicting,
     detectedGesture, voteSituation, phase,
     Roles, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext,
-    voteTargetId, deadIds, hiddenMission, setHiddenMission, loadGestureRecognizer } = useGameContext();
+    voteTargetId, deadIds, hiddenMission, setHiddenMission, loadGestureRecognizer, uniquePlayers } = useGameContext();
     
   useEffect(() => {
+    uniquePlayers();
     setIsConfirmed(false);
     setClickedCamera(null);
     setIsSkipped(false);
@@ -343,6 +344,7 @@ const DayNightCamera = React.memo(({ players }) => {
       loadGestureRecognizer();
       startHiddenMission();
     } else {
+      console.log("히든미션 끝이요~~",hiddenMission)
       stopHiddenMission();
     }
   }, [hiddenMission])
