@@ -154,7 +154,7 @@ const ResultPage = () => {
     // if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
     
     // 데이터 초기화
-    setPlayer.current = {};
+    // setPlayer.current = {};
     // setPlayers(new Map());
     players.current = new Map();
     setRoomSession((prev) => {
@@ -163,6 +163,7 @@ const ResultPage = () => {
         gameId: undefined,
       });
     });
+    initGameSession();
     console.log("새로운 방 만들기", roomSession.roomId);
     unsubscribeRedisTopic();
     navigate(`/${roomSession.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
@@ -185,8 +186,8 @@ const ResultPage = () => {
         gameId: undefined
       });
     });
-    initGameSession()
-    console.log("홈으로 나가기")
+    initGameSession();
+    console.log("홈으로 나가기");
     unsubscribeRedisTopic();
     navigate('/');
   };
