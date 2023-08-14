@@ -72,10 +72,18 @@ const Table = styled.table`
   border-spacing: 0px 4px; /* Remove default border spacing */
   text-align: center;
   z-index: 1;
-  margin: 0 auto;
-  margin-left: -63%;
-  margin-top: -10%;
-  borderCollapse: 'separate',
+  margin: 0 auto; /* Center the table horizontally */
+  
+  // width: 70%;
+  // max-height: 62%;
+  // overflow-x: auto;
+  // border-spacing: 0px 4px; /* Remove default border spacing */
+  // text-align: center;
+  // z-index: 1;
+  // margin: 0 auto;
+  // margin-left: -63%;
+  // margin-top: -10%;
+  // borderCollapse: 'separate',
 `;
 
 const TableCell = styled.td`
@@ -130,7 +138,7 @@ const ResultPage = () => {
   const {
     roomSession, setRoomSession, setPlayer, setPlayers, players
   } = useRoomContext();
-  const { roleAssignedArray, winner, stompClient } = useGameContext();
+  const { roleAssignedArray, winner, unsubscribeRedisTopic } = useGameContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -164,6 +172,7 @@ const ResultPage = () => {
       });
     });
     console.log("새로운 방 만들기", roomSession.roomId);
+    unsubscribeRedisTopic();
     navigate(`/${roomSession.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
 
@@ -185,6 +194,7 @@ const ResultPage = () => {
       });
     });
     console.log("홈으로 나가기")
+    unsubscribeRedisTopic();
     navigate('/');
   };
 

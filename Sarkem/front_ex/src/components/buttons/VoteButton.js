@@ -16,7 +16,6 @@ const ButtonImage = styled.button`
     &:hover {
         filter: brightness(0.8);
     // background: transparent;
-    border: none;
 }
 `;
 
