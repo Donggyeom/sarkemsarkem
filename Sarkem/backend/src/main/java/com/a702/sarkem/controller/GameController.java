@@ -94,17 +94,7 @@ public class GameController {
      */
 	@MessageMapping("/chat/room")
 	public void message(ChatMessage chatMessage) {
-		log.debug(chatMessage.toString());
-		log.debug("채팅 메시지");
-		if (MessageType.ENTER == chatMessage.getType()) {
-			log.debug(chatMessage.getPlayerId() + "채팅방 입장!!");
-			chatMessage.setMessage(chatMessage.getPlayerId() + "님이 채팅방에 입장하셨습니다.");
-        }
-		else {
-			log.debug(chatMessage.getPlayerId() + "채팅 입력");
-			log.debug(chatMessage.toString());
-		}
-
-		gameManager.sendChattingMessage(chatMessage);
+		log.debug(chatMessage.getPlayerId());
+		gameManager.chattingSend(chatMessage, chatMessage.getPlayerId());
 	}
 }

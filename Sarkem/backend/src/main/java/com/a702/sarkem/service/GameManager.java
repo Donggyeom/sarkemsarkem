@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.a702.sarkem.exception.GameRoomNotFoundException;
 import com.a702.sarkem.model.chat.ChatMessage;
+import com.a702.sarkem.model.chat.ChatMessage.MessageType;
 import com.a702.sarkem.model.game.GameSession;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
@@ -297,7 +298,7 @@ public class GameManager {
 
 
 		if (playerCount != optionRoleCount) {
-			sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.", PhaseType.NIGHT);// TODO ready페이즈로 변경해야함
+			sendNoticeMessageToPlayer(roomId, playerId, "플레이어 수와 역할 수가 일치하지 않습니다.", PhaseType.NIGHT);// TODO ready페이즈로 변경해야함
 			return false;
 		} 
 		// TODO: 테스트를 위해 아래 elif문 일단 주석, 나중에 주석 풀어야함
@@ -574,6 +575,23 @@ public class GameManager {
 		Map<String, String> winner = new HashMap<>();
 		winner.put("winner", winTeam.toString());
 		sendGameEndMessage(roomId, winner);
+	}
+	
+	// 채팅 보내기
+	public void chattingSend(ChatMessage chatMessage, String playerId) {
+		String roomId = chatMessage.getRoomId();
+		GameSession gameSession = getGameSession(roomId);
+//		log.debug("룸아이디" + chatMessage.getRoomId());
+		Player player = gameSession.getPlayer(playerId);
+		log.debug("채팅 메시지" + chatMessage.toString());
+		if (MessageType.ENTER == chatMessage.getType()) {
+			log.debug(player.getNickname() + "채팅방 입장!!");
+			chatMessage.setMessage(player.getNickname() + "님이 채팅방에 입장하셨습니다.");
+        }
+		else {
+			log.debug(player.getNickname() + " 채팅 입력 " + chatMessage.toString());
+		}
+		sendChattingMessage(chatMessage);
 	}
 	
 	
