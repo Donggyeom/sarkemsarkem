@@ -44,7 +44,7 @@ const TimeSecond = styled.text`
 
 const NightPage = () => {
   const { roomSession, player, setPlayer, players } = useRoomContext(); 
-  const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers } = useGameContext();
+  const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers, unsubscribeRedisTopic } = useGameContext();
   const navigate = useNavigate();
   
 
@@ -107,6 +107,7 @@ const NightPage = () => {
     
     // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
     const onbeforeunload = (event) => {
+      unsubscribeRedisTopic();
       leaveSession();
     }
 
