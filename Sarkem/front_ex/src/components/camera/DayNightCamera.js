@@ -6,7 +6,7 @@ import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
-import { VoteButton, SkipButton, SmalSkipButton, SmalVoteButton } from '../buttons/VoteButton.js';
+import { VoteButton, SkipButton, SmallSkipButton, SmallVoteButton } from '../buttons/VoteButton.js';
 import skipImg from '../../img/btn_스킵하기.png';
 import skipClearImg from '../../img/tb_endskip.png';
 import voteImg from '../../img/btn_투표확정.png';
@@ -58,7 +58,7 @@ const ActionButton = styled.button`
 // `;
 
 const VoteImage = styled.img`
-  width: 100%;
+  width: 40%;
   // height: 60%;
 `;
 
@@ -528,7 +528,7 @@ const DayNightCamera = React.memo(({ players }) => {
                 ) : (
                   <>
                     {startVote && (
-                      <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                      <SmallSkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
                     )}
                   </>
                 )

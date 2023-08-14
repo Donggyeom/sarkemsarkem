@@ -21,8 +21,8 @@ const SmallButtonImage = styled.button`
     padding: 0;
     background: url(${props => props.imageSrc}) no-repeat center center;
     background-size: cover;
-    width: 50%;
-    height: 50%;
+    width: 40%;
+    height: 40%;
     border : none;
     cursor: pointer;
     // z-index: 1;
@@ -96,4 +96,4 @@ const SmallSkipButton = ({ onClick, disabled}) => {
             />;
 };
 
-export {VoteButton, SkipButton} ;
+export {VoteButton, SkipButton, SmallVoteButton, SmallSkipButton} ;
