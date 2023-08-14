@@ -10,6 +10,7 @@ const ButtonImage = styled.button`
     background-size: cover;
     width: 80%;
     height: 80%;
+    border : none;
     cursor: pointer;
     // z-index: 1;
     &:hover {
