@@ -5,6 +5,7 @@ import Background from '../components/backgrounds/BackgroundDay';
 
 import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
+import NoMicButton from '../components/buttons/NoMicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
@@ -111,10 +112,10 @@ const DayPage = () => {
   const threated = () =>{
     console.log(threatedTarget);
     if(threatedTarget){
+      console.log("참이냐??")
       player.current.stream.publishAudio(false);
       // player.current.stream.publishVideo(false);
     }
-
   }
 
   const handleCamButtonClick = () => {
@@ -175,7 +176,11 @@ const DayPage = () => {
         <SunMoon alt="SunMoon" />
         <TimeSecond>{remainTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
+        {threatedTarget ? (
+          <NoMicButton alt="Mic Button" />
+          ) : (
+          <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
+        )}
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
         <DayPopup sysMessage={currentSysMessagesArray}  dayCount={dayCount}/> {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
