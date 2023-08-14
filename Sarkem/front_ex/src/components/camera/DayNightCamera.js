@@ -516,7 +516,7 @@ const DayNightCamera = React.memo(({ players }) => {
         </CamCatWrapper>
       ))}
       
-      {player.role !== "OBSERVER" && (
+      {player.current.role !== "OBSERVER" && (
         <ButtonWrapper>
           {dayCount === 1 && phase === 'day' ? (
             <>
