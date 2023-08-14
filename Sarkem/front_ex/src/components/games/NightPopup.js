@@ -20,7 +20,9 @@ const StyledPopupContainer = styled.div`
   background: #8E9EC9;
   border-radius: 30.94px;
   border: 5.16px solid #000000;
+  height: 180px; /* Set a fixed height for the popup box */
   padding: 61.87px;
+  width: 650px;
   display: flex;
   flex-direction: column;
   gap: 12.89px;
@@ -34,7 +36,7 @@ const StyledPopupContainer = styled.div`
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
-  font-size: 42px;
+  font-size: 35px;
   font-family: "RixInooAriDuriR", sans-serif;
   text-align: center;
   text-shadow: 1px 1px black;
@@ -44,8 +46,11 @@ const StyledPopupTitle = styled.div`
 `;
 
 const CloseBtn = styled.img`
-  width: 80%;
-  // height: 60%;
+  width: 15%;
+  position: fixed;
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const StyledButton = styled.button`
@@ -121,7 +126,7 @@ const NightPopup = ({sysMessage, dayCount}) => {
               width: '229.44px',
               height: '45px',
               position: 'relative',
-              bottom: 'calc(50% + 100px)',
+               top: '-120px',
               right: '110px',
             }}
           >
