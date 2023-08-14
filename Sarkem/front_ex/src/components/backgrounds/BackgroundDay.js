@@ -4,11 +4,11 @@ import backgroundImage from '../../img/back2.png';
 
 const StyledBackground = styled.div`
   background-image: url(${backgroundImage});
-  background-size: '100% 100%';
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 `;
 
 const Background = ({ children }) => {

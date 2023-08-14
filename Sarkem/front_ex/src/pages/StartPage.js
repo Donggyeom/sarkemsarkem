@@ -64,35 +64,38 @@ const StartButtonContainer = styled.div`
 
 const StartPage = () => {
   const navigate = useNavigate();
+  const {setPlayer} = useRoomContext();
   const [logoVisible, setLogoVisible] = useState(false);
-  const [audioPlaying, setAudioPlaying] = useState(false);
+  const audio = new Audio(logoSound);
 
   // 로고가 화면에 나타날 때까지 대기하는 효과를 주기 위해 useEffect 사용
   useEffect(() => {
     setLogoVisible(true);
+    window.addEventListener("mousemove", playBGM);
 
-    const audio = new Audio(logoSound);
-  
-    // Play the audio when the component mounts
-    try{
-      audio.play();
-      audio.playbackRate = 0.79;
-    } catch {
-      console.log("크롬 정책 문제로 배경 음악 재생에 실패했습니다.");
-    }
-  
-    // Update state to track audio playback
-    setAudioPlaying(true);
-  
     // Clean up the audio object when the component unmounts
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-      setAudioPlaying(false);
-    };
+    
   }, []);
 
+  const playBGM = () => {
+  
+    // Play the audio when the component mounts
+    // console.log('틀기전');
+    audio.play();
+    audio.playbackRate = 0.79;
+    // console.log('튼후');
+  
+    // Update state to track audio playback
+    window.removeEventListener("mousemove", playBGM);
+    return () => {
+      console.log('멈춰');
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }
+
   const goToCreateRoom = () => {
+    setPlayer([{key: 'isHost', value: true}]);
     navigate(`/${createRandomId()}`);
   };
 

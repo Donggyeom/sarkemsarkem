@@ -14,6 +14,15 @@ import { useGameContext } from '../GameContext';
 import createRandomId from '../utils';
 import resultSound from '../sound/result.mp3';
 
+//icon
+import achiIcon from '../img/icon/o_achi.png'
+import citizenIcon from '../img/icon/o_citizen.png'
+import detectorIcon from '../img/icon/o_detector.png'
+import doctorIcon from '../img/icon/o_doctor.png'
+import policeIcon from '../img/icon/o_police.png'
+import psychoIcon from '../img/icon/o_psycho.png'
+import sarkIcon from '../img/icon/o_sark.png'
+
 const StyledSunsetPage = styled.div`
   display: flex;
   position: relative;
@@ -63,10 +72,18 @@ const Table = styled.table`
   border-spacing: 0px 4px; /* Remove default border spacing */
   text-align: center;
   z-index: 1;
-  margin: 0 auto;
-  margin-left: -63%;
-  margin-top: -10%;
-  borderCollapse: 'separate',
+  margin: 0 auto; /* Center the table horizontally */
+  
+  // width: 70%;
+  // max-height: 62%;
+  // overflow-x: auto;
+  // border-spacing: 0px 4px; /* Remove default border spacing */
+  // text-align: center;
+  // z-index: 1;
+  // margin: 0 auto;
+  // margin-left: -63%;
+  // margin-top: -10%;
+  // borderCollapse: 'separate',
 `;
 
 const TableCell = styled.td`
@@ -83,16 +100,34 @@ const TableCell = styled.td`
   }
 `;
 
-const TableHeader = styled.th`
-  font-size: 35px; /* Adjust the font size as needed */
-  background-color: #f2f2f2;
-  padding: 10px;
+const TableCell2 = styled.td`
+  width: 20%; /* Adjust the width as needed */
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+  &:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
 `;
+
 
 const TableRow = styled.tr`
   background-color: ${(props) => (props.even ? '#f2f2f2' : 'white')};
   
 `;
+
+const roleInfoMapping = {
+  PSYCHO: { icon: psychoIcon, displayName: '심리학자' },
+  POLICE: { icon: policeIcon, displayName: '경찰' },
+  DOCTOR: { icon: doctorIcon, displayName: '의사' },
+  DETECTIVE: { icon: detectorIcon, displayName: '탐정' },
+  CITIZEN: { icon: citizenIcon, displayName: '시민' },
+  BULLY: { icon: achiIcon, displayName: '냥아치' },
+  SARK: { icon: sarkIcon, displayName: '삵' }
+};
+
 
 // const TableCell = styled.td`
 //   font-size: 20px; /* Adjust the font size as needed */
@@ -101,11 +136,10 @@ const TableRow = styled.tr`
 
 const ResultPage = () => {
   const {
-    roomSession, setPlayer, setPlayers, players
+    roomSession, setRoomSession, setPlayer, setPlayers, players
   } = useRoomContext();
-  const { winner, stompClient } = useGameContext();
+  const { roleAssignedArray, winner, unsubscribeRedisTopic } = useGameContext();
   const navigate = useNavigate();
-  // console.log(roleAssignedArray);
 
   useEffect(() => {
     // Play the resultSound when the page loads
@@ -123,16 +157,23 @@ const ResultPage = () => {
     console.log("세션 해제중입니다.....");
     if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
 
-    console.log("세션 해제중입니다.....")
-    // 세션 연결 종료
-    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
+    // console.log("세션 해제중입니다.....")
+    // // 세션 연결 종료
+    // if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
     
     // 데이터 초기화
-    setPlayer({});
+    setPlayer.current = {};
     // setPlayers(new Map());
     players.current = new Map();
-    console.log("새로운 방 만들기")
-    navigate(`/${createRandomId()}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
+    setRoomSession((prev) => {
+      return ({
+        ...prev,
+        gameId: undefined,
+      });
+    });
+    console.log("새로운 방 만들기", roomSession.roomId);
+    unsubscribeRedisTopic();
+    navigate(`/${roomSession.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
 
   const handleExitButtonClick = () => {
@@ -142,16 +183,27 @@ const ResultPage = () => {
     
     // 데이터 초기화
     // setSession(undefined);
-    setPlayer({});
+    setPlayer.current = {};
     // setPlayers(new Map());
     players.current = new Map();
+    setRoomSession((prev) => {
+      return ({
+        ...prev,
+        roomId: undefined,
+        gameId: undefined
+      });
+    });
     console.log("홈으로 나가기")
+    unsubscribeRedisTopic();
     navigate('/');
   };
 
-  const sarkPlayers = Array.from(players.current.values()).filter(player => player.role === 'SARK');
-  const nonSarkPlayers = Array.from(players.current.values()).filter(player => player.role !== 'SARK');
 
+
+  const sarkPlayers = roleAssignedArray.current.filter(playerRole => playerRole.job === '삵');
+  console.log(sarkPlayers, "sarkPlayers");
+  const nonSarkPlayers = roleAssignedArray.current.filter(playerRole => playerRole.job !== '삵');
+  console.log(nonSarkPlayers, "nonSarkPlayers");
   return (
     <div>
     {winner === 'CITIZEN' ? (
@@ -168,14 +220,33 @@ const ResultPage = () => {
           <tbody>
             {nonSarkPlayers.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#f25282" }}>
+                 <TableCell2>
+                   {roleInfoMapping[playerRole.role].icon && (
+                      <img
+                        src={roleInfoMapping[playerRole.role].icon}
+                        alt={`${roleInfoMapping[playerRole.role].displayName} Icon`}
+                        style={{ width: '40px', height: '40px' }}
+                      />
+                    )}
+                  </TableCell2>
                 <TableCell>{playerRole.nickname}</TableCell>
-                <TableCell>{playerRole.job}</TableCell>
+                <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
+
               </TableRow>
             ))}
             {sarkPlayers.map((playerRole, index) => (
               <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#ff9cb9" }}>
+                 <TableCell2>
+                    {roleInfoMapping[playerRole.role].icon && (
+                      <img
+                        src={roleInfoMapping[playerRole.role].icon}
+                        alt={`${roleInfoMapping[playerRole.role].displayName} Icon`}
+                        style={{ width: '40px', height: '40px' }}
+                      />
+                    )}
+                  </TableCell2>
                 <TableCell>{playerRole.nickname}</TableCell>
-                <TableCell>{playerRole.job}</TableCell>
+                <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
               </TableRow>
             ))}
             
@@ -197,14 +268,32 @@ const ResultPage = () => {
         <tbody>
           {sarkPlayers.map((playerRole, index) => (
             <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#9ed8ff" }}>
+               <TableCell2>
+                   {roleInfoMapping[playerRole.role].icon && (
+                      <img
+                        src={roleInfoMapping[playerRole.role].icon}
+                        alt={`${roleInfoMapping[playerRole.role].displayName} Icon`}
+                        style={{ width: '40px', height: '40px' }}
+                      />
+                    )}
+                  </TableCell2>
               <TableCell>{playerRole.nickname}</TableCell>
-              <TableCell>{playerRole.job}</TableCell>
+              <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
             </TableRow>
           ))}
           {nonSarkPlayers.map((playerRole, index) => (
             <TableRow key={index} even={index % 2 === 0} style={{  backgroundColor: "#7db1d4" }}>
+               <TableCell2>
+                  {roleInfoMapping[playerRole.role].icon && (
+                      <img
+                        src={roleInfoMapping[playerRole.role].icon}
+                        alt={`${roleInfoMapping[playerRole.role].displayName} Icon`}
+                        style={{ width: '40px', height: '40px' }}
+                      />
+                    )}
+                  </TableCell2>
               <TableCell>{playerRole.nickname}</TableCell>
-              <TableCell>{playerRole.job}</TableCell>
+              <TableCell>{roleInfoMapping[playerRole.role].displayName}</TableCell>
             </TableRow>
           ))}
         </tbody>

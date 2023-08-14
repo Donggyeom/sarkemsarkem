@@ -1,6 +1,6 @@
 package com.a702.sarkem.controller;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,9 +58,13 @@ public class MainController {
 		SessionProperties properties = SessionProperties.fromJson(params).build();
 		Session session = openvidu.createSession(properties);
 
+		String roomId = (String) params.get("customSessionId");
+		
+		if (roomId == null || roomId.equals("undefined"))
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		
 		// Game Session
-		gameManager.createGameRoom(session.getSessionId());
-		String roomId = session.getSessionId();
+		gameManager.createGameRoom(roomId);
 		log.info(roomId + "방이 생성되었습니다.");
 		return new ResponseEntity<>(roomId, HttpStatus.OK);
 	}
@@ -109,6 +113,7 @@ public class MainController {
 
 		if (gameSession.getPhase() != GameSession.PhaseType.READY) {
 			log.debug("이미 게임이 실행 중입니다 roomId : " + roomId);
+			log.debug(gameSession.toString());
 			return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
 		}
 
@@ -132,17 +137,13 @@ public class MainController {
 		// 토큰 발급
 		String token = getConnectionToken(session, paramMap);
 		String playerId = token.split("token=")[1]; // 토큰 앞부분 삭제
-		Player player = new Player(playerId, nickName);
+		Player player = new Player(playerId, nickName, LocalDateTime.now());
 
 		log.debug(player.toString());
 
 		System.out.println(roomId + " " + playerId);
 		// 해당 게임 세션에 player 연결
 		if (gameManager.connectPlayer(roomId, player)) {
-
-			// 해당 게임 세션에 host가 없을 시 현재 player를 host로 지정
-			if (gameManager.getHostId(roomId) == null)
-				gameManager.setHostId(roomId, playerId);
 			
 			log.info(nickName + "님이 " + roomId + "에 접속합니다.");
 			
@@ -150,6 +151,7 @@ public class MainController {
 			data.put("token", token);
 			data.put("playerId", playerId);
 			data.put("nickName", nickName);
+			data.put("hostId", gameManager.getHostId(roomId));
 			
 			return new ResponseEntity<>(data, HttpStatus.OK);
 		} else {

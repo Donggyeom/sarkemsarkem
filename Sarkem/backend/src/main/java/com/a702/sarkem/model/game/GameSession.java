@@ -1,8 +1,10 @@
 package com.a702.sarkem.model.game;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,12 +18,14 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Setter
 @Getter
 @Builder
 @ToString
 @AllArgsConstructor
+@Slf4j
 public class GameSession {
 
 	public enum PhaseType {
@@ -62,7 +66,29 @@ public class GameSession {
 		this.gameId = gameId;
 		this.players = new ArrayList<>(10);
 		this.phase = PhaseType.READY;
+		this.citizenCount = 1;
+		this.sarkCount = 1;
+		this.policeCount = 1;
+		this.doctorCount = 1;
+		this.bullyCount = 1;
+		this.psychologistCount = 1;
 		this.meetingTime = 60;
+		this.day = 0;
+		this.winTeam = 0;
+	}
+	
+	public GameSession(String roomId, String gameId, GameOptionDTO optionDto) {
+		this.roomId = roomId;
+		this.gameId = gameId;
+		this.players = new ArrayList<>(10);
+		this.phase = PhaseType.READY;
+		this.citizenCount = optionDto.getCitizenCount();
+		this.sarkCount = optionDto.getSarkCount();
+		this.policeCount = optionDto.getPoliceCount();
+		this.doctorCount = optionDto.getDoctorCount();
+		this.bullyCount = optionDto.getBullyCount();
+		this.psychologistCount = optionDto.getPsychologistCount();
+		this.meetingTime = optionDto.getMeetingTime();
 		this.day = 0;
 		this.winTeam = 0;
 	}
@@ -96,6 +122,19 @@ public class GameSession {
 			}
 		}
 		return null;
+	}
+	public List<RolePlayer> getPlayers() {
+		LocalDateTime tenSecondsBefore = LocalDateTime.now().minusSeconds(10);
+		for (Iterator<RolePlayer> itr = players.iterator(); itr.hasNext();) {
+			RolePlayer p = itr.next();
+			if (p.getLastUpdateTime().isBefore(tenSecondsBefore)) {
+				log.debug("tenSecondsBefore" + tenSecondsBefore.toString());
+				log.debug("p.getLastUpdateTime()" + p.getLastUpdateTime().toString());
+				log.debug(p.toString() + " is Removed");
+				itr.remove();
+			}
+		}
+		return this.players;
 	}
 
 	// 살아있는 플레이어만 반환하는 함수

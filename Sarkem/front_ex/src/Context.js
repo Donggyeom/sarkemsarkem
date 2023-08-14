@@ -7,7 +7,7 @@ const RoomContext = createContext();
 
 const RoomProvider = ({ children }) => {
   const [roomSession, setRoomSession] = useState({});
-  const [player, setPlayer] = useState({});
+  const player = useRef({});
   const players = useRef(new Map());
   const [showImage, setShowImage] = useState(false);
 
@@ -25,19 +25,20 @@ const RoomProvider = ({ children }) => {
   }, []);
 
 
-  useEffect(() => {
-    console.log(`useEffect player`);
-    console.log(player);
-    console.log(player.stream);
-    if (player.stream == undefined) return;
+  // useEffect(() => {
+  //   console.log(`useEffect player`);
+  //   console.log(player);
+  //   console.log(player.stream);
+  //   if (player.stream == undefined) return;
 
-    console.log('player 변경');
-    console.log(player);
-    // setPlayers((prev) => {
-    //   return new Map(prev).set(player.playerId, player);
-    // });
-    players.current.set(player.playerId, player);
-  }, [player]);
+  //   console.log('player 변경');
+  //   console.log(player);
+  //   // setPlayers((prev) => {
+  //   //   return new Map(prev).set(player.playerId, player);
+  //   // });
+  //   players.current.set(player.playerId, player);
+  // }, [player]);
+
 
 
   // useEffect(() => {
@@ -58,13 +59,40 @@ const RoomProvider = ({ children }) => {
 
 
   ////////////   RoomContext 함수   ////////////
+  
+  const setPlayer = (props) => {
+    if (!player.current) return;
+
+    for (let prop of props) {
+      player.current[prop.key] = prop.value;
+    }
+    
+    if (player.current.playerId === undefined) return;
+    console.log('setPlayer', props);
+    setPlayers(player.current);
+  }
+
+  const setPlayers = (player) => {
+    if (!players.current) return;
+    players.current.set(player.playerId, player);
+    console.log('setPlayers', players.current);
+  }
 
   const getGameRoom = async (roomId) => {
     // 게임방 정보 획득
     console.log(`getGameRoom`);
-    const response = await axios.get('/api/game/' + roomId, {
-      headers: { 'Content-Type': 'application/json;charset=utf-8', },
-    });
+    let response;
+    try{
+      response = await axios.get('/api/game/' + roomId, {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
+      });
+    } catch (error) {
+      console.log("서버와 연결이 원활하지 않습니다.", error);
+      alert("서버와 연결이 원활하지 않습니다.");
+      leaveSession(); // 바꿔야할 수도;
+      navigate("/");
+      return;
+    }
     
     if (response.status == '204') {
       console.log('gameRoom null');
@@ -90,11 +118,16 @@ const RoomProvider = ({ children }) => {
       // 세션 연결 종료
       if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
       // game 퇴장 요청
-      const response = await axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`,
-        {
-          headers: { 'Content-Type': 'application/json;charset=utf-8', },
-        }
-      )
+      let response;
+      try{
+        response = axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`,
+          {
+            headers: { 'Content-Type': 'application/json;charset=utf-8', },
+          }
+        )
+      } catch(error){
+        console.log("서버와 연결이 원활하지 않습니다.", error);
+      }
       // 세션 스토리지에 저장된 데이터 삭제
       window.sessionStorage.removeItem("roomId");
       window.sessionStorage.removeItem("gameId");
@@ -103,8 +136,8 @@ const RoomProvider = ({ children }) => {
       // setSession(undefined);
       // setPlayers(new Map());
       players.current = new Map();
-      setPlayer({});
-      navigate(`/${roomSession.roomId}`)
+      player.current = {};
+      // navigate(`/${roomSession.roomId}`)
   }
 
 
@@ -129,7 +162,8 @@ const RoomProvider = ({ children }) => {
       // setPlayers((prev) => {
       //   return new Map(prev).set(newPlayer.playerId, newPlayer);
       // });
-      players.current.set(newPlayer.playerId, newPlayer);
+      // players.current.set(newPlayer.playerId, newPlayer);
+      setPlayers(newPlayer);
       console.log(newPlayer.nickName, "님이 접속했습니다.");
     });
 
@@ -142,7 +176,7 @@ const RoomProvider = ({ children }) => {
       //   players.delete(targetId);
       //   return players;
       // });
-      players.current.removeItem(targetId);
+      players.current.delete(targetId);
       console.log(targetNickname, "님이 접속을 종료했습니다.");
     });
 
@@ -170,6 +204,7 @@ const RoomProvider = ({ children }) => {
 
   const connectSession = async (response, roomId) => {
     console.log(`connectSession`);
+    console.log(player.current);
     try {
       const session = response;
       // 오픈비두 토큰 발급
@@ -177,17 +212,17 @@ const RoomProvider = ({ children }) => {
       await session.connect(data.token, {
         nickName: data.nickName, 
         playerId: data.playerId,
-        isMicOn: player.isMicOn,
-        isCamOn: player.isCamOn,
-        isHost: player.isHost,
+        isMicOn: player.current.isMicOn,
+        isCamOn: player.current.isCamOn,
+        isHost: player.current.isHost,
       });
 
       // 내 퍼블리셔 객체 생성
       let publisher = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
-        publishAudio: player.isMicOn,
-        publishVideo: player.isCamOn,
+        publishAudio: player.current.isMicOn,
+        publishVideo: player.current.isCamOn,
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
@@ -197,15 +232,16 @@ const RoomProvider = ({ children }) => {
       session.publish(publisher);
 
       // 내 디바이스 on/off 상태 게시
-      publisher.publishVideo(player.isCamOn);
-      publisher.publishAudio(player.isMicOn);
+      publisher.publishVideo(player.current.isCamOn);
+      publisher.publishAudio(player.current.isMicOn);
       // 퍼블리셔 useState 갱신
-      setPlayer((prevState) => {
-        return ({
-          ...prevState,
-          stream: publisher,
-        });
-      });
+      // setPlayer((prevState) => {
+      //   return ({
+      //     ...prevState,
+      //     stream: publisher,
+      //   });
+      // });
+      setPlayer([{key: 'stream', value: publisher}]);
     }
     catch (error) {
       console.error(error);
@@ -219,14 +255,22 @@ const RoomProvider = ({ children }) => {
   // 서버에 요청하여 화상 채팅 세션 생성하는 함수
   const createGameRoom = async (roomId) => {
     console.log(`${roomId} 세션을 생성합니다.`);
-    const response = await axios.post('/api/game', { 
-      customSessionId: roomId, 
-      nickName: player.nickName,
-    }, 
-    {
-      headers: { 'Content-Type': 'application/json;charset=utf-8', },
-    });
-    
+    let response;
+    try{
+      response = await axios.post('/api/game', { 
+        customSessionId: roomId, 
+        nickName: player.current.nickName,
+      }, 
+      {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
+      });
+    } catch(error) {
+      console.log("서버와 연결이 원활하지 않습니다.", error);
+      alert("서버와 연결이 원활하지 않습니다.");
+      leaveSession();
+      navigate("/");
+      return;
+    }
     console.log('세션 생성됨');
     console.log(response);
     return response; // The sessionId
@@ -236,19 +280,24 @@ const RoomProvider = ({ children }) => {
   // 서버에 요청하여 토큰 생성하는 함수
   const getToken = async (roomId) => {
     console.log("세션에 연결을 시도합니다.")
-    console.log(player.nickName);
-    const response = await axios.post(`/api/game/${roomId}/player`, player.nickName, {
-      headers: { 'Content-Type': 'application/json;charset=utf-8', },
-    });
-    
-    console.log('createToken ' + response.data.playerId);
-    setPlayer((prevState => {
-      return ({
-        ...prevState,
-        playerId: response.data.playerId,
-        nickName: response.data.nickName,
+    console.log(player.current.nickName);
+    let response;
+    try{
+      response = await axios.post(`/api/game/${roomId}/player`, player.current.nickName, {
+        headers: { 'Content-Type': 'application/json;charset=utf-8', },
       });
-    }));
+    } catch(error) {
+      console.log("서버와 연결이 원활하지 않습니다.", error);
+      alert("서버와 연결이 원활하지 않습니다.");
+      leaveSession();
+      navigate("/");
+      return;
+    }
+    setPlayer([
+      {key: 'playerId', value: response.data.playerId}, 
+      {key: 'nickName', value: response.data.nickName},  
+      {key: 'isHost', value: response.data.playerId === response.data.hostId}
+    ]);
     // sessionStorage에 playerId 갱신
     console.log("sessionStorage에 playerId를 갱신합니다.")
     window.sessionStorage.setItem("playerId", response.data.playerId);
@@ -264,7 +313,7 @@ const RoomProvider = ({ children }) => {
   return (
     <RoomContext.Provider value={{ roomSession, setRoomSession, createGameRoom, getGameRoom,
       OV, initSession, connectSession, leaveSession, getToken,  
-      player, setPlayer, players }}>
+      player, setPlayer, players, setPlayers }}>
       {children}
     </RoomContext.Provider>
   );

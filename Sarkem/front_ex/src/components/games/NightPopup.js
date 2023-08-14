@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import closeBtn from '../../img/btn_close.png';
 
-const fadeInOut = keyframes`
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
-  }
-`;
+// const fadeInOut = keyframes`
+//   0% {
+//     opacity: 1;
+//   }
+//   100% {
+//     opacity: 0;
+//     display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
+//   }
+// `;
 
 const StyledPopupContainer = styled.div`
   position: fixed;
@@ -19,7 +20,9 @@ const StyledPopupContainer = styled.div`
   background: #8E9EC9;
   border-radius: 30.94px;
   border: 5.16px solid #000000;
+  height: 180px; /* Set a fixed height for the popup box */
   padding: 61.87px;
+  width: 650px;
   display: flex;
   flex-direction: column;
   gap: 12.89px;
@@ -28,12 +31,12 @@ const StyledPopupContainer = styled.div`
   box-shadow: 0px 5.16px 5.16px 0px rgba(0, 0, 0, 0.25), 10.31px 10.31px 0px 0px rgba(0, 0, 0, 1);
   z-index: 9999;
   opacity: ${({ showPopup }) => (showPopup ? 1 : 0)};
-  animation: ${fadeInOut} 4s ease-in-out forwards;
-`;
+  `;
+  // animation: ${fadeInOut} 4s ease-in-out forwards;
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
-  font-size: 42px;
+  font-size: 35px;
   font-family: "RixInooAriDuriR", sans-serif;
   text-align: center;
   text-shadow: 1px 1px black;
@@ -42,22 +45,45 @@ const StyledPopupTitle = styled.div`
   padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
 `;
 
+const CloseBtn = styled.img`
+  width: 15%;
+  position: fixed;
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const StyledButton = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
 const NightPopup = ({sysMessage, dayCount}) => {
   const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
     if (sysMessage) {
+      console.log(sysMessage);
       setShowPopup(true);
-    
-    const fadeOutTimeout = setTimeout(() => {
-      setShowPopup(false);
-    }, 3500);
-    console.log(sysMessage);
-
-    return () => clearTimeout(fadeOutTimeout);
   }
   }, [sysMessage]);
 
+  // useEffect(() => {
+  //   let fadeOutTimeout;
+  //   if (showPopup) {
+  //     fadeOutTimeout = setTimeout(() => {
+  //       setShowPopup(false);
+  //     }, 3500);
+  //   }
+  //   return () => clearTimeout(fadeOutTimeout);
+  // }, [showPopup])
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
   const formattedMessage = sysMessage?.param?.message
   ? sysMessage.param.message.split('.').map((sentence, index) => (
       <React.Fragment key={index}>
@@ -70,44 +96,50 @@ const NightPopup = ({sysMessage, dayCount}) => {
 
 
   return (
-    <StyledPopupContainer showPopup={showPopup}>
-      {/* Your popup content */}
-      <div
-        style={{
-          flexShrink: '0',
-          width: '59.29px',
-          height: '0.01px',
-          position: 'relative',
-          transformOrigin: '0 0',
-          // transform: 'rotate(0deg) scale(1, -1)',
-        }}
-      >
+    <>
+      {showPopup && (
+        <StyledPopupContainer showPopup={showPopup}>
+        {/* Your popup content */}
         <div
           style={{
-            background: '#ffffff',
-            borderRadius: '72.18px',
-            borderStyle: 'solid',
-            borderColor: '#000000',
-            borderWidth: '5.16px',
-            padding: '10.31px 21.91px 10.31px 21.91px',
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '12.89px',
-            alignItems: 'center',
-            justifyContent: 'center', // Center the content horizontally
-            width: '229.44px',
-            height: '45px',
+            flexShrink: '0',
+            width: '59.29px',
+            height: '0.01px',
             position: 'relative',
-            bottom: 'calc(50% + 100px)',
-            right: '110px',
+            transformOrigin: '0 0',
+            // transform: 'rotate(0deg) scale(1, -1)',
           }}
         >
-          {dayCount}일차 밤
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '72.18px',
+              borderStyle: 'solid',
+              borderColor: '#000000',
+              borderWidth: '5.16px',
+              padding: '10.31px 21.91px 10.31px 21.91px',
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '12.89px',
+              alignItems: 'center',
+              justifyContent: 'center', // Center the content horizontally
+              width: '229.44px',
+              height: '45px',
+              position: 'relative',
+               top: '-120px',
+              right: '110px',
+            }}
+          >
+            {dayCount}일차 밤
+          </div>
         </div>
-      </div>
 
-      <StyledPopupTitle>{formattedMessage}</StyledPopupTitle>
-    </StyledPopupContainer>
+        <StyledPopupTitle>{formattedMessage}</StyledPopupTitle>
+        <StyledButton onClick={handleClosePopup}><CloseBtn src={closeBtn} alt="Close" /></StyledButton>
+      </StyledPopupContainer>
+      )}
+    </>
+    
   );
 };
 

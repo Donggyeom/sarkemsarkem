@@ -33,6 +33,8 @@ import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
 import LoadingPage from './LoadingPage';
 import ingameClickSound from '../sound/ingameclick.mp3';
+import DayPopup from "../components/games/DayPopup";
+import NightPopup from "../components/games/NightPopup";
 
 const StyledContent = styled.div`
   display: flex;
@@ -144,13 +146,14 @@ const ButtonContainer = styled.div`
 `;
 const ButtonContainer2 = styled.div`
   width: auto;
-  height: 80%;
+  height: 65%;
 `;
 
 
 const CommonLobby = ()=>{
   const { roomSession, player, players, leaveSession } = useRoomContext();
-  const { gameSession, setGameSession, getGameSession, handleGamePageClick, stompClient } = useGameContext();
+  const { gameSession, setGameSession, handleGamePageClick, 
+    stompClient, currentSysMessage, connectGameWS, loadGestureRecognizer, unsubscribeRedisTopic } = useGameContext();
 
   // const [ isLoaded, setIsLoaded ] = useState(false);
   
@@ -178,6 +181,10 @@ const CommonLobby = ()=>{
       return;
     }
 
+    connectGameWS();
+    loadGestureRecognizer();
+
+
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
     return () => {
@@ -191,21 +198,31 @@ const CommonLobby = ()=>{
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
+    unsubscribeRedisTopic();
     leaveSession();
   }
 
   
   // Function to handle the click event when the user wants to invite others
   const handleInviteClick = async () => {
-    await navigator.clipboard.writeText("i9a702.p.ssafy.io/"+roomSession.roomId).then(alert("게임 링크가 복사되었습니다."));
-    console.log('Invite functionality for hosts');
+    try {
+      await navigator.clipboard.writeText("i9a702.p.ssafy.io/"+roomSession.roomId).then(alert("게임 링크가 복사되었습니다."));
+      console.log('Invite functionality for hosts');
+    } catch (error) {
+      console.error("Error copying text to clipboard:", error);
+    }
   };
   
 
   // 게임 옵션을 변경처리 하는 함수
   const handleGameOptionChange = (part, value) => {
-    if (!player.isHost) return;
+    console.log('handleGameOptionChange', part, value);
+    console.log(player.current);
+    console.log(player.current.isHost);
+    if (!player.current.isHost) return;
+    console.log(player.current.isHost);
     if (stompClient.current.connect === undefined) return;
+    console.log(player.current.isHost);
     if (value < 0) return;    
     else if (part === 'meetingTime' && (value < 15 || value > 180)) return;
 
@@ -474,7 +491,7 @@ const CommonLobby = ()=>{
       </DivWrapper>
           
           
-            {player.isHost ? (
+            {player.current.isHost ? (
               <>
               <DivWrapper>
                 <LeftPart>
@@ -505,7 +522,9 @@ const CommonLobby = ()=>{
               </>
             )}
         
-        </RightSection>
+          </RightSection>
+          {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={0}/>}
+          {/* {currentSysMessage && <DayPopup sysMessage={currentSysMessage} dayCount={0}/>} */}
       </StyledContent>
     </Background>):<LoadingPage/>}
     </>

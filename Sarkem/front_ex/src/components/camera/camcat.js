@@ -14,56 +14,32 @@ const Box = styled.div
 
 
 const CamCat = ({id}) => {
-  const { players } = useRoomContext();
-  const [running, setRunning] = useState(false);
-  const [intervalId, setIntervalId] = useState(null);
-  const [boxPosition, setBoxPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const { psyTarget, psychologist, voteSituation, phase } = useGameContext();
-  const player = players.current.get(id);
-  const stream = player.stream;
+  const { players, player } = useRoomContext();
+  const { voteSituation, phase } = useGameContext();
+  const current = players.current.get(id);
+  const stream = current.stream;
 
-  useEffect(() => {
-    loadModels();
-  }, []);
-
-  useEffect(() => {
-    loadModels();
-    startFaceDetection();
-  }, [psyTarget]);
-
-  //faceapi 실행
-  //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
-  const startFaceDetection = () => {
-    if(player.playerId===psyTarget){
-      const id = faceMyDetect(stream.videos[1].video, setBoxPosition, running, setRunning);
-      setIntervalId(id);
-    }
-  };
-  //끄는거 
-  const stopFaceDetection = () => {
-    stopFace(intervalId, setRunning, setBoxPosition);
-  };
 
   const getVoteResultForUser = (id) => {
     if (phase === 'day') {
-      let player = players.current.get(id);
       if (voteSituation && voteSituation[id] !== undefined) {
         return `X  ${voteSituation[id]}`;
       }
       return `X 0`;
 
     }
-    else if (phase === 'night') {
-      if (player.role === "SARK" || player.role === "OBSERVER") {
-        if (voteSituation[id]) {
-          return `삵이 죽일 사람`;
+      else if (phase === 'night') {
+        if (player.current.role === "SARK" || player.current.role === "OBSERVER") {
+          if (voteSituation[id]) {
+            return `삵이 죽일 사람`;
+          }
+          return '';
         }
-        return `투표하지 않음`;
+        return ''; // sark나 observer가 아닌 경우
       }
-      return ''; // sark나 observer가 아닌 경우
-    }
-    return ''; // day나 night가 아닌 경우
-  };
+    
+      return ''; // day나 night가 아닌 경우
+    };
 
   return (
       <div
@@ -123,10 +99,10 @@ const CamCat = ({id}) => {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: '3px' }}>
             <div style={{ flex: 1, textAlign: 'right' }}>
-              {player.nickName}
+              {current.nickName}
             </div>
             <div style={{ flex: 0.8, textAlign: 'center' }}>
-              {getVoteResultForUser(player.playerId, phase)}
+              {getVoteResultForUser(current.playerId)}
             </div>
           </div>
         </div>

@@ -5,15 +5,18 @@ import Background from '../components/backgrounds/BackgroundDay';
 
 import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
+import NoMicButton from '../components/buttons/NoMicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
+import SarkMission from '../components/job/SarkMission';
+import PsychologistBox from '../components/job/PsychologistBox';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
 import DayNightCamera from '../components/camera/DayNightCamera';
-
+import { loadModels, faceMyDetect, stopFace } from '../components/job/Psychologist';
 // log
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
@@ -44,24 +47,37 @@ const DayPage = () => {
 
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
   const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, 
-    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp } = useGameContext();
+    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers, psychologist, psyTarget, currentSysMessagesArray, unsubscribeRedisTopic } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
   const [isLogOn, setIsLogOn] = useState(true);
+  const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
+  const [running, setRunning] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
+    console.log(currentSysMessagesArray);
+  useEffect(() => {
+    loadModels();
+  }, []);
+
   const handleLogButtonClick = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
-
+  useEffect(()=>{
+    console.log(psychologist);
+    if (psychologist) startFaceDetection();
+    else stopFaceDetection();
+  },[psychologist])
   
-  useEffect(() => {
-    if (roomSession.roomId === undefined){
+  useEffect((currentSysMessage) => {
+    if (roomSession == undefined || roomSession.roomId == undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
     }
     
-    if(player.isCamOn){
+    if(player.current.isCamOn){
       daystatus();
     }
     threated();
@@ -71,47 +87,68 @@ const DayPage = () => {
     return () => {
         window.removeEventListener('beforeunload', onbeforeunload);
     }
-  }, []);
+  }, [currentSysMessage]);
 
+
+    //faceapi 실행
+  //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
+  const startFaceDetection = () => {
+    if (players.current.get(psyTarget) === undefined) return;
+    console.log(players.current.get(psyTarget).stream);
+      const id = faceMyDetect(players.current.get(psyTarget).stream.videos[players.current.get(psyTarget).stream.videos.length-1].video, running, setRunning, setDetectExpressions);
+      setIntervalId(id);
+    }
+  //끄는거 
+  const stopFaceDetection = () => {
+    console.log("꺼짐?");
+    if (intervalId) {
+        clearInterval(intervalId);
+        setIntervalId(null);
+        setRunning(false);
+      }
+    stopFace(intervalId, setIntervalId, setRunning);
+  };
 
   const threated = () =>{
     console.log(threatedTarget);
     if(threatedTarget){
-      player.stream.publishAudio(false);
-      // player.stream.publishVideo(false);
+      console.log("참이냐??")
+      player.current.stream.publishAudio(false);
+      // player.current.stream.publishVideo(false);
     }
-
   }
 
   const handleCamButtonClick = () => {
-    const camOn = !player.isCamOn;
-    if (player.stream) {
-      player.stream.publishVideo(camOn);
+    const camOn = !player.current.isCamOn;
+    if (player.current.stream) {
+      player.current.stream.publishVideo(camOn);
     }
-    setPlayer((prev) => {
-      return ({
-        ...prev,
-        isCamon: camOn
-      });
-    });
+    // setPlayer((prev) => {
+    //   return ({
+    //     ...prev,
+    //     isCamOn: camOn
+    //   });
+    // });
+    setPlayer([{key: 'isCamOn', value: camOn}]);
   };
 
   const handleMicButtonClick = () => {
-    const micOn = !player.isMicOn;
-    if (player.stream) {
-      player.stream.publishAudio(micOn);
+    const micOn = !player.current.isMicOn;
+    if (player.current.stream) {
+      player.current.stream.publishAudio(micOn);
       // 버튼 클릭 이벤트를 threatedTarget이 못하게
       console.log('냥아치 협박 대상인가?');
-      if (player.stream !== threatedTarget) {
-        player.stream.publishAudio(micOn);
+      if (player.current.stream !== threatedTarget) {
+        player.current.stream.publishAudio(micOn);
         console.log('냥아치 협박 대상 아님! 마이크 버튼 클릭!');
       }
-      setPlayer((prev) => {
-        return ({
-          ...prev,
-          isMicOn: micOn
-        });
-      });
+      // setPlayer((prev) => {
+      //   return ({
+      //     ...prev,
+      //     isMicOn: micOn
+      //   });
+      // });
+      setPlayer([{key: 'isMicOn', value: micOn}]);
     };
   }
 
@@ -121,13 +158,14 @@ const DayPage = () => {
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
+    unsubscribeRedisTopic();
     leaveSession();
   }
   
   const daystatus = () =>{
-    if(player.role !== 'OBSERVER') {
-      player.stream.publishVideo(true);
-      player.stream.publishAudio(true);
+    if(player.current.role !== 'OBSERVER') {
+      player.current.stream.publishVideo(true);
+      player.current.stream.publishAudio(true);
     }
   };
 
@@ -137,12 +175,18 @@ const DayPage = () => {
         {!isLogOn && <Log />}
         <SunMoon alt="SunMoon" />
         <TimeSecond>{remainTime}s</TimeSecond>
-        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.isMicOn}/>
+        <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
+        {threatedTarget ? (
+          <NoMicButton alt="Mic Button" />
+          ) : (
+          <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
+        )}
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
-        {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
-        {players.current && <DayNightCamera ids={Array.from(players.current.keys())} />}
+        <DayPopup sysMessage={currentSysMessagesArray}  dayCount={dayCount}/> {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
+        {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <ScMini />
+        <SarkMission handNumber={currentHandNumber} />
+        {psychologist&&<PsychologistBox detectExpressions={detectExpressions}></PsychologistBox>}
         </StyledDayPage>
         <TempButton url={`/${roomSession.roomId}/sunset`} onClick={() => navigate(`/${roomSession.roomId}/sunset`)} alt="Start Game" />
         {chatVisible()}

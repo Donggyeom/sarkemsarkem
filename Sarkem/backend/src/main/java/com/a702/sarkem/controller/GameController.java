@@ -10,6 +10,7 @@ import com.a702.sarkem.model.chat.ChatMessage.MessageType;
 import com.a702.sarkem.model.game.GameSession.PhaseType;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.game.message.ActionMessage;
+import com.a702.sarkem.model.game.message.ActionMessage.ActionCode;
 import com.a702.sarkem.model.game.message.SystemMessage.SystemCode;
 import com.a702.sarkem.service.GameManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,13 +31,17 @@ public class GameController {
      */
 	@MessageMapping("/game/action")
 	public void message(ActionMessage actionMessage) {
-		log.debug(actionMessage.toString());
+		if (actionMessage.getCode() != ActionCode.PING)
+			log.debug(actionMessage.toString());
 		String roomId = actionMessage.getRoomId();
 		String gameId = actionMessage.getGameId();
 		String playerId = actionMessage.getPlayerId();
 		Object param = actionMessage.getParam();
 		
 		switch(actionMessage.getCode()) {
+		case PING:
+			gameManager.updatePlayerSession(roomId, playerId);
+			break;
 		case ENTER:
 			if ( gameManager.isHost(roomId, playerId) ) break;
 			// 방장이 아닌 사용자 입장 시 게임 옵션 전송
@@ -48,12 +53,10 @@ public class GameController {
 				// 방장이 아닌 사용자에게 에러 메세지 전송
 				gameManager.sendSystemMessage(roomId, playerId, SystemCode.ONLY_HOST_ACTION, null);
 			} 
-			else if (!gameManager.checkStartable(roomId)){
-				// 시작 가능 여부 확인
-				gameManager.sendNoticeMessageToPlayer(roomId, playerId, "플래이어 수와 역할 수가 일치하지 않습니다.", PhaseType.DAY);
+			else if (gameManager.checkStartable(roomId, playerId)){
+				// 시작 가능 여부 확인 수 게임 실행(시작 불가 경우 checkStartable에서 메시지 보냄)
+				gameManager.gameStart(roomId);
 			}
-			// 게임 실행
-			else gameManager.gameStart(roomId);
 			break;
 		// 추방투표
 		case EXPULSION_VOTE:
@@ -95,7 +98,7 @@ public class GameController {
 		log.debug("채팅 메시지");
 		if (MessageType.ENTER == chatMessage.getType()) {
 			log.debug(chatMessage.getPlayerId() + "채팅방 입장!!");
-			chatMessage.setMessage(chatMessage.getPlayerId() + "님이 채팅방에 입장하셨습니다.");
+			chatMessage.setMessage(chatMessage.getNickName() + "님이 채팅방에 입장하셨습니다.");
         }
 		else {
 			log.debug(chatMessage.getPlayerId() + "채팅 입력");
