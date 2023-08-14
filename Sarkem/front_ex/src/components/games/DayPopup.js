@@ -21,13 +21,14 @@ const StyledPopupContainer = styled.div`
   border-radius: 30.94px;
   border: 5.16px solid #000000;
   padding: 61.87px;
+  height: 180px; /* Set a fixed height for the popup box */
+  width: 650px;
   display: flex;
   flex-direction: column;
   gap: 12.89px;
   align-items: center;
   justify-content: center;
   box-shadow: 0px 5.16px 5.16px 0px rgba(0, 0, 0, 0.25), 10.31px 10.31px 0px 0px rgba(0, 0, 0, 1);
-  // z-index: 9999;
   z-index: ${({ showPopup }) => (showPopup ? 9999 : -1)};
   opacity: ${({ showPopup }) => (showPopup ? 1 : 0)};
   `;
@@ -35,7 +36,7 @@ const StyledPopupContainer = styled.div`
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
-  font-size: 42px;
+  font-size: 35px;
   font-family: "RixInooAriDuriR";
   text-align: center;
   text-shadow: 1px 1px black;
@@ -45,8 +46,11 @@ const StyledPopupTitle = styled.div`
 `;
 
 const CloseBtn = styled.img`
-  width: 80%;
-  // height: 60%;
+  width: 15%;
+  position: fixed;
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const StyledButton = styled.button`
@@ -133,7 +137,8 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
             width: '229.44px',
             height: '45px',
             position: 'relative',
-            bottom: 'calc(50% + 100px)',
+            // bottom: 'calc(50% + 100px)',
+            top: '-120px',
             right: '110px',
           }}
         >

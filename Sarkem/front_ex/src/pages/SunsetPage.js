@@ -48,6 +48,7 @@ const CamCatGrid = styled.div`
     max-height: ${style.maxHeight};
     left : ${style.left};
     top : ${style.top};
+    // margin-top : ${style.marginTop};
   `}
 `;
 
@@ -92,20 +93,24 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 7) {
     return {
+      marginLeft: '1%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 8) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr',
+      marginTop : '-15%',
       width : '100%',
     };
   } else if (camCount === 9) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr 1fr 1fr',
+      gridTemplateRows: '1fr 1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
+      marginTop : '30%',
+      marginLeft : '1%',
     };
   } else if (camCount === 10) {
     return {
@@ -229,13 +234,14 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     left : 55%;
+    bottom : 30%;
   `
   :
   camCount === 6 && index === 1
   ? `
     position: relative;
     right : 45%;
-    top : 55%;
+    top : 30%;
   `
   :
   camCount === 6 && index === 2
@@ -248,33 +254,33 @@ const CamCatWrapper = styled.div`
   camCount === 6 && index === 3
   ? `
     position: relative;
-    left : 125%;
-    top : 55%;
+    left : 115%;
+    top : 31%;
   `
   :
   camCount === 6 && index === 4
   ? `
     position: relative;
-    left : 25%;
+    left : 15%;
+    bottom : 32%;
   `
   :
   camCount === 6 && index === 5
   ? `
     position: relative;
-    top : 25%;
   `
   :
   camCount === 7 && index === 0
   ? `
     position: relative;
     left : 100%;
+    bottom : 25%;
 
   `
   :
   camCount === 7 && index === 1
   ? `
     position: relative;
-    top : 30%;
     right : 100%;
 
   `
@@ -283,7 +289,7 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     right : 100%;
-    top : 60%;
+    top : 30%;
 
   `
   :
@@ -291,13 +297,14 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 300%;
-    left : 5%;
+    left : 7%;
   `
   :
   camCount === 7 && index === 4
   ? `
     position: relative;
     left : 100%;
+    bottom : 25%;
 
   `
   :
@@ -305,7 +312,6 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     left : 100%;
-    top : 30%;
 
   `
   :
@@ -313,74 +319,80 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     right : 100%;
-    top : 60%;
+    top : 30%;
   `
   :
   camCount === 8 && index === 0
   ? `
     position: relative;
-    width : 30%;
-    top : 40%;
-    right : 15%;
+    width : 50%;
+    top : 50%;
 
   `
   :
   camCount === 8 && index === 1
   ? `
     position: relative;
-    width : 30%;
-    left : 30%;
+    width : 50%;
+    margin-top : 10%;
+    right : 50%;
+    top : 30%;
 
   `
   :
   camCount === 8 && index === 2
   ? `
     position: relative;
-    width : 30%;
-    top : 60%;
-    right : 6%;
+    width : 50%;
+    left : 100%;
+    top : 85%;
 
   `
   :
   camCount === 8 && index === 3
   ? `
     position: relative;
-    width : 30%;
-    left : 2%;
+    width : 50%;
+    right : 50%;
+    top : 25%;
+    margin-top : 20%;
 
   `
   :
   camCount === 8 && index === 4
   ? `
     position: relative;
-    width : 30%;
-    top : 85%;
-    right : 15%;
+    width : 50%;
 
   `
   :
   camCount === 8 && index === 5
   ? `
     position: relative;
-    width : 30%;
-    left : 2%;
+    width : 50%;
+    right : 50%;
+    top : 25%;
+    margin-top : 20%;
 
   `
   :
   camCount === 8 && index === 6
   ? `
     position: relative;
-    width : 100%;
-    left : 50%;
-    bottom : 85%;
+    width : 150%;
+    right : 43%;
+    bottom : 15%;
+
 
   `
   :
   camCount === 8 && index === 7
   ? `
     position: relative;
-    width : 30%;
-    left : 30%;
+    width : 50%;
+    margin-top : 10%;
+    right : 50%;
+    top : 30%;
 
   `
   :

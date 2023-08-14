@@ -36,7 +36,7 @@ const LineStyle = styled.div`
   width: 112%; /* Set the desired width for your line */
   height: 5px; /* Set the desired height for your line */
   background-color: black; /* Color of the line */
-  margin-left: -6%;
+  margin-left: -5.5%;
   margin-top: 5%;
 `
 
