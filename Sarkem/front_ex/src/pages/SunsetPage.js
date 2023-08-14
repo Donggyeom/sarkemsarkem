@@ -106,9 +106,11 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 9) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr 1fr 1fr',
+      gridTemplateRows: '1fr 1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
+      marginTop : '30%',
+      marginLeft : '1%',
     };
   } else if (camCount === 10) {
     return {
