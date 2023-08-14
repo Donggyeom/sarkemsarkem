@@ -545,7 +545,7 @@ const SunsetPage = () => {
    
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
   const { startVote, agreeExpulsion, disagreeExpulsion, targetId, 
-    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers } = useGameContext();
+    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers, unsubscribeRedisTopic } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
   const [isAgree, setIsAgree] = useState(false);
@@ -589,6 +589,7 @@ const SunsetPage = () => {
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
+    unsubscribeRedisTopic();
     leaveSession();
   }
 

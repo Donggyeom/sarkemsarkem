@@ -143,7 +143,15 @@ const GameProvider = ({ children }) => {
 
     sendPing();
   }
-  
+
+  const unsubscribeRedisTopic = () => {
+    try{
+      unconnectChat();
+      unconnectGame();
+    } catch(error) {
+      console.log(error);
+    }
+  }
 
   const sendPing = () => {
     if (pingSession.current) clearInterval(pingSession.current);
@@ -197,9 +205,15 @@ const GameProvider = ({ children }) => {
   // 게임룸 redis 구독
   const connectGame = () => {
     if (!stompClient.current.connected) return;
-    console.log('/sub/game/system/' + window.sessionStorage.getItem("roomId") + " redis 구독")
-    stompClient.current.subscribe('/sub/game/system/' + window.sessionStorage.getItem("roomId"), receiveMessage)
+    console.log('/sub/game/system/' + roomSession.roomId + " redis 구독")
+    stompClient.current.subscribe('/sub/game/system/' + roomSession.roomId, receiveMessage)
   }
+
+  // 게임 끝나거나 비활성화 할때 //
+  const unconnectGame = () => {
+    console.log('/sub/game/system/' + roomSession.roomId + " redis 구독 취소");
+    stompClient.current.unsubscribe('/sub/game/system/' + roomSession.roomId, receiveMessage);
+  };
 
 
   const receiveChatMessage = async (message) => {
@@ -247,7 +261,7 @@ const GameProvider = ({ children }) => {
   
   // 게임 끝나거나 비활성화 할때 //
   const unconnectChat = () => {
-    console.log('/sub/chat/room/' + roomSession.roomId + " redis 구독");
+    console.log('/sub/chat/room/' + roomSession.roomId + " redis 구독 취소");
     stompClient.current.unsubscribe('/sub/chat/room/' + roomSession.roomId, receiveMessage);
   };
 
@@ -747,7 +761,7 @@ const GameProvider = ({ children }) => {
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
-      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray }}
+      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic }}
     >
       {children}
     </GameContext.Provider>
