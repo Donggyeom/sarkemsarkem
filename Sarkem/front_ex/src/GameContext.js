@@ -218,18 +218,22 @@ const GameProvider = ({ children }) => {
 
   const receiveChatMessage = async (message) => {
     const parsedMessage = JSON.parse(message.body);
+    console.log(parsedMessage, "parsedMessage");
     const chatMessage = parsedMessage.message;
     const playerId = parsedMessage.playerId;
+    const nickName = parsedMessage.nickName;
     
     console.log(chatMessage, "메세지 수신2"); // 메시지 수신 여부 확인을 위한 로그
-    setChatMessages((prevMessages) => [...prevMessages, { message: chatMessage, playerId }]);
+    console.log(nickName, "메세지 수신3");
+    setChatMessages((prevMessages) => [...prevMessages, { message: chatMessage, playerId, nickName }]);
   };
   
 
   const sendChatPubMessage = (message) => {
     console.log("chat publish 들어감"); 
     if (stompClient.current.connected && player.current.playerId !== null) {
-      console.log("Enter 메시지 보냄, roomId", roomSession.roomId); 
+      console.log("Enter 메시지 보냄, roomId", roomSession.roomId);
+      console.log(player.current.nickName, "playernickname");
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'ENTER',
         playerId:player.current.playerId,
@@ -255,6 +259,7 @@ const GameProvider = ({ children }) => {
         type:'TALK', 
         roomId: roomSession.roomId,
         playerId:player.current.playerId,
+        nickName : player.current.nickName,
         message: message
       }));
     }
