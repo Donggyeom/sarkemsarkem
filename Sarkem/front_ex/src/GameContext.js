@@ -275,13 +275,7 @@ const GameProvider = ({ children }) => {
     console.log("chat publish 들어감"); 
     if (stompClient.current.connected && player.current.playerId !== null) {
       console.log("Enter 메시지 보냄, roomId", roomSession.roomId);
-      console.log(player.current.nickName, "playernickname");
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
-        type:'ENTER',
-        playerId:player.current.playerId,
-        nickName:player.current.nickName,
-        roomId: roomSession.roomId,
-        message: message
       }));
     }
   };
