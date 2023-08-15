@@ -211,7 +211,7 @@ const CommonStart = ({onClick} ) => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
       videoRef.current.style.transform = 'scaleX(-1)';
-      setPlayer([{key: 'isCamOn', value: player.current.isMicOn}]);
+      setPlayer([{key: 'isCamOn', value: true}]);
     }
     catch (error) {
       console.error("Failed to start video: ", error);
