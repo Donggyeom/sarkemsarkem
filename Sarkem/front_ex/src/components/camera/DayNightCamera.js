@@ -306,7 +306,7 @@ const DayNightCamera = React.memo(({ players }) => {
         if (player.role === "SARK") sarkArray.push(player);
       }
 
-      if (player.role === "DETECTIVE") {
+      if (player.current.role === "DETECTIVE") {
         changeVoice(sarkArray);
       }
 
