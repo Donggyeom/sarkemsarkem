@@ -49,14 +49,15 @@ const DayPage = () => {
 
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
   const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, 
-    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers, psychologist, psyTarget, dayCurrentSysMessagesArray, unsubscribeRedisTopic } = useGameContext();
+    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, 
+    getAlivePlayers, psychologist, psyTarget, dayCurrentSysMessagesArray, unsubscribeRedisTopic,
+    faceDetectionIntervalId, setFaceDetectionIntervalId } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
   const [isLogOn, setIsLogOn] = useState(true);
   const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
   const [running, setRunning] = useState(false);
-  const [intervalId, setIntervalId] = useState(null);
   const audio = new Audio(Sound);
   const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
   useEffect(() => {
@@ -121,17 +122,17 @@ const DayPage = () => {
     if (players.current.get(psyTarget) === undefined) return;
     console.log(players.current.get(psyTarget).stream);
       const id = faceMyDetect(players.current.get(psyTarget).stream.videos[players.current.get(psyTarget).stream.videos.length-1].video, running, setRunning, setDetectExpressions);
-      setIntervalId(id);
+      setFaceDetectionIntervalId(id);
     }
   //끄는거 
   const stopFaceDetection = () => {
     console.log("꺼짐?");
-    if (intervalId) {
-        clearInterval(intervalId);
-        setIntervalId(null);
+    if (faceDetectionIntervalId) {
+        clearInterval(faceDetectionIntervalId);
+        setFaceDetectionIntervalId(null);
         setRunning(false);
       }
-    stopFace(intervalId, setIntervalId, setRunning);
+    stopFace(faceDetectionIntervalId, setFaceDetectionIntervalId, setRunning);
   };
 
   const threated = () =>{

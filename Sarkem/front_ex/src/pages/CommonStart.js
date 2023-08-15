@@ -147,11 +147,8 @@ const Logo = styled.img`
 
 
 const CommonStart = ({onClick} ) => {
-  const { player, setPlayer, roomSession, setRoomSession, getGameRoom } = useRoomContext();
-  const [ roomId, setRoomId ] = useState("");
+  const { player, setPlayer, roomSession, setRoomSession, getGameRoom, checkGameRoom } = useRoomContext();
   const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const videoRef = useRef(null);
   const audioRef = useRef(null);
@@ -162,17 +159,13 @@ const CommonStart = ({onClick} ) => {
 
   useEffect(() => {
 
-    // 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
-    let roomId = location.pathname.split("/")[1];
-    setRoomId(roomId);
-    if (roomId === ""){
-      alert("roomId 정보가 없습니다.");
-      navigate("/");
-      return;
+    if (player.current && player.current.nickName !== undefined) {
+      setNickName(player.current.nickName);
     }
 
     // 게임방 존재 여부 확인
-    checkGameRoom(roomId);
+    
+    checkGameRoom();
     
     // 카메라 세팅
     getUserCamera();
@@ -187,24 +180,6 @@ const CommonStart = ({onClick} ) => {
   }, [nickName]);
 
   ////////////  CommonStart 함수  ////////////
-
-  const checkGameRoom = async (roomId) => {
-    console.log('checkGameRoom');
-    var gameRoom = await getGameRoom(roomId);
-    if (gameRoom == null) {
-      setPlayer([{key: 'isHost', value: true}]);
-    }
-    else {
-      setPlayer([{key: 'isHost', value: false}]);
-      setRoomSession((prev) => {
-        return ({
-          ...prev,
-          roomId: gameRoom.roomId,
-          gameId: gameRoom.gameId
-        });
-      });
-    }
-  };
 
   const getUserCamera = async () => {
     try {
@@ -347,7 +322,7 @@ const CommonStart = ({onClick} ) => {
               <RightPart2>
                 <ButtonContainer>
                    {/* 조건부 렌더링을 사용하여 버튼 선택 */}
-                   <GoroomButton onClick={onClick} roomId={roomId} />
+                   <GoroomButton onClick={onClick} />
                 </ButtonContainer>
               </RightPart2>
               

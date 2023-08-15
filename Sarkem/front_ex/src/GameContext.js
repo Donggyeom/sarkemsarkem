@@ -42,6 +42,7 @@ const GameProvider = ({ children }) => {
   
   const [psyTarget, setPsyTarget] = useState("");
   const [psychologist, setPsychologist] = useState(false);//심리학자 실행
+  const [faceDetectionIntervalId, setFaceDetectionIntervalId] = useState(null);
   const [hiddenMission, setHiddenMission] = useState(false);//히든미션 실행
   const hiddenMissionType = ["Thumb_Up", "Thumb_Down", "Victory", "Pointing_Up", "Closed_Fist", "ILoveYou"];//히든미션 리스트
   const [missionNumber, setMissionNumber] = useState(0);
@@ -107,7 +108,7 @@ const GameProvider = ({ children }) => {
   useEffect(()=> {
 
     if(!player.current.isHost) return;
-
+    if (gameSession.gameOption === undefined) return;
     callChangeOption();
 
   }, [gameSession.gameOption]);
@@ -117,6 +118,17 @@ const GameProvider = ({ children }) => {
 
   const initGameSession = () => {
     console.log("initGameSession");
+    if (pingSession.current) clearInterval(pingSession.current);  // ping stop
+    
+    stopPredicting();
+    player.current.stream.publishAudio(false);
+    player.current.stream.publishVideo(false);
+    player.current.isAlive = true;
+    for (let player of players.current.values()) {
+      player.isAlive = true;
+    }
+    clearInterval(faceDetectionIntervalId);
+    setFaceDetectionIntervalId(null);
     setGameSession({});
     setCurrentSysMessage(null);
     setCurrentSysMessagesArray([]);
@@ -152,9 +164,6 @@ const GameProvider = ({ children }) => {
     setAnimationFrameId(null);
     
     setDeadIds([]);
-
-    // 게임 결과 출력을 위한 직업 저장
-    roleAssignedArray.current = [];
   }
 
   // WebSocket 연결
@@ -162,7 +171,7 @@ const GameProvider = ({ children }) => {
     
     if (pingSession.current) clearInterval(pingSession.current);
 
-    if (stompClient.current === undefined) return;
+    if (stompClient.current !== undefined && stompClient.current.connected) return;
     console.log("connectGameWS");
     let socket = new SockJS("http://localhost:8080/ws-stomp");
     stompClient.current = Stomp.over(socket);
@@ -183,8 +192,6 @@ const GameProvider = ({ children }) => {
       alert("socket error");
       navigate("/");
     }
-
-    sendPing();
   }
 
   const unsubscribeRedisTopic = () => {
@@ -205,24 +212,12 @@ const GameProvider = ({ children }) => {
         console.log('sendPing');
         console.log('stompClient.current null');
         if (pingSession.current) clearInterval(pingSession.current);
-        if (roomSession.roomId !== undefined) {
-          navigate(`/${roomSession.roomId}`);
-        }
-        else {
-          navigate(`/`);
-        }
       }
 
       if (player.current.playerId === undefined) {
         console.log('sendPing');
         console.log('player.current.playerId null');
         if (pingSession.current) clearInterval(pingSession.current);
-        if (roomSession.roomId !== undefined) {
-          navigate(`/${roomSession.roomId}`);
-        }
-        else {
-          navigate(`/`);
-        }
       }
       
       if (roomSession.gameId === undefined) {
@@ -248,8 +243,9 @@ const GameProvider = ({ children }) => {
   // 게임룸 redis 구독
   const connectGame = () => {
     if (!stompClient.current.connected) return;
-    console.log('/sub/game/system/' + roomSession.roomId + " redis 구독")
-    stompClient.current.subscribe('/sub/game/system/' + roomSession.roomId, receiveMessage)
+    let roomId = window.sessionStorage.getItem("roomId");
+    console.log('/sub/game/system/' + roomId + " redis 구독")
+    stompClient.current.subscribe('/sub/game/system/' + roomId, receiveMessage)
   }
 
   // 게임 끝나거나 비활성화 할때 //
@@ -359,6 +355,7 @@ const GameProvider = ({ children }) => {
   const receiveMessage = async (message) => {
     // 시스템 메시지 처리
     let sysMessage = JSON.parse(message.body);
+    console.log(sysMessage);
 
     if (sysMessage.playerId === "ALL" || player.current.playerId === sysMessage.playerId) {
     switch (sysMessage.code) {
@@ -377,10 +374,7 @@ const GameProvider = ({ children }) => {
 
     case "GAME_START":   
         // 게임상태 초기화
-        for (let player of players.current.values()) {
-          console.log(player, "handleGamePageClick");
-          player.isAlive = true;
-        }
+        sendPing();
         navigate(`/${roomSession.roomId}/day`);
         break;
 
@@ -483,7 +477,7 @@ const GameProvider = ({ children }) => {
         break;
 
     case "TWILIGHT_SELECTION":
-        alert("죽일지 살릴지 선택해주세요");
+        // alert("죽일지 살릴지 선택해주세요");
         setStartVote(true);
         break;
 
@@ -576,7 +570,7 @@ const GameProvider = ({ children }) => {
         const disclosedRoles = sysMessage.param;
         // console.log(sysMessage.param)
         // console.log(sysMessage.param.job.length)
-        const newRoleAssignedArray = [];
+        roleAssignedArray.current = [];
     
         for (let i = 0; i < disclosedRoles.job.length; i++) {
           const nickname = disclosedRoles.nickname[i];
@@ -590,15 +584,13 @@ const GameProvider = ({ children }) => {
             team = "citizen";
           }
     
-          newRoleAssignedArray.push({
+          roleAssignedArray.current.push({
             team: team,
             nickname: nickname,
             job: job,
             role: role,
           });
         }
-        // TODO: 게임 종료됐을 때, 직업 구성 받기
-        roleAssignedArray.current = newRoleAssignedArray;
         console.log(roleAssignedArray, "roleAssignedArray");
         break;
       }
@@ -796,6 +788,7 @@ const uniquePlayers = () => {
 
   // 변경된 게임 옵션을 redis 토픽에 전달
   const callChangeOption = () => {
+    if (stompClient.current === undefined) return;
     if(stompClient.current.connected) {
       stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
@@ -823,7 +816,8 @@ const uniquePlayers = () => {
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, setCurrentSysMessagesArray,phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
-      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray }}
+      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers, pingSession,
+      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray }}
     >
       {children}
     </GameContext.Provider>

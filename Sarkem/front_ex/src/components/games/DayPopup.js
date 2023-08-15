@@ -99,6 +99,7 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
 
   const handleNextPage = () => {
     setCurrentPageIndex((prevIndex) => Math.min(prevIndex + 1, totalMessages - 1));
+    console.log(currentPageIndex, totalMessages, 'handleNextPage');
   };
 
   const handlePreviousPage = () => {

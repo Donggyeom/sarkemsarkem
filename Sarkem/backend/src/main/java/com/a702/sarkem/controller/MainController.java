@@ -59,14 +59,17 @@ public class MainController {
 		Session session = openvidu.createSession(properties);
 
 		String roomId = (String) params.get("customSessionId");
-		
+
 		if (roomId == null || roomId.equals("undefined"))
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		
+
+		if (gameManager.getGameRoom(roomId) != null)
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+
 		// Game Session
 		gameManager.createGameRoom(roomId);
 		log.info(roomId + "방이 생성되었습니다.");
-		return new ResponseEntity<>(roomId, HttpStatus.OK);
+		return new ResponseEntity<String>(roomId, HttpStatus.OK);
 	}
 
 	// 방 획득 retrieveGameRoom
@@ -85,7 +88,7 @@ public class MainController {
 		}
 		return new ResponseEntity<>(gameManager.getGameRoom(roomId), HttpStatus.OK);
 	}
-	
+
 	// 게임 세션 생성 createGameSession
 	@PostMapping("/api/game/session/{roomId}")
 	public ResponseEntity<?> createGameSession(@PathVariable("roomId") String roomId) {
@@ -95,16 +98,16 @@ public class MainController {
 		if (gameRoom == null || !gameManager.createGameSession(roomId)) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		String gameId = gameRoom.getGameId(); 
+		String gameId = gameRoom.getGameId();
 		log.info(gameId + "게임세션이 생성되었습니다.");
 		return new ResponseEntity<>(gameId, HttpStatus.OK);
 	}
-	
+
 	// 게임세션 획득 retrieveGameSession
 	@GetMapping("/api/game/session/{roomId}")
 	public ResponseEntity<?> retrieveGameSession(@PathVariable("roomId") String roomId,
 			@RequestBody(required = false) Map<String, Object> params) {
-		
+
 		GameSession gameSession = gameManager.getGameSession(roomId);
 		if (gameSession == null) {
 			log.debug("retrieveGameSession - 게임세션 획득 실패 roomId : " + roomId);
@@ -144,15 +147,15 @@ public class MainController {
 		System.out.println(roomId + " " + playerId);
 		// 해당 게임 세션에 player 연결
 		if (gameManager.connectPlayer(roomId, player)) {
-			
+
 			log.info(nickName + "님이 " + roomId + "에 접속합니다.");
-			
+
 			Map<String, String> data = new HashMap<>();
 			data.put("token", token);
 			data.put("playerId", playerId);
 			data.put("nickName", nickName);
 			data.put("hostId", gameManager.getHostId(roomId));
-			
+
 			return new ResponseEntity<>(data, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
