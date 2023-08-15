@@ -76,6 +76,22 @@ public class GameSession {
 		this.day = 0;
 		this.winTeam = 0;
 	}
+	
+	public GameSession(String roomId, String gameId, GameOptionDTO optionDto) {
+		this.roomId = roomId;
+		this.gameId = gameId;
+		this.players = new ArrayList<>(10);
+		this.phase = PhaseType.READY;
+		this.citizenCount = optionDto.getCitizenCount();
+		this.sarkCount = optionDto.getSarkCount();
+		this.policeCount = optionDto.getPoliceCount();
+		this.doctorCount = optionDto.getDoctorCount();
+		this.bullyCount = optionDto.getBullyCount();
+		this.psychologistCount = optionDto.getPsychologistCount();
+		this.meetingTime = optionDto.getMeetingTime();
+		this.day = 0;
+		this.winTeam = 0;
+	}
 
 	public int nextDay() {
 		return ++day;

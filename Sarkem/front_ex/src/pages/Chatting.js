@@ -167,7 +167,7 @@ const Chatting = ({ handleCloseButtonClick }) => {
         <ChatMessages ref={chatMessagesRef}>
           {chatMessages.map((messageObj, index) => {
             console.log('messageObj.playerId:', messageObj.playerId);
-            // console.log('token:', token);
+            console.log('messageObj.nickName:', messageObj.nickName);
             return (
               messageObj.playerId === player.current.playerId ? (
                 <ChatMessage key={index}>
@@ -175,7 +175,7 @@ const Chatting = ({ handleCloseButtonClick }) => {
                 </ChatMessage>
               ) : (
                 <ChatReceiverMessage key={index}>
-                  {messageObj.message}
+                  {messageObj.nickName} : {messageObj.message}
                 </ChatReceiverMessage>
               )
             );

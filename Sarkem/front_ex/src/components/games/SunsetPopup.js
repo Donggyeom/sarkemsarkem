@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import closeBtn from '../../img/btn_close.png';
 
-const fadeInOut = keyframes`
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
-  }
-`;
+// const fadeInOut = keyframes`
+//   0% {
+//     opacity: 1;
+//   }
+//   100% {
+//     opacity: 0;
+//     display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
+//   }
+// `;
 
 const StyledPopupContainer = styled.div`
   position: fixed;
@@ -20,6 +21,8 @@ const StyledPopupContainer = styled.div`
   border-radius: 30.94px;
   border: 5.16px solid #000000;
   padding: 61.87px;
+  height: 180px; /* Set a fixed height for the popup box */
+  width: 650px;
   display: flex;
   flex-direction: column;
   gap: 12.89px;
@@ -28,12 +31,12 @@ const StyledPopupContainer = styled.div`
   box-shadow: 0px 5.16px 5.16px 0px rgba(0, 0, 0, 0.25), 10.31px 10.31px 0px 0px rgba(0, 0, 0, 1);
   z-index: 9999;
   opacity: ${({ showPopup }) => (showPopup ? 1 : 0)};
-  animation: ${fadeInOut} 4s ease-in-out forwards;
-`;
+  `;
+  // animation: ${fadeInOut} 4s ease-in-out forwards;
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
-  font-size: 42px;
+  font-size: 35px;
   font-family: "RixInooAriDuriR", sans-serif;
   text-align: center;
   text-shadow: 1px 1px black;
@@ -42,18 +45,38 @@ const StyledPopupTitle = styled.div`
   padding: 10px; /* Optionally, you can add some padding to create space between the text and the border */
 `;
 
+const CloseBtn = styled.img`
+  width: 15%;
+  position: fixed;
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const StyledButton = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
+
 
 const SunsetPopup = ({dayCount}) => {
   const [showPopup, setShowPopup] = useState(true);
 
-  useEffect(() => {
-    const fadeOutTimeout = setTimeout(() => {
-      setShowPopup(false);
-    }, 3500);
+  // useEffect(() => {
+  //   const fadeOutTimeout = setTimeout(() => {
+  //     setShowPopup(false);
+  //   }, 3500);
 
-    return () => clearTimeout(fadeOutTimeout);
-  }, []);
-
+  //   return () => clearTimeout(fadeOutTimeout);
+  // }, []);
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
   return (
     <StyledPopupContainer showPopup={showPopup} >
       {/* Your popup content */}
@@ -83,7 +106,7 @@ const SunsetPopup = ({dayCount}) => {
             width: '229.44px',
             height: '45px',
             position: 'relative',
-            bottom: 'calc(50% + 100px)',
+            top: '-100px',
             right: '110px',
           }}
         >
@@ -91,7 +114,8 @@ const SunsetPopup = ({dayCount}) => {
         </div>
       </div>
 
-      <StyledPopupTitle>추방하려면 찬성, 아니라면 반대를 선택하세요.</StyledPopupTitle>
+      <StyledPopupTitle>추방하려면 찬성, <br></br> 아니라면 반대를 선택하세요.</StyledPopupTitle>
+      <StyledButton onClick={handleClosePopup}><CloseBtn src={closeBtn} alt="Close" /></StyledButton>
     </StyledPopupContainer>
   );
 };

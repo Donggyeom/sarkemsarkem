@@ -132,6 +132,9 @@ public class GameThread extends Thread {
 		// 게임 결과 DB저장
 		dbService.InsertGameResult(gameSession);
 		
+		gameManager.createGameSession(roomId);
+		
+		return; 
 	}
 
 	// 역할배정
@@ -163,55 +166,47 @@ public class GameThread extends Thread {
 		int day = gameSession.nextDay();
 		gameSession.setPhase(PhaseType.DAY);
 		
-		// "낮 페이즈" 메시지 전송
-		Map<String, Integer> param = new HashMap<>();
-		param.put("day", day);
-		gameManager.sendDayPhaseMessage(roomId, param);
-		if(day==1) {
-			gameManager.sendNoticeMessageToAll(roomId, "첫째날 낮입니다.\n회의를 진행해주세요.", gameSession.getPhase());
-		}else {
-			gameManager.sendNoticeMessageToAll(roomId, "낮이 되었습니다.\n회의를 통해 추방할 고양이를 투표해주세요.", gameSession.getPhase());
-		}
 		
-		// 밤에 누가 죽었는지, 아무도 안죽었는지 전체한테 노티스 메시지 보내기
-		if (!"".equals(nightResultNoticeMessage)) {
-			gameManager.sendNoticeMessageToAll(roomId, nightResultNoticeMessage, gameSession.getPhase());
-		}
-		
-		// 경찰 기능: 대상 선택한 사람들 삵인지 여부 알려주기
-		for (RolePlayer rp : gameSession.getRolePlayers(GameRole.POLICE)) {
-			RolePlayer target = gameSession.getPlayer(rp.getTarget());
-			if (target == null) continue;
-			
-			if (target.getRole().equals(GameRole.SARK)) {
-				gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(),
-						target.getNickname() + "님은 삵이 맞습니다.", gameSession.getPhase());
-			} else {
-				gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(),
-						target.getNickname() + "님은 삵이 아닙니다.", gameSession.getPhase());
-			}
-		}
-
-		// 심리학자 기능 시작(표정분석 API)
-		for (RolePlayer rp : gameSession.getRolePlayers(GameRole.PSYCHO)) {
-			RolePlayer target = gameSession.getPlayer(rp.getTarget());
-			if (target == null) continue;
-			
-			HashMap<String, String> targetMap = new HashMap<>();
-			targetMap.put("targetId", target.getPlayerId());
-			targetMap.put("targetNickname", target.getNickname());
-			gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), target.getNickname() + "님의 심리를 분석합니다.", gameSession.getPhase());
-			gameManager.sendPsychoStartMessage(roomId, rp.getPlayerId(), targetMap);
-		}
-
-		// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
-		for (RolePlayer rp : gameSession.getRolePlayers(GameRole.BULLY)) {
-			gameManager.sendThreatingMessage(roomId, rp.getTarget());
-			gameManager.sendNoticeMessageToPlayer(roomId, rp.getTarget(), "냥아치에게 협박을 당해\n이번 낮에는 말을 할 수 없습니다.", gameSession.getPhase());
-		}
 		
 		// 1일차에는 아래 기능 미실행
 		if (gameSession.getDay() > 1) {
+			// 밤에 누가 죽었는지, 아무도 안죽었는지 전체한테 노티스 메시지 보내기
+			if (!"".equals(nightResultNoticeMessage)) {
+				gameManager.sendNoticeMessageToAll(roomId, nightResultNoticeMessage, gameSession.getPhase());
+			}
+
+			// 경찰 기능: 대상 선택한 사람들 삵인지 여부 알려주기
+			for (RolePlayer rp : gameSession.getRolePlayers(GameRole.POLICE)) {
+				RolePlayer target = gameSession.getPlayer(rp.getTarget());
+				if (target == null) continue;
+				
+				if (target.getRole().equals(GameRole.SARK)) {
+					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(),
+							target.getNickname() + "님은 삵이 맞습니다.", gameSession.getPhase());
+				} else {
+					gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(),
+							target.getNickname() + "님은 삵이 아닙니다.", gameSession.getPhase());
+				}
+			}
+
+			// 심리학자 기능 시작(표정분석 API)
+			for (RolePlayer rp : gameSession.getRolePlayers(GameRole.PSYCHO)) {
+				RolePlayer target = gameSession.getPlayer(rp.getTarget());
+				if (target == null) continue;
+				
+				HashMap<String, String> targetMap = new HashMap<>();
+				targetMap.put("targetId", target.getPlayerId());
+				targetMap.put("targetNickname", target.getNickname());
+				gameManager.sendNoticeMessageToPlayer(roomId, rp.getPlayerId(), target.getNickname() + "님의 심리를 분석합니다.", gameSession.getPhase());
+				gameManager.sendPsychoStartMessage(roomId, rp.getPlayerId(), targetMap);
+			}
+
+			// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
+			for (RolePlayer rp : gameSession.getRolePlayers(GameRole.BULLY)) {
+				gameManager.sendThreatingMessage(roomId, rp.getTarget());
+				gameManager.sendNoticeMessageToPlayer(roomId, rp.getTarget(), "냥아치에게 협박을 당해\n이번 낮에는 말을 할 수 없습니다.", gameSession.getPhase());
+			}
+			
 			// 히든미션 관련 초기화
 			gameSession.setBHiddenMissionStatus(false);
 			gameSession.setBHiddenMissionSuccess(false);
@@ -230,6 +225,16 @@ public class GameThread extends Thread {
 				gameSession.setHiddenMissionCnt(gameSession.getHiddenMissionCnt()+1);
 			}
 
+		}
+		
+		// "낮 페이즈" 메시지 전송
+		Map<String, Integer> param = new HashMap<>();
+		param.put("day", day);
+		gameManager.sendDayPhaseMessage(roomId, param);
+		if (day == 1) {
+			gameManager.sendNoticeMessageToAll(roomId, "첫째날 낮입니다.\n회의를 진행해주세요.", gameSession.getPhase());
+		} else {
+			gameManager.sendNoticeMessageToAll(roomId, "낮이 되었습니다.\n회의를 통해 추방할 고양이를 투표해주세요.", gameSession.getPhase());
 		}
 		
 		// 대상 선택 하기 전에 전체 플레이어 타겟, 대상 선택, 받은 투표수 초기화
@@ -439,16 +444,14 @@ public class GameThread extends Thread {
 
 	// 밤투표 시간 보내기
 	private boolean isNightTimeEnded() throws InterruptedException {
-		int time = gameSession.getMeetingTime();
+		int time = 30;
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		while (true) {
-			if(time % 5 == 0) {
-				remainTime.put("time", time);
-				gameManager.sendRemainTime(roomId, remainTime);
-			}
-			time--;
+			remainTime.put("time", time);
+			gameManager.sendRemainTime(roomId, remainTime);
+			time-=5;
 			if (time <= 0) break;
-			sleep(1000);
+			sleep(5000);
 		}
 		return true;
 	}

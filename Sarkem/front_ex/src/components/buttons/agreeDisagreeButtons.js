@@ -10,14 +10,12 @@ const SmallButton = styled.button`
   padding: 0;
   background: url(${props => props.imageSrc}) no-repeat center center;
   background-size: cover;
+  width: 20%;
+  height: 20%;
+  border : none;
   cursor: pointer;
-  border: none;
-  position: relative; 
-  z-index: 1;
-  width: 9vw;
-  height: 10vh;
   &:hover {
-    filter: brightness(0.8);
+      filter: brightness(0.8);
   }
 `;
 
@@ -36,8 +34,8 @@ const ButtonWithSound = ({ onClick, imageSrc, alt, disabled }) => {
 };
 
 const AgreeButton = ({ onClick, disabled, isComplete }) => {
-  const imageSrc = isComplete ? completeagreeButtonImage : agreeButtonImage;
-
+  // const imageSrc = isComplete ? completeagreeButtonImage : agreeButtonImage;
+  const imageSrc = agreeButtonImage;
   return (
     <ButtonWithSound
       onClick={onClick}
@@ -49,8 +47,8 @@ const AgreeButton = ({ onClick, disabled, isComplete }) => {
 };
 
 const DisagreeButton = ({ onClick, disabled, isComplete }) => {
-  const imageSrc = isComplete ? completeDisagreeButtonImage : disagreeButtonImage;
-  
+  // const imageSrc = isComplete ? completeDisagreeButtonImage : disagreeButtonImage;
+  const imageSrc = disagreeButtonImage;
   return (
     <ButtonWithSound
       onClick={onClick}

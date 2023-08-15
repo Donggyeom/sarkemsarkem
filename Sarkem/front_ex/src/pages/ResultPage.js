@@ -74,7 +74,7 @@ const Table = styled.table`
   z-index: 1;
   margin: 0 auto;
   margin-left: -63%;
-  margin-top: -10%;
+  margin-top: 0%;
   borderCollapse: 'separate',
 `;
 
@@ -130,7 +130,7 @@ const ResultPage = () => {
   const {
     roomSession, setRoomSession, setPlayer, setPlayers, players
   } = useRoomContext();
-  const { roleAssignedArray, winner, stompClient } = useGameContext();
+  const { roleAssignedArray, winner, unsubscribeRedisTopic, initGameSession } = useGameContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -154,17 +154,19 @@ const ResultPage = () => {
     // if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
     
     // 데이터 초기화
-    setPlayer.current = {};
+    // setPlayer.current = {};
     // setPlayers(new Map());
     players.current = new Map();
     setRoomSession((prev) => {
       return ({
         ...prev,
-        gameId: null,
+        gameId: undefined,
       });
     });
-    console.log("새로운 방 만들기")
-    navigate(`/${createRandomId()}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
+    initGameSession();
+    console.log("새로운 방 만들기", roomSession.roomId);
+    unsubscribeRedisTopic();
+    navigate(`/${roomSession.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
 
   const handleExitButtonClick = () => {
@@ -180,10 +182,13 @@ const ResultPage = () => {
     setRoomSession((prev) => {
       return ({
         ...prev,
-        gameId: null,
+        roomId: undefined,
+        gameId: undefined
       });
     });
-    console.log("홈으로 나가기")
+    initGameSession();
+    console.log("홈으로 나가기");
+    unsubscribeRedisTopic();
     navigate('/');
   };
 

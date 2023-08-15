@@ -5,6 +5,7 @@ import Background from '../components/backgrounds/BackgroundDay';
 
 import CamButton from '../components/buttons/CamButton';
 import MicButton from '../components/buttons/MicButton';
+import NoMicButton from '../components/buttons/NoMicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import DayPopup from '../components/games/DayPopup';
@@ -19,8 +20,10 @@ import { loadModels, faceMyDetect, stopFace } from '../components/job/Psychologi
 // log
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
+import Sound from '../sound/daystart.mp3';
 
 import TempButton from '../components/buttons/TempButton';
+
 
 const StyledDayPage = styled.div`
   display: flex;
@@ -46,7 +49,7 @@ const DayPage = () => {
 
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
   const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, 
-    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers, psychologist, psyTarget } = useGameContext();
+    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers, psychologist, psyTarget, currentSysMessagesArray, unsubscribeRedisTopic } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
@@ -54,12 +57,9 @@ const DayPage = () => {
   const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
   const [running, setRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
+  const audio = new Audio(Sound);
   const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
-
-  // useEffect(()=>{
-  //   console.log(detectExpressions);
-  // },[detectExpressions])
-
+    console.log(currentSysMessagesArray);
   useEffect(() => {
     loadModels();
   }, []);
@@ -93,6 +93,29 @@ const DayPage = () => {
   }, [currentSysMessage]);
 
 
+  useEffect(() => {
+    window.addEventListener("mousemove", playBGM);
+  }, []);
+
+  const playBGM = () => {
+  
+    // Play the audio when the component mounts
+    // console.log('틀기전');
+    audio.play();
+    audio.playbackRate = 0.9;
+    audio.volume = 0.7;
+    // console.log('튼후');
+  
+    // Update state to track audio playback
+    window.removeEventListener("mousemove", playBGM);
+    return () => {
+      console.log('멈춰');
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }
+
+
     //faceapi 실행
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
@@ -115,10 +138,10 @@ const DayPage = () => {
   const threated = () =>{
     console.log(threatedTarget);
     if(threatedTarget){
+      console.log("참이냐??")
       player.current.stream.publishAudio(false);
       // player.current.stream.publishVideo(false);
     }
-
   }
 
   const handleCamButtonClick = () => {
@@ -161,6 +184,7 @@ const DayPage = () => {
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
+    unsubscribeRedisTopic();
     leaveSession();
   }
   
@@ -178,9 +202,13 @@ const DayPage = () => {
         <SunMoon alt="SunMoon" />
         <TimeSecond>{remainTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
-        <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
+        {threatedTarget ? (
+          <NoMicButton alt="Mic Button" />
+          ) : (
+          <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
+        )}
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
-        {currentSysMessage && <DayPopup sysMessage={currentSysMessage}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
+        {currentSysMessagesArray.length>0 && <DayPopup sysMessage={currentSysMessagesArray}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <ScMini />
         <SarkMission handNumber={currentHandNumber} />

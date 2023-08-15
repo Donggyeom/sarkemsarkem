@@ -64,16 +64,20 @@ const StartButtonContainer = styled.div`
 
 const StartPage = () => {
   const navigate = useNavigate();
+  const {setPlayer} = useRoomContext();
   const [logoVisible, setLogoVisible] = useState(false);
   const audio = new Audio(logoSound);
 
   // 로고가 화면에 나타날 때까지 대기하는 효과를 주기 위해 useEffect 사용
   useEffect(() => {
     setLogoVisible(true);
-    window.addEventListener("mousemove", playBGM);
-
-    // Clean up the audio object when the component unmounts
-    
+    window.addEventListener("click", playBGM);
+  
+    return () => {
+      window.removeEventListener("click", playBGM);
+      audio.pause();
+      audio.currentTime = 0;
+    };
   }, []);
 
   const playBGM = () => {
@@ -81,11 +85,12 @@ const StartPage = () => {
     // Play the audio when the component mounts
     // console.log('틀기전');
     audio.play();
-    audio.playbackRate = 0.79;
+    audio.playbackRate = 0.9;
+    audio.volume = 0.5;
     // console.log('튼후');
   
     // Update state to track audio playback
-    window.removeEventListener("mousemove", playBGM);
+    window.removeEventListener("click", playBGM);
     return () => {
       console.log('멈춰');
       audio.pause();
@@ -94,7 +99,7 @@ const StartPage = () => {
   }
 
   const goToCreateRoom = () => {
-    console.log('커신이다~')
+    setPlayer([{key: 'isHost', value: true}]);
     navigate(`/${createRandomId()}`);
   };
 

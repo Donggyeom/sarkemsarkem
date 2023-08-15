@@ -6,7 +6,7 @@ import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
 import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
-
+import { VoteButton, SkipButton, SmallSkipButton, SmallVoteButton } from '../buttons/VoteButton.js';
 import skipImg from '../../img/btn_스킵하기.png';
 import skipClearImg from '../../img/tb_endskip.png';
 import voteImg from '../../img/btn_투표확정.png';
@@ -50,26 +50,26 @@ const ActionButton = styled.button`
   cursor: pointer;
 `;
 
-const VoteButton = styled.button`
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  top: 30%;
-`;
+// const VoteButton = styled.button`
+//   border: none;
+//   background: transparent;
+//   cursor: pointer;
+//   top: 30%;
+// `;
 
 const VoteImage = styled.img`
-  width: 80%;
+  width: 35%;
   // height: 60%;
 `;
 
 const ButtonWrapper = styled.div`
-  position: absolute;
-  bottom: -45px;
+  position: fixed;
+  bottom: 20px; /* Adjust the value as needed */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 10px;
-
+  justify-content: center;
 `;
 
 const VotefootWrapper = styled.div`
@@ -169,7 +169,7 @@ const calculateGrid = (camCount) => {
       width: '90%',
       height: '70%',
       gridRowGap: '3%',
-      bottom: '1%',
+      bottom: '15%',
     };
   } else {
     // Add more cases as needed
@@ -271,7 +271,7 @@ const CamCatWrapper = styled.div`
   camCount === 9 && index === 4
   ? `
   position: relative;
-  top : 100%;
+  top : 115%;
   `
   : ''};
   `;
@@ -282,13 +282,15 @@ const DayNightCamera = React.memo(({ players }) => {
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const { selectAction, selectConfirm, setSelectedTarget,
     myVote, startVote, dayCount, predictWebcam, stopPredicting,
     detectedGesture, voteSituation, phase,
     Roles, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext,
-    voteTargetId, deadIds, hiddenMission, setHiddenMission, loadGestureRecognizer } = useGameContext();
+    voteTargetId, deadIds, hiddenMission, setHiddenMission, loadGestureRecognizer, uniquePlayers } = useGameContext();
     
   useEffect(() => {
+    uniquePlayers();
     setIsConfirmed(false);
     setClickedCamera(null);
     setIsSkipped(false);
@@ -297,7 +299,7 @@ const DayNightCamera = React.memo(({ players }) => {
     if (phase === "night") {
       // 모두의 카메라, 마이크 설정
       nightCamAudio();
-
+      setIsMuted(true);
       // 마피아 넣는 작업
       let sarkArray = [];
       for (let player of players) {
@@ -321,6 +323,7 @@ const DayNightCamera = React.memo(({ players }) => {
     else if (phase === "day") {
       dayCamAudio();
       stopVoiceChange();
+      setIsMuted(false);
       // TODO: 
       // if (myRole === "OBSERVER" && publisher) {
       //   publisher.publishVideo(false);
@@ -343,6 +346,7 @@ const DayNightCamera = React.memo(({ players }) => {
       loadGestureRecognizer();
       startHiddenMission();
     } else {
+      console.log("히든미션 끝이요~~",hiddenMission)
       stopHiddenMission();
     }
   }, [hiddenMission])
@@ -398,9 +402,6 @@ const DayNightCamera = React.memo(({ players }) => {
     console.log("삵의 properties 변화가 감지되었습니다.");
     console.log(sark);
     sark.target.subscribeToVideo(false);
-    if (player.role !== "DETECTIVE") {
-      sark.target.subscribeToAudio(false);
-    }
   }
 
   const nightCamAudio = () => {
@@ -474,9 +475,6 @@ const DayNightCamera = React.memo(({ players }) => {
       jungle.setPitchOffset(1);
       source.connect(jungle.input);
       jungle.output.connect(audioContext.destination);
-      const audioTrackWithEffects = audioContext.createMediaStreamDestination();
-      jungle.output.connect(audioTrackWithEffects);
-      mixedMediaStream.addTrack(audioTrackWithEffects.stream.getAudioTracks()[0]);
       jungle.isConnected = true;
       jungleRefs.current.push(jungle);
     });
@@ -497,8 +495,6 @@ const DayNightCamera = React.memo(({ players }) => {
     mixedMediaStreamRef.current = null;
   };
 
-  console.log(deadIds, "죽읍");
-
   return (
     <CamCatGrid style={gridStyles}>
       {players && players.map((otherPlayer, index) => (
@@ -509,42 +505,45 @@ const DayNightCamera = React.memo(({ players }) => {
           index={index}
           onClick={() => handleCamClick(otherPlayer.playerId)}
         >
-          <CamCat id={otherPlayer.playerId} />
+          <CamCat id={otherPlayer.playerId} isMuted={isMuted}/>
           <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
         </CamCatWrapper>
       ))}
-      <ButtonWrapper>
-        {dayCount === 1 && phase === 'day' ? (
-          <>
-            {startVote && (
-            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
-              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
-            </VoteButton>
-            )}
-          </>
-        ) : (
-          <>
-            {isConfirmed ? (
-              <VoteButton disabled >
-                <VoteImage src={voteClearImg} alt="Vote" />
-              </VoteButton>
-            ) : (
-              startVote && (
-              <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped}>
-                <VoteImage src={clickedCamera ? voteImg : voteImg} alt="Vote" />
-              </VoteButton>
-              )
-            )}
-            {startVote && (
-            <VoteButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped}>
-              <VoteImage src={isSkipped ? skipClearImg:skipImg} alt="Vote" />
-            </VoteButton>
-            )}
-          </>
-        )}
-      </ButtonWrapper>
+      
+      {player.current.role !== "OBSERVER" && (
+        <ButtonWrapper>
+          {dayCount === 1 && phase === 'day' ? (
+            <>
+              {isSkipped ? (
+                <VoteImage src={skipClearImg} alt="skip end" />
+              ) : (
+                <>
+                  {startVote && (
+                    <SmallSkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                  )}
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              {isConfirmed || isSkipped ? (
+                <VoteImage src={isSkipped ? skipClearImg : voteClearImg} alt="Skipped or voted over image" />
+              ) : (
+                <>
+                  {startVote && (
+                    <VoteButton onClick={handleConfirmClick} disabled={!clickedCamera || isSkipped} />
+                  )}
+                  {startVote && (
+                    <SkipButton onClick={handleSkipClick} disabled={isConfirmed || isSkipped} />
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </ButtonWrapper>
+      )}
     </CamCatGrid>
   );
 });

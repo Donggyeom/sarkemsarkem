@@ -152,8 +152,8 @@ const ButtonContainer2 = styled.div`
 
 const CommonLobby = ()=>{
   const { roomSession, player, players, leaveSession } = useRoomContext();
-  const { gameSession, setGameSession, getGameSession, handleGamePageClick, 
-    stompClient, currentSysMessage, dayCount, connectGameWS, loadGestureRecognizer } = useGameContext();
+  const { gameSession, setGameSession, handleGamePageClick, 
+    stompClient, currentSysMessage, connectGameWS, loadGestureRecognizer, unsubscribeRedisTopic } = useGameContext();
 
   // const [ isLoaded, setIsLoaded ] = useState(false);
   
@@ -198,6 +198,7 @@ const CommonLobby = ()=>{
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
+    unsubscribeRedisTopic();
     leaveSession();
   }
 

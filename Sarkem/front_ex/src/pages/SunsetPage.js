@@ -14,6 +14,8 @@ import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import SunsetPopup from '../components/games/SunsetPopup';
 import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
+import completeagreeButtonImage from '../img/tb_endok.png';
+import completeDisagreeButtonImage from '../img/tb_endno.png';
 import loadingimage from '../img/loading1.jpg';
 import agreeButtonImage from '../img/찬성.png';
 import disagreeButtonImage from '../img/반대.png';
@@ -30,6 +32,10 @@ const StyledContent = styled.div`
   height: 100%;
   overflow: hidden;
 `;
+const VoteImage = styled.img`
+  width: 30%;
+  margin-right: 25px;
+`;
 
 const CamCatGrid = styled.div`
   display: grid;
@@ -42,7 +48,15 @@ const CamCatGrid = styled.div`
     max-height: ${style.maxHeight};
     left : ${style.left};
     top : ${style.top};
+    // margin-top : ${style.marginTop};
   `}
+`;
+const AbsoluteContainer = styled.div`
+  position: absolute;
+  top: 92%; /* Adjust the top value as needed */
+  right: 15%; /* Adjust the right value as needed */
+  transform: translateY(-50%);
+  z-index: 100; /* Adjust the z-index if needed */
 `;
 
 const calculateGrid = (camCount) => {
@@ -64,17 +78,17 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr 1fr',
       width: '100%',
       left: '4%',
-      marginTop : '5%',
+      // marginTop : '5%',
     };
   } else if (camCount === 4) {
     return {
-      marginTop : '5%',
+      // marginTop : '5%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 5) {
     return {
-      marginTop : '4%',
+      // marginTop : '4%',
       marginLeft : '2%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
@@ -86,20 +100,24 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 7) {
     return {
+      marginLeft: '1%',
       gridTemplateRows: '1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
     };
   } else if (camCount === 8) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr 1fr',
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateRows: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr',
+      marginBottom : '15%',
       width : '100%',
     };
   } else if (camCount === 9) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr 1fr 1fr',
+      gridTemplateRows: '1fr 1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
+      marginTop : '30%',
+      marginLeft : '1%',
     };
   } else if (camCount === 10) {
     return {
@@ -223,13 +241,14 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     left : 55%;
+    bottom : 30%;
   `
   :
   camCount === 6 && index === 1
   ? `
     position: relative;
     right : 45%;
-    top : 55%;
+    top : 30%;
   `
   :
   camCount === 6 && index === 2
@@ -242,33 +261,33 @@ const CamCatWrapper = styled.div`
   camCount === 6 && index === 3
   ? `
     position: relative;
-    left : 125%;
-    top : 55%;
+    left : 115%;
+    top : 31%;
   `
   :
   camCount === 6 && index === 4
   ? `
     position: relative;
-    left : 25%;
+    left : 15%;
+    bottom : 32%;
   `
   :
   camCount === 6 && index === 5
   ? `
     position: relative;
-    top : 25%;
   `
   :
   camCount === 7 && index === 0
   ? `
     position: relative;
     left : 100%;
+    bottom : 25%;
 
   `
   :
   camCount === 7 && index === 1
   ? `
     position: relative;
-    top : 30%;
     right : 100%;
 
   `
@@ -277,7 +296,7 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     right : 100%;
-    top : 60%;
+    top : 30%;
 
   `
   :
@@ -285,13 +304,14 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 300%;
-    left : 5%;
+    left : 7%;
   `
   :
   camCount === 7 && index === 4
   ? `
     position: relative;
     left : 100%;
+    bottom : 25%;
 
   `
   :
@@ -299,7 +319,6 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     left : 100%;
-    top : 30%;
 
   `
   :
@@ -307,74 +326,80 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     right : 100%;
-    top : 60%;
+    top : 30%;
   `
   :
   camCount === 8 && index === 0
   ? `
     position: relative;
-    width : 30%;
-    top : 40%;
-    right : 15%;
+    width : 50%;
+    top : 50%;
 
   `
   :
   camCount === 8 && index === 1
   ? `
     position: relative;
-    width : 30%;
-    left : 30%;
+    width : 50%;
+    margin-top : 10%;
+    right : 50%;
+    top : 30%;
 
   `
   :
   camCount === 8 && index === 2
   ? `
     position: relative;
-    width : 30%;
-    top : 60%;
-    right : 6%;
+    width : 50%;
+    left : 100%;
+    top : 85%;
 
   `
   :
   camCount === 8 && index === 3
   ? `
     position: relative;
-    width : 30%;
-    left : 2%;
+    width : 50%;
+    right : 50%;
+    top : 25%;
+    margin-top : 20%;
 
   `
   :
   camCount === 8 && index === 4
   ? `
     position: relative;
-    width : 30%;
-    top : 85%;
-    right : 15%;
+    width : 50%;
 
   `
   :
   camCount === 8 && index === 5
   ? `
     position: relative;
-    width : 30%;
-    left : 2%;
+    width : 50%;
+    right : 50%;
+    top : 25%;
+    margin-top : 20%;
 
   `
   :
   camCount === 8 && index === 6
   ? `
     position: relative;
-    width : 100%;
-    left : 50%;
-    bottom : 85%;
+    width : 150%;
+    right : 43%;
+    bottom : 15%;
+
 
   `
   :
   camCount === 8 && index === 7
   ? `
     position: relative;
-    width : 30%;
-    left : 30%;
+    width : 50%;
+    margin-top : 10%;
+    right : 50%;
+    top : 30%;
 
   `
   :
@@ -539,7 +564,7 @@ const SunsetPage = () => {
    
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
   const { startVote, agreeExpulsion, disagreeExpulsion, targetId, 
-    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers } = useGameContext();
+    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers, unsubscribeRedisTopic } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
   const [isAgree, setIsAgree] = useState(false);
@@ -583,6 +608,7 @@ const SunsetPage = () => {
 
   // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
   const onbeforeunload = (event) => {
+    unsubscribeRedisTopic();
     leaveSession();
   }
 
@@ -639,6 +665,21 @@ const SunsetPage = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
   
+  const handleAgreeClick = () => {
+    if (!disAgree && !isAgree) {
+      agreeExpulsion();
+      setIsAgree(true);
+      setDisAgree(false);
+    }
+  };
+
+  const handleDisagreeClick = () => {
+    if (!isAgree && !disAgree) {
+      disagreeExpulsion();
+      setDisAgree(true);
+      setIsAgree(false);
+    }
+  };
 
   const sortedCamArray = getAlivePlayers().filter((player) => {
       return !deadIds.includes(player.playerId);
@@ -754,16 +795,34 @@ const SunsetPage = () => {
       </CamCatGrid>
 
       <div>
-      {player.role === "OBSERVER" ? (
+        <AbsoluteContainer>
+        {player.role === "OBSERVER" ? (
         <>
           <AgreeButton onClick={null} disabled={isAgree} />
           <DisagreeButton onClick={null} disabled={disAgree} />
         </>
-      ) : (
-        <>
+          ) : (
+              <>
+                {isAgree || disAgree ? (
+                  <VoteImage src={isAgree ? completeagreeButtonImage : completeDisagreeButtonImage} alt="찬반완료" />
+                ) : (
+                  <>
+                    <AgreeButton
+                      onClick={handleAgreeClick}
+                      disabled={isAgree || disAgree || !startVote}
+                      isComplete={isAgree}
+                    />
+                    <DisagreeButton
+                      onClick={handleDisagreeClick}
+                      disabled={disAgree || isAgree || !startVote}
+                      isComplete={disAgree}
+                    />
+                  </>
+                )
+                }
           {/* <AgreeButton onClick={startVote ? agreeExpulsion : null} disabled={!startVote} /> */}
           {/* <DisagreeButton onClick={startVote ? disagreeExpulsion : null} disabled={!startVote} /> */}
-          <AgreeButton
+          {/* <AgreeButton
         onClick={() => {
           if (!disAgree && !isAgree) {
             agreeExpulsion();
@@ -782,9 +841,12 @@ const SunsetPage = () => {
         }}
         disabled={disAgree || !startVote || isAgree}
         isComplete={disAgree}
-      />
+      /> */}
     </>
   )}
+          
+        </AbsoluteContainer>
+      
 </div>
 <ScMini />
 </StyledContent>
