@@ -282,6 +282,7 @@ const DayNightCamera = React.memo(({ players }) => {
   const [clickedCamera, setClickedCamera] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const { selectAction, selectConfirm, setSelectedTarget,
     myVote, startVote, dayCount, predictWebcam, stopPredicting,
     detectedGesture, voteSituation, phase,
@@ -298,7 +299,7 @@ const DayNightCamera = React.memo(({ players }) => {
     if (phase === "night") {
       // 모두의 카메라, 마이크 설정
       nightCamAudio();
-
+      setIsMuted(true);
       // 마피아 넣는 작업
       let sarkArray = [];
       for (let player of players) {
@@ -322,6 +323,7 @@ const DayNightCamera = React.memo(({ players }) => {
     else if (phase === "day") {
       dayCamAudio();
       stopVoiceChange();
+      setIsMuted(false);
       // TODO: 
       // if (myRole === "OBSERVER" && publisher) {
       //   publisher.publishVideo(false);
@@ -400,9 +402,6 @@ const DayNightCamera = React.memo(({ players }) => {
     console.log("삵의 properties 변화가 감지되었습니다.");
     console.log(sark);
     sark.target.subscribeToVideo(false);
-    if (player.role !== "DETECTIVE") {
-      sark.target.subscribeToAudio(false);
-    }
   }
 
   const nightCamAudio = () => {
@@ -476,9 +475,6 @@ const DayNightCamera = React.memo(({ players }) => {
       jungle.setPitchOffset(1);
       source.connect(jungle.input);
       jungle.output.connect(audioContext.destination);
-      const audioTrackWithEffects = audioContext.createMediaStreamDestination();
-      jungle.output.connect(audioTrackWithEffects);
-      mixedMediaStream.addTrack(audioTrackWithEffects.stream.getAudioTracks()[0]);
       jungle.isConnected = true;
       jungleRefs.current.push(jungle);
     });
@@ -499,8 +495,6 @@ const DayNightCamera = React.memo(({ players }) => {
     mixedMediaStreamRef.current = null;
   };
 
-  console.log(deadIds, "죽읍");
-
   return (
     <CamCatGrid style={gridStyles}>
       {players && players.map((otherPlayer, index) => (
@@ -511,7 +505,7 @@ const DayNightCamera = React.memo(({ players }) => {
           index={index}
           onClick={() => handleCamClick(otherPlayer.playerId)}
         >
-          <CamCat id={otherPlayer.playerId} />
+          <CamCat id={otherPlayer.playerId} isMuted={isMuted}/>
           <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
           </VotefootWrapper>
