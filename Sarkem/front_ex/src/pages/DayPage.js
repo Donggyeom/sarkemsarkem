@@ -49,7 +49,7 @@ const DayPage = () => {
 
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
   const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, 
-    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers, psychologist, psyTarget, currentSysMessagesArray, unsubscribeRedisTopic } = useGameContext();
+    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers, psychologist, psyTarget, dayCurrentSysMessagesArray, unsubscribeRedisTopic } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
@@ -59,7 +59,6 @@ const DayPage = () => {
   const [intervalId, setIntervalId] = useState(null);
   const audio = new Audio(Sound);
   const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
-    console.log(currentSysMessagesArray);
   useEffect(() => {
     loadModels();
   }, []);
@@ -208,7 +207,7 @@ const DayPage = () => {
           <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
         )}
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
-        {currentSysMessagesArray.length>0 && <DayPopup sysMessage={currentSysMessagesArray}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
+        {dayCurrentSysMessagesArray.length>0 && <DayPopup sysMessage={dayCurrentSysMessagesArray}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <ScMini />
         <SarkMission handNumber={currentHandNumber} />

@@ -18,6 +18,7 @@ const GameProvider = ({ children }) => {
   // 현재 시스템 메시지를 저장할 상태 추가
   const [currentSysMessage, setCurrentSysMessage] = useState(null);
   const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
+  const [dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray] = useState([]); // 낮 팝업 배열 추가
   const [chatMessages, setChatMessages] = useState([]); 
   const [chatConnected, setChatConnected] = useState(false);
   const [message, setMessage] = useState("");
@@ -365,11 +366,11 @@ const GameProvider = ({ children }) => {
     case "NOTICE_MESSAGE":
         console.log(sysMessage.param);
         setCurrentSysMessage(()=>sysMessage);
-        console.log(sysMessage.param.phase);
-        console.log(sysMessage.param.phase==="DAY");
+        setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
+        { ...sysMessage, dayCount: sysMessage.param.day }]);
         if(sysMessage.param.phase==="DAY"){
           console.log("들어간다");
-          setCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
+          setDayCurrentSysMessagesArray(prevMessages => [ ...prevMessages,
           { ...sysMessage, dayCount: sysMessage.param.day }]);
         }
     break;
@@ -433,7 +434,7 @@ const GameProvider = ({ children }) => {
         setPsyTarget("");//심리학자 끝
         setPsychologist(false);
         setHiddenMission(false);// 밤이 되면 마피아 미션 끝
-        setCurrentSysMessagesArray([]);
+        setDayCurrentSysMessagesArray([]);
         console.log(phase);
         navigate(`/${roomSession.roomId}/night`);
         break;
@@ -822,7 +823,7 @@ const uniquePlayers = () => {
       systemMessages, handleSystemMessage, dayCount, agreeExpulsion, disagreeExpulsion, predictWebcam, stopPredicting, detectedGesture, chatMessages, receiveChatMessage,
       voteSituation, currentSysMessage, currentSysMessagesArray, setCurrentSysMessagesArray,phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
-      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers }}
+      psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray }}
     >
       {children}
     </GameContext.Provider>
