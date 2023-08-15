@@ -299,7 +299,6 @@ const DayNightCamera = React.memo(({ players }) => {
     if (phase === "night") {
       // 모두의 카메라, 마이크 설정
       nightCamAudio();
-      setIsMuted(true);
       // 마피아 넣는 작업
       let sarkArray = [];
       for (let player of players) {
@@ -323,7 +322,6 @@ const DayNightCamera = React.memo(({ players }) => {
     else if (phase === "day") {
       dayCamAudio();
       stopVoiceChange();
-      setIsMuted(false);
       // TODO: 
       // if (myRole === "OBSERVER" && publisher) {
       //   publisher.publishVideo(false);
@@ -406,6 +404,7 @@ const DayNightCamera = React.memo(({ players }) => {
 
   const nightCamAudio = () => {
     if (player.current.role == "DETECTIVE") {
+      setIsMuted(true);
       console.log("player.current.role == DETECTIVE");
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
       for (let otherPlayer of players) {
@@ -447,6 +446,7 @@ const DayNightCamera = React.memo(({ players }) => {
 
 
   const dayCamAudio = () => {
+    setIsMuted(false);
     for (let otherPlayer of players) {
       if (player.current === otherPlayer) continue;  // 내가 아닌 경우에만 설정
       if (otherPlayer.role == "OBSERVER") continue;            // 관전자가 아닌 경우에만 설정
