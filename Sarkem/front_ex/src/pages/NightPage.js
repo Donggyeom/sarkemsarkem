@@ -44,7 +44,7 @@ const TimeSecond = styled.text`
 
 
 const NightPage = () => {
-  const { roomSession, player, setPlayer, players } = useRoomContext(); 
+  const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
   const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers, unsubscribeRedisTopic } = useGameContext();
   const navigate = useNavigate();
   const audio = new Audio(Sound);

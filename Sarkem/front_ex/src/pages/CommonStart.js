@@ -183,14 +183,6 @@ const CommonStart = ({onClick} ) => {
   }, []);
 
   useEffect(() => {
-
-    // 플레이어 닉네임 설정
-    // setPlayer((prevState => {
-    //   return {
-    //     ...prevState,
-    //     nickName: nickName
-    //   };
-    // }));
     setPlayer([{key: 'nickName', value: nickName}]);
   }, [nickName]);
 
@@ -218,15 +210,8 @@ const CommonStart = ({onClick} ) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
-
       videoRef.current.style.transform = 'scaleX(-1)';
-      // setPlayer((prevState) => {
-      //   console.log(`setPlayer - isCamOn true`);
-      //   return {...prevState,
-      //     isCamOn: true,
-      //   };
-      // });
-      setPlayer([{key: 'isCamOn', value: true}]);
+      setPlayer([{key: 'isCamOn', value: player.current.isMicOn}]);
     }
     catch (error) {
       console.error("Failed to start video: ", error);
@@ -237,12 +222,6 @@ const CommonStart = ({onClick} ) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioRef.current.srcObject = stream;
-      // setPlayer((prevState) => {
-      //   console.log(`setPlayer - isMicOn true`);
-      //   return {...prevState,
-      //     isMicOn: true,
-      //   };
-      // });
       setPlayer([{key: 'isMicOn', value: true}]);
     }
     catch (error) {
@@ -252,31 +231,28 @@ const CommonStart = ({onClick} ) => {
 
   const handleMicToggle = () => {
     const micOn = !player.current.isMicOn;
-    // setIsMicOn(micOn);
-    // setPlayer((prevState) => {
-    //   return {...prevState,
-    //     isMicOn: micOn,
-    //   };
-    // });
+    try{
+      const tracks = audioRef.current.srcObject.getTracks();
+      tracks.forEach((track) => {
+        track.enabled = micOn;
+      });
+    } catch(error) {
+      console.log("마이크 정보가 없습니다.");
+    }
     setPlayer([{key: 'isMicOn', value: micOn}]);
-    const tracks = audioRef.current.srcObject.getTracks();
-    tracks.forEach((track) => {
-      track.enabled = micOn;
-    });
   };
 
   const handleCamToggle = () => {
     const camOn = !player.current.isCamOn;
-    // setPlayer((prevState) => {
-    //   return {...prevState,
-    //     isCamOn: camOn,
-    //   };
-    // });
+    try{
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach((track) => {
+        track.enabled = camOn;
+      });
+    } catch(error) {
+      console.log("카메라 정보가 없습니다.");
+    }
     setPlayer([{key: 'isCamOn', value: camOn}]);
-    const tracks = videoRef.current.srcObject.getTracks();
-    tracks.forEach((track) => {
-      track.enabled = camOn;
-    });
 
   };
 

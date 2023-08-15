@@ -71,10 +71,10 @@ const StartPage = () => {
   // 로고가 화면에 나타날 때까지 대기하는 효과를 주기 위해 useEffect 사용
   useEffect(() => {
     setLogoVisible(true);
-    window.addEventListener("mousemove", playBGM);
+    window.addEventListener("click", playBGM);
   
     return () => {
-      window.removeEventListener("mousemove", playBGM);
+      window.removeEventListener("click", playBGM);
       audio.pause();
       audio.currentTime = 0;
     };
@@ -90,7 +90,7 @@ const StartPage = () => {
     // console.log('튼후');
   
     // Update state to track audio playback
-    window.removeEventListener("mousemove", playBGM);
+    window.removeEventListener("click", playBGM);
     return () => {
       console.log('멈춰');
       audio.pause();
