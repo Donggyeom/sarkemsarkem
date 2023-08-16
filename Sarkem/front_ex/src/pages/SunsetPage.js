@@ -823,7 +823,7 @@ const SunsetPage = () => {
 </div>
 <ScMini />
 </StyledContent>
-<TempButton url={`/${roomSession.current.roomId}/night`} onClick={() => navigate(`/${roomSession.current.roomId}/night`)}/>
+{/* <TempButton url={`/${roomSession.current.roomId}/night`} onClick={() => navigate(`/${roomSession.current.roomId}/night`)}/> */}
 {chatVisible()}
 </Background>
 );
