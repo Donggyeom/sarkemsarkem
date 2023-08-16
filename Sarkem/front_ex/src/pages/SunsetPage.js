@@ -6,7 +6,7 @@ import MicButton from '../components/buttons/MicButton';
 import SunMoon from '../components/games/SunMoon';
 import ScMini from '../components/games/ScMini';
 import CamCat from '../components/camera/camcat';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import TempButton from '../components/buttons/TempButton';
 import { useGameContext } from '../GameContext';
@@ -567,14 +567,14 @@ const SunsetPage = () => {
    
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
   const { startVote, agreeExpulsion, disagreeExpulsion, targetId, 
-    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers, unsubscribeRedisTopic } = useGameContext();
+    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers, onbeforeunload } = useGameContext();
   const [targetIndex, setTargetIndex] = useState(null);
   
   const [isAgree, setIsAgree] = useState(false);
   const [disAgree, setDisAgree] = useState(false);
 
   const navigate = useNavigate();
-  
+  const location = useLocation();
   // TODO: camcount 계산
   const [camCount, setCamCount] = useState(getAlivePlayers().length);
   console.log(getAlivePlayers(), "여기");
@@ -594,8 +594,11 @@ const SunsetPage = () => {
     }
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
+    window.history.pushState(null, "", location.href);
+    window.addEventListener("popstate", onbeforeunload);
     return () => {
-        window.removeEventListener('beforeunload', onbeforeunload);
+      window.removeEventListener('beforeunload', onbeforeunload);
+      window.removeEventListener('popstate', onbeforeunload);
     }
   }, []);
 
@@ -608,12 +611,6 @@ const SunsetPage = () => {
 
 
   ///   SunsetPage 함수 ///
-
-  // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
-  const onbeforeunload = (event) => {
-    unsubscribeRedisTopic();
-    leaveSession();
-  }
 
   // const calculateAdjustedCamCount = () => {
   //   const filteredCamArray = Array.from(players.current.values()).filter((player) => {

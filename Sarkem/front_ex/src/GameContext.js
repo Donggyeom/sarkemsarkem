@@ -210,6 +210,12 @@ const GameProvider = ({ children }) => {
     }
   }
 
+  const onbeforeunload = (event) => {
+    unsubscribeRedisTopic();
+    leaveSession();
+    window.location.href = "/";
+  }
+
   const unsubscribeRedisTopic = () => {
     try{
       unconnectChat();
@@ -841,7 +847,7 @@ const uniquePlayers = () => {
       voteSituation, currentSysMessage, currentSysMessagesArray, setCurrentSysMessagesArray,phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
       psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers, pingSession,
-      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray, sendPing, startTimer }}
+      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray, sendPing, startTimer, onbeforeunload }}
     >
       {children}
     </GameContext.Provider>
