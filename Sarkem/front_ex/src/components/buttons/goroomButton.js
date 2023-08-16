@@ -19,7 +19,7 @@ const GoroomButtonImage = styled.img`
 `;
 
 const GoroomButton = () => {
-  const { createGameRoom, roomSession, setRoomSession, getGameRoom, checkGameRoom,
+  const { createGameRoom, roomSession, getGameRoom, checkGameRoom,
     player, setPlayer, players, setPlayers, initSession, connectSession } = useRoomContext();
   const {getGameSession, connectGameWS, loadGestureRecognizer } = useGameContext();
   const navigate = useNavigate();
@@ -51,23 +51,16 @@ const GoroomButton = () => {
     }
     
     // 게임방ID 설정
-    setRoomSession((prev) => {
-      console.log(`setRoomSession`);
-      console.log(gameRoom);
-      return ({
-        ...prev,
-        roomId: gameRoom.roomId,
-        gameId: gameRoom.gameId,
-      });
-    });
+    roomSession.current.roomId = gameRoom.roomId;
+    roomSession.current.gameId = gameRoom.gameId;
     
     // sessionStorage에 roomId 갱신
-    console.log("sessionStorage에 roomId를 갱신합니다.", gameRoom.roomId);
-    window.sessionStorage.setItem("roomId", gameRoom.roomId);
+    // console.log("sessionStorage에 roomId를 갱신합니다.", gameRoom.roomId);
+    // window.sessionStorage.setItem("roomId", gameRoom.roomId);
 
     // sessionStorage에 playerId 갱신
-    console.log("sessionStorage에 gameId를 갱신합니다.", gameRoom.gameId);
-    window.sessionStorage.setItem("gameId", gameRoom.gameId);
+    // console.log("sessionStorage에 gameId를 갱신합니다.", gameRoom.gameId);
+    // window.sessionStorage.setItem("gameId", gameRoom.gameId);
 
     // let players = new Map();
     gameRoom.players.forEach(element => {
@@ -95,8 +88,8 @@ const GoroomButton = () => {
       return;
     }
     console.log(isEnterable);
-    console.log(roomSession.openviduSession);
-    if (roomSession.openviduSession === undefined) {
+    console.log(roomSession.current.openviduSession);
+    if (roomSession.current.openviduSession === undefined) {
       const session = await initSession();
       let response = await connectSession(session, gameRoom.roomId);
       if (response != null) {

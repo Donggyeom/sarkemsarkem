@@ -144,7 +144,7 @@ const Logo = styled.img`
 
 
 const CommonStart = ({onClick} ) => {
-  const { player, setPlayer, roomSession, setRoomSession, getGameRoom, checkGameRoom } = useRoomContext();
+  const { player, setPlayer, roomSession, getGameRoom, checkGameRoom } = useRoomContext();
   const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
 
   const videoRef = useRef(null);

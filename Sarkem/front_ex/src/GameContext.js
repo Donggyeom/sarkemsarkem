@@ -205,9 +205,6 @@ const GameProvider = ({ children }) => {
 
   const sendPing = () => {
     if (pingSession.current) clearInterval(pingSession.current);
-
-    let roomId = window.sessionStorage.getItem('roomId');
-    let gameId = window.sessionStorage.getItem('gameId');
     
     // 연결되어 있음을 알리는 메시지 전송
     pingSession.current = setInterval(() => {
@@ -223,9 +220,9 @@ const GameProvider = ({ children }) => {
         if (pingSession.current) clearInterval(pingSession.current);
       }
       
-      if (gameId === undefined) {
+      if (roomSession.current.gameId === undefined) {
         console.log('sendPing');
-        console.log('roomSession.gameId null');
+        console.log('roomSession.current.gameId null');
         if (pingSession.current) clearInterval(pingSession.current);
       }
 
@@ -236,8 +233,8 @@ const GameProvider = ({ children }) => {
       }
       stompClient.current.send('/pub/game/action', {}, JSON.stringify({
         code:'PING',
-        roomId: roomId,
-        gameId: gameId,
+        roomId: roomSession.current.roomId,
+        gameId: roomSession.current.gameId,
         playerId:player.current.playerId, 
       }));
     }, 5000);
@@ -246,15 +243,14 @@ const GameProvider = ({ children }) => {
   // 게임룸 redis 구독
   const connectGame = () => {
     if (!stompClient.current.connected) return;
-    let roomId = window.sessionStorage.getItem("roomId");
-    console.log('/sub/game/system/' + roomId + " redis 구독")
-    stompClient.current.subscribe('/sub/game/system/' + roomId, receiveMessage)
+    console.log('/sub/game/system/' + roomSession.current.roomId + " redis 구독")
+    stompClient.current.subscribe('/sub/game/system/' + roomSession.current.roomId, receiveMessage)
   }
 
   // 게임 끝나거나 비활성화 할때 //
   const unconnectGame = () => {
-    console.log('/sub/game/system/' + roomSession.roomId + " redis 구독 취소");
-    stompClient.current.unsubscribe('/sub/game/system/' + roomSession.roomId, receiveMessage);
+    console.log('/sub/game/system/' + roomSession.current.roomId + " redis 구독 취소");
+    stompClient.current.unsubscribe('/sub/game/system/' + roomSession.current.roomId, receiveMessage);
   };
 
 
@@ -274,12 +270,12 @@ const GameProvider = ({ children }) => {
   const sendChatPubMessage = (message) => {
     console.log("chat publish 들어감"); 
     if (stompClient.current.connected && player.current.playerId !== null) {
-      console.log("Enter 메시지 보냄, roomId", roomSession.roomId);
+      console.log("Enter 메시지 보냄, roomId", roomSession.current.roomId);
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         // type:'ENTER',
         // playerId:player.current.playerId,
         // nickName:player.current.nickName,
-        // roomId: roomSession.roomId,
+        // roomId: roomSession.current.roomId,
         // message: message
       }));
     }
@@ -288,8 +284,8 @@ const GameProvider = ({ children }) => {
   // 채팅 연결할 때 //
   const connectChat = () => {
     if (!stompClient.current.connected) return;
-    console.log('/sub/chat/room/' + window.sessionStorage.getItem("roomId") + " redis 구독")
-    stompClient.current.subscribe('/sub/chat/room/' + window.sessionStorage.getItem("roomId"), receiveChatMessage);
+    console.log('/sub/chat/room/' + roomSession.current.roomId + " redis 구독")
+    stompClient.current.subscribe('/sub/chat/room/' + roomSession.current.roomId, receiveChatMessage);
   };
 
   const sendMessage = (message) => {
@@ -298,7 +294,7 @@ const GameProvider = ({ children }) => {
       console.log("메시지: ", message); 
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'TALK', 
-        roomId: roomSession.roomId,
+        roomId: roomSession.current.roomId,
         playerId:player.current.playerId,
         nickName : player.current.nickName,
         message: message
@@ -308,8 +304,8 @@ const GameProvider = ({ children }) => {
   
   // 게임 끝나거나 비활성화 할때 //
   const unconnectChat = () => {
-    console.log('/sub/chat/room/' + roomSession.roomId + " redis 구독 취소");
-    stompClient.current.unsubscribe('/sub/chat/room/' + roomSession.roomId, receiveMessage);
+    console.log('/sub/chat/room/' + roomSession.current.roomId + " redis 구독 취소");
+    stompClient.current.unsubscribe('/sub/chat/room/' + roomSession.current.roomId, receiveMessage);
   };
 
   const getGameSession = async (roomId) => {
@@ -346,10 +342,10 @@ const GameProvider = ({ children }) => {
     stompClient.current.send("/pub/game/action", {}, 
       JSON.stringify({
           code:'GAME_START', 
-          roomId: roomSession.roomId, 
+          roomId: roomSession.current.roomId, 
           playerId: player.current.playerId
       })
-      );
+    );
   };
 
 
@@ -383,7 +379,7 @@ const GameProvider = ({ children }) => {
     case "GAME_START":   
         // 게임상태 초기화
         sendPing();
-        navigate(`/${roomSession.roomId}/day`);
+        navigate(`/${roomSession.current.roomId}/day`);
         break;
 
     case "ONLY_HOST_ACTION":
@@ -420,12 +416,12 @@ const GameProvider = ({ children }) => {
         
     case "PHASE_DAY":
         setphase("day");
-        navigate(`/${roomSession.roomId}/day`);
+        navigate(`/${roomSession.current.roomId}/day`);
         break;
 
     case "PHASE_TWILIGHT":
         setphase("twilight");
-        navigate(`/${roomSession.roomId}/sunset`);
+        navigate(`/${roomSession.current.roomId}/sunset`);
         setThreatedTarget(false); // 저녁 되면 협박 풀림
         setHiddenMission(false);
         break;
@@ -438,11 +434,11 @@ const GameProvider = ({ children }) => {
         setHiddenMission(false);// 밤이 되면 마피아 미션 끝
         setDayCurrentSysMessagesArray([]);
         console.log(phase);
-        navigate(`/${roomSession.roomId}/night`);
+        navigate(`/${roomSession.current.roomId}/night`);
         break;
 
     case "GAME_END":
-        navigate(`/${roomSession.roomId}/result`);
+        navigate(`/${roomSession.current.roomId}/result`);
         const nowWinner = sysMessage.param.winner;
         console.log(nowWinner);
         setWinner(nowWinner);
@@ -555,7 +551,7 @@ const GameProvider = ({ children }) => {
         break;
 
     case "PHASE_NIGHT":
-        navigate(`/${roomSession.roomId}/night`);
+        navigate(`/${roomSession.current.roomId}/night`);
         break;
 
     case "CHANGE_HOST":
@@ -650,7 +646,7 @@ const GameProvider = ({ children }) => {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECT',
-                  roomId: roomSession.roomId,
+                  roomId: roomSession.current.roomId,
                   playerId: player.current.playerId,
                   param: {
                       target: target.playerId
@@ -667,7 +663,7 @@ const GameProvider = ({ children }) => {
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECTED', // 스킵했을 때도 얘도 보내달라
-                  roomId: roomSession.roomId,
+                  roomId: roomSession.current.roomId,
                   playerId: player.current.playerId,
                   param: {
                       // target: selectedTarget
@@ -681,7 +677,7 @@ const GameProvider = ({ children }) => {
       stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
               code: 'EXPULSION_VOTE',
-              roomId: roomSession.roomId, 
+              roomId: roomSession.current.roomId, 
               playerId: player.current.playerId,
               param: {
                   result: true
@@ -695,7 +691,7 @@ const GameProvider = ({ children }) => {
       stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
               code: 'EXPULSION_VOTE',
-              roomId: roomSession.roomId, 
+              roomId: roomSession.current.roomId, 
               playerId: player.current.playerId,
               param: {
                   result: false
@@ -735,7 +731,7 @@ const GameProvider = ({ children }) => {
             stompClient.current.send("/pub/game/action", {},
                 JSON.stringify({
                     code: 'HIDDENMISSION_SUCCESS ', // 스킵했을 때도 얘도 보내달라
-                    roomId: roomSession.roomId,
+                    roomId: roomSession.current.roomId,
                     playerId: player.current.playerId,
                     param: {
                         // target: selectedTarget
@@ -801,7 +797,7 @@ const uniquePlayers = () => {
       stompClient.current.send("/pub/game/action", {}, 
           JSON.stringify({
               code:'OPTION_CHANGE', 
-              roomId: roomSession.roomId,
+              roomId: roomSession.current.roomId,
               playerId: player.current.playerId,
               param: gameSession.gameOption
       }));

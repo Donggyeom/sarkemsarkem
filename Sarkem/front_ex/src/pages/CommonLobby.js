@@ -171,11 +171,11 @@ const CommonLobby = ()=>{
     // window.addEventListener("popstate", () => leaveSession());
 
 
-    if (roomSession == undefined || roomSession.roomId == undefined) {
+    if (roomSession == undefined || roomSession.current.roomId == undefined) {
       console.log(`roomSession`);
       console.log(roomSession);
       console.log(`roomSession roomId`);
-      console.log(roomSession.roomId);
+      console.log(roomSession.current.roomId);
       console.log(location.pathname);
       navigate(`/${location.pathname.split("/")[1]}`);
       return;
@@ -208,7 +208,7 @@ const CommonLobby = ()=>{
   // Function to handle the click event when the user wants to invite others
   const handleInviteClick = async () => {
     try {
-      await navigator.clipboard.writeText("localhost:3000/"+roomSession.roomId).then(alert("게임 링크가 복사되었습니다."));
+      await navigator.clipboard.writeText("localhost:3000/"+roomSession.current.roomId).then(alert("게임 링크가 복사되었습니다."));
       console.log('Invite functionality for hosts');
     } catch (error) {
       console.error("Error copying text to clipboard:", error);

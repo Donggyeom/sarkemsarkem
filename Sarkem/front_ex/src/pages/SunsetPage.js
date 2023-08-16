@@ -587,7 +587,7 @@ const SunsetPage = () => {
   // let adjustedCamCount = 0;
 
   useEffect(() => {
-    if (roomSession == undefined || roomSession.roomId == undefined){
+    if (roomSession == undefined || roomSession.current.roomId == undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
@@ -853,7 +853,7 @@ const SunsetPage = () => {
 </div>
 <ScMini />
 </StyledContent>
-<TempButton url={`/${roomSession.roomId}/night`} onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
+<TempButton url={`/${roomSession.current.roomId}/night`} onClick={() => navigate(`/${roomSession.current.roomId}/night`)}/>
 {chatVisible()}
 </Background>
 );
