@@ -577,6 +577,7 @@ const GameProvider = ({ children }) => {
     case "LEAVE_PLAYER":
         console.log(sysMessage.param);
         players.current.delete(systemMessages.param);
+        console.log(players.current);
         forceUpdate();
         break;
 
