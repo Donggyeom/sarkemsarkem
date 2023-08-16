@@ -155,9 +155,7 @@ const CommonLobby = ()=>{
   const { gameSession, setGameSession, handleGamePageClick, startTimer, sendPing,
     stompClient, currentSysMessage, connectGameWS, loadGestureRecognizer, unsubscribeRedisTopic } = useGameContext();
   
-  const [, updateState] = useState();
   // const [ isLoaded, setIsLoaded ] = useState(false);
-  const forceUpdate = useCallback(() => updateState({}), []);
   const clickAudio = new Audio(ingameClickSound);
   const navigate = useNavigate();
   const location = useLocation();
@@ -196,11 +194,6 @@ const CommonLobby = ()=>{
         window.removeEventListener('beforeunload', onbeforeunload);
     }
   }, []);
-
-  useEffect(() => {
-    forceUpdate();
-    console.log('updateState');
-  }, [players.current]);
 
 
   ////////////   CommonLobby 함수   ////////////
