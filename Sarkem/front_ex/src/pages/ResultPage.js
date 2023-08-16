@@ -130,7 +130,7 @@ const ResultPage = () => {
   const {
     roomSession, setPlayer, setPlayers, players
   } = useRoomContext();
-  const { roleAssignedArray, winner, unsubscribeRedisTopic, initGameSession, stompClient } = useGameContext();
+  const { roleAssignedArray, winner, unsubscribeRedisTopic, initGameSession, stompClien, timer } = useGameContext();
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -38,7 +38,9 @@ const GameProvider = ({ children }) => {
   // twilight 투표 설정 위한 타겟id
   const [targetId, setTargetId] = useState("");
   // 남은 시간
-  const [remainTime, setRemainTime] = useState(0);
+  const remainTime = useRef(0);
+  const renderTimerId = useRef(null);
+  const [isRender, setIsRender] = useState(true);
   
   const [psyTarget, setPsyTarget] = useState("");
   const [psychologist, setPsychologist] = useState(false);//심리학자 실행
@@ -88,6 +90,11 @@ const GameProvider = ({ children }) => {
 
 
   useEffect(() => {
+    if (isRender) setIsRender(false);
+  }, [isRender]);
+
+
+  useEffect(() => {
     setCurrentSysMessage(null);
     setCurrentSysMessagesArray([]);
     
@@ -121,6 +128,7 @@ const GameProvider = ({ children }) => {
     if (pingSession.current) clearInterval(pingSession.current);  // ping stop
     
     stopPredicting();
+    clearInterval(renderTimerId);
     player.current.stream.publishAudio(false);
     player.current.stream.publishVideo(false);
     player.current.isAlive = true;
@@ -148,8 +156,7 @@ const GameProvider = ({ children }) => {
     setVotesituation({});
     setThreatedTarget("");
     setTargetId("");
-    setRemainTime("");
-    
+
     setPsyTarget("");
     setPsychologist(false);
     setHiddenMission(false);
@@ -164,6 +171,15 @@ const GameProvider = ({ children }) => {
     setAnimationFrameId(null);
     
     setDeadIds([]);
+  }
+
+  const startTimer = () => {
+    renderTimerId.current = setInterval(() => {
+      if (remainTime.current > 0) {
+        remainTime.current -= 1;
+        setIsRender(true);
+      }
+    }, 1000);
   }
 
   // WebSocket 연결
@@ -379,6 +395,7 @@ const GameProvider = ({ children }) => {
     case "GAME_START":   
         // 게임상태 초기화
         sendPing();
+        startTimer();
         navigate(`/${roomSession.current.roomId}/day`);
         break;
 
@@ -566,7 +583,7 @@ const GameProvider = ({ children }) => {
       break;
 
     case "REMAIN_TIME":
-        setRemainTime(sysMessage.param.time);
+        remainTime.current = sysMessage.param.time;
         // console.log("남은 시간: ",sysMessage.param.time);
         break;
 
