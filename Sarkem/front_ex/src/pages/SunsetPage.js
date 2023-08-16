@@ -117,13 +117,14 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
       marginTop : '30%',
-      marginLeft : '1%',
+      marginLeft : '3%',
     };
   } else if (camCount === 10) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr 1fr 1fr',
+      gridTemplateRows: '1fr 1fr 1fr 1fr',
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
+      marginLeft : '3.5%',
     };
   } else {
     return {
