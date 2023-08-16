@@ -213,7 +213,7 @@ const GameProvider = ({ children }) => {
   const onbeforeunload = (event) => {
     unsubscribeRedisTopic();
     leaveSession();
-    navigate("/");
+    window.location.href = "/";
   }
 
   const unsubscribeRedisTopic = () => {
