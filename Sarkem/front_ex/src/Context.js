@@ -193,6 +193,7 @@ const RoomProvider = ({ children }) => {
     newSession.on('sessionDisconnected', (event) => {
       console.log("openvidu 세션 연결이 끊겼습니다.");
       leaveSession();
+      navigate("/");
     })
 
     // stream 예외 이벤트 발생 시 에러 출력
