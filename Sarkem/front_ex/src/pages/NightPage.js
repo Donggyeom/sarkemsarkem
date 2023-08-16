@@ -44,7 +44,7 @@ const TimeSecond = styled.text`
 
 
 const NightPage = () => {
-  const { roomSession, player, setPlayer, players } = useRoomContext(); 
+  const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
   const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers, unsubscribeRedisTopic } = useGameContext();
   const navigate = useNavigate();
   const audio = new Audio(Sound);
@@ -52,12 +52,12 @@ const NightPage = () => {
 
   useEffect(() => {
         console.log(roomSession.roomId);
-        turnOffCams();  
         if (roomSession == undefined || roomSession.roomId == undefined){
           console.log("세션 정보가 없습니다.")
           navigate("/");
           return;
         }
+        turnOffCams();
         // 윈도우 객체에 화면 종료 이벤트 추가
         window.addEventListener('beforeunload', onbeforeunload);
         return () => {

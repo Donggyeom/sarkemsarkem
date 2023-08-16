@@ -71,32 +71,44 @@ const StartPage = () => {
   // 로고가 화면에 나타날 때까지 대기하는 효과를 주기 위해 useEffect 사용
   useEffect(() => {
     setLogoVisible(true);
-    window.addEventListener("mousemove", playBGM);
+    var playPromise = audio.play();
+    audio.volume = 0.5;
+    if (playPromise !== undefined) {
+      playPromise.then(_ => {
+        // Automatic playback started!
+        // Show playing UI.
+      })
+      .catch(error => {
+        // Auto-play was prevented
+        // Show paused UI.
+      });
+    }
+    // window.addEventListener("click", playBGM);
   
-    return () => {
-      window.removeEventListener("mousemove", playBGM);
-      audio.pause();
-      audio.currentTime = 0;
-    };
+    // return () => {
+    //   window.removeEventListener("click", playBGM);
+    //   audio.pause();
+    //   audio.currentTime = 0;
+    // };
   }, []);
 
-  const playBGM = () => {
+  // const playBGM = () => {
   
-    // Play the audio when the component mounts
-    // console.log('틀기전');
-    audio.play();
-    audio.playbackRate = 0.9;
-    audio.volume = 0.5;
-    // console.log('튼후');
+  //   // Play the audio when the component mounts
+  //   // console.log('틀기전');
+  //   audio.play();
+  //   audio.playbackRate = 0.9;
+  //   audio.volume = 0.5;
+  //   // console.log('튼후');
   
-    // Update state to track audio playback
-    window.removeEventListener("mousemove", playBGM);
-    return () => {
-      console.log('멈춰');
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }
+  //   // Update state to track audio playback
+  //   window.removeEventListener("click", playBGM);
+  //   return () => {
+  //     console.log('멈춰');
+  //     audio.pause();
+  //     audio.currentTime = 0;
+  //   };
+  // }
 
   const goToCreateRoom = () => {
     setPlayer([{key: 'isHost', value: true}]);

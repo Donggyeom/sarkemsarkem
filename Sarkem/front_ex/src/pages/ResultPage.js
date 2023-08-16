@@ -130,10 +130,13 @@ const ResultPage = () => {
   const {
     roomSession, setRoomSession, setPlayer, setPlayers, players
   } = useRoomContext();
-  const { roleAssignedArray, winner, unsubscribeRedisTopic, initGameSession } = useGameContext();
+  const { roleAssignedArray, winner, unsubscribeRedisTopic, initGameSession, stompClient } = useGameContext();
   const navigate = useNavigate();
 
   useEffect(() => {
+    
+    initGameSession();
+
     // Play the resultSound when the page loads
     const audio = new Audio(resultSound);
     audio.play();
@@ -146,8 +149,8 @@ const ResultPage = () => {
   }, []);
 
   const handleAgainButtonClick = () => {
-    console.log("세션 해제중입니다.....");
-    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
+    console.log("다시하기 버튼 클릭");
+    // if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
 
     // console.log("세션 해제중입니다.....")
     // // 세션 연결 종료
@@ -156,24 +159,25 @@ const ResultPage = () => {
     // 데이터 초기화
     // setPlayer.current = {};
     // setPlayers(new Map());
-    players.current = new Map();
+    // players.current = new Map();
     setRoomSession((prev) => {
       return ({
         ...prev,
         gameId: undefined,
       });
     });
-    initGameSession();
     console.log("새로운 방 만들기", roomSession.roomId);
-    unsubscribeRedisTopic();
+    // unsubscribeRedisTopic();
     navigate(`/${roomSession.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
 
   const handleExitButtonClick = () => {
     console.log("세션 해제중입니다.....")
     // 세션 연결 종료
-    if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
-    
+    if (roomSession.openviduSession) {
+      roomSession.openviduSession.disconnect();
+    }
+    if (stompClient.current !== undefined) stompClient.current = undefined;
     // 데이터 초기화
     // setSession(undefined);
     setPlayer.current = {};
@@ -183,10 +187,10 @@ const ResultPage = () => {
       return ({
         ...prev,
         roomId: undefined,
-        gameId: undefined
+        gameId: undefined,
+        openviduSession: undefined
       });
     });
-    initGameSession();
     console.log("홈으로 나가기");
     unsubscribeRedisTopic();
     navigate('/');
