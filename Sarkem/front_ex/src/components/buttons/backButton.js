@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import backbuttonImage from '../../img/backbutton.png';
-import { useRoomContext } from '../../Context';
+import { useGameContext } from '../../GameContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const BackButtonContainer = styled.div`
   position: absolute;
@@ -12,10 +14,16 @@ const BackButtonContainer = styled.div`
 `;
 
 const BackButton = () => {
-  const {leaveSession} = useRoomContext();
+  const navigate = useNavigate();
+  const {onbeforeunload} = useGameContext();
+
+  const goToPrev = () => {
+    onbeforeunload();
+    navigate("/");
+  }
 
   return (
-    <BackButtonContainer onClick={leaveSession}>
+    <BackButtonContainer onClick={goToPrev}>
       <img src={backbuttonImage} alt="Back" />
     </BackButtonContainer>
   );

@@ -153,11 +153,9 @@ const ButtonContainer2 = styled.div`
 const CommonLobby = ()=>{
   const { roomSession, player, players, leaveSession } = useRoomContext();
   const { gameSession, setGameSession, handleGamePageClick, startTimer, sendPing,
-    stompClient, currentSysMessage, connectGameWS, loadGestureRecognizer, unsubscribeRedisTopic } = useGameContext();
+    stompClient, currentSysMessage, onbeforeunload } = useGameContext();
   
-  const [, updateState] = useState();
   // const [ isLoaded, setIsLoaded ] = useState(false);
-  const forceUpdate = useCallback(() => updateState({}), []);
   const clickAudio = new Audio(ingameClickSound);
   const navigate = useNavigate();
   const location = useLocation();
@@ -167,13 +165,11 @@ const CommonLobby = ()=>{
 
 
   useEffect(() => {
-
-    // window.history.pushState(null, "", location.href);
-    // window.addEventListener("popstate", () => leaveSession());
-
+    
+    
     sendPing();
     startTimer();
-
+    
     if (roomSession == undefined || roomSession.current.roomId == undefined) {
       console.log(`roomSession`);
       console.log(roomSession);
@@ -183,34 +179,27 @@ const CommonLobby = ()=>{
       navigate(`/${location.pathname.split("/")[1]}`);
       return;
     }
-
+    
     if (player.current.stream !== undefined) {
       player.current.stream.publishAudio(player.current.isMicOn);
       player.current.stream.publishVideo(player.current.isCamOn);
     }
-
+    
 
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
+    window.history.pushState(null, "", location.href);
+    window.addEventListener("popstate", onbeforeunload);
     return () => {
-        window.removeEventListener('beforeunload', onbeforeunload);
+      window.removeEventListener('beforeunload', onbeforeunload);
+      window.removeEventListener('popstate', onbeforeunload);
     }
   }, []);
-
-  useEffect(() => {
-    forceUpdate();
-    console.log('updateState');
-  }, [players.current]);
 
 
   ////////////   CommonLobby 함수   ////////////
 
 
-  // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
-  const onbeforeunload = (event) => {
-    unsubscribeRedisTopic();
-    leaveSession();
-  }
 
   
   // Function to handle the click event when the user wants to invite others
