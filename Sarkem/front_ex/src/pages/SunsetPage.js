@@ -799,47 +799,27 @@ const SunsetPage = () => {
 
       <div>
         <AbsoluteContainer>
-        {/* {player.current.role === "OBSERVER" ? (
-        <>
-          <AgreeButton onClick={null} disabled={isAgree} />
-          <DisagreeButton onClick={null} disabled={disAgree} />
-        </>
+          {player?.current?.role !== "OBSERVER" && (
+          <>
+          {isAgree || disAgree ? (
+          <VoteImage src={isAgree ? completeagreeButtonImage : completeDisagreeButtonImage} alt="찬반완료" />
           ) : (
-              <>
-                {isAgree || disAgree ? (
-                  <VoteImage src={isAgree ? completeagreeButtonImage : completeDisagreeButtonImage} alt="찬반완료" />
-                ) : (
-                  <>
-                    <AgreeButton
-                      onClick={handleAgreeClick}
-                      disabled={isAgree || disAgree || !startVote}
-                      isComplete={isAgree}
-                    />
-                    <DisagreeButton
-                      onClick={handleDisagreeClick}
-                      disabled={disAgree || isAgree || !startVote}
-                      isComplete={disAgree} */}
-                      {player?.current?.role !== "OBSERVER" && (
-  <>
-    {isAgree || disAgree ? (
-      <VoteImage src={isAgree ? completeagreeButtonImage : completeDisagreeButtonImage} alt="찬반완료" />
-    ) : (
-      <>
-        <AgreeButton
+          <>
+          <AgreeButton
           onClick={handleAgreeClick}
           disabled={isAgree || disAgree || !startVote}
           isComplete={isAgree}
-        />
-        <DisagreeButton
+          />
+          <DisagreeButton
           onClick={handleDisagreeClick}
           disabled={disAgree || isAgree || !startVote}
           isComplete={disAgree}
-                    />
-                  </>
-                )
-                }
-    </>
-  )}
+          />
+        </>
+      )
+    }
+  </>
+)}
           
         </AbsoluteContainer>
       
