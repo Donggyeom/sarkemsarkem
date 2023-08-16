@@ -74,6 +74,14 @@ const ChatReceiverMessage = styled.div`
   position: relative;
   margin-right: 10px;
   font-family: 'SUITE-Regular', sans-serif;
+
+`;
+
+const Nickname = styled.div`
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 5px;
+  /* Add more styles here if needed */
 `;
 
 const ChatInputWrapper = styled.div`
@@ -174,7 +182,7 @@ const Chatting = ({ handleCloseButtonClick }) => {
                 </ChatMessage>
               ) : (
                 <div key={index}>
-                <div className="nickname">{messageObj.nickName}</div>
+                <Nickname>{messageObj.nickName}</Nickname>
                 <ChatReceiverMessage>
                   {messageObj.message}
                 </ChatReceiverMessage>
