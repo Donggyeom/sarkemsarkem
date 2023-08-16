@@ -92,14 +92,11 @@ const RightPart = styled.div`
 
   /* Input styling */
   input {
-    width: 300px; /* 원하는 너비로 설정 */
-    height: 50px; /* 원하는 높이로 설정 */
-    padding: 5px;
     font-size: 30px;
     border: none;
     background-color: transparent;
     outline: none;
-    // text-align: center; 
+    text-align: center; 
     font-family: "RixInooAriDuriR";
     font-weight: 10% !important;
   }
