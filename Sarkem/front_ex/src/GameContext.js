@@ -205,6 +205,9 @@ const GameProvider = ({ children }) => {
 
   const sendPing = () => {
     if (pingSession.current) clearInterval(pingSession.current);
+
+    let roomId = window.sessionStorage.getItem('roomId');
+    let gameId = window.sessionStorage.getItem('gameId');
     
     // 연결되어 있음을 알리는 메시지 전송
     pingSession.current = setInterval(() => {
@@ -220,7 +223,7 @@ const GameProvider = ({ children }) => {
         if (pingSession.current) clearInterval(pingSession.current);
       }
       
-      if (roomSession.gameId === undefined) {
+      if (gameId === undefined) {
         console.log('sendPing');
         console.log('roomSession.gameId null');
         if (pingSession.current) clearInterval(pingSession.current);
@@ -233,8 +236,8 @@ const GameProvider = ({ children }) => {
       }
       stompClient.current.send('/pub/game/action', {}, JSON.stringify({
         code:'PING',
-        roomId: roomSession.roomId,
-        gameId: roomSession.gameId,
+        roomId: roomId,
+        gameId: gameId,
         playerId:player.current.playerId, 
       }));
     }, 5000);
