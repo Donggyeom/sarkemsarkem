@@ -192,7 +192,7 @@ public class MainController {
 	@DeleteMapping("/api/game/{roomId}/player/{playerId}")
 	public void exitGame(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
 		gameManager.deletePlayer(roomId, playerId);
-
+		gameManager.sendLeaveGameMessage(roomId, playerId);
 		log.info(playerId + "님이" + roomId + "룸에서 퇴장합니다.");
 	}
 

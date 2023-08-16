@@ -13,7 +13,7 @@ import nightCamAudio from './components/camera/DayNightCamera';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-  const { roomSession, player, setPlayer, players, setPlayers, leaveSession } = useRoomContext();
+  const { roomSession, player, setPlayer, players, setPlayers, leaveSession, forceUpdate } = useRoomContext();
   const [ gameSession, setGameSession ] = useState({});
   // 현재 시스템 메시지를 저장할 상태 추가
   const [currentSysMessage, setCurrentSysMessage] = useState(null);
@@ -572,6 +572,12 @@ const GameProvider = ({ children }) => {
 
     case "PHASE_NIGHT":
         navigate(`/${roomSession.current.roomId}/night`);
+        break;
+
+    case "LEAVE_PLAYER":
+        console.log(sysMessage.param);
+        players.current.delete(systemMessages.param);
+        forceUpdate();
         break;
 
     case "CHANGE_HOST":
