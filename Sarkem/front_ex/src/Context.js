@@ -121,9 +121,13 @@ const RoomProvider = ({ children }) => {
   const leaveSession = async () => {
       console.log("세션 해제중입니다.....")
       // 세션 연결 종료
-      if (roomSession.current.openviduSession) {
-        await roomSession.current.openviduSession.disconnect();
-        roomSession.current.openviduSession = undefined;
+      try{
+        if (roomSession.current.openviduSession) {
+          await roomSession.current.openviduSession.disconnect();
+          roomSession.current.openviduSession = undefined;
+        }
+      } catch(error) {
+        console.error(error);
       }
       // game 퇴장 요청
       let response;
@@ -206,6 +210,7 @@ const RoomProvider = ({ children }) => {
   const sessionDisconnectedHandler = () => {
     console.log("openvidu 세션 연결이 끊겼습니다.");
     roomSession.current.openviduSession.off('sessionDisconnected', sessionDisconnectedHandler); // 등록 해제
+    leaveSession();
     window.location.href = "/";
   }
 
