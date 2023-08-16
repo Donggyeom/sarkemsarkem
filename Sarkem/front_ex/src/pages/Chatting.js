@@ -74,14 +74,15 @@ const ChatReceiverMessage = styled.div`
   position: relative;
   margin-right: 10px;
   font-family: 'SUITE-Regular', sans-serif;
+  color : white;
 
 `;
 
 const Nickname = styled.div`
+  font-family: 'SUITE-Regular', sans-serif;
   font-size: 12px;
-  color: #666;
+  color: #300909;
   margin-bottom: 5px;
-  /* Add more styles here if needed */
 `;
 
 const ChatInputWrapper = styled.div`
