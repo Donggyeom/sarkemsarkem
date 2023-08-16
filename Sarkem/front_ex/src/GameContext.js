@@ -742,6 +742,7 @@ const GameProvider = ({ children }) => {
 
     // 
     const predictWebcam = () => {
+      try {
         if (gestureRecognizer) {
           const videoElement = player.current.stream.videos[player.current.stream.videos.length-1].video;
           const nowInMs = Date.now();
@@ -755,7 +756,11 @@ const GameProvider = ({ children }) => {
             }
           }
         }
-        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
+      } catch (error) {
+        console.log("오류발생");
+      }
+      setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
+
   };
 
   const stopPredicting = () => {
