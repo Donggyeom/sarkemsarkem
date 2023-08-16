@@ -292,7 +292,7 @@ const CommonStart = ({onClick} ) => {
               value={nickName}
               onChange={handleNickNameChange}
               placeholder="닉네임 입력"
-              maxLength={9} // 최대 글자수 제한
+              maxLength={6} // 최대 글자수 제한
             />
             </RightPart>
             </DivWrapper>
