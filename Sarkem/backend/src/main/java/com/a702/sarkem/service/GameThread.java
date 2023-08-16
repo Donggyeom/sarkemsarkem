@@ -416,7 +416,7 @@ public class GameThread extends Thread {
 
 	// 플레이어 투표 종료 여부 반환
 	private boolean isPlayersVoteEnded() throws InterruptedException {
-		List<RolePlayer> players = gameSession.getPlayers();
+		List<RolePlayer> players = gameSession.getAlivePlayers();
 		int confirmCnt = 0;
 		int time = gameSession.getMeetingTime();
 		int idx = 0;
