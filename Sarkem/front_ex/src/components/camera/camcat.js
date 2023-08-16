@@ -98,7 +98,7 @@ const CamCat = ({id, isMuted}) => {
             <OpenViduVideoComponent streamManager={stream} isMuted={isMuted}/>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: '3px' }}>
-            <div style={{ flex: 1, textAlign: 'right' }}>
+            <div style={{ flex: 1, textAlign: 'right' , fontFamily: 'MBC1961GulimM'}}>
               {current.nickName}
             </div>
             <div style={{ flex: 0.8, textAlign: 'center' }}>

@@ -1,7 +1,7 @@
 import Background from '../components/backgrounds/BackgroundSunset';
 import '../index.css';
 import styled from 'styled-components';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // img
 import boxImage from '../img/box.png';
 import sc_police from '../img/sc_경찰.png';
@@ -152,11 +152,12 @@ const ButtonContainer2 = styled.div`
 
 const CommonLobby = ()=>{
   const { roomSession, player, players, leaveSession } = useRoomContext();
-  const { gameSession, setGameSession, handleGamePageClick, 
+  const { gameSession, setGameSession, handleGamePageClick, startTimer, sendPing,
     stompClient, currentSysMessage, connectGameWS, loadGestureRecognizer, unsubscribeRedisTopic } = useGameContext();
-
-  // const [ isLoaded, setIsLoaded ] = useState(false);
   
+  const [, updateState] = useState();
+  // const [ isLoaded, setIsLoaded ] = useState(false);
+  const forceUpdate = useCallback(() => updateState({}), []);
   const clickAudio = new Audio(ingameClickSound);
   const navigate = useNavigate();
   const location = useLocation();
@@ -170,6 +171,8 @@ const CommonLobby = ()=>{
     // window.history.pushState(null, "", location.href);
     // window.addEventListener("popstate", () => leaveSession());
 
+    sendPing();
+    startTimer();
 
     if (roomSession == undefined || roomSession.current.roomId == undefined) {
       console.log(`roomSession`);
@@ -192,7 +195,12 @@ const CommonLobby = ()=>{
     return () => {
         window.removeEventListener('beforeunload', onbeforeunload);
     }
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    forceUpdate();
+    console.log('updateState');
+  }, [players.current]);
 
 
   ////////////   CommonLobby 함수   ////////////
@@ -315,7 +323,7 @@ const CommonLobby = ()=>{
       {showNyangachiPopup && <ScPopup src={c_nyangachi} top="80%" left="50%" />}
       <BackButton/>
       <StyledContent>
-         <LobbyCamera ids={Array.from(players.current.keys())} />
+        {players.current && <LobbyCamera ids={Array.from(players.current.keys())} />}
         <RightSection>
           <DivWrapper
             style={{ backgroundRepeat: 'no-repeat', backgroundPosition : 'center center', backgroundSize: '95% 100%', backgroundImage: `url(${settingbuttonImage})`, width: '100%', height : '15%'}}/>

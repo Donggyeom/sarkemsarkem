@@ -51,22 +51,23 @@ const NightPage = () => {
   
 
   useEffect(() => {
-        console.log(roomSession.current.roomId);
-        if (roomSession == undefined || roomSession.current.roomId == undefined){
-          console.log("세션 정보가 없습니다.")
-          navigate("/");
-          return;
-        }
-        turnOffCams();
-        // 윈도우 객체에 화면 종료 이벤트 추가
-        window.addEventListener('beforeunload', onbeforeunload);
-        return () => {
-            window.removeEventListener('beforeunload', onbeforeunload);
-        }
-  }, []);
+    
+    if (roomSession == undefined || roomSession.current.roomId == undefined){
+      console.log("세션 정보가 없습니다.")
+      navigate("/");
+      return;
+    }
 
-  useEffect(() => {
     window.addEventListener("mousemove", playBGM);
+    remainTime.current = 30;
+    turnOffCams();
+    
+
+    // 윈도우 객체에 화면 종료 이벤트 추가
+    window.addEventListener('beforeunload', onbeforeunload);
+    return () => {
+        window.removeEventListener('beforeunload', onbeforeunload);
+    }
   }, []);
 
   const playBGM = () => {
@@ -141,7 +142,7 @@ const NightPage = () => {
         {!isLogOn && <Log />}
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <SunMoon alt="SunMoon"></SunMoon>
-        <TimeSecond>{remainTime}</TimeSecond>
+        <TimeSecond>{remainTime.current}s</TimeSecond>
         {player.current.role === 'SARK' ? (
           <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
         ) : (

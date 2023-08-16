@@ -26,7 +26,7 @@ const ChatPopup = styled.div`
   width: 400px;
   height: 450px;
   border-radius: 5px;
-  opacity: 0.8;
+  // opacity: 0.8;
   z-index: 1; // Set higher z-index when the popup is open
 `;
 
