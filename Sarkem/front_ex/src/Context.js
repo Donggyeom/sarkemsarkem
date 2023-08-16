@@ -187,6 +187,7 @@ const RoomProvider = ({ children }) => {
       // });
       players.current.delete(targetId);
       console.log(targetNickname, "님이 접속을 종료했습니다.");
+      forceUpdate();
     });
 
     newSession.on('sessionDisconnected', (event) => {
