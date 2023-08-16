@@ -193,7 +193,7 @@ public class MainController {
 	public void exitGame(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
 		gameManager.deletePlayer(roomId, playerId);
 
-		log.info(playerId + "님이" + playerId + "룸에서 퇴장합니다.");
+		log.info(playerId + "님이" + roomId + "룸에서 퇴장합니다.");
 	}
 
 	// 토큰 생성하기&가져오기
