@@ -45,7 +45,7 @@ const TimeSecond = styled.text`
 
 const NightPage = () => {
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
-  const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers, unsubscribeRedisTopic } = useGameContext();
+  const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers, onbeforeunload } = useGameContext();
   const navigate = useNavigate();
   const audio = new Audio(Sound);
   
@@ -65,8 +65,11 @@ const NightPage = () => {
 
     // 윈도우 객체에 화면 종료 이벤트 추가
     window.addEventListener('beforeunload', onbeforeunload);
+    window.history.pushState(null, "", location.href);
+    window.addEventListener("popstate", onbeforeunload);
     return () => {
-        window.removeEventListener('beforeunload', onbeforeunload);
+      window.removeEventListener('beforeunload', onbeforeunload);
+      window.removeEventListener('popstate', onbeforeunload);
     }
   }, []);
 
@@ -129,13 +132,6 @@ const NightPage = () => {
   };
   
 
-    
-    // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
-    const onbeforeunload = (event) => {
-      unsubscribeRedisTopic();
-      leaveSession();
-    }
-
     return (   
     <Background>
       <StyledNightPage>
@@ -160,7 +156,7 @@ const NightPage = () => {
         <ScMini />
         {chatVisible()}
       </StyledNightPage>
-      <TempButton url={`/${roomSession.current.roomId}/result`} onClick={() => navigate(`/${roomSession.current.roomId}/result`)} alt="End Game" />
+      {/* <TempButton url={`/${roomSession.current.roomId}/result`} onClick={() => navigate(`/${roomSession.current.roomId}/result`)} alt="End Game" /> */}
     </Background>
   );
 };

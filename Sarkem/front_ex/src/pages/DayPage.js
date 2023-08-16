@@ -51,7 +51,7 @@ const DayPage = () => {
   const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, 
     chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, 
     getAlivePlayers, psychologist, psyTarget, dayCurrentSysMessagesArray, unsubscribeRedisTopic,
-    faceDetectionIntervalId, setFaceDetectionIntervalId } = useGameContext();
+    faceDetectionIntervalId, setFaceDetectionIntervalId, onbeforeunload } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
@@ -60,8 +60,17 @@ const DayPage = () => {
   const [running, setRunning] = useState(false);
   const audio = new Audio(Sound);
   const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
+  const location = useLocation();
   useEffect(() => {
     loadModels();
+    // 윈도우 객체에 화면 종료 이벤트 추가
+    window.addEventListener('beforeunload', onbeforeunload);
+    window.history.pushState(null, "", location.href);
+    window.addEventListener("popstate", onbeforeunload);
+    return () => {
+      window.removeEventListener('beforeunload', onbeforeunload);
+      window.removeEventListener('popstate', onbeforeunload);
+    }
   }, []);
 
   const handleLogButtonClick = () => {
@@ -181,12 +190,6 @@ const DayPage = () => {
   // const handleScMiniClick = () => {
   //   console.log('ScMini clicked!');
   // };
-
-  // 화면을 새로고침 하거나 종료할 때 발생하는 이벤트
-  const onbeforeunload = (event) => {
-    unsubscribeRedisTopic();
-    leaveSession();
-  }
   
   const daystatus = () =>{
     if(player.current.role !== 'OBSERVER') {
@@ -214,7 +217,7 @@ const DayPage = () => {
         <SarkMission handNumber={currentHandNumber} />
         {psychologist&&<PsychologistBox detectExpressions={detectExpressions}></PsychologistBox>}
         </StyledDayPage>
-        <TempButton url={`/${roomSession.current.roomId}/sunset`} onClick={() => navigate(`/${roomSession.current.roomId}/sunset`)} alt="Start Game" />
+        {/* <TempButton url={`/${roomSession.current.roomId}/sunset`} onClick={() => navigate(`/${roomSession.current.roomId}/sunset`)} alt="Start Game" /> */}
         {chatVisible()}
       </Background>
       );
