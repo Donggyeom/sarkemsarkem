@@ -730,9 +730,7 @@ public class GameManager {
 
 	// "게임시작" 메시지 전송
 	public void sendGameStartMessage(String roomId) {
-		GameRoom gameRoom = gameRoomMap.get(roomId);
-		List<String> playersId = gameRoom.getPlayersId();
-		sendSystemMessage(roomId, playersId, SystemCode.GAME_START, null);
+		sendSystemMessage(roomId, "ALL", SystemCode.GAME_START, null);
 	}
 	
 	// "남은 시간" 메시지 전송

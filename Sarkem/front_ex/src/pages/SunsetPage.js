@@ -108,7 +108,7 @@ const calculateGrid = (camCount) => {
     return {
       gridTemplateRows: '1fr 1fr',
       gridTemplateColumns: '1fr 1fr 1fr 1fr',
-      marginBottom : '15%',
+      marginBottom : '20%',
       width : '100%',
     };
   } else if (camCount === 9) {

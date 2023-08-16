@@ -122,8 +122,11 @@ const RoomProvider = ({ children }) => {
       console.log("세션 해제중입니다.....")
       // 세션 연결 종료
       try{
+        console.log(roomSession.current.openviduSession);
         if (roomSession.current.openviduSession) {
-          await roomSession.current.openviduSession.disconnect();
+          await roomSession.current.openviduSession.disconnect().then(() => {
+            console.log("세션 연결이 해제되었습니다.")
+          });
           roomSession.current.openviduSession = undefined;
         }
       } catch(error) {
@@ -132,7 +135,7 @@ const RoomProvider = ({ children }) => {
       // game 퇴장 요청
       let response;
       try{
-        response = axios.delete(`/api/game/${roomSession.current.roomId}/player/${player.current.playerId}`,
+        response = await axios.delete(`/api/game/${roomSession.current.roomId}/player/${player.current.playerId}`,
           {
             headers: { 'Content-Type': 'application/json;charset=utf-8', },
           }

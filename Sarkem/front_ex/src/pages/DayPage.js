@@ -101,7 +101,6 @@ const DayPage = () => {
     }
   }, [currentSysMessage]);
 
-
   useEffect(() => {
     window.addEventListener("mousemove", playBGM);
   }, []);
