@@ -190,6 +190,7 @@ const ResultPage = () => {
   console.log(sarkPlayers, "sarkPlayers");
   const nonSarkPlayers = roleAssignedArray.current.filter(playerRole => playerRole.job !== '삵');
   console.log(nonSarkPlayers, "nonSarkPlayers");
+  console.log(winner, "위너확인");
   return (
     <div>
     {winner === 'CITIZEN' ? (
