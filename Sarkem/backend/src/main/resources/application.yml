@@ -10,8 +10,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/sarkem?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: sarkem
-    password: sarkem
+    username: root
+    password: root
   data:
     redis:
       host: localhost
