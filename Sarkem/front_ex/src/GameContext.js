@@ -811,7 +811,7 @@ const uniquePlayers = () => {
   };
 
   const chatVisible = () =>{
-    if (player.current.role === 'OBSERVER'){
+    if (player.current.role === 'CITIZEN'){
       return (
         <>
           <ChatButtonAndPopup />

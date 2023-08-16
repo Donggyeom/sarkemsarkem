@@ -61,8 +61,8 @@ const ChatMessages = styled.div`
 `;
 
 const ChatReceiverMessage = styled.div`
-  word-wrap : break-word; // 문자 수가 많아지면 가로로 넘어가는 현상 해결하기위함
-  max-width: 60%; // 문자 수가 많아지면 가로로 넘어가는 현상 해결하기위함
+  word-wrap: break-word;
+  max-width: 60%;
   background-color: transparent;
   background-image: url(${receiverboxImage});
   background-size: cover;
@@ -72,7 +72,6 @@ const ChatReceiverMessage = styled.div`
   border-radius: 5px;
   width: fit-content;
   position: relative;
-  // margin-left: auto;
   margin-right: 10px;
   font-family: 'SUITE-Regular', sans-serif;
 `;
@@ -174,9 +173,12 @@ const Chatting = ({ handleCloseButtonClick }) => {
                   {messageObj.message}
                 </ChatMessage>
               ) : (
-                <ChatReceiverMessage key={index}>
-                  {messageObj.nickName} : {messageObj.message}
+                <div key={index}>
+                <div className="nickname">{messageObj.nickName}</div>
+                <ChatReceiverMessage>
+                  {messageObj.message}
                 </ChatReceiverMessage>
+              </div>
               )
             );
           })}
