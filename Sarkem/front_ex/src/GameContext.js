@@ -394,8 +394,6 @@ const GameProvider = ({ children }) => {
 
     case "GAME_START":   
         // 게임상태 초기화
-        sendPing();
-        startTimer();
         navigate(`/${roomSession.current.roomId}/day`);
         break;
 
@@ -843,7 +841,7 @@ const uniquePlayers = () => {
       voteSituation, currentSysMessage, currentSysMessagesArray, setCurrentSysMessagesArray,phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
       psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers, pingSession,
-      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray }}
+      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray, sendPing, startTimer }}
     >
       {children}
     </GameContext.Provider>
