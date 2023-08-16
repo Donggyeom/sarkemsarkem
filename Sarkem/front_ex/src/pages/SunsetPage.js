@@ -117,13 +117,16 @@ const calculateGrid = (camCount) => {
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
       marginTop : '30%',
-      marginLeft : '1%',
+      marginLeft : '3%',
     };
   } else if (camCount === 10) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr 1fr 1fr',
+      // gridTemplateRows: '1fr 1fr 1fr 1fr',
+      alignItems : 'flex-start',
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
+      marginTop : '20%',
+      marginLeft : '3.5%',
     };
   } else {
     return {
@@ -538,8 +541,8 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 80%;
-    left : 50%;
-    bottom : 100%;
+    left : 53.5%;
+    bottom : 120%;
   `
   :
   camCount === 10 && index === 9
@@ -584,7 +587,7 @@ const SunsetPage = () => {
   // let adjustedCamCount = 0;
 
   useEffect(() => {
-    if (roomSession == undefined || roomSession.roomId == undefined){
+    if (roomSession == undefined || roomSession.current.roomId == undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
@@ -850,7 +853,7 @@ const SunsetPage = () => {
 </div>
 <ScMini />
 </StyledContent>
-<TempButton url={`/${roomSession.roomId}/night`} onClick={() => navigate(`/${roomSession.roomId}/night`)}/>
+<TempButton url={`/${roomSession.current.roomId}/night`} onClick={() => navigate(`/${roomSession.current.roomId}/night`)}/>
 {chatVisible()}
 </Background>
 );

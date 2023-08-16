@@ -18,10 +18,10 @@ const GoroomButtonImage = styled.img`
   align-items: center;
 `;
 
-const GoroomButton = (props) => {
-  const { createGameRoom, roomSession, setRoomSession, getGameRoom, 
+const GoroomButton = () => {
+  const { createGameRoom, roomSession, getGameRoom, checkGameRoom,
     player, setPlayer, players, setPlayers, initSession, connectSession } = useRoomContext();
-  const {getGameSession} = useGameContext();
+  const {getGameSession, connectGameWS, loadGestureRecognizer } = useGameContext();
   const navigate = useNavigate();
 
   const handleButtonClick = async () => {
@@ -34,59 +34,50 @@ const GoroomButton = (props) => {
     // 문자열 연결을 사용하여 URL을 구성하고 state로 필요한 데이터를 전달합니다.
     const sound = new Audio(buttonclickSound);
     sound.play();
-    let roomId = props.roomId;
     navigate("/loading");
-    
+
+    let gameRoom = await checkGameRoom();
+    console.log(`checkGameRoom return gameRoom`, gameRoom);
     // 게임방이 없을 경우 게임방 생성
-    if (roomSession.roomId === undefined && player.current.isHost) {
-      const response = await createGameRoom(roomId);
-      
-      if (response.status != '200') {
-        alert(`게임방 세션 생성 실패 roomId : ${roomId}`);
+    if (gameRoom == null) {
+      const response = await createGameRoom();
+
+      if (response.status == '400') {
+        alert(`게임방 세션 생성 실패`);
         navigate("/");
         return;
       }
-      
-      setPlayer([{key: 'isHost', value: true}]);
+      gameRoom = await getGameRoom(response.data);
     }
     
-    let gameRoom = await getGameRoom(roomId);
-    console.log(gameRoom);
-    
     // 게임방ID 설정
-    setRoomSession((prev) => {
-      console.log(`setRoomSession`);
-      console.log(gameRoom);
-      return ({
-        ...prev,
-        roomId: gameRoom.roomId,
-        gameId: gameRoom.gameId,
-      });
-    });
+    roomSession.current.roomId = gameRoom.roomId;
+    roomSession.current.gameId = gameRoom.gameId;
     
     // sessionStorage에 roomId 갱신
-    console.log("sessionStorage에 roomId를 갱신합니다.")
-    window.sessionStorage.setItem("roomId", gameRoom.roomId);
+    // console.log("sessionStorage에 roomId를 갱신합니다.", gameRoom.roomId);
+    // window.sessionStorage.setItem("roomId", gameRoom.roomId);
 
     // sessionStorage에 playerId 갱신
-    console.log("sessionStorage에 gameId를 갱신합니다.")
-    window.sessionStorage.setItem("gameId", gameRoom.gameId);
+    // console.log("sessionStorage에 gameId를 갱신합니다.", gameRoom.gameId);
+    // window.sessionStorage.setItem("gameId", gameRoom.gameId);
 
     // let players = new Map();
     gameRoom.players.forEach(element => {
       var p = players.current.get(element.playerId);
+      console.log(p, 'gameRoom.players');
       if (p == null) {
         setPlayers({
           playerId: element.playerId,
           nickName: element.nickname
         });
       }
-      else {
-        setPlayers({
-          playerId: p.playerId,
-          nickName: p.nickname
-        });
-      }
+      // else {
+      //   setPlayers({
+      //     playerId: p.playerId,
+      //     nickName: p.nickname
+      //   });
+      // }
     });
     // setPlayers(players);
     // 게임 세션 갱신
@@ -96,10 +87,20 @@ const GoroomButton = (props) => {
       navigate("/");
       return;
     }
-    console.log(isEnterable)
-    const session = await initSession();
-    await connectSession(session, gameRoom.roomId);
-    navigate(`/${roomId}/lobby`);
+    console.log(isEnterable);
+    console.log(roomSession.current.openviduSession);
+    if (roomSession.current.openviduSession === undefined) {
+      const session = await initSession();
+      let response = await connectSession(session, gameRoom.roomId);
+      if (response != null) {
+        navigate("/");
+        return;
+      }
+    }
+
+    connectGameWS();
+    loadGestureRecognizer();
+    navigate(`/${gameRoom.roomId}/lobby`);
   };
 
   return <GoroomButtonImage src={player.current.isHost ? makeRoomButtonSrc : goroomButtonSrc} alt={player.current.isHost ? "방 만들기" : "입장하기"} onClick={handleButtonClick} />;

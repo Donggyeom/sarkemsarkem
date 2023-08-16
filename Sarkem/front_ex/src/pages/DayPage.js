@@ -49,17 +49,17 @@ const DayPage = () => {
 
   const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
   const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, 
-    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, getAlivePlayers, psychologist, psyTarget, currentSysMessagesArray, unsubscribeRedisTopic } = useGameContext();
+    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, 
+    getAlivePlayers, psychologist, psyTarget, dayCurrentSysMessagesArray, unsubscribeRedisTopic,
+    faceDetectionIntervalId, setFaceDetectionIntervalId } = useGameContext();
   const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
   const [voteCount, setVoteCount] = useState(0);
   const [isLogOn, setIsLogOn] = useState(true);
   const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
   const [running, setRunning] = useState(false);
-  const [intervalId, setIntervalId] = useState(null);
   const audio = new Audio(Sound);
   const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
-    console.log(currentSysMessagesArray);
   useEffect(() => {
     loadModels();
   }, []);
@@ -74,7 +74,7 @@ const DayPage = () => {
   },[psychologist])
   
   useEffect((currentSysMessage) => {
-    if (roomSession == undefined || roomSession.roomId == undefined){
+    if (roomSession == undefined || roomSession.current.roomId == undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
@@ -122,17 +122,17 @@ const DayPage = () => {
     if (players.current.get(psyTarget) === undefined) return;
     console.log(players.current.get(psyTarget).stream);
       const id = faceMyDetect(players.current.get(psyTarget).stream.videos[players.current.get(psyTarget).stream.videos.length-1].video, running, setRunning, setDetectExpressions);
-      setIntervalId(id);
+      setFaceDetectionIntervalId(id);
     }
   //끄는거 
   const stopFaceDetection = () => {
     console.log("꺼짐?");
-    if (intervalId) {
-        clearInterval(intervalId);
-        setIntervalId(null);
+    if (faceDetectionIntervalId) {
+        clearInterval(faceDetectionIntervalId);
+        setFaceDetectionIntervalId(null);
         setRunning(false);
       }
-    stopFace(intervalId, setIntervalId, setRunning);
+    stopFace(faceDetectionIntervalId, setFaceDetectionIntervalId, setRunning);
   };
 
   const threated = () =>{
@@ -208,13 +208,13 @@ const DayPage = () => {
           <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
         )}
         <LogButton alt="Log Button" onClick={handleLogButtonClick} isLogOn={isLogOn} />
-        {currentSysMessagesArray.length>0 && <DayPopup sysMessage={currentSysMessagesArray}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
+        {dayCurrentSysMessagesArray.length>0 && <DayPopup sysMessage={dayCurrentSysMessagesArray}  dayCount={dayCount}/>} {/* sysMessage를 DayPopup 컴포넌트에 prop으로 전달 */}
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <ScMini />
         <SarkMission handNumber={currentHandNumber} />
         {psychologist&&<PsychologistBox detectExpressions={detectExpressions}></PsychologistBox>}
         </StyledDayPage>
-        <TempButton url={`/${roomSession.roomId}/sunset`} onClick={() => navigate(`/${roomSession.roomId}/sunset`)} alt="Start Game" />
+        <TempButton url={`/${roomSession.current.roomId}/sunset`} onClick={() => navigate(`/${roomSession.current.roomId}/sunset`)} alt="Start Game" />
         {chatVisible()}
       </Background>
       );

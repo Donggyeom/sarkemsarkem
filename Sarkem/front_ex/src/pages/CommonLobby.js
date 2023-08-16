@@ -171,18 +171,20 @@ const CommonLobby = ()=>{
     // window.addEventListener("popstate", () => leaveSession());
 
 
-    if (roomSession == undefined || roomSession.roomId == undefined) {
+    if (roomSession == undefined || roomSession.current.roomId == undefined) {
       console.log(`roomSession`);
       console.log(roomSession);
       console.log(`roomSession roomId`);
-      console.log(roomSession.roomId);
+      console.log(roomSession.current.roomId);
       console.log(location.pathname);
       navigate(`/${location.pathname.split("/")[1]}`);
       return;
     }
 
-    connectGameWS();
-    loadGestureRecognizer();
+    if (player.current.stream !== undefined) {
+      player.current.stream.publishAudio(player.current.isMicOn);
+      player.current.stream.publishVideo(player.current.isCamOn);
+    }
 
 
     // 윈도우 객체에 화면 종료 이벤트 추가
@@ -206,7 +208,7 @@ const CommonLobby = ()=>{
   // Function to handle the click event when the user wants to invite others
   const handleInviteClick = async () => {
     try {
-      await navigator.clipboard.writeText("i9a702.p.ssafy.io/"+roomSession.roomId).then(alert("게임 링크가 복사되었습니다."));
+      await navigator.clipboard.writeText("i9a702.p.ssafy.io/"+roomSession.current.roomId).then(alert("게임 링크가 복사되었습니다."));
       console.log('Invite functionality for hosts');
     } catch (error) {
       console.error("Error copying text to clipboard:", error);
@@ -217,12 +219,8 @@ const CommonLobby = ()=>{
   // 게임 옵션을 변경처리 하는 함수
   const handleGameOptionChange = (part, value) => {
     console.log('handleGameOptionChange', part, value);
-    console.log(player.current);
-    console.log(player.current.isHost);
-    if (!player.current.isHost) return;
-    console.log(player.current.isHost);
-    if (stompClient.current.connect === undefined) return;
-    console.log(player.current.isHost);
+    if (player.current !== undefined && !player.current.isHost) return;
+    if (stompClient.current !== undefined && stompClient.current.connect === undefined) return;
     if (value < 0) return;    
     else if (part === 'meetingTime' && (value < 15 || value > 180)) return;
 

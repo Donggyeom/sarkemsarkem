@@ -187,6 +187,7 @@ public class GameManager {
 	 */
 	public GameSession getGameSession(String roomId) {
 		GameRoom room = gameRoomMap.get(roomId);
+		if (room == null) return null;
 		String gameId = room.getGameId();
 		if (gameId == null) return null;
 		return gameSessionMap.get(gameId);

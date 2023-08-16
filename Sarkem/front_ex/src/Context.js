@@ -2,17 +2,19 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { OpenVidu } from 'openvidu-browser';
+import { useLocation } from 'react-use';
 
 const RoomContext = createContext();
 
 const RoomProvider = ({ children }) => {
-  const [roomSession, setRoomSession] = useState({});
+  const roomSession = useRef({});
   const player = useRef({});
   const players = useRef(new Map());
   const [showImage, setShowImage] = useState(false);
 
   const OV = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
 
   ////////////   RoomContext Effect   ////////////
@@ -80,7 +82,7 @@ const RoomProvider = ({ children }) => {
 
   const getGameRoom = async (roomId) => {
     // 게임방 정보 획득
-    console.log(`getGameRoom`);
+    console.log(`getGameRoom`, roomId);
     let response;
     try{
       response = await axios.get('/api/game/' + roomId, {
@@ -116,11 +118,11 @@ const RoomProvider = ({ children }) => {
   const leaveSession = async () => {
       console.log("세션 해제중입니다.....")
       // 세션 연결 종료
-      if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
+      if (roomSession.current.openviduSession) roomSession.current.openviduSession.disconnect();
       // game 퇴장 요청
       let response;
       try{
-        response = axios.delete(`/api/game/${window.sessionStorage.getItem("roomId")}/player/${window.sessionStorage.getItem("playerId")}`,
+        response = axios.delete(`/api/game/${roomSession.current.roomId}/player/${player.current.playerId}`,
           {
             headers: { 'Content-Type': 'application/json;charset=utf-8', },
           }
@@ -129,15 +131,15 @@ const RoomProvider = ({ children }) => {
         console.log("서버와 연결이 원활하지 않습니다.", error);
       }
       // 세션 스토리지에 저장된 데이터 삭제
-      window.sessionStorage.removeItem("roomId");
-      window.sessionStorage.removeItem("gameId");
-      window.sessionStorage.removeItem("playerId");
+      // window.sessionStorage.removeItem("roomId");
+      // window.sessionStorage.removeItem("gameId");
+      // window.sessionStorage.removeItem("playerId");
       // 데이터 초기화
       // setSession(undefined);
       // setPlayers(new Map());
       players.current = new Map();
       player.current = {};
-      // navigate(`/${roomSession.roomId}`)
+      // navigate(`/${roomSession.current.roomId}`)
   }
 
 
@@ -191,12 +193,7 @@ const RoomProvider = ({ children }) => {
     console.log(`initSession - session`);
     console.log(newSession);
     // 설정한 세션 useState 갱신
-    setRoomSession((prev) => {
-      return ({
-        ...prev,
-        openviduSession: newSession,
-      });
-    });
+    roomSession.current.openviduSession = newSession;
 
     return newSession;
   }
@@ -209,12 +206,16 @@ const RoomProvider = ({ children }) => {
       const session = response;
       // 오픈비두 토큰 발급
       const data = await getToken(roomId);
+
+      if (data == null) throw '오픈비두 세션연결 실패';
+
       await session.connect(data.token, {
         nickName: data.nickName, 
         playerId: data.playerId,
         isMicOn: player.current.isMicOn,
         isCamOn: player.current.isCamOn,
         isHost: player.current.isHost,
+        isAlive: true,
       });
 
       // 내 퍼블리셔 객체 생성
@@ -245,15 +246,42 @@ const RoomProvider = ({ children }) => {
     }
     catch (error) {
       console.error(error);
-      alert("세션 연결 오류");
-      navigate("/");
-      return;
+      return error;
     }
   }
 
   
+  // 게임룸 여부 확인
+  const checkGameRoom = async () => {
+
+    // 룸아이디 유무 여부 확인하고 룸아이디 있으면 오류 X, 없으면 오류페이지 O 확인하기
+    let roomId = location.pathname.split("/")[1];
+    if (roomId === ""){
+      alert("roomId 정보가 없습니다.");
+      navigate("/");
+      return;
+    }
+
+    console.log('checkGameRoom');
+    var gameRoom = await getGameRoom(roomId);
+    console.log(gameRoom);
+    if (gameRoom == null) {
+      setPlayer([{key: 'isHost', value: true}]);
+      roomSession.current.roomId = undefined;
+      roomSession.current.gameId = undefined;
+    }
+    else {
+      setPlayer([{key: 'isHost', value: player.current.playerId === gameRoom.hostId}]);
+      roomSession.current.roomId = gameRoom.roomId;
+      roomSession.current.gameId = gameRoom.gameId;
+    }
+
+    return gameRoom;
+  };
+  
   // 서버에 요청하여 화상 채팅 세션 생성하는 함수
-  const createGameRoom = async (roomId) => {
+  const createGameRoom = async () => {
+    let roomId = location.pathname.split("/")[1];
     console.log(`${roomId} 세션을 생성합니다.`);
     let response;
     try{
@@ -263,6 +291,7 @@ const RoomProvider = ({ children }) => {
       }, 
       {
         headers: { 'Content-Type': 'application/json;charset=utf-8', },
+        responseType: 'text'
       });
     } catch(error) {
       console.log("서버와 연결이 원활하지 않습니다.", error);
@@ -272,7 +301,7 @@ const RoomProvider = ({ children }) => {
       return;
     }
     console.log('세션 생성됨');
-    console.log(response);
+    console.log(String(response.data));
     return response; // The sessionId
   }
   
@@ -289,18 +318,17 @@ const RoomProvider = ({ children }) => {
     } catch(error) {
       console.log("서버와 연결이 원활하지 않습니다.", error);
       alert("서버와 연결이 원활하지 않습니다.");
-      leaveSession();
-      navigate("/");
-      return;
+      return null;
     }
     setPlayer([
       {key: 'playerId', value: response.data.playerId}, 
       {key: 'nickName', value: response.data.nickName},  
-      {key: 'isHost', value: response.data.playerId === response.data.hostId}
+      {key: 'isHost', value: response.data.playerId === response.data.hostId},
+      {key: 'isAlive', value: true}
     ]);
     // sessionStorage에 playerId 갱신
     console.log("sessionStorage에 playerId를 갱신합니다.")
-    window.sessionStorage.setItem("playerId", response.data.playerId);
+    // window.sessionStorage.setItem("playerId", response.data.playerId);
     return response.data; // The token
   }
 
@@ -311,8 +339,8 @@ const RoomProvider = ({ children }) => {
   // }
 
   return (
-    <RoomContext.Provider value={{ roomSession, setRoomSession, createGameRoom, getGameRoom,
-      OV, initSession, connectSession, leaveSession, getToken,  
+    <RoomContext.Provider value={{ roomSession, createGameRoom, getGameRoom,
+      OV, initSession, connectSession, leaveSession, getToken,  checkGameRoom,
       player, setPlayer, players, setPlayers }}>
       {children}
     </RoomContext.Provider>
