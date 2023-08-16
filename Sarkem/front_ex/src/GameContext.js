@@ -768,19 +768,23 @@ const GameProvider = ({ children }) => {
           const videoElement = player.current.stream.videos[player.current.stream.videos.length-1].video;
           const nowInMs = Date.now();
           const results = gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
+          let detectedGestureName;
           if (results.gestures.length > 0) {
-            const detectedGestureName = results.gestures[0][0].categoryName;
+            detectedGestureName = results.gestures[0][0].categoryName;
             console.log(detectedGestureName);
-            if(selectMission===detectedGestureName){
-              missionConplete();
-              setHiddenMission(false);
-            }
           }
+          if(selectMission===detectedGestureName){
+            missionConplete();
+            setHiddenMission(false);
+          }else{
+            setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
+          }
+
         }
       } catch (error) {
         console.log("오류발생");
+        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
       }
-      setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
 
   };
 
