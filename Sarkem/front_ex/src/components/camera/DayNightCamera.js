@@ -364,10 +364,12 @@ const DayNightCamera = React.memo(({ players }) => {
     if (clickedCamera === id) {
       setClickedCamera(null);
       selectAction({ playerId: null });
+      console.log(clickedCamera, id, "확인용");
     }
     else {
-      selectAction({ playerId: id });
       setClickedCamera(id);
+      selectAction({ playerId: id });
+      console.log(clickedCamera, id, "확인용2");
     }
   };
 

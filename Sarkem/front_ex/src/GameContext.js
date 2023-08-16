@@ -655,12 +655,18 @@ const GameProvider = ({ children }) => {
 
   const selectAction = ((target) => {
       console.log(target, "2번");
-      if (selectedTarget !== "") {
-          setSelectedTarget("");
-          target.playerId = "";
-      }
-      else {
-          setSelectedTarget(target.playerId)
+      // if (selectedTarget !== "") {
+      //     setSelectedTarget("");
+      //     target.playerId = "";
+      // }
+      // else {
+      //     setSelectedTarget(target.playerId)
+      // }
+      if (selectedTarget !== target.playerId) {
+        setSelectedTarget(target.playerId);
+      } else {
+        setSelectedTarget("");
+        target.playerId = ""; // 클릭한 카메라의 playerId 값을 null로 설정
       }
       console.log("다른 플레이어 선택 " + target.playerId);
       if (stompClient.current.connected && player.current.playerId !== null) {
