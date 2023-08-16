@@ -121,9 +121,11 @@ const calculateGrid = (camCount) => {
     };
   } else if (camCount === 10) {
     return {
-      gridTemplateRows: '1fr 1fr 1fr 1fr',
+      // gridTemplateRows: '1fr 1fr 1fr 1fr',
+      alignItems : 'flex-start',
       gridTemplateColumns: '1fr 1fr',
       width : '100%',
+      marginTop : '20%',
       marginLeft : '3.5%',
     };
   } else {
@@ -539,8 +541,8 @@ const CamCatWrapper = styled.div`
   ? `
     position: relative;
     width : 80%;
-    left : 50%;
-    bottom : 100%;
+    left : 53.5%;
+    bottom : 120%;
   `
   :
   camCount === 10 && index === 9
