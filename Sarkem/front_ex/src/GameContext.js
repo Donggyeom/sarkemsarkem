@@ -654,13 +654,12 @@ const GameProvider = ({ children }) => {
 
 
   const selectAction = ((target) => {
-      console.log(target, "2번");
-      if (selectedTarget !== "") {
-          setSelectedTarget("");
-          target.playerId = "";
-      }
-      else {
-          setSelectedTarget(target.playerId)
+      console.log(selectedTarget, target.playerId , target, "2번");
+      if (selectedTarget !== target.playerId) {
+        setSelectedTarget(target.playerId);
+      } else {
+        setSelectedTarget("");
+        target = "";
       }
       console.log("다른 플레이어 선택 " + target.playerId);
       if (stompClient.current.connected && player.current.playerId !== null) {

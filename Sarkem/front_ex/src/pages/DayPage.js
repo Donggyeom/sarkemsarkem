@@ -217,7 +217,7 @@ const DayPage = () => {
         <SarkMission handNumber={currentHandNumber} />
         {psychologist&&<PsychologistBox detectExpressions={detectExpressions}></PsychologistBox>}
         </StyledDayPage>
-        <TempButton url={`/${roomSession.current.roomId}/sunset`} onClick={() => navigate(`/${roomSession.current.roomId}/sunset`)} alt="Start Game" />
+        {/* <TempButton url={`/${roomSession.current.roomId}/sunset`} onClick={() => navigate(`/${roomSession.current.roomId}/sunset`)} alt="Start Game" /> */}
         {chatVisible()}
       </Background>
       );

@@ -140,7 +140,7 @@ public class GameSession {
 	// 살아있는 플레이어만 반환하는 함수
 	public List<RolePlayer> getAlivePlayers() {
 		List<RolePlayer> alivePlayers = new ArrayList<>();
-		for (RolePlayer p : this.players) {
+		for (RolePlayer p : this.getPlayers()) {
 			if (p.isAlive()) {
 				alivePlayers.add(p);
 			}

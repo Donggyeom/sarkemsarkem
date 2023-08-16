@@ -122,7 +122,7 @@ const RoomProvider = ({ children }) => {
       console.log("세션 해제중입니다.....")
       // 세션 연결 종료
       if (roomSession.current.openviduSession) {
-        roomSession.current.openviduSession.disconnect();
+        await roomSession.current.openviduSession.disconnect();
         roomSession.current.openviduSession = undefined;
       }
       // game 퇴장 요청
@@ -192,7 +192,8 @@ const RoomProvider = ({ children }) => {
 
     newSession.on('sessionDisconnected', (event) => {
       console.log("openvidu 세션 연결이 끊겼습니다.");
-      // leaveSession();
+      leaveSession();
+      navigate("/");
     })
 
     // stream 예외 이벤트 발생 시 에러 출력

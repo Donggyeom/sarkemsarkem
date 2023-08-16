@@ -156,7 +156,7 @@ const NightPage = () => {
         <ScMini />
         {chatVisible()}
       </StyledNightPage>
-      <TempButton url={`/${roomSession.current.roomId}/result`} onClick={() => navigate(`/${roomSession.current.roomId}/result`)} alt="End Game" />
+      {/* <TempButton url={`/${roomSession.current.roomId}/result`} onClick={() => navigate(`/${roomSession.current.roomId}/result`)} alt="End Game" /> */}
     </Background>
   );
 };
