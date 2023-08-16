@@ -360,7 +360,7 @@ const RoomProvider = ({ children }) => {
   return (
     <RoomContext.Provider value={{ roomSession, createGameRoom, getGameRoom,
       OV, initSession, connectSession, leaveSession, getToken,  checkGameRoom,
-      player, setPlayer, players, setPlayers }}>
+      player, setPlayer, players, setPlayers, forceUpdate }}>
       {children}
     </RoomContext.Provider>
   );
