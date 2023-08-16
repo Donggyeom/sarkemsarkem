@@ -74,7 +74,7 @@ const DayPage = () => {
   },[psychologist])
   
   useEffect((currentSysMessage) => {
-    if (roomSession == undefined || roomSession.roomId == undefined){
+    if (roomSession == undefined || roomSession.current.roomId == undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
@@ -214,7 +214,7 @@ const DayPage = () => {
         <SarkMission handNumber={currentHandNumber} />
         {psychologist&&<PsychologistBox detectExpressions={detectExpressions}></PsychologistBox>}
         </StyledDayPage>
-        <TempButton url={`/${roomSession.roomId}/sunset`} onClick={() => navigate(`/${roomSession.roomId}/sunset`)} alt="Start Game" />
+        <TempButton url={`/${roomSession.current.roomId}/sunset`} onClick={() => navigate(`/${roomSession.current.roomId}/sunset`)} alt="Start Game" />
         {chatVisible()}
       </Background>
       );

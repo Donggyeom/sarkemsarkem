@@ -51,8 +51,8 @@ const NightPage = () => {
   
 
   useEffect(() => {
-        console.log(roomSession.roomId);
-        if (roomSession == undefined || roomSession.roomId == undefined){
+        console.log(roomSession.current.roomId);
+        if (roomSession == undefined || roomSession.current.roomId == undefined){
           console.log("세션 정보가 없습니다.")
           navigate("/");
           return;
@@ -159,7 +159,7 @@ const NightPage = () => {
         <ScMini />
         {chatVisible()}
       </StyledNightPage>
-      <TempButton url={`/${roomSession.roomId}/result`} onClick={() => navigate(`/${roomSession.roomId}/result`)} alt="End Game" />
+      <TempButton url={`/${roomSession.current.roomId}/result`} onClick={() => navigate(`/${roomSession.current.roomId}/result`)} alt="End Game" />
     </Background>
   );
 };

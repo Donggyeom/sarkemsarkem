@@ -128,7 +128,7 @@ const roleInfoMapping = {
 
 const ResultPage = () => {
   const {
-    roomSession, setRoomSession, setPlayer, setPlayers, players
+    roomSession, setPlayer, setPlayers, players
   } = useRoomContext();
   const { roleAssignedArray, winner, unsubscribeRedisTopic, initGameSession, stompClient } = useGameContext();
   const navigate = useNavigate();
@@ -150,33 +150,28 @@ const ResultPage = () => {
 
   const handleAgainButtonClick = () => {
     console.log("다시하기 버튼 클릭");
-    // if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
+    // if (roomSession.current.openviduSession) roomSession.current.openviduSession.disconnect();
 
     // console.log("세션 해제중입니다.....")
     // // 세션 연결 종료
-    // if (roomSession.openviduSession) roomSession.openviduSession.disconnect();
+    // if (roomSession.current.openviduSession) roomSession.current.openviduSession.disconnect();
     
     // 데이터 초기화
     // setPlayer.current = {};
     // setPlayers(new Map());
     // players.current = new Map();
-    setRoomSession((prev) => {
-      return ({
-        ...prev,
-        gameId: undefined,
-      });
-    });
-    console.log("새로운 방 만들기", roomSession.roomId);
+    roomSession.current.gameId = undefined;
+    console.log("새로운 방 만들기", roomSession.current.roomId);
     // unsubscribeRedisTopic();
-    navigate(`/${roomSession.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
+    navigate(`/${roomSession.current.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
 
   const handleExitButtonClick = () => {
     window.location.href = '/';
     // console.log("세션 해제중입니다.....")
     // // 세션 연결 종료
-    // if (roomSession.openviduSession) {
-    //   roomSession.openviduSession.disconnect();
+    // if (roomSession.current.openviduSession) {
+    //   roomSession.current.openviduSession.disconnect();
     // }
     // if (stompClient.current !== undefined) stompClient.current = undefined;
     // // 데이터 초기화
@@ -184,14 +179,6 @@ const ResultPage = () => {
     // setPlayer.current = {};
     // // setPlayers(new Map());
     // players.current = new Map();
-    // setRoomSession((prev) => {
-    //   return ({
-    //     ...prev,
-    //     roomId: undefined,
-    //     gameId: undefined,
-    //     openviduSession: undefined
-    //   });
-    // });
     // console.log("홈으로 나가기");
     // unsubscribeRedisTopic();
     // navigate('/');
