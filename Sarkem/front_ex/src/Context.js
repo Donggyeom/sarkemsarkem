@@ -206,8 +206,7 @@ const RoomProvider = ({ children }) => {
   const sessionDisconnectedHandler = () => {
     console.log("openvidu 세션 연결이 끊겼습니다.");
     roomSession.current.openviduSession.off('sessionDisconnected', sessionDisconnectedHandler); // 등록 해제
-    leaveSession();
-    navigate("/");
+    window.location.href = "/";
   }
 
 

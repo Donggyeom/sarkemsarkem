@@ -468,7 +468,7 @@ const GameProvider = ({ children }) => {
 
     case "TARGET_SELECTION":
         setVotesituation({});
-        // alert('투표가 시작됐습니다');
+        
         setStartVote(true);
         if (sysMessage.param && sysMessage.param.day !== undefined && sysMessage.param.day !== null) {
             setDayCount(sysMessage.param.day);
@@ -658,8 +658,8 @@ const GameProvider = ({ children }) => {
       if (selectedTarget !== target.playerId) {
         setSelectedTarget(target.playerId);
       } else {
-        setSelectedTarget("");
-        target = "";
+        setSelectedTarget(null);
+        target = null;
       }
       console.log("다른 플레이어 선택 " + target.playerId);
       if (stompClient.current.connected && player.current.playerId !== null) {

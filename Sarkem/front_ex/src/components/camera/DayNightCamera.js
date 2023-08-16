@@ -508,9 +508,14 @@ const DayNightCamera = React.memo(({ players }) => {
           onClick={() => handleCamClick(otherPlayer.playerId)}
         >
           <CamCat id={otherPlayer.playerId} isMuted={isMuted}/>
-          <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
+          {!((player.current.role === "SARK" && phase === "night") || (player.current.role === "OBSERVER" && phase === "night")) && (
+            <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
+              <VotefootImage src={voteImage} alt="Vote" />
+            </VotefootWrapper>
+          )}
+          {/* <VotefootWrapper show={clickedCamera === otherPlayer.playerId && startVote}>
             <VotefootImage src={voteImage} alt="Vote" />
-          </VotefootWrapper>
+          </VotefootWrapper> */}
         </CamCatWrapper>
       ))}
       
