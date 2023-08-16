@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { OpenVidu } from 'openvidu-browser';
@@ -15,6 +15,9 @@ const RoomProvider = ({ children }) => {
   const OV = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [, updateState] = useState();
+  const forceUpdate = useCallback(() => updateState({}), []);
 
 
   ////////////   RoomContext Effect   ////////////
@@ -169,6 +172,7 @@ const RoomProvider = ({ children }) => {
       // });
       // players.current.set(newPlayer.playerId, newPlayer);
       setPlayers(newPlayer);
+      forceUpdate();
       console.log(newPlayer.nickName, "님이 접속했습니다.");
     });
 
