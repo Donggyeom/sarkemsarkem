@@ -143,7 +143,7 @@ const GameProvider = ({ children }) => {
     setChatMessages([]);
     setChatConnected(false);
     setMessage("");
-    setWinner(null);
+    // setWinner(null);
     jungleRefs.current = [];
     mixedMediaStreamRef.current = null;
     // const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
@@ -457,7 +457,7 @@ const GameProvider = ({ children }) => {
     case "GAME_END":
         navigate(`/${roomSession.current.roomId}/result`);
         const nowWinner = sysMessage.param.winner;
-        console.log(nowWinner);
+        console.log(nowWinner, "위너");
         setWinner(nowWinner);
         setphase("");
         break;
