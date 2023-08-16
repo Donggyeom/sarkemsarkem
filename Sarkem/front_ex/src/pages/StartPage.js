@@ -73,24 +73,18 @@ const StartPage = () => {
     setLogoVisible(true);
     var playPromise = audio.play();
     audio.volume = 0.5;
+
     if (playPromise !== undefined) {
-      playPromise.then(_ => {
-        // Automatic playback started!
-        // Show playing UI.
-      })
-      .catch(error => {
-        // Auto-play was prevented
-        // Show paused UI.
-      });
+      playPromise.then(_ => {}).catch(error => {});
     }
-    // window.addEventListener("click", playBGM);
-  
-    // return () => {
-    //   window.removeEventListener("click", playBGM);
-    //   audio.pause();
-    //   audio.currentTime = 0;
-    // };
+
+    return () => {
+      // Clean up the audio when the component unmounts
+      audio.pause();
+      audio.currentTime = 0;
+    };
   }, []);
+
 
   // const playBGM = () => {
   

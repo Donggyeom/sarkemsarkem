@@ -654,19 +654,12 @@ const GameProvider = ({ children }) => {
 
 
   const selectAction = ((target) => {
-      console.log(target, "2번");
-      // if (selectedTarget !== "") {
-      //     setSelectedTarget("");
-      //     target.playerId = "";
-      // }
-      // else {
-      //     setSelectedTarget(target.playerId)
-      // }
+      console.log(selectedTarget, target.playerId , target, "2번");
       if (selectedTarget !== target.playerId) {
         setSelectedTarget(target.playerId);
       } else {
         setSelectedTarget("");
-        target.playerId = ""; // 클릭한 카메라의 playerId 값을 null로 설정
+        target = "";
       }
       console.log("다른 플레이어 선택 " + target.playerId);
       if (stompClient.current.connected && player.current.playerId !== null) {
@@ -774,19 +767,23 @@ const GameProvider = ({ children }) => {
           const videoElement = player.current.stream.videos[player.current.stream.videos.length-1].video;
           const nowInMs = Date.now();
           const results = gestureRecognizer.recognizeForVideo(videoElement, nowInMs);
+          let detectedGestureName;
           if (results.gestures.length > 0) {
-            const detectedGestureName = results.gestures[0][0].categoryName;
+            detectedGestureName = results.gestures[0][0].categoryName;
             console.log(detectedGestureName);
-            if(selectMission===detectedGestureName){
-              missionConplete();
-              setHiddenMission(false);
-            }
           }
+          if(selectMission===detectedGestureName){
+            missionConplete();
+            setHiddenMission(false);
+          }else{
+            setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
+          }
+
         }
       } catch (error) {
         console.log("오류발생");
+        setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
       }
-      setAnimationFrameId(setTimeout(() => requestAnimationFrame(predictWebcam), 500));
 
   };
 
