@@ -97,8 +97,8 @@ const RightPart = styled.div`
     background-color: transparent;
     outline: none;
     text-align: center; 
-    font-family: "RixInooAriDuriR";
-    font-weight: 10% !important;
+    font-family: "MBC1961GulimM";
+    // font-weight: 10;
   }
   span {
     margin: 0 50px; /* You can adjust the margin as needed */
