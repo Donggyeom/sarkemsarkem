@@ -172,28 +172,29 @@ const ResultPage = () => {
   };
 
   const handleExitButtonClick = () => {
-    console.log("세션 해제중입니다.....")
-    // 세션 연결 종료
-    if (roomSession.openviduSession) {
-      roomSession.openviduSession.disconnect();
-    }
-    if (stompClient.current !== undefined) stompClient.current = undefined;
-    // 데이터 초기화
-    // setSession(undefined);
-    setPlayer.current = {};
-    // setPlayers(new Map());
-    players.current = new Map();
-    setRoomSession((prev) => {
-      return ({
-        ...prev,
-        roomId: undefined,
-        gameId: undefined,
-        openviduSession: undefined
-      });
-    });
-    console.log("홈으로 나가기");
-    unsubscribeRedisTopic();
-    navigate('/');
+    window.location.href = '/';
+    // console.log("세션 해제중입니다.....")
+    // // 세션 연결 종료
+    // if (roomSession.openviduSession) {
+    //   roomSession.openviduSession.disconnect();
+    // }
+    // if (stompClient.current !== undefined) stompClient.current = undefined;
+    // // 데이터 초기화
+    // // setSession(undefined);
+    // setPlayer.current = {};
+    // // setPlayers(new Map());
+    // players.current = new Map();
+    // setRoomSession((prev) => {
+    //   return ({
+    //     ...prev,
+    //     roomId: undefined,
+    //     gameId: undefined,
+    //     openviduSession: undefined
+    //   });
+    // });
+    // console.log("홈으로 나가기");
+    // unsubscribeRedisTopic();
+    // navigate('/');
   };
 
 
