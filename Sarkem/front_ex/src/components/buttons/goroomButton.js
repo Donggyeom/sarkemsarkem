@@ -57,12 +57,6 @@ const GoroomButton = () => {
     gameRoom.players.forEach(element => {
       var p = players.current.get(element.playerId);
       console.log(p, 'gameRoom.players');
-      if (p == null) {
-        setPlayers({
-          playerId: element.playerId,
-          nickName: element.nickname
-        });
-      }
     });
 
     const isEnterable = await getGameSession(gameRoom.roomId);

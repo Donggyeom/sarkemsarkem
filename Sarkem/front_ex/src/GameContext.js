@@ -502,7 +502,7 @@ const GameProvider = ({ children }) => {
 
         let time = sysMessage.param.time;
         for (let i = 0; i < 5; i++) {
-          timerWorker.current.push(setTimeout(() => setRemainTime(time - i), i*1000));
+          if (time - i > 0)  timerWorker.current.push(setTimeout(() => setRemainTime(time - i), i*1000));
         }
         break;
 

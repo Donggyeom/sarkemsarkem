@@ -11,6 +11,7 @@ import java.util.Map;
 import com.a702.sarkem.model.game.dto.GameOptionDTO;
 import com.a702.sarkem.model.player.GameRole;
 import com.a702.sarkem.model.player.RolePlayer;
+import com.a702.sarkem.service.GameManager;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 public class GameSession {
+	
+	private static GameManager gameManager;
 
 	public enum PhaseType {
 		READY, DAY, TWILIGHT, NIGHT
@@ -123,14 +126,14 @@ public class GameSession {
 		}
 		return null;
 	}
+	
 	public List<RolePlayer> getPlayers() {
 		LocalDateTime tenSecondsBefore = LocalDateTime.now().minusSeconds(10);
 		for (Iterator<RolePlayer> itr = players.iterator(); itr.hasNext();) {
 			RolePlayer p = itr.next();
 			if (p.getLastUpdateTime().isBefore(tenSecondsBefore)) {
-				log.debug("tenSecondsBefore" + tenSecondsBefore.toString());
-				log.debug("p.getLastUpdateTime()" + p.getLastUpdateTime().toString());
 				log.debug(p.toString() + " is Removed");
+				gameManager.sendLeaveGameMessage(roomId, p.getPlayerId());
 				itr.remove();
 			}
 		}

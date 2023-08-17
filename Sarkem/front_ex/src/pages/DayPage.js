@@ -192,7 +192,7 @@ const DayPage = () => {
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <ScMini />
         <SarkMission handNumber={currentHandNumber} />
-        {psychologist&&<PsychologistBox detectExpressions={detectExpressions}></PsychologistBox>}
+        {psychologist&&<PsychologistBox detectExpressions={detectExpressions} nickname={players.current.get(psyTarget).nickName}></PsychologistBox>}
         </StyledDayPage>
         {/* <TempButton url={`/${roomSession.current.roomId}/sunset`} onClick={() => navigate(`/${roomSession.current.roomId}/sunset`)} alt="Start Game" /> */}
         {chatVisible()}
