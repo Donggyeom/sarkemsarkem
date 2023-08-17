@@ -122,9 +122,9 @@ const DayPage = () => {
     //faceapi 실행
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
-    if (players.current.get(psyTarget) === undefined) return;
-    console.log(players.current.get(psyTarget).stream);
-      const id = faceMyDetect(players.current.get(psyTarget), running, setRunning, setDetectExpressions);
+    let targetPlayer = players.current.get(psyTarget);
+    if (targetPlayer === undefined|| !targetPlayer.isAlive) return;
+      const id = faceMyDetect(targetPlayer, running, setRunning, setDetectExpressions);
       setFaceDetectionIntervalId(id);
     }
   //끄는거 
