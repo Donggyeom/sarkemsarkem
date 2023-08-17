@@ -1,6 +1,0 @@
-#video-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(30%, auto));
-    row-gap: 10px;
-    column-gap: 20px;
-  }
