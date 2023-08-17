@@ -33,8 +33,8 @@ import LobbyCamera from '../components/camera/LobbyCamera';
 import ScPopup from '../components/games/ScPopup';
 import LoadingPage from './LoadingPage';
 import ingameClickSound from '../sound/ingameclick.mp3';
-import DayPopup from "../components/games/DayPopup";
 import NightPopup from "../components/games/NightPopup";
+import { clientUrl } from '../apiConfig';
 
 const StyledContent = styled.div`
   display: flex;
@@ -200,7 +200,7 @@ const CommonLobby = ()=>{
   // Function to handle the click event when the user wants to invite others
   const handleInviteClick = async () => {
     try {
-      await navigator.clipboard.writeText("i9a702.p.ssafy.io/"+roomSession.current.roomId).then(alert("게임 링크가 복사되었습니다."));
+      await navigator.clipboard.writeText(`${clientUrl}/${roomSession.current.roomId}`).then(alert("게임 링크가 복사되었습니다."));
       console.log('Invite functionality for hosts');
     } catch (error) {
       console.error("Error copying text to clipboard:", error);
