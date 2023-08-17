@@ -36,6 +36,7 @@ const GameProvider = ({ children }) => {
   const [targetId, setTargetId] = useState("");
   // 남은 시간
   const [remainTime, setRemainTime] = useState(0);
+  const timerWorker = useRef();
   
   const [psyTarget, setPsyTarget] = useState("");
   const [psychologist, setPsychologist] = useState(false);//심리학자 실행
@@ -80,6 +81,7 @@ const GameProvider = ({ children }) => {
   useEffect(() => {
     console.log('GameProvider 생성');
     jungleRefs.current = [];
+    timerWorker.current = [];
   }, []);
 
   useEffect(() => {
@@ -493,9 +495,14 @@ const GameProvider = ({ children }) => {
       break;
 
     case "REMAIN_TIME":
+        for (let timeout of timerWorker.current) {
+          clearTimeout(timeout);
+        }
+        timerWorker.current = [];
+
         let time = sysMessage.param.time;
         for (let i = 0; i < 5; i++) {
-          setTimeout(() => setRemainTime(time - i), i*1000);
+          if (time - i > 0)  timerWorker.current.push(setTimeout(() => setRemainTime(time - i), i*1000));
         }
         break;
 
@@ -735,7 +742,7 @@ const uniquePlayers = () => {
       voteSituation, currentSysMessage, currentSysMessagesArray, setCurrentSysMessagesArray,phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
       psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers, pingSession,
-      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray, sendPing, onbeforeunload }}
+      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray, sendPing, onbeforeunload, setPsychologist }}
     >
       {children}
     </GameContext.Provider>
