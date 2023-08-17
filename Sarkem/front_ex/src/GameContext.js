@@ -6,6 +6,7 @@ import { useRoomContext } from './Context';
 import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 import ChatButtonAndPopup from './components/buttons/ChatButtonAndPopup';
 import axios from "axios";
+import { serverUrl } from './apiConfig';
 
 const GameContext = createContext();
 
@@ -64,7 +65,7 @@ const GameProvider = ({ children }) => {
   let stompClient = useRef({});
   const pingSession = useRef();
 
-  
+
   const Roles = new Map(Object.entries({
     CITIZEN: "CITIZEN",
     SARK: "SARK",
@@ -160,7 +161,11 @@ const GameProvider = ({ children }) => {
 
     if (stompClient.current !== undefined && stompClient.current.connected) return;
     console.log("connectGameWS");
+<<<<<<< HEAD
     let socket = new SockJS("https://i9a702.p.ssafy.io/ws-stomp");
+=======
+    let socket = new SockJS(`${serverUrl}/ws-stomp`);
+>>>>>>> FE_Redis
     stompClient.current = Stomp.over(socket);
     await stompClient.current.connect({}, () => {
       setTimeout(function() {

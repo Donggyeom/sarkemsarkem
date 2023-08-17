@@ -135,11 +135,6 @@ const RoomProvider = ({ children }) => {
     newSession.on('streamDestroyed', (event) => {
       const targetId = JSON.parse(event.stream.streamManager.stream.connection.data).playerId;
       const targetNickname = JSON.parse(event.stream.streamManager.stream.connection.data).nickName;
-      // setPlayers((prev) => {
-      //   const players = new Map(prev);
-      //   players.delete(targetId);
-      //   return players;
-      // });
       players.current.delete(targetId);
       console.log(targetNickname, "님이 접속을 종료했습니다.");
       forceUpdate();
