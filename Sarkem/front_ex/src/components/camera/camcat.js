@@ -1,26 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import camcatImage from '../../img/camcat2.png';
 import OpenViduVideoComponent from './OvVideo';
-import { loadModels, faceMyDetect, stopFace } from '../job/Psychologist';
 import styled from 'styled-components';
 import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
 import voteImage from '../../img/votefoot.png';
 
-const Box = styled.div
-  `
-  position: absolute;
-  border: 2px solid red;
-`;
-
-const VotefootWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: ${({ show }) => (show ? 'block' : 'none')};
-`;
 
 const VotefootImage = styled.img`
   position: absolute;
@@ -34,28 +19,7 @@ const CamCat = ({id, isMuted}) => {
   const { voteSituation, phase } = useGameContext();
   const current = players.current.get(id);
   const stream = current.stream;
-
-
-  // const getVoteResultForUser = (id) => {
-  //   if (phase === 'day') {
-  //     if (voteSituation && voteSituation[id] !== undefined) {
-  //       return `X  ${voteSituation[id]}`;
-  //     }
-  //     return `X 0`;
-
-  //   }
-  //     else if (phase === 'night') {
-  //       if (player.current.role === "SARK" || player.current.role === "OBSERVER") {
-  //         if (voteSituation[id]) {
-  //           return `삵이 죽일 사람`;
-  //         }
-  //         return '';
-  //       }
-  //       return ''; // sark나 observer가 아닌 경우
-  //     }
-    
-  //     return ''; // day나 night가 아닌 경우
-  //   };
+ 
   const getVoteResultForUser = (id) => {
     if (phase === 'day') {
       if (voteSituation && voteSituation[id] !== undefined) {

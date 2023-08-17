@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import psychologistBox from '../../img/psychologistbox.png'
-import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
 
 const Psychologistboxdiv = styled.div`
@@ -61,7 +60,7 @@ const PsychologistBox = ({detectExpressions}) => {
         <div>슬픔 : {sad}</div>
         <div>보통 : {neutral}</div>
         <div>화남 : {angry}</div>
-        <div>놀람: {surprised}</div>
+        <div>놀람 : {surprised}</div>
         <div>공포 : {fearful}</div>
         <div>역겹 : {disgusted}</div>
       </Psychologistboxdiv>

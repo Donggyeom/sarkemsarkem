@@ -85,25 +85,6 @@ const StartPage = () => {
     };
   }, []);
 
-
-  // const playBGM = () => {
-  
-  //   // Play the audio when the component mounts
-  //   // console.log('틀기전');
-  //   audio.play();
-  //   audio.playbackRate = 0.9;
-  //   audio.volume = 0.5;
-  //   // console.log('튼후');
-  
-  //   // Update state to track audio playback
-  //   window.removeEventListener("click", playBGM);
-  //   return () => {
-  //     console.log('멈춰');
-  //     audio.pause();
-  //     audio.currentTime = 0;
-  //   };
-  // }
-
   const goToCreateRoom = () => {
     setPlayer([{key: 'isHost', value: true}]);
     navigate(`/${createRandomId()}`);

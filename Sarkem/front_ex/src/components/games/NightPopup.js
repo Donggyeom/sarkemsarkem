@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import closeBtn from '../../img/btn_close.png';
 
-// const fadeInOut = keyframes`
-//   0% {
-//     opacity: 1;
-//   }
-//   100% {
-//     opacity: 0;
-//     display: none; /* 팝업이 완전히 사라지도록 display 속성을 none으로 설정 */
-//   }
-// `;
 
 const StyledPopupContainer = styled.div`
   position: fixed;
@@ -32,7 +23,6 @@ const StyledPopupContainer = styled.div`
   z-index: 9999;
   opacity: ${({ showPopup }) => (showPopup ? 1 : 0)};
   `;
-  // animation: ${fadeInOut} 4s ease-in-out forwards;
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
@@ -67,7 +57,6 @@ const NightPopup = ({sysMessage, dayCount}) => {
 
   useEffect(() => {
     if (sysMessage) {
-      console.log(sysMessage);
       setShowPopup(true);
   }
   }, [sysMessage]);
@@ -99,7 +88,6 @@ const NightPopup = ({sysMessage, dayCount}) => {
     <>
       {showPopup && (
         <StyledPopupContainer showPopup={showPopup}>
-        {/* Your popup content */}
         <div
           style={{
             flexShrink: '0',
@@ -107,7 +95,6 @@ const NightPopup = ({sysMessage, dayCount}) => {
             height: '0.01px',
             position: 'relative',
             transformOrigin: '0 0',
-            // transform: 'rotate(0deg) scale(1, -1)',
           }}
         >
           <div

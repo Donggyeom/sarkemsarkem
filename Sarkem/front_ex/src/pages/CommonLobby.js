@@ -1,7 +1,7 @@
 import Background from '../components/backgrounds/BackgroundSunset';
 import '../index.css';
 import styled from 'styled-components';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 // img
 import boxImage from '../img/box.png';
 import sc_police from '../img/sc_경찰.png';
@@ -151,11 +151,10 @@ const ButtonContainer2 = styled.div`
 
 
 const CommonLobby = ()=>{
-  const { roomSession, player, players, leaveSession } = useRoomContext();
+  const { roomSession, player, players } = useRoomContext();
   const { gameSession, setGameSession, handleGamePageClick, startTimer, sendPing,
     stompClient, currentSysMessage, onbeforeunload } = useGameContext();
   
-  // const [ isLoaded, setIsLoaded ] = useState(false);
   const clickAudio = new Audio(ingameClickSound);
   const navigate = useNavigate();
   const location = useLocation();
@@ -165,12 +164,10 @@ const CommonLobby = ()=>{
 
 
   useEffect(() => {
-    
-    
     sendPing();
     startTimer();
     
-    if (roomSession == undefined || roomSession.current.roomId == undefined) {
+    if (roomSession === undefined || roomSession.current.roomId === undefined) {
       console.log(`roomSession`);
       console.log(roomSession);
       console.log(`roomSession roomId`);
@@ -215,7 +212,6 @@ const CommonLobby = ()=>{
 
   // 게임 옵션을 변경처리 하는 함수
   const handleGameOptionChange = (part, value) => {
-    console.log('handleGameOptionChange', part, value);
     if (player.current !== undefined && !player.current.isHost) return;
     if (stompClient.current !== undefined && stompClient.current.connect === undefined) return;
     if (value < 0) return;    

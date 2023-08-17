@@ -19,8 +19,6 @@ import DayNightCamera from '../components/camera/DayNightCamera';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import Sound from '../sound/nightstart.mp3';
-import TempButton from '../components/buttons/TempButton';
-
 
 const StyledNightPage = styled.div`
   display: flex;
@@ -44,7 +42,7 @@ const TimeSecond = styled.text`
 
 
 const NightPage = () => {
-  const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
+  const { roomSession, player, setPlayer, players } = useRoomContext(); 
   const { currentSysMessage, dayCount, chatVisible, remainTime, getAlivePlayers, onbeforeunload } = useGameContext();
   const navigate = useNavigate();
   const audio = new Audio(Sound);
@@ -76,11 +74,9 @@ const NightPage = () => {
   const playBGM = () => {
   
     // Play the audio when the component mounts
-    // console.log('틀기전');
     audio.play();
     audio.playbackRate = 0.9;
     audio.volume = 0.7;
-    // console.log('튼후');
   
     // Update state to track audio playback
     window.removeEventListener("mousemove", playBGM);
@@ -94,11 +90,6 @@ const NightPage = () => {
 
   const handleCamButtonClick = () => {
     const camOn = !player.current.isCamOn;
-    // setPlayer((prevState) => {
-    //   return {...prevState,
-    //     isCamOn: camOn,
-    //   };
-    // });
     setPlayer([{key: 'isCamOn', value: camOn}]);
     if (player.current.stream) {
       player.current.stream.publishVideo(camOn);
@@ -107,11 +98,6 @@ const NightPage = () => {
   
   const handleMicButtonClick = () => {
     const micOn = !player.current.isMicOn;
-    // setPlayer((prevState) => {
-    //   return {...prevState,
-    //     isMicOn: micOn,
-    //   };
-    // });
     setPlayer([{key: 'isMicOn', value: micOn}]);
     if (player.current.stream) {
       player.current.stream.publishAudio(micOn);
@@ -120,8 +106,6 @@ const NightPage = () => {
 
   const turnOffCams = () =>{
     if (player.current.role === 'SARK' || player.current.role === 'OBSERVER') return;
-
-    console.log("꺼졌니?")
     player.current.stream.publishVideo(false);
     player.current.stream.publishAudio(false);
   };
@@ -149,14 +133,11 @@ const NightPage = () => {
         ) : (
           <NoMicButton alt="Mic Button" />
         )}
-        {/* {<MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>} */}
         <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
-          {/* <NightPopup></NightPopup> */}
           {currentSysMessage && <NightPopup sysMessage={currentSysMessage} dayCount={dayCount}/>}
         <ScMini />
         {chatVisible()}
       </StyledNightPage>
-      {/* <TempButton url={`/${roomSession.current.roomId}/result`} onClick={() => navigate(`/${roomSession.current.roomId}/result`)} alt="End Game" /> */}
     </Background>
   );
 };

@@ -91,9 +91,7 @@ const PopupImage = styled.img`
 const ScMini = () => {
   const alt = "ScMini";
   const { player } = useRoomContext();
-  const { dayCount, phase } = useGameContext();
   const {scMiniPopUp, setScMiniPopUp } = useGameContext();
-  // const [isPopupOpen, setIsPopupOpen] = useState(dayCount === 1 && phase === "day");
   const [isPopupOpen, setIsPopupOpen] = useState(scMiniPopUp);
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state
 
@@ -114,17 +112,8 @@ const ScMini = () => {
     setScMiniPopUp(false);
   };
 
-  // useEffect(() => {
-  //   if (dayCount === 0) {
-  //     setIsPopupOpen(true);
-  //   }
-  // }, [dayCount]);
-
   useEffect(() => {
-    console.log(scMiniPopUp);
-    console.log("너가 실행되는거니?");
     if (scMiniPopUp) {
-      console.log("내가 왜나옴?");
       setIsPopupOpen(true);
     }
   }, [scMiniPopUp]);
