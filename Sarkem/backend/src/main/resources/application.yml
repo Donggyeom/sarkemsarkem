@@ -3,6 +3,8 @@ server.ssl.enabled: false
 
 # openvidu setting
 OPENVIDU_URL: "https://localhost:8443/"
+# OPENVIDU_SECRET: ${openvidu .env에서 설정한 secret"}
+
 
 
 # sarkem
@@ -10,8 +12,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/sarkem?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: sarkem
-    password: sarkem
+    username: # ${username}
+    password: # ${username}
   data:
     redis:
       host: localhost
