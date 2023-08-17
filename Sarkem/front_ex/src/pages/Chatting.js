@@ -105,6 +105,11 @@ const ChatInput = styled.input`
   height : 100%;
   border: none;
   position : relative;
+  &:focus {
+    /* Style when the input is focused (clicked or tabbed into) */
+    border: none; /* Remove the border on focus */
+    outline: none; /* Remove the outline on focus */
+  }
 `;
 
 const ChatButton = styled.button`

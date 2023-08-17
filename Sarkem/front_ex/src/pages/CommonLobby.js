@@ -152,7 +152,7 @@ const ButtonContainer2 = styled.div`
 
 const CommonLobby = ()=>{
   const { roomSession, player, players } = useRoomContext();
-  const { gameSession, setGameSession, handleGamePageClick, startTimer, sendPing,
+  const { gameSession, setGameSession, handleGamePageClick, sendPing,
     stompClient, currentSysMessage, onbeforeunload } = useGameContext();
   
   const clickAudio = new Audio(ingameClickSound);
@@ -164,8 +164,6 @@ const CommonLobby = ()=>{
 
 
   useEffect(() => {
-    sendPing();
-    startTimer();
     
     if (roomSession === undefined || roomSession.current.roomId === undefined) {
       console.log(`roomSession`);

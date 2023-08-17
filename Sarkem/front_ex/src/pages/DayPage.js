@@ -178,7 +178,7 @@ const DayPage = () => {
       <StyledDayPage>
         {!isLogOn && <Log />}
         <SunMoon alt="SunMoon" />
-        <TimeSecond>{remainTime.current}s</TimeSecond>
+        <TimeSecond>{remainTime}s</TimeSecond>
         <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
         {threatedTarget ? (
           <NoMicButton alt="Mic Button" />

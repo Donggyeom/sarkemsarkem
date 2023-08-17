@@ -49,7 +49,7 @@ const CamCatGrid = styled.div`
 const AbsoluteContainer = styled.div`
   position: absolute;
   top: 110%;
-  left: 50%;
+  left: 55%;
   margin: -10% 0 0 -12%;
   transform: translateY(-50%);
   z-index: 100;
@@ -725,7 +725,7 @@ const SunsetPage = () => {
       <StyledContent>
       {!isLogOn && <Log />}
       <SunMoon alt="SunMoon"></SunMoon>
-      <TimeSecond>{remainTime.current}s</TimeSecond>
+      <TimeSecond>{remainTime}s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>

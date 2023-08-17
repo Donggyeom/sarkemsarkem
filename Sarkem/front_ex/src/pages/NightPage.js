@@ -57,7 +57,6 @@ const NightPage = () => {
     }
 
     window.addEventListener("mousemove", playBGM);
-    remainTime.current = 30;
     turnOffCams();
     
 
@@ -122,7 +121,7 @@ const NightPage = () => {
         {!isLogOn && <Log />}
         {players.current && <DayNightCamera players={getAlivePlayers()} />}
         <SunMoon alt="SunMoon"></SunMoon>
-        <TimeSecond>{remainTime.current}s</TimeSecond>
+        <TimeSecond>{remainTime}s</TimeSecond>
         {player.current.role === 'SARK' ? (
           <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
         ) : (

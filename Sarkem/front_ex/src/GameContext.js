@@ -35,9 +35,7 @@ const GameProvider = ({ children }) => {
   // twilight 투표 설정 위한 타겟id
   const [targetId, setTargetId] = useState("");
   // 남은 시간
-  const remainTime = useRef(0);
-  const renderTimerId = useRef(null);
-  const [isRender, setIsRender] = useState(true);
+  const [remainTime, setRemainTime] = useState(0);
   
   const [psyTarget, setPsyTarget] = useState("");
   const [psychologist, setPsychologist] = useState(false);//심리학자 실행
@@ -84,12 +82,6 @@ const GameProvider = ({ children }) => {
     jungleRefs.current = [];
   }, []);
 
-
-  useEffect(() => {
-    if (isRender) setIsRender(false);
-  }, [isRender]);
-
-
   useEffect(() => {
     setCurrentSysMessage(null);
     setCurrentSysMessagesArray([]);
@@ -117,7 +109,6 @@ const GameProvider = ({ children }) => {
     if (pingSession.current) clearInterval(pingSession.current);  // ping stop
     
     stopPredicting();
-    clearInterval(renderTimerId);
     player.current.stream.publishAudio(false);
     player.current.stream.publishVideo(false);
     player.current.isAlive = true;
@@ -158,15 +149,6 @@ const GameProvider = ({ children }) => {
     setAnimationFrameId(null);
     
     setDeadIds([]);
-  }
-
-  const startTimer = () => {
-    renderTimerId.current = setInterval(() => {
-      if (remainTime.current > 0) {
-        remainTime.current -= 1;
-        setIsRender(true);
-      }
-    }, 1000);
   }
 
   // WebSocket 연결
@@ -357,6 +339,7 @@ const GameProvider = ({ children }) => {
 
     case "GAME_START":   
         // 게임상태 초기화
+        sendPing();
         navigate(`/${roomSession.current.roomId}/day`);
         break;
 
@@ -510,7 +493,10 @@ const GameProvider = ({ children }) => {
       break;
 
     case "REMAIN_TIME":
-        remainTime.current = sysMessage.param.time;
+        let time = sysMessage.param.time;
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => setRemainTime(time - i), i*1000);
+        }
         break;
 
     case "JOB_DISCLOSE":
@@ -709,10 +695,14 @@ const removeDuplicateVideosFromStream = (player) => {
 
 const uniquePlayers = () => {
   // Map의 각 요소에 대해 중복 제거 함수 적용
-  console.log("중복값제거")
-  players.current.forEach((player) => {
-    removeDuplicateVideosFromStream(player);
-  });
+  try{
+    console.log("중복값제거")
+    players.current.forEach((player) => {
+      removeDuplicateVideosFromStream(player);
+    });
+  } catch(error) {
+    console.log("중복 제거 실패");
+  }
 }
 
   // 변경된 게임 옵션을 redis 토픽에 전달
@@ -745,7 +735,7 @@ const uniquePlayers = () => {
       voteSituation, currentSysMessage, currentSysMessagesArray, setCurrentSysMessagesArray,phase, targetId, sendMessage, threatedTarget, getGameSession, gameSession, setGameSession, chatVisible, 
       Roles, sendMessage, jungleRefs, mixedMediaStreamRef, audioContext, winner, setWinner, voteTargetId, deadIds, psyTarget, hiddenMission, setHiddenMission, remainTime, 
       psychologist, scMiniPopUp, setScMiniPopUp, loadGestureRecognizer, missionNumber, getAlivePlayers, roleAssignedArray, unsubscribeRedisTopic, initGameSession, uniquePlayers, pingSession,
-      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray, sendPing, startTimer, onbeforeunload }}
+      faceDetectionIntervalId, setFaceDetectionIntervalId, dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray, sendPing, onbeforeunload }}
     >
       {children}
     </GameContext.Provider>
