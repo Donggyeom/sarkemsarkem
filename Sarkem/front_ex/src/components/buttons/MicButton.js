@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import micButtonImageSrc from '../../img/micbutton.png';
 import micOffButtonImageSrc from '../../img/micoffbutton.png';

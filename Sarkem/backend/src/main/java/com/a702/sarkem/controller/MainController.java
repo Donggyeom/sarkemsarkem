@@ -192,8 +192,8 @@ public class MainController {
 	@DeleteMapping("/api/game/{roomId}/player/{playerId}")
 	public void exitGame(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
 		gameManager.deletePlayer(roomId, playerId);
-
-		log.info(playerId + "님이" + playerId + "룸에서 퇴장합니다.");
+		gameManager.sendLeaveGameMessage(roomId, playerId);
+		log.info(playerId + "님이" + roomId + "룸에서 퇴장합니다.");
 	}
 
 	// 토큰 생성하기&가져오기

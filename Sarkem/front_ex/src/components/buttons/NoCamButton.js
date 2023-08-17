@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import camButtonImageSrc from '../../img/nocambutton.png';
 
@@ -15,11 +15,7 @@ const CamButtonImage = styled.img`
 const NoCamButton = ({  }) => {
 
   return (
-    <CamButtonImage
-      src={camButtonImageSrc}
-    //   alt={alt}
-    //   onClick={handleClick} // Use the handleClick function
-    />
+    <CamButtonImage src={camButtonImageSrc}/>
   );
 };
 

@@ -139,7 +139,6 @@ const Chatting = ({ handleCloseButtonClick }) => {
   const { player } = useRoomContext();
   const [inputMessage, setInputMessage] = useState('');
   const chatMessagesRef = useRef();
-  console.log(player, "플레이어");
     
   const scrollToBottom = () => {
     chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
@@ -174,8 +173,6 @@ const Chatting = ({ handleCloseButtonClick }) => {
       <ChatWrapper>
         <ChatMessages ref={chatMessagesRef}>
           {chatMessages.map((messageObj, index) => {
-            console.log('messageObj.playerId:', messageObj.playerId);
-            console.log('messageObj.nickName:', messageObj.nickName);
             return (
               messageObj.playerId === player.current.playerId ? (
                 <ChatMessage key={index}>

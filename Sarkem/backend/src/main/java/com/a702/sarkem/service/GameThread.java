@@ -450,9 +450,9 @@ public class GameThread extends Thread {
 		while (true) {
 			remainTime.put("time", time);
 			gameManager.sendRemainTime(roomId, remainTime);
-			time-=5;
-			if (time <= 0) break;
 			sleep(5000);
+			if (time <= 0) break;
+			time-=5;
 		}
 		return true;
 	}

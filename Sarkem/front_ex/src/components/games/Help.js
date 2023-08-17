@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import chatbox from '../../img/helpbox2.png';
 import chatcloseImage from '../../img/closebutton.png'

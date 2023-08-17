@@ -1,31 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CamCat from './camcat';
 import voteImage from '../../img/votefoot.png';
 import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
-import { Publisher, Subscriber } from 'openvidu-browser';
 import Jungle from '../job/Detective';
-import { VoteButton, SkipButton, SmallSkipButton, SmallVoteButton } from '../buttons/VoteButton.js';
-import skipImg from '../../img/btn_스킵하기.png';
+import { VoteButton, SkipButton, SmallSkipButton } from '../buttons/VoteButton.js';
 import skipClearImg from '../../img/tb_endskip.png';
-import voteImg from '../../img/btn_투표확정.png';
 import voteClearImg from '../../img/tb_endvote.png';
 
-
-
-
-const StyledVoteResultDiv = styled.div`
-  position: absolute;
-  top: 93%;
-  right : 31%;
-`;
-
-
-const Votefoot = styled.img`
-  position: absolute;
-  transform: translateX(-50%);
-`;
 
 const CamCatGrid = styled.div`
     // overflow : hidden;
@@ -42,20 +25,6 @@ const CamCatGrid = styled.div`
 
   `}
 `;
-
-const ActionButton = styled.button`
-  padding: 8px 16px;
-  border: none;
-  color: white;
-  cursor: pointer;
-`;
-
-// const VoteButton = styled.button`
-//   border: none;
-//   background: transparent;
-//   cursor: pointer;
-//   top: 30%;
-// `;
 
 const VoteImage = styled.img`
   width: 35%;
@@ -90,8 +59,6 @@ const VotefootImage = styled.img`
 
 
 const calculateGrid = (camCount) => {
-  const positions = [
-  ];
   if (camCount === 1) {
     return {
       gridTemplateRows: '1fr',
@@ -284,17 +251,15 @@ const DayNightCamera = React.memo(({ players }) => {
   const [isSkipped, setIsSkipped] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const { selectAction, selectConfirm, setSelectedTarget,
-    myVote, startVote, dayCount, predictWebcam, stopPredicting,
-    detectedGesture, voteSituation, phase,
-    Roles, mafias, setMafias, jungleRefs, mixedMediaStreamRef, audioContext,
-    voteTargetId, deadIds, hiddenMission, setHiddenMission, loadGestureRecognizer, uniquePlayers } = useGameContext();
+    startVote, dayCount, predictWebcam, stopPredicting,
+    phase, jungleRefs, mixedMediaStreamRef, audioContext,
+    hiddenMission, loadGestureRecognizer, uniquePlayers } = useGameContext();
     
   useEffect(() => {
     uniquePlayers();
     setIsConfirmed(false);
     setClickedCamera(null);
     setIsSkipped(false);
-    console.log(phase);
 
     if (phase === "night") {
       // 모두의 카메라, 마이크 설정
@@ -322,41 +287,25 @@ const DayNightCamera = React.memo(({ players }) => {
     else if (phase === "day") {
       dayCamAudio();
       stopVoiceChange();
-      // TODO: 
-      // if (myRole === "OBSERVER" && publisher) {
-      //   publisher.publishVideo(false);
-      //   publisher.publishAudio(false);
-      // }
     }
 
     
   }, [startVote, phase]);
 
-  // useEffect(() => {
-  //   setCamCount(adjustedCamCount);
-  // }, [adjustedCamCount]);
-
-
   useEffect(() => {
-    console.log("히든미션 바뀜", hiddenMission);
     if (hiddenMission) {
-      console.log("미션시작이요~~");
+      console.log("미션을 시작합니다.");
       loadGestureRecognizer();
       startHiddenMission();
     } else {
-      console.log("히든미션 끝이요~~",hiddenMission)
+      console.log("히든미션을 중지합니다",hiddenMission)
       stopHiddenMission();
     }
   }, [hiddenMission])
 
-  console.log(player.current.role, "롤확인");
 
 
   const handleCamClick = (id) => {
-    console.log(voteSituation, "투표 결과 확인합니다");
-    console.log(startVote);
-    console.log(dayCount);
-    console.log(id, "얘는 캠주인");
     if (!startVote || (dayCount === 1 && phase === "day") || isConfirmed || isSkipped || player.current.role === "OBSERVER") {
       return;
     }
@@ -364,12 +313,10 @@ const DayNightCamera = React.memo(({ players }) => {
     if (clickedCamera === id) {
       setClickedCamera(null);
       selectAction({ playerId: null });
-      console.log(clickedCamera, id, "확인용");
     }
     else {
       setClickedCamera(id);
       selectAction({ playerId: id });
-      console.log(clickedCamera, id, "확인용2");
     }
   };
 
@@ -381,7 +328,7 @@ const DayNightCamera = React.memo(({ players }) => {
   };
 
   const handleSkipClick = () => {
-    if (!isConfirmed && !isSkipped && startVote || player.current.role == "OBSERVER") {
+    if (!isConfirmed && !isSkipped && startVote || player.current.role === "OBSERVER") {
       setIsSkipped(true);
       setClickedCamera(null);
       setSelectedTarget("");
@@ -400,33 +347,29 @@ const DayNightCamera = React.memo(({ players }) => {
 
   const handleSarksCam = (sark) => {
     console.log("삵의 properties 변화가 감지되었습니다.");
-    console.log(sark);
     sark.target.subscribeToVideo(false);
   }
 
   const nightCamAudio = () => {
-    if (player.current.role == "DETECTIVE") {
+    if (player.current.role === "DETECTIVE") {
       setIsMuted(true);
-      console.log("player.current.role == DETECTIVE");
       // 탐정 플레이어 화면에서 모두의 캠을 끄고, 마피아를 제외한 생존자의 마이크를 끈다.
       for (let otherPlayer of players) {
         if (player.current === otherPlayer) continue;
 
         otherPlayer.stream.subscribeToVideo(false);
 
-        if (otherPlayer.role != "SARK") {
+        if (otherPlayer.role !== "SARK") {
           otherPlayer.stream.subscribeToAudio(false);
         } else {
           otherPlayer.stream.on('streamPropertyChanged', handleSarksCam);
         }
       }
     }
-    else if (player.current.role == "SARK" || player.current.role == "OBSERVER") {
-      console.log("player.current.role == SARK OBSERVER");
+    else if (player.current.role === "SARK" || player.current.role === "OBSERVER") {
       for (let otherPlayer of players) {
         if (player.current === otherPlayer) continue;
-        console.log(otherPlayer.stream)
-        if (otherPlayer.role != "SARK") {
+        if (otherPlayer.role !== "SARK") {
           otherPlayer.stream.subscribeToVideo(false);
           otherPlayer.stream.subscribeToAudio(false);
         }
@@ -434,11 +377,8 @@ const DayNightCamera = React.memo(({ players }) => {
     }
     else {
       // 마피아, 탐정, 관전자를 제외한 나머지 플레이어의 화면에서 모두의 캠, 오디오를 끈다.
-      console.log("player.current.role == others");
-      console.log(players);
       for (let otherPlayer of players) {
         if (player.current === otherPlayer) continue;
-        console.log("여기까진 오니");
         otherPlayer.stream.subscribeToVideo(false);
         otherPlayer.stream.subscribeToAudio(false);
         if (otherPlayer.role === 'SARK') otherPlayer.stream.on('streamPropertyChanged', handleSarksCam);
@@ -451,7 +391,7 @@ const DayNightCamera = React.memo(({ players }) => {
     setIsMuted(false);
     for (let otherPlayer of players) {
       if (player.current === otherPlayer) continue;  // 내가 아닌 경우에만 설정
-      if (otherPlayer.role == "OBSERVER") continue;            // 관전자가 아닌 경우에만 설정
+      if (otherPlayer.role === "OBSERVER") continue;  // 관전자가 아닌 경우에만 설정
 
       otherPlayer.stream.subscribeToVideo(true);
       otherPlayer.stream.subscribeToAudio(true);
@@ -466,14 +406,12 @@ const DayNightCamera = React.memo(({ players }) => {
   // 삵들에 대해 음성변조 시작
   const getMixedMediaStream = (sarkArray) => {
     console.log("음성 변조 시작...")
-    const mixedMediaStream = new MediaStream();
     sarkArray.forEach((sark) => {
       const mediaStream = sark.stream.stream.mediaStream;
 
       const audioTrack = mediaStream.getAudioTracks()[0];
       const source = audioContext.createMediaStreamSource(new MediaStream([audioTrack]));
       const jungle = new Jungle(audioContext);
-      // const randomPitch = Math.random() < 0.5 ? -1 : 1;
       jungle.setPitchOffset(1);
       source.connect(jungle.input);
       jungle.output.connect(audioContext.destination);
@@ -485,7 +423,6 @@ const DayNightCamera = React.memo(({ players }) => {
   // 음성 변조 중지
   const stopVoiceChange = () => {
     console.log("음성 변조 중지");
-    console.log(jungleRefs);
     jungleRefs.current.forEach((jungle) => {
       if (jungle && jungle.isConnected) {
         console.log(jungle, "음성 변조 중지 중...");

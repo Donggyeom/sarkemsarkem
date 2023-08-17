@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Background1 from '../components/backgrounds/BackgroundSunset';
 import Background2 from '../components/backgrounds/BackgroundNight';
@@ -11,7 +11,6 @@ import againImage from '../img/btn_again.png';
 import { useNavigate } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import { useGameContext } from '../GameContext';
-import createRandomId from '../utils';
 import resultSound from '../sound/result.mp3';
 
 //icon
@@ -55,7 +54,7 @@ const ButtonContainer = styled.div`
 
 const Title = styled.div`
   position: absolute;
-  top: 90px;
+  top: 11%;
   left: 50%;
   transform: translateX(-50%);
   font-size: 75px;
@@ -121,16 +120,9 @@ const roleInfoMapping = {
 };
 
 
-// const TableCell = styled.td`
-//   font-size: 20px; /* Adjust the font size as needed */
-//   padding: 10px;
-// `;
-
 const ResultPage = () => {
-  const {
-    roomSession, setPlayer, setPlayers, players
-  } = useRoomContext();
-  const { roleAssignedArray, winner, unsubscribeRedisTopic, initGameSession, stompClien, timer } = useGameContext();
+  const { roomSession } = useRoomContext();
+  const { roleAssignedArray, winner, initGameSession } = useGameContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -150,47 +142,22 @@ const ResultPage = () => {
 
   const handleAgainButtonClick = () => {
     console.log("다시하기 버튼 클릭");
-    // if (roomSession.current.openviduSession) roomSession.current.openviduSession.disconnect();
 
-    // console.log("세션 해제중입니다.....")
-    // // 세션 연결 종료
-    // if (roomSession.current.openviduSession) roomSession.current.openviduSession.disconnect();
-    
-    // 데이터 초기화
-    // setPlayer.current = {};
-    // setPlayers(new Map());
-    // players.current = new Map();
     roomSession.current.gameId = undefined;
     console.log("새로운 방 만들기", roomSession.current.roomId);
-    // unsubscribeRedisTopic();
     navigate(`/${roomSession.current.roomId}`); // TODO 게임 끝나고 다시하기 눌렀을 때 방을 새로 만드는 것, 바로 로비로 가도록 만들기
   };
 
   const handleExitButtonClick = () => {
     window.location.href = '/';
-    // console.log("세션 해제중입니다.....")
-    // // 세션 연결 종료
-    // if (roomSession.current.openviduSession) {
-    //   roomSession.current.openviduSession.disconnect();
-    // }
-    // if (stompClient.current !== undefined) stompClient.current = undefined;
-    // // 데이터 초기화
-    // // setSession(undefined);
-    // setPlayer.current = {};
-    // // setPlayers(new Map());
-    // players.current = new Map();
-    // console.log("홈으로 나가기");
-    // unsubscribeRedisTopic();
-    // navigate('/');
   };
 
 
 
   const sarkPlayers = roleAssignedArray.current.filter(playerRole => playerRole.job === '삵');
-  console.log(sarkPlayers, "sarkPlayers");
+
   const nonSarkPlayers = roleAssignedArray.current.filter(playerRole => playerRole.job !== '삵');
-  console.log(nonSarkPlayers, "nonSarkPlayers");
-  console.log(winner, "위너확인");
+
   return (
     <div>
     {winner === 'CITIZEN' ? (
