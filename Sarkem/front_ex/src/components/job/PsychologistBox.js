@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import psychologistBox from '../../img/psychologistbox.png'
-import { useGameContext } from '../../GameContext';
 import { useRoomContext } from '../../Context';
 
 const Psychologistboxdiv = styled.div`

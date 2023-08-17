@@ -33,7 +33,7 @@ const ReButton = ({ src, onClick, ...props }) => {
       sound.pause();
     })
     .catch(error => {
-      console.log("Qkznb")
+      console.log("재시작 하는데에 오류가 발생했습니다.")
     });}
 
 

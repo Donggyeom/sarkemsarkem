@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { useGameContext } from '../../GameContext';
 import closeBtn from '../../img/btn_close.png';
 
-// const fadeInOut = keyframes`
-//   0% {
-//     opacity: 1;
-//   }
-//   100% {
-//     opacity: 0;
-//   }
-// `;
+
 
 const StyledPopupContainer = styled.div`
   position: fixed;
@@ -32,7 +25,6 @@ const StyledPopupContainer = styled.div`
   z-index: ${({ showPopup }) => (showPopup ? 9999 : -1)};
   opacity: ${({ showPopup }) => (showPopup ? 1 : 0)};
   `;
-// animation: ${fadeInOut} 4s ease-in-out forwards;
 
 const StyledPopupTitle = styled.div`
   color: #ffffff;
@@ -74,18 +66,6 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
       setCurrentPageIndex(0);
     }
   }, [sysMessage]);
-  // useEffect(() => {
-  //   if (sysMessage) {
-  //     setShowPopup(true);
-
-  //     const fadeOutTimeout = setTimeout(() => {
-  //       setShowPopup(false);
-  //     }, 3500);
-
-  //     return () => clearTimeout(fadeOutTimeout);
-  //   }
-  // }, [sysMessage]);
-  // console.log(sysMessage);
 
   const formattedMessages = sysMessage?.map((messageItem) => {
     return messageItem.param.message.split('.').map((sentence, index) => (
@@ -99,18 +79,12 @@ const DayPopup = ({ sysMessage, dayCount }) => { // sysMessage를 prop으로 받
 
   const handleNextPage = () => {
     setCurrentPageIndex((prevIndex) => Math.min(prevIndex + 1, totalMessages - 1));
-    console.log(currentPageIndex, totalMessages, 'handleNextPage');
-  };
-
-  const handlePreviousPage = () => {
-    setCurrentPageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
   const handleClosePopup = () => {
     setShowPopup(false);
     setDayCurrentSysMessagesArray([]);
   };
-  // console.log(sysMessage);
   return (
     <StyledPopupContainer showPopup={showPopup}>
       <div

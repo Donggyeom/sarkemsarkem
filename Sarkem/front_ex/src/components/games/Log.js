@@ -51,8 +51,6 @@ const Log = () => {
       <ScrollableText ref={scrollableRef}>
       {currentSysMessagesArray.map((sysMessage, index) => (
         <div key={index}>
-          {/* {sysMessage.param.day} 일차 {sysMessage.param.phase}: {sysMessage.param.message} */}
-          {/* n일차 인식을 못함 */}
           {sysMessage.param.phase}: {sysMessage.param.message} 
         </div>
       ))}

@@ -22,8 +22,6 @@ import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
 import Sound from '../sound/daystart.mp3';
 
-import TempButton from '../components/buttons/TempButton';
-
 
 const StyledDayPage = styled.div`
   display: flex;
@@ -47,20 +45,19 @@ const TimeSecond = styled.text`
 
 const DayPage = () => {
 
-  const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext();
-  const { gameSession, Roles, threatedTarget, currentSysMessage, dayCount, 
-    chatVisible, systemMessages, voteSituation, remainTime, scMiniPopUp, 
-    getAlivePlayers, psychologist, psyTarget, dayCurrentSysMessagesArray, unsubscribeRedisTopic,
+  const { roomSession, player, setPlayer, players } = useRoomContext();
+  const { threatedTarget, currentSysMessage, dayCount, 
+    chatVisible,   remainTime, 
+    getAlivePlayers, psychologist, psyTarget, dayCurrentSysMessagesArray,
     faceDetectionIntervalId, setFaceDetectionIntervalId, onbeforeunload } = useGameContext();
-  const [ meetingTime, setMeetingTime ] = useState(gameSession?.gameOption?.meetingTime);
   const navigate = useNavigate();
-  const [voteCount, setVoteCount] = useState(0);
   const [isLogOn, setIsLogOn] = useState(true);
-  const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
+  const [currentHandNumber] = useState(1); //삵 미션!
   const [running, setRunning] = useState(false);
   const audio = new Audio(Sound);
   const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과
   const location = useLocation();
+
   useEffect(() => {
     loadModels();
     // 윈도우 객체에 화면 종료 이벤트 추가
@@ -82,8 +79,8 @@ const DayPage = () => {
     else stopFaceDetection();
   },[psychologist])
   
-  useEffect((currentSysMessage) => {
-    if (roomSession == undefined || roomSession.current.roomId == undefined){
+  useEffect(() => {
+    if (roomSession === undefined || roomSession.current.roomId === undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
@@ -108,11 +105,9 @@ const DayPage = () => {
   const playBGM = () => {
   
     // Play the audio when the component mounts
-    // console.log('틀기전');
     audio.play();
     audio.playbackRate = 0.9;
     audio.volume = 0.7;
-    // console.log('튼후');
   
     // Update state to track audio playback
     window.removeEventListener("mousemove", playBGM);
@@ -134,7 +129,6 @@ const DayPage = () => {
     }
   //끄는거 
   const stopFaceDetection = () => {
-    console.log("꺼짐?");
     if (faceDetectionIntervalId) {
         clearInterval(faceDetectionIntervalId);
         setFaceDetectionIntervalId(null);
@@ -146,9 +140,7 @@ const DayPage = () => {
   const threated = () =>{
     console.log(threatedTarget);
     if(threatedTarget){
-      console.log("참이냐??")
       player.current.stream.publishAudio(false);
-      // player.current.stream.publishVideo(false);
     }
   }
 
@@ -157,12 +149,6 @@ const DayPage = () => {
     if (player.current.stream) {
       player.current.stream.publishVideo(camOn);
     }
-    // setPlayer((prev) => {
-    //   return ({
-    //     ...prev,
-    //     isCamOn: camOn
-    //   });
-    // });
     setPlayer([{key: 'isCamOn', value: camOn}]);
   };
 
@@ -176,20 +162,10 @@ const DayPage = () => {
         player.current.stream.publishAudio(micOn);
         console.log('냥아치 협박 대상 아님! 마이크 버튼 클릭!');
       }
-      // setPlayer((prev) => {
-      //   return ({
-      //     ...prev,
-      //     isMicOn: micOn
-      //   });
-      // });
       setPlayer([{key: 'isMicOn', value: micOn}]);
     };
   }
 
-  // const handleScMiniClick = () => {
-  //   console.log('ScMini clicked!');
-  // };
-  
   const daystatus = () =>{
     if(player.current.role !== 'OBSERVER') {
       player.current.stream.publishVideo(true);

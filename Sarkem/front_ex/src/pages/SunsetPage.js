@@ -8,7 +8,6 @@ import ScMini from '../components/games/ScMini';
 import CamCat from '../components/camera/camcat';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
-import TempButton from '../components/buttons/TempButton';
 import { useGameContext } from '../GameContext';
 import LogButton from '../components/buttons/LogButton';
 import Log from '../components/games/Log';
@@ -16,10 +15,6 @@ import SunsetPopup from '../components/games/SunsetPopup';
 import { AgreeButton, DisagreeButton } from '../components/buttons/agreeDisagreeButtons.js';
 import completeagreeButtonImage from '../img/tb_endok.png';
 import completeDisagreeButtonImage from '../img/tb_endno.png';
-import loadingimage from '../img/loading1.jpg';
-import agreeButtonImage from '../img/찬성.png';
-import disagreeButtonImage from '../img/반대.png';
-
 
 
 const StyledContent = styled.div`
@@ -565,10 +560,9 @@ const CamCatWrapper = styled.div`
 
 const SunsetPage = () => {
    
-  const { roomSession, player, setPlayer, players, leaveSession } = useRoomContext(); 
+  const { roomSession, player, setPlayer } = useRoomContext(); 
   const { startVote, agreeExpulsion, disagreeExpulsion, targetId, 
     chatVisible, remainTime, dayCount, deadIds, getAlivePlayers, onbeforeunload } = useGameContext();
-  const [targetIndex, setTargetIndex] = useState(null);
   
   const [isAgree, setIsAgree] = useState(false);
   const [disAgree, setDisAgree] = useState(false);
@@ -576,18 +570,15 @@ const SunsetPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // TODO: camcount 계산
-  const [camCount, setCamCount] = useState(getAlivePlayers().length);
-  console.log(getAlivePlayers(), "여기");
+  const [camCount] = useState(getAlivePlayers().length);
   const gridStyles = calculateGrid(camCount);
-
-  console.log(targetId, "확인합시다");
 
   let displayCamCat = false;
   let assignedIndices = [];
   // let adjustedCamCount = 0;
 
   useEffect(() => {
-    if (roomSession == undefined || roomSession.current.roomId == undefined){
+    if (roomSession === undefined || roomSession.current.roomId === undefined){
       console.log("세션 정보가 없습니다.")
       navigate("/");
       return;
@@ -602,44 +593,8 @@ const SunsetPage = () => {
     }
   }, []);
 
-
-  // useEffect(() => {
-  //   adjustedCamCount = calculateAdjustedCamCount();
-
-  //   setCamCount(adjustedCamCount);
-  // }, [adjustedCamCount]);
-
-
-  ///   SunsetPage 함수 ///
-
-  // const calculateAdjustedCamCount = () => {
-  //   const filteredCamArray = Array.from(players.current.values()).filter((player) => {
-  //     return !deadIds.includes(player.playerId);
-  //   });
-
-  //   let adjustedCamCount = filteredCamArray.length;
-
-  //   filteredCamArray.forEach((player) => {
-
-  //     if (deadIds.includes(player.playerId)) {
-  //       adjustedCamCount -= 1;
-  //     }
-  //   });
-
-  //   return adjustedCamCount;
-  // }
-
-  // const generateRandomPositionIndex = (maxIndex) => {
-  //   return Math.floor(Math.random() * maxIndex);
-  // };
-
   const handleCamButtonClick = () => {
     const camOn = !player.current.isCamOn;
-    // setPlayer((prevState) => {
-    //   return {...prevState,
-    //     isCamOn: camOn,
-    //   };
-    // });
     setPlayer([{key: 'isCamOn', value: camOn}]);
     if (player.current.stream) {
       player.current.stream.publishVideo(camOn);
@@ -649,11 +604,6 @@ const SunsetPage = () => {
   
   const handleMicButtonClick = () => {
     const micOn = !player.current.isMicOn;
-    // setPlayer((prevState) => {
-    //   return {...prevState,
-    //     isMicOn: micOn,
-    //   };
-    // });
     setPlayer([{key: 'isMicOn', value: micOn}]);
     if (player.current.stream) {
       player.current.stream.publishAudio(micOn);
@@ -750,8 +700,6 @@ const SunsetPage = () => {
         positionIndex = targetIndex;
         assignedIndices.push(positionIndex);
       }
-
-    console.log(`타겟아이디 : ${targetId}, User Id: ${player.playerId}, Target Index: ${targetIndex}, Position Index: ${positionIndex}`, "확인하세요");
       
       return {
         positionIndex,
@@ -823,7 +771,6 @@ const SunsetPage = () => {
 </div>
 <ScMini />
 </StyledContent>
-{/* <TempButton url={`/${roomSession.current.roomId}/night`} onClick={() => navigate(`/${roomSession.current.roomId}/night`)}/> */}
 {chatVisible()}
 </Background>
 );

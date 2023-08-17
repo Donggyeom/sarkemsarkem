@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import micButtonImageSrc from '../../img/nomicbutton.png';
 
@@ -15,11 +15,7 @@ const MicButtonImage = styled.img`
 const NoMicButton = ({  }) => {
 
   return (
-    <MicButtonImage
-      src={micButtonImageSrc}
-    //   alt={alt}
-    //   onClick={handleClick} // Use the handleClick function
-    />
+    <MicButtonImage src={micButtonImageSrc} />
   );
 };
 

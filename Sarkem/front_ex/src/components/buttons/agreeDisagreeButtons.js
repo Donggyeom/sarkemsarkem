@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import agreeButtonImage from '../../img/찬성.png';
 import disagreeButtonImage from '../../img/반대.png';
-import completeagreeButtonImage from '../../img/tb_endok.png';
-import completeDisagreeButtonImage from '../../img/tb_endno.png';
 import buttonclickSound from '../../sound/buttonclick.mp3'
 
 const SmallButton = styled.button`
@@ -33,8 +31,7 @@ const ButtonWithSound = ({ onClick, imageSrc, alt, disabled }) => {
   );
 };
 
-const AgreeButton = ({ onClick, disabled, isComplete }) => {
-  // const imageSrc = isComplete ? completeagreeButtonImage : agreeButtonImage;
+const AgreeButton = ({ onClick, disabled }) => {
   const imageSrc = agreeButtonImage;
   return (
     <ButtonWithSound
@@ -46,8 +43,7 @@ const AgreeButton = ({ onClick, disabled, isComplete }) => {
   );
 };
 
-const DisagreeButton = ({ onClick, disabled, isComplete }) => {
-  // const imageSrc = isComplete ? completeDisagreeButtonImage : disagreeButtonImage;
+const DisagreeButton = ({ onClick, disabled }) => {
   const imageSrc = disagreeButtonImage;
   return (
     <ButtonWithSound
