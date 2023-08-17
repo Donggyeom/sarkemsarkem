@@ -64,7 +64,8 @@ public class GameSession {
 	private int expulsionVoteCnt; // 추방 투표 수
 	private int winTeam; // 0: 진행 중 , 1: 삵 승리 , 2: 시민 승리
 
-	public GameSession(String roomId, String gameId) {
+	public GameSession(GameManager gameManager, String roomId, String gameId) {
+		this.gameManager = gameManager;
 		this.roomId = roomId;
 		this.gameId = gameId;
 		this.players = new ArrayList<>(10);
@@ -80,7 +81,8 @@ public class GameSession {
 		this.winTeam = 0;
 	}
 	
-	public GameSession(String roomId, String gameId, GameOptionDTO optionDto) {
+	public GameSession(GameManager gameManager, String roomId, String gameId, GameOptionDTO optionDto) {
+		this.gameManager = gameManager;
 		this.roomId = roomId;
 		this.gameId = gameId;
 		this.players = new ArrayList<>(10);
