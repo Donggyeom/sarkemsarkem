@@ -20,7 +20,7 @@ const Psychologistboxdiv = styled.div`
   z-index: 5;
 
   > div:first-child { /* Apply style to the first div element */
-    padding-top: 5.5px;
+    padding-top: 6.5px;
     color: #723a00;
     text-align: center; /* Center align the content */
   }
@@ -34,8 +34,7 @@ const Psychologistboxdiv = styled.div`
 `;
 
 
-const PsychologistBox = ({detectExpressions}) => {
-    console.log(detectExpressions);
+const PsychologistBox = ({detectExpressions, nickname}) => {
     let happy = 0;
     let sad = 0;
     let disgusted = 0;
@@ -59,7 +58,7 @@ const PsychologistBox = ({detectExpressions}) => {
     return (
       <Psychologistboxdiv>
         {/* {Psychologist} */}
-        <div> 어쩌구의 심리</div>
+        <div> {nickname}의 심리</div>
         <div>행복 : {happy}</div>
         <div>슬픔 : {sad}</div>
         <div>보통 : {neutral}</div>
