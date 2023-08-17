@@ -60,7 +60,7 @@ const PsychologistBox = ({detectExpressions}) => {
         <div>슬픔 : {sad}</div>
         <div>보통 : {neutral}</div>
         <div>화남 : {angry}</div>
-        <div>놀람: {surprised}</div>
+        <div>놀람 : {surprised}</div>
         <div>공포 : {fearful}</div>
         <div>역겹 : {disgusted}</div>
       </Psychologistboxdiv>

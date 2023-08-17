@@ -563,7 +563,8 @@ const SunsetPage = () => {
    
   const { roomSession, player, setPlayer } = useRoomContext(); 
   const { startVote, agreeExpulsion, disagreeExpulsion, targetId, 
-    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers, onbeforeunload } = useGameContext();
+    chatVisible, remainTime, dayCount, deadIds, getAlivePlayers, onbeforeunload, ThreatedTarget } = useGameContext();
+
   
   const [isAgree, setIsAgree] = useState(false);
   const [disAgree, setDisAgree] = useState(false);
@@ -593,6 +594,9 @@ const SunsetPage = () => {
       window.removeEventListener('popstate', onbeforeunload);
     }
   }, []);
+  useEffect(()=>{
+    player.current.stream.publishAudio(player.current.isMicOn);
+  },[ThreatedTarget])
 
   const handleCamButtonClick = () => {
     const camOn = !player.current.isCamOn;

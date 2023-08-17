@@ -17,11 +17,11 @@ const faceMyDetect = (videoRef, running, setRunning, setDetectExpressions) => {
     if (!running) {
         const id = setInterval(async () => {
             const detectionsWithExpressions = await faceapi
-                .detectSingleFace(videoRef)
+                .detectSingleFace(videoRef.stream.videos[1].video)
                 .withFaceLandmarks()
                 .withFaceExpressions();
             setDetectExpressions(detectionsWithExpressions);
-        }, 1000);
+        }, 2000);
         setRunning(true);
         return id;
     }
