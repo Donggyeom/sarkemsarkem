@@ -122,7 +122,7 @@ const RoomProvider = ({ children }) => {
     newSession.on('streamCreated', (event) => {
       const subscriber = newSession.subscribe(event.stream, undefined);
       console.log(`streamCreated`);
-      const newPlayer = {
+      var newPlayer = {
         ...JSON.parse(event.stream.streamManager.stream.connection.data),
         stream: subscriber,
       };

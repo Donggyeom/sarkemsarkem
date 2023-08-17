@@ -74,7 +74,6 @@ const DayPage = () => {
     setIsLogOn((prevIsLogOn) => !prevIsLogOn);
   };
   useEffect(()=>{
-    console.log(psychologist);
     if (psychologist) startFaceDetection();
     else stopFaceDetection();
   },[psychologist])
@@ -140,7 +139,6 @@ const DayPage = () => {
   };
 
   const threated = () =>{
-    console.log(threatedTarget);
     if(threatedTarget){
       player.current.stream.publishAudio(false);
     }
@@ -159,10 +157,8 @@ const DayPage = () => {
     if (player.current.stream) {
       player.current.stream.publishAudio(micOn);
       // 버튼 클릭 이벤트를 threatedTarget이 못하게
-      console.log('냥아치 협박 대상인가?');
       if (player.current.stream !== threatedTarget) {
         player.current.stream.publishAudio(micOn);
-        console.log('냥아치 협박 대상 아님! 마이크 버튼 클릭!');
       }
       setPlayer([{key: 'isMicOn', value: micOn}]);
     };

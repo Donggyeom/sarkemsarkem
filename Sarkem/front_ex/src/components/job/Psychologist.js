@@ -17,7 +17,7 @@ const faceMyDetect = (videoRef, running, setRunning, setDetectExpressions) => {
     if (!running) {
         const id = setInterval(async () => {
             const detectionsWithExpressions = await faceapi
-                .detectSingleFace(videoRef.stream.videos[1].video)
+                .detectSingleFace(videoRef.stream.videos[videoRef.stream.videos.length-1].video)
                 .withFaceLandmarks()
                 .withFaceExpressions();
             setDetectExpressions(detectionsWithExpressions);
@@ -28,7 +28,6 @@ const faceMyDetect = (videoRef, running, setRunning, setDetectExpressions) => {
 };
 //끄기
 const stopFace = (intervalId, setIntervalId, setRunning) => {
-    console.log("꺼짐?");
     if (intervalId) {
         clearInterval(intervalId);
         setIntervalId(null);
