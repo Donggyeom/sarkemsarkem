@@ -49,7 +49,7 @@ const DayPage = () => {
   const { threatedTarget, currentSysMessage, dayCount, 
     chatVisible,   remainTime, 
     getAlivePlayers, psychologist, psyTarget, dayCurrentSysMessagesArray,
-    faceDetectionIntervalId, setFaceDetectionIntervalId, onbeforeunload } = useGameContext();
+    faceDetectionIntervalId, setFaceDetectionIntervalId, onbeforeunload, setPsychologist} = useGameContext();
   const navigate = useNavigate();
   const [isLogOn, setIsLogOn] = useState(true);
   const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
@@ -123,7 +123,9 @@ const DayPage = () => {
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
     let targetPlayer = players.current.get(psyTarget);
-    if (targetPlayer === undefined|| !targetPlayer.isAlive) return;
+    if (targetPlayer === undefined|| !targetPlayer.isAlive) {
+      setPsychologist(false);
+      return;}
       const id = faceMyDetect(targetPlayer, running, setRunning, setDetectExpressions);
       setFaceDetectionIntervalId(id);
     }

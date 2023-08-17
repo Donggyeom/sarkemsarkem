@@ -10,6 +10,9 @@ const BackButtonContainer = styled.div`
   left: 10px;
   cursor: pointer;
   z-index: 10;
+  &:hover {
+      filter: brightness(0.8);
+  }
 `;
 
 const BackButtonImage = styled.img`
