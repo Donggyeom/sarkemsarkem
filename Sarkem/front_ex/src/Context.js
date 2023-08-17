@@ -248,7 +248,8 @@ const RoomProvider = ({ children }) => {
       }, 
       {
         headers: { 'Content-Type': 'application/json;charset=utf-8', },
-        responseType: 'text'
+        responseType: 'text',
+        transformResponse: [data => data]
       });
     } catch(error) {
       console.log("서버와 연결이 원활하지 않습니다.", error);
@@ -258,7 +259,7 @@ const RoomProvider = ({ children }) => {
       return;
     }
     console.log('세션 생성됨');
-    console.log(String(response.data));
+    console.log(response.data);
     return response; // The sessionId
   }
   
