@@ -122,7 +122,7 @@ const roleInfoMapping = {
 
 const ResultPage = () => {
   const { roomSession } = useRoomContext();
-  const { roleAssignedArray, winner, initGameSession } = useGameContext();
+  const { roleAssignedArray, winner, initGameSession, onbeforeunload } = useGameContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -149,7 +149,7 @@ const ResultPage = () => {
   };
 
   const handleExitButtonClick = () => {
-    window.location.href = '/';
+    onbeforeunload();
   };
 
 
