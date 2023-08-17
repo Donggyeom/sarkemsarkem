@@ -180,7 +180,6 @@ const GameProvider = ({ children }) => {
     stompClient.current = Stomp.over(socket);
     await stompClient.current.connect({}, () => {
       setTimeout(function() {
-        console.log(players);
         connectGame();
         connectChat();
        console.log(stompClient.current.connected);
@@ -712,7 +711,6 @@ const uniquePlayers = () => {
   // Map의 각 요소에 대해 중복 제거 함수 적용
   console.log("중복값제거")
   players.current.forEach((player) => {
-    console.log("중복 제거", player);
     removeDuplicateVideosFromStream(player);
   });
 }

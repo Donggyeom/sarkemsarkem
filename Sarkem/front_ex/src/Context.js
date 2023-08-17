@@ -10,7 +10,6 @@ const RoomProvider = ({ children }) => {
   const roomSession = useRef({});
   const player = useRef({});
   const players = useRef(new Map());
-  const [showImage, setShowImage] = useState(false);
 
   const OV = useRef(null);
   const navigate = useNavigate();
@@ -29,40 +28,6 @@ const RoomProvider = ({ children }) => {
     OV.current.enableProdMode();
   }, []);
 
-
-  // useEffect(() => {
-  //   console.log(`useEffect player`);
-  //   console.log(player);
-  //   console.log(player.stream);
-  //   if (player.stream == undefined) return;
-
-  //   console.log('player 변경');
-  //   console.log(player);
-  //   // setPlayers((prev) => {
-  //   //   return new Map(prev).set(player.playerId, player);
-  //   // });
-  //   players.current.set(player.playerId, player);
-  // }, [player]);
-
-
-
-  // useEffect(() => {
-
-  //   console.log('players 변경');
-  //   console.log(players);
-
-  // }, [players]);
-
-  // TODO: showImage 기능
-  // useEffect(() => {
-  //   if (!isCamOn) {
-  //       setShowImage(true);
-  //   } else {
-  //       setShowImage(false);
-  //   }
-  // }, [isCamOn]);
-
-
   ////////////   RoomContext 함수   ////////////
   
   const setPlayer = (props) => {
@@ -73,14 +38,12 @@ const RoomProvider = ({ children }) => {
     }
     
     if (player.current.playerId === undefined) return;
-    console.log('setPlayer', props);
     setPlayers(player.current);
   }
 
   const setPlayers = (player) => {
     if (!players.current) return;
     players.current.set(player.playerId, player);
-    console.log('setPlayers', players.current);
   }
 
   const getGameRoom = async (roomId) => {
@@ -106,7 +69,6 @@ const RoomProvider = ({ children }) => {
     else if (response.status == '200') {
       console.log('게임방 정보 획득');
       const gameRoom = response.data;
-      console.log(gameRoom);
       return gameRoom;
     }
     else {
@@ -143,16 +105,8 @@ const RoomProvider = ({ children }) => {
       } catch(error){
         console.log("서버와 연결이 원활하지 않습니다.", error);
       }
-      // 세션 스토리지에 저장된 데이터 삭제
-      // window.sessionStorage.removeItem("roomId");
-      // window.sessionStorage.removeItem("gameId");
-      // window.sessionStorage.removeItem("playerId");
-      // 데이터 초기화
-      // setSession(undefined);
-      // setPlayers(new Map());
       players.current = new Map();
       player.current = {};
-      // navigate(`/${roomSession.current.roomId}`)
   }
 
 
@@ -167,17 +121,11 @@ const RoomProvider = ({ children }) => {
     // stream 생성 이벤트 발생
     newSession.on('streamCreated', (event) => {
       const subscriber = newSession.subscribe(event.stream, undefined);
-      // setSubscribers((subscribers) => [...subscribers, subscriber]);
       console.log(`streamCreated`);
-      // console.log(subscriber);
       const newPlayer = {
         ...JSON.parse(event.stream.streamManager.stream.connection.data),
         stream: subscriber,
       };
-      // setPlayers((prev) => {
-      //   return new Map(prev).set(newPlayer.playerId, newPlayer);
-      // });
-      // players.current.set(newPlayer.playerId, newPlayer);
       setPlayers(newPlayer);
       forceUpdate();
       console.log(newPlayer.nickName, "님이 접속했습니다.");
@@ -203,7 +151,6 @@ const RoomProvider = ({ children }) => {
     newSession.on('exception', (e) => console.warn(e));
 
     console.log(`initSession - session`);
-    console.log(newSession);
     // 설정한 세션 useState 갱신
     roomSession.current.openviduSession = newSession;
 
@@ -220,7 +167,6 @@ const RoomProvider = ({ children }) => {
 
   const connectSession = async (response, roomId) => {
     console.log(`connectSession`);
-    console.log(player.current);
     try {
       const session = response;
       // 오픈비두 토큰 발급
@@ -254,13 +200,6 @@ const RoomProvider = ({ children }) => {
       // 내 디바이스 on/off 상태 게시
       publisher.publishVideo(player.current.isCamOn);
       publisher.publishAudio(player.current.isMicOn);
-      // 퍼블리셔 useState 갱신
-      // setPlayer((prevState) => {
-      //   return ({
-      //     ...prevState,
-      //     stream: publisher,
-      //   });
-      // });
       setPlayer([{key: 'stream', value: publisher}]);
     }
     catch (error) {
@@ -283,7 +222,6 @@ const RoomProvider = ({ children }) => {
 
     console.log('checkGameRoom');
     var gameRoom = await getGameRoom(roomId);
-    console.log(gameRoom);
     if (gameRoom == null) {
       setPlayer([{key: 'isHost', value: true}]);
       roomSession.current.roomId = undefined;
@@ -347,15 +285,9 @@ const RoomProvider = ({ children }) => {
     ]);
     // sessionStorage에 playerId 갱신
     console.log("sessionStorage에 playerId를 갱신합니다.")
-    // window.sessionStorage.setItem("playerId", response.data.playerId);
     return response.data; // The token
   }
 
-
-  // const getPlayer = async (roomId) => {
-  //   const response = await axios.get(`/api/game/${roomId}/player`);
-  //   return response.data;
-  // }
 
   return (
     <RoomContext.Provider value={{ roomSession, createGameRoom, getGameRoom,
