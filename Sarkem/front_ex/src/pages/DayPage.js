@@ -130,7 +130,7 @@ const DayPage = () => {
   const startFaceDetection = () => {
     if (players.current.get(psyTarget) === undefined) return;
     console.log(players.current.get(psyTarget).stream);
-      const id = faceMyDetect(players.current.get(psyTarget).stream.videos[players.current.get(psyTarget).stream.videos.length-1].video, running, setRunning, setDetectExpressions);
+      const id = faceMyDetect(players.current.get(psyTarget), running, setRunning, setDetectExpressions);
       setFaceDetectionIntervalId(id);
     }
   //끄는거 
