@@ -53,10 +53,11 @@ const CamCatGrid = styled.div`
 `;
 const AbsoluteContainer = styled.div`
   position: absolute;
-  top: 92%; /* Adjust the top value as needed */
-  right: 15%; /* Adjust the right value as needed */
+  top: 110%;
+  left: 50%;
+  margin: -10% 0 0 -12%;
   transform: translateY(-50%);
-  z-index: 100; /* Adjust the z-index if needed */
+  z-index: 100;
 `;
 
 const calculateGrid = (camCount) => {
