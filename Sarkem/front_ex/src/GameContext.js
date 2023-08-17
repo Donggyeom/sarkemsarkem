@@ -709,10 +709,14 @@ const removeDuplicateVideosFromStream = (player) => {
 
 const uniquePlayers = () => {
   // Map의 각 요소에 대해 중복 제거 함수 적용
-  console.log("중복값제거")
-  players.current.forEach((player) => {
-    removeDuplicateVideosFromStream(player);
-  });
+  try{
+    console.log("중복값제거")
+    players.current.forEach((player) => {
+      removeDuplicateVideosFromStream(player);
+    });
+  } catch(error) {
+    console.log("중복 제거 실패");
+  }
 }
 
   // 변경된 게임 옵션을 redis 토픽에 전달
