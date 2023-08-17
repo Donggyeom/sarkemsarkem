@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.data.redis.listener.ChannelTopic;
 
@@ -388,10 +389,13 @@ public class GameThread extends Thread {
 		List<RolePlayer> doctorTarget = findTarget(GameRole.DOCTOR);
 		List<RolePlayer> psychoTarget = findTarget(GameRole.PSYCHO);
 		List<RolePlayer> bullyTarget = findTarget(GameRole.BULLY);
+		log.debug("sarkTargets : { }", sarkTarget);
+		sarkTarget = sarkTarget.stream().distinct().collect(Collectors.toList());
 		// 의사 대상에 있는 삵 대상 삭제
 		for (RolePlayer target : doctorTarget) {
 			sarkTarget.remove(target);
 		}
+		log.debug("sarkTargets : { }", sarkTarget);
 		
 		// 사냥 대상 사망 처리
 		for (RolePlayer target : sarkTarget) {
