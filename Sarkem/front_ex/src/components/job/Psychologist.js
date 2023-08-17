@@ -28,7 +28,6 @@ const faceMyDetect = (videoRef, running, setRunning, setDetectExpressions) => {
 };
 //끄기
 const stopFace = (intervalId, setIntervalId, setRunning) => {
-    console.log("꺼짐?");
     if (intervalId) {
         clearInterval(intervalId);
         setIntervalId(null);

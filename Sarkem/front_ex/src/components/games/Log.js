@@ -34,7 +34,6 @@ const ScrollableText = styled.div`
 
 const Log = () => {
   const { currentSysMessagesArray } = useGameContext();
-  console.log(currentSysMessagesArray);
 
   const scrollableRef = useRef(null); // Ref for the scrollable container
 

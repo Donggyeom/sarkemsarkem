@@ -246,7 +246,6 @@ const GameProvider = ({ children }) => {
 
   const receiveChatMessage = async (message) => {
     const parsedMessage = JSON.parse(message.body);
-    console.log(parsedMessage, "parsedMessage");
     const chatMessage = parsedMessage.message;
     const playerId = parsedMessage.playerId;
     const nickName = parsedMessage.nickName;
@@ -262,7 +261,6 @@ const GameProvider = ({ children }) => {
 
   const sendMessage = (message) => {
     if (stompClient.current.connected && player.current.playerId !== null) {
-      console.log("메시지: ", message); 
       stompClient.current.send('/pub/chat/room', {}, JSON.stringify({
         type:'TALK', 
         roomId: roomSession.current.roomId,
@@ -462,17 +460,14 @@ const GameProvider = ({ children }) => {
         break;
 
     case "BE_THREATED":
-        console.log("냥아치에게 협박 당했습니다.");
         setThreatedTarget(true);
         break;
 
     case "PSYCHOANALYSIS_START":
-        console.log("심리 분석을 시작합니다.");
         setPsyTarget(sysMessage.param.targetId);
         setPsychologist(true);
         break;
     case "MISSION_START":
-        console.log("미션시작");
         setHiddenMission(true);
         setMissionNumber(sysMessage.param.missionIdx);
         setSelectMission(hiddenMissionType[sysMessage.param.missionIdx]);
@@ -642,7 +637,6 @@ const GameProvider = ({ children }) => {
 
     // 미션성공
     const missionConplete = () => {
-      console.log("미션 성공");
       setHiddenMission(false);
       setSelectMission("");
       stopPredicting();
@@ -666,7 +660,6 @@ const GameProvider = ({ children }) => {
           let detectedGestureName;
           if (results.gestures.length > 0) {
             detectedGestureName = results.gestures[0][0].categoryName;
-            console.log(detectedGestureName);
           }
           if(selectMission===detectedGestureName){
             missionConplete();

@@ -294,11 +294,9 @@ const DayNightCamera = React.memo(({ players }) => {
 
   useEffect(() => {
     if (hiddenMission) {
-      console.log("미션을 시작합니다.");
       loadGestureRecognizer();
       startHiddenMission();
     } else {
-      console.log("히든미션을 중지합니다",hiddenMission)
       stopHiddenMission();
     }
   }, [hiddenMission])
@@ -341,12 +339,10 @@ const DayNightCamera = React.memo(({ players }) => {
     predictWebcam();
   }
   const stopHiddenMission = () => {
-    console.log("히든미션끝");
     stopPredicting();
   }
 
   const handleSarksCam = (sark) => {
-    console.log("삵의 properties 변화가 감지되었습니다.");
     sark.target.subscribeToVideo(false);
   }
 
@@ -405,7 +401,6 @@ const DayNightCamera = React.memo(({ players }) => {
 
   // 삵들에 대해 음성변조 시작
   const getMixedMediaStream = (sarkArray) => {
-    console.log("음성 변조 시작...")
     sarkArray.forEach((sark) => {
       const mediaStream = sark.stream.stream.mediaStream;
 
@@ -422,10 +417,8 @@ const DayNightCamera = React.memo(({ players }) => {
 
   // 음성 변조 중지
   const stopVoiceChange = () => {
-    console.log("음성 변조 중지");
     jungleRefs.current.forEach((jungle) => {
       if (jungle && jungle.isConnected) {
-        console.log(jungle, "음성 변조 중지 중...");
         jungle.output.disconnect(audioContext.destination);
         jungle.isConnected = false;
       }
