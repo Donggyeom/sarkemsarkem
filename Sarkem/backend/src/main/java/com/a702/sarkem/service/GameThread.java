@@ -467,6 +467,7 @@ public class GameThread extends Thread {
 			if(idx%5==0) {
 				remainTime.put("time", leftTime);
 				gameManager.sendRemainTime(roomId, remainTime);
+//				log.debug("nightTime : {}", remainTime);
 			}
 			idx++;
 			gameManager.sendRemainTime(roomId, remainTime);

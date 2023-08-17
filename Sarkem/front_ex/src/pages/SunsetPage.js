@@ -725,7 +725,7 @@ const SunsetPage = () => {
       <StyledContent>
       {!isLogOn && <Log />}
       <SunMoon alt="SunMoon"></SunMoon>
-      <TimeSecond>{remainTime.current}s</TimeSecond>
+      <TimeSecond>{remainTime}s</TimeSecond>
       <CamButton alt="Camera Button" onClick={handleCamButtonClick} isCamOn={player.current.isCamOn} />
       <MicButton alt="Mic Button" onClick={handleMicButtonClick} isMicOn={player.current.isMicOn}/>
       <LogButton alt="Log Button"onClick={handleLogButtonClick} isLogOn={isLogOn}></LogButton>
