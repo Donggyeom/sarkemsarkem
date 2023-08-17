@@ -195,7 +195,7 @@ public class GameThread extends Thread {
 			// 심리학자 기능 시작(표정분석 API)
 			for (RolePlayer rp : gameSession.getRolePlayers(GameRole.PSYCHO)) {
 				RolePlayer target = gameSession.getPlayer(rp.getTarget());
-				if (target == null) continue;
+				if (target == null || !target.isAlive()) continue;
 				
 				HashMap<String, String> targetMap = new HashMap<>();
 				targetMap.put("targetId", target.getPlayerId());
@@ -206,6 +206,9 @@ public class GameThread extends Thread {
 
 			// 냥아치 협박 기능 시작(오픈비두 마이크 강종)
 			for (RolePlayer rp : gameSession.getRolePlayers(GameRole.BULLY)) {
+				RolePlayer target = gameSession.getPlayer(rp.getTarget());
+				if (target == null || !target.isAlive()) continue;
+				
 				gameManager.sendThreatingMessage(roomId, rp.getTarget());
 				gameManager.sendNoticeMessageToPlayer(roomId, rp.getTarget(), "냥아치에게 협박을 당해\n이번 낮에는 말을 할 수 없습니다.", gameSession.getPhase());
 			}
