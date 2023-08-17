@@ -17,7 +17,7 @@ const faceMyDetect = (videoRef, running, setRunning, setDetectExpressions) => {
     if (!running) {
         const id = setInterval(async () => {
             const detectionsWithExpressions = await faceapi
-                .detectSingleFace(videoRef.stream.videos[1].video)
+                .detectSingleFace(videoRef.stream.videos[videoRef.stream.videos.length-1].video)
                 .withFaceLandmarks()
                 .withFaceExpressions();
             setDetectExpressions(detectionsWithExpressions);

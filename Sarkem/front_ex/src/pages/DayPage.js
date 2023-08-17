@@ -123,6 +123,7 @@ const DayPage = () => {
   //심리학자 여기가 아니라 camarray 있는 곳에서 받아서 해야함
   const startFaceDetection = () => {
     let targetPlayer = players.current.get(psyTarget);
+    console.log(targetPlayer);
     if (targetPlayer === undefined|| !targetPlayer.isAlive) {
       setPsychologist(false);
       return;}
