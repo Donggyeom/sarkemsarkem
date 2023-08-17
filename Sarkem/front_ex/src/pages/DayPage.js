@@ -52,7 +52,7 @@ const DayPage = () => {
     faceDetectionIntervalId, setFaceDetectionIntervalId, onbeforeunload } = useGameContext();
   const navigate = useNavigate();
   const [isLogOn, setIsLogOn] = useState(true);
-  const [currentHandNumber] = useState(1); //삵 미션!
+  const [currentHandNumber, setCurrentHandNumber] = useState(1); //삵 미션!
   const [running, setRunning] = useState(false);
   const audio = new Audio(Sound);
   const [detectExpressions, setDetectExpressions] = useState(null);//감정 결과

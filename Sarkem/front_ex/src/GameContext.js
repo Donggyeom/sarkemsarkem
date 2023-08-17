@@ -17,19 +17,19 @@ const GameProvider = ({ children }) => {
   const [currentSysMessagesArray, setCurrentSysMessagesArray] = useState([]); // 배열 추가
   const [dayCurrentSysMessagesArray, setDayCurrentSysMessagesArray] = useState([]); // 낮 팝업 배열 추가
   const [chatMessages, setChatMessages] = useState([]); 
-  const [setChatConnected] = useState(false);
-  const [setMessage] = useState("");
+  const [chatConnected, setChatConnected] = useState(false);
+  const [message, setMessage] = useState("");
   
   const [winner, setWinner] = useState(null);
   const jungleRefs = useRef([]);
   const mixedMediaStreamRef = useRef(null);
   const audioContext = useRef(new (window.AudioContext || window.webkitAudioContext)()).current;
   
-  const [setMyVote] = useState(0);
+  const [myVote, setMyVote] = useState(0);
   const [dayCount, setDayCount] = useState(0);
   const [startVote, setStartVote] = useState(false);
   const [selectedTarget, setSelectedTarget] = useState("");
-  const [setExpulsionTarget] = useState("");
+  const [expulsionTarget, setExpulsionTarget] = useState("");
   const [voteSituation, setVotesituation] = useState({});
   const [threatedTarget, setThreatedTarget] = useState("");
   // twilight 투표 설정 위한 타겟id

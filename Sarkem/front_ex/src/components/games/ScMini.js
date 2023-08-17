@@ -91,7 +91,6 @@ const PopupImage = styled.img`
 const ScMini = () => {
   const alt = "ScMini";
   const { player } = useRoomContext();
-  const { dayCount, phase } = useGameContext();
   const {scMiniPopUp, setScMiniPopUp } = useGameContext();
   const [isPopupOpen, setIsPopupOpen] = useState(scMiniPopUp);
   const [isClosing, setIsClosing] = useState(false); // 팝업이 닫히는 상태를 저장하는 state

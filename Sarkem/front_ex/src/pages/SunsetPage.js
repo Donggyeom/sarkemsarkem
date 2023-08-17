@@ -571,7 +571,7 @@ const SunsetPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // TODO: camcount 계산
-  const [camCount] = useState(getAlivePlayers().length);
+  const [camCount, setCamCount] = useState(getAlivePlayers().length);
   const gridStyles = calculateGrid(camCount);
 
   let displayCamCat = false;

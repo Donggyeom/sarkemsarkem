@@ -7,12 +7,9 @@ import boxImage from '../img/box.png';
 import Background from '../components/backgrounds/BackgroundSunset';
 import usernicknameImage from '../img/usernickname.png';
 import usernicknameinputImage from '../img/usernicknameinput.png';
-// import offImage from '../img/off.png';
-// import onImage from '../img/on.png'
 import micImage from '../img/mic.png';
 import camImage from '../img/cam.png';
 import GoroomButton from '../components/buttons/goroomButton';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { useRoomContext } from '../Context';
 import ToggleButton from '../components/buttons/ToggleButton';
 import HelpButton from '../components/buttons/HelpButton';
@@ -144,7 +141,7 @@ const Logo = styled.img`
 
 
 const CommonStart = ({onClick} ) => {
-  const { player, setPlayer, roomSession, getGameRoom, checkGameRoom } = useRoomContext();
+  const { player, setPlayer, checkGameRoom } = useRoomContext();
   const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
 
   const videoRef = useRef(null);
