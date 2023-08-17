@@ -49,7 +49,7 @@ const CamCatGrid = styled.div`
 const AbsoluteContainer = styled.div`
   position: absolute;
   top: 110%;
-  left: 50%;
+  left: 55%;
   margin: -10% 0 0 -12%;
   transform: translateY(-50%);
   z-index: 100;
