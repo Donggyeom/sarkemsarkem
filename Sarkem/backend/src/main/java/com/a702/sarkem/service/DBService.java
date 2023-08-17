@@ -28,7 +28,7 @@ public class DBService {
 		gameLogRepository.save(gameLog);
 
 		int[] roles = gameSession.getRoles();
-		int i = 0;
+		int i = -1;
 		for (int p : roles) {
 			i++;
 			if (p == 0)
