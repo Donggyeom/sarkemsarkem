@@ -4,6 +4,7 @@ import Background from '../components/backgrounds/BackgroundSunset';
 import NotFoundButton from '../components/games/NotFoundPopup';
 import ReButton from '../components/buttons/reButton';
 import { useNavigate } from 'react-router-dom';
+import outImage from '../img/btn_out.png';
 
 const StyledSunsetPage = styled.div`
   display: flex;
@@ -36,7 +37,7 @@ const NotFound = () => {
     <Background>
       <StyledSunsetPage>
         <NotFoundButton showPopup={showPopup} />
-        {showPopup ? null : <ReButton alt="Go to Home" onClick={goToHome}>나가기</ReButton> }
+        {showPopup ? null : <ReButton src={outImage} alt="Go to Home" onClick={goToHome}>나가기</ReButton> }
       </StyledSunsetPage>  
     </Background>
   );

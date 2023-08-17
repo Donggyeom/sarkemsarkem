@@ -56,6 +56,7 @@ const PsychologistBox = ({detectExpressions}) => {
     return (
       <Psychologistboxdiv>
         {/* {Psychologist} */}
+        <div> 어쩌구 님의 심리</div>
         <div>행복 : {happy}</div>
         <div>슬픔 : {sad}</div>
         <div>보통 : {neutral}</div>
