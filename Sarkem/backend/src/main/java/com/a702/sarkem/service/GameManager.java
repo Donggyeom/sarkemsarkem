@@ -128,8 +128,8 @@ public class GameManager {
 		String newGameId = gameCodeGenerate(); // 새 게임 코드 획득
 		GameSession prevGame = gameSessionMap.get(gameRoom.getGameId());
 		GameSession newGame = null;
-		if (prevGame != null) newGame = new GameSession(roomId, newGameId, prevGame.getGameOption()); // 새 게임 세션 생성
-		else newGame = new GameSession(roomId, newGameId); // 새 게임 세션 생성
+		if (prevGame != null) newGame = new GameSession(this, roomId, newGameId, prevGame.getGameOption()); // 새 게임 세션 생성
+		else newGame = new GameSession(this, roomId, newGameId); // 새 게임 세션 생성
 		gameRoom.setGameId(newGameId);
 		gameSessionMap.put(newGameId, newGame);
 		log.debug("createGameRoom - GameSession : " + newGame);
