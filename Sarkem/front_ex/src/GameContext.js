@@ -161,11 +161,7 @@ const GameProvider = ({ children }) => {
 
     if (stompClient.current !== undefined && stompClient.current.connected) return;
     console.log("connectGameWS");
-<<<<<<< HEAD
-    let socket = new SockJS("https://i9a702.p.ssafy.io/ws-stomp");
-=======
     let socket = new SockJS(`${serverUrl}/ws-stomp`);
->>>>>>> FE_Redis
     stompClient.current = Stomp.over(socket);
     await stompClient.current.connect({}, () => {
       setTimeout(function() {
