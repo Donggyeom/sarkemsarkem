@@ -1,5 +1,7 @@
 package com.a702.sarkem.service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -419,14 +421,19 @@ public class GameThread extends Thread {
 		List<RolePlayer> players = gameSession.getAlivePlayers();
 		int confirmCnt = 0;
 		int time = gameSession.getMeetingTime();
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime end = now.plusSeconds(time);
 		int idx = 0;
 		HashMap<String, Integer> remainTime = new HashMap<>();
 		// 남은 시간 보내기
-		while (true) {
-			if(idx%10==0) {
-				remainTime.put("time", time);
+		int leftTime = time;
+		do {
+			now = LocalDateTime.now();
+			leftTime = (int) ChronoUnit.SECONDS.between(now, end);
+//			log.debug("isPlayersVoteEnded : {}", leftTime);
+			if(idx%5==0) {
+				remainTime.put("time", leftTime);
 				gameManager.sendRemainTime(roomId, remainTime);
-				time -= 5;
 			}
 			idx++;
 			confirmCnt = 0;
@@ -434,26 +441,37 @@ public class GameThread extends Thread {
 				if (p.isTargetConfirmed())
 					confirmCnt++;
 			}
+			
 			// 투표가 모두 완료되면 종료
-			if (confirmCnt == players.size())
-				return true;
-			if(time<=0) break;
-			sleep(500);
-		}
+			if (confirmCnt == players.size()) return true;
+			
+			sleep(1000);
+			
+		} while (leftTime > 0);
+		
 		return true;
 	}
 
 	// 밤투표 시간 보내기
 	private boolean isNightTimeEnded() throws InterruptedException {
 		int time = 30;
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime end = now.plusSeconds(time);
 		HashMap<String, Integer> remainTime = new HashMap<>();
-		while (true) {
-			remainTime.put("time", time);
+		// 남은 시간 보내기
+		int idx = 0;
+		int leftTime = time;
+		do {
+			now = LocalDateTime.now();
+			leftTime = (int) ChronoUnit.SECONDS.between(now, end);
+			if(idx%5==0) {
+				remainTime.put("time", leftTime);
+				gameManager.sendRemainTime(roomId, remainTime);
+			}
+			idx++;
 			gameManager.sendRemainTime(roomId, remainTime);
-			sleep(5000);
-			if (time <= 0) break;
-			time-=5;
-		}
+			sleep(1000);
+		} while (leftTime > 0);
 		return true;
 	}
 		
