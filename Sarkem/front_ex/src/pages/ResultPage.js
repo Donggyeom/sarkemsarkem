@@ -55,7 +55,7 @@ const ButtonContainer = styled.div`
 
 const Title = styled.div`
   position: absolute;
-  top: 90px;
+  top: 11%;
   left: 50%;
   transform: translateX(-50%);
   font-size: 75px;
