@@ -154,20 +154,16 @@ const DayPage = () => {
 
   const handleMicButtonClick = () => {
     const micOn = !player.current.isMicOn;
-    if (player.current.stream) {
+    if (player.current.stream !== undefined) {
       player.current.stream.publishAudio(micOn);
-      // 버튼 클릭 이벤트를 threatedTarget이 못하게
-      if (player.current.stream !== threatedTarget) {
-        player.current.stream.publishAudio(micOn);
-      }
       setPlayer([{key: 'isMicOn', value: micOn}]);
     };
   }
 
   const daystatus = () =>{
     if(player.current.role !== 'OBSERVER') {
-      player.current.stream.publishVideo(true);
-      player.current.stream.publishAudio(true);
+      player.current.stream.publishVideo(player.current.isCamOn);
+      player.current.stream.publishAudio(player.current.isMicOn);
     }
   };
 
