@@ -1,6 +1,7 @@
 package com.a702.sarkem.model.gameroom;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.a702.sarkem.model.player.Player;
@@ -49,9 +50,10 @@ public class GameRoom {
 	
 	public void deletePlayer(String playerId) {
 		int playerCnt = this.getPlayerCount();
-		for(int i = 0; i < playerCnt; i++) {
-			if(this.players.get(i).getPlayerId().equals(playerId)) {
-				this.players.remove(i);
+		for(Iterator<Player> itr = players.iterator(); itr.hasNext();) {
+			Player p = itr.next();
+			if(p.getPlayerId().equals(playerId)) {
+				itr.remove();
 				return;
 			}
 		}
