@@ -246,8 +246,9 @@ public class GameManager {
 
 		GameRoom room = gameRoomMap.get(roomId);
 		GameSession gameSession = getGameSession(roomId);
+		
 		// 방장과 플레이어 일치 여부 확인
-		if (!room.getHostId().equals(playerId)) {
+		if (room == null || room.getHostId() == null || !room.getHostId().equals(playerId)) {
 			return;
 		}
 
