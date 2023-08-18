@@ -559,9 +559,10 @@ const GameProvider = ({ children }) => {
         setSelectedTarget(target.playerId);
       } else {
         setSelectedTarget(null);
-        target = null;
+        target = {playerId: ""};
       }
       if (stompClient.current.connected && player.current.playerId !== null) {
+          console.log(`selectAction`, target);
           stompClient.current.send("/pub/game/action", {},
               JSON.stringify({
                   code: 'TARGET_SELECT',
