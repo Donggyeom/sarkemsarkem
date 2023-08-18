@@ -1,0 +1,213 @@
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import chatbox from '../img/chatbox.png';
+import chatinputboxImage from '../img/chatinputbox.png';
+import chatsendbuttonImage from '../img/chatsendbutton.png';
+import chatsenderImage from '../img/chatsender.png';
+import chatcloseImage from '../img/closebutton.png';
+import { useGameContext } from '../GameContext';
+import { useRoomContext } from '../Context';
+import receiverboxImage from '../img/receiverbox.png';
+
+
+const ChatContainer = styled.div`
+  background-image: url(${chatbox});
+  background-size: cover;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  width: 550px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  position : relative;
+`;
+
+
+const ChatWrapper = styled.div`
+  top : 48px;
+  max-height : 300px;
+  padding : 20px;
+  max-width : 530px;
+  position: relative;
+`;
+
+const ChatMessage = styled.div`
+  word-wrap : break-word; // 문자 수가 많아지면 가로로 넘어가는 현상 해결하기위함
+  max-width: 60%; // 문자 수가 많아지면 가로로 넘어가는 현상 해결하기위함
+  background-color: transparent;
+  background-image: url(${chatsenderImage});
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-bottom: 10px;
+  padding: 12px;
+  border-radius: 5px;
+  width: fit-content;
+  position: relative;
+  margin-left: auto;
+  margin-right: 10px;
+  font-family: 'SUITE-Regular', sans-serif; // SUITE-Regular 폰트를 적용
+`;
+
+const ChatMessages = styled.div`
+  margin: 10px;
+  opacity: 0.8;
+  flex: 1;
+  display: flex;
+  overflow-y : auto;
+  max-height : 110%;
+  flex-direction: column;
+  border-radius: 5px;
+`;
+
+const ChatReceiverMessage = styled.div`
+  word-wrap: break-word;
+  max-width: 60%;
+  background-color: transparent;
+  background-image: url(${receiverboxImage});
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-bottom: 10px;
+  padding: 12px;
+  border-radius: 5px;
+  width: fit-content;
+  position: relative;
+  margin-right: 10px;
+  font-family: 'SUITE-Regular', sans-serif;
+  color : white;
+
+`;
+
+const Nickname = styled.div`
+  font-family: 'SUITE-Regular', sans-serif;
+  font-size: 12px;
+  color: #300909;
+  margin-bottom: 5px;
+`;
+
+const ChatInputWrapper = styled.div`
+  margin: 10px;
+  display: flex;
+  height: 10%;
+  justify-content : space-between;
+  align-items: center;
+  margin-top: auto;
+`;
+
+const ChatInput = styled.input`
+  flex : 0.85;
+  background-color: transparent;
+  margin-left: 5%;
+  background-image: url(${chatinputboxImage});
+  background-repeat : no-repeat;
+  background-size: auto 100%;
+  // width : 95%;
+  height : 100%;
+  border: none;
+  position : relative;
+  &:focus {
+    /* Style when the input is focused (clicked or tabbed into) */
+    border: none; /* Remove the border on focus */
+    outline: none; /* Remove the outline on focus */
+  }
+`;
+
+const ChatButton = styled.button`
+  flex : 0.09;
+  background-color: transparent;
+  background-image: url(${chatsendbuttonImage});
+  background-size:  95% auto;
+  background-repeat: no-repeat;
+  margin-right : 5%;
+  border: none;
+  cursor: pointer;
+  height : 100%;
+  position : relative;
+`;
+
+const ChatCloseButton = styled.button`
+  background-color: transparent;
+  background-image: url(${chatcloseImage});
+  background-size: cover;
+  width: 35px;
+  height: 35px;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 28px;
+  right: 38px;
+  z-index: 1;
+`;
+
+const Chatting = ({ handleCloseButtonClick }) => {
+  const { chatMessages, sendMessage } = useGameContext();
+  const { player } = useRoomContext();
+  const [inputMessage, setInputMessage] = useState('');
+  const chatMessagesRef = useRef();
+    
+  const scrollToBottom = () => {
+    chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+  };
+  
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
+
+  const handleSendMessage = () => {
+    if (inputMessage.trim() !== '') {
+      sendMessage(inputMessage);
+      setInputMessage('');
+    }
+  };
+  
+  const handleInputChange = (e) => {
+    setInputMessage(e.target.value);
+  };
+  
+  const handleInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
+  return (
+    <ChatContainer>
+      <headerWrapper>
+        <ChatCloseButton onClick={handleCloseButtonClick}></ChatCloseButton>
+      </headerWrapper>
+      <ChatWrapper>
+        <ChatMessages ref={chatMessagesRef}>
+          {chatMessages.map((messageObj, index) => {
+            return (
+              messageObj.playerId === player.current.playerId ? (
+                <ChatMessage key={index}>
+                  {messageObj.message}
+                </ChatMessage>
+              ) : (
+                <div key={index}>
+                <Nickname>{messageObj.nickName}</Nickname>
+                <ChatReceiverMessage>
+                  {messageObj.message}
+                </ChatReceiverMessage>
+              </div>
+              )
+            );
+          })}
+        </ChatMessages>
+      </ChatWrapper>
+      <ChatInputWrapper>
+        <ChatInput
+          type="text"
+          img={chatinputboxImage}
+          value={inputMessage}
+          onChange={handleInputChange}
+          onKeyPress={handleInputKeyPress}
+          placeholder="메세지를 입력하세요..."
+        />
+        <ChatButton onClick={handleSendMessage}></ChatButton>
+      </ChatInputWrapper>
+    </ChatContainer>
+  );
+}
+
+export default Chatting;

@@ -1,16 +1,19 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import logoImage from '../img/logo.png';
-import camcatImage from '../img/camcat.png';
+import camcatImage from '../img/camcat2.png';
 import boxImage from '../img/box.png';
 import Background from '../components/backgrounds/BackgroundSunset';
 import usernicknameImage from '../img/usernickname.png';
 import usernicknameinputImage from '../img/usernicknameinput.png';
-import offImage from '../img/off.png';
-import onImage from '../img/on.png'
 import micImage from '../img/mic.png';
 import camImage from '../img/cam.png';
-import { useNavigate, useLocation } from 'react-router-dom';
+import GoroomButton from '../components/buttons/goroomButton';
+import { useRoomContext } from '../Context';
+import ToggleButton from '../components/buttons/ToggleButton';
+import HelpButton from '../components/buttons/HelpButton';
+import Help from '../components/games/Help';
 
 const StyledStartPage = styled.div`
 `;
@@ -31,15 +34,11 @@ const StyledContent = styled.div`
 `;
 
 const LeftSection = styled.div`
-  /* 왼쪽 섹션 스타일 작성 */
-  flex: 4; /* 40% of the available width */
+  flex: 4;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-image: url(${camcatImage});
-  background-size: 85% 85%;
-  background-repeat: no-repeat;
-  background-position: center center;
+  margin-left : 2.5%;
+  // margin-top : 1%;
 `;
 
 const RightSection = styled.div`
@@ -60,6 +59,7 @@ const DivWrapper = styled.div`
   display: flex;
   width : 100%;
   height : 100%;
+  justify-content: center;
 `;
 
 const LeftPart = styled.div`
@@ -83,7 +83,52 @@ const RightPart = styled.div`
   background-size: 15vw;
   background-position: center center;
   background-repeat: no-repeat;
-  padding : 50px 0px 50px 150px;
+  padding: 50px 10px 50px 10px;
+  font-family: "RixInooAriDuriR";
+  font-size: 35px;
+
+  /* Input styling */
+  input {
+    font-size: 30px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    text-align: center; 
+    font-family: "MBC1961GulimM";
+    // font-weight: 10;
+  }
+  span {
+    margin: 0 50px; /* You can adjust the margin as needed */
+  }
+`;
+
+const ButtonContainer = styled.div`
+  width: 60%;
+  height: 85%;
+`;
+const LeftPart2 = styled.div`
+  /* Left part of each RightDiv */
+  flex: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: 15vw;
+  background-position: center center;
+  // padding: 0px 10px 50px 10px;
+  background-repeat: no-repeat;
+  margin-left: 20px;
+`;
+
+const RightPart2 = styled.div`
+  /* Right part of each RightDiv */
+  flex: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: 15vw;
+  background-position: center center;
+  // padding: 0px 10px 50px 10px;
+  background-repeat: no-repeat;
 `;
 
 const Logo = styled.img`
@@ -93,102 +138,189 @@ const Logo = styled.img`
   max-height: 100%; /* 세로 크기 100% */
 `;
 
-const CommonStart = ({image, onClick} ) => {
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const roomId = location.pathname.slice(1);
-  const isHost = location.state.isHost;
 
-  const [userName, setUserName] = useState('이름모를유저' + Math.floor(Math.random() * 100))
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCamOn, setIsCamOn] = useState(true);
-  
+const CommonStart = ({onClick} ) => {
+  const { player, setPlayer, checkGameRoom } = useRoomContext();
+  const [ nickName, setNickName ] = useState('냥냥' + Math.floor(Math.random() * 100));
+
   const videoRef = useRef(null);
   const audioRef = useRef(null);
 
-  useEffect(()=>{
+
+  ////////////   CommonStart Effect   ////////////
+
+
+  useEffect(() => {
+
+    if (player.current && player.current.nickName !== undefined) {
+      setNickName(player.current.nickName);
+    }
+
+    // 게임방 존재 여부 확인
+    
+    checkGameRoom();
+    
+    // 카메라 세팅
     getUserCamera();
+
+    // 마이크 세팅
     getUserAudio();
-    console.log(isCamOn);
-  }, [videoRef])
+
+  }, []);
+
+  useEffect(() => {
+    setPlayer([{key: 'nickName', value: nickName}]);
+  }, [nickName]);
+
+  ////////////  CommonStart 함수  ////////////
 
   const getUserCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
-      setIsCamOn(true);
+      videoRef.current.style.transform = 'scaleX(-1)';
+      setPlayer([{key: 'isCamOn', value: true}]);
     }
     catch (error) {
       console.error("Failed to start video: ", error);
     }
-  }
+  };
 
   const getUserAudio = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioRef.current.srcObject = stream;
-      setIsMicOn(true);
+      setPlayer([{key: 'isMicOn', value: true}]);
     }
     catch (error) {
       console.error("Failed to start audio: ", error);
     }
-  }
+  };
 
   const handleMicToggle = () => {
-    const micOn = !isMicOn;
-    setIsMicOn(micOn)
-    const tracks = audioRef.current.srcObject.getTracks();
-    tracks.forEach((track) => {
-      track.enabled = micOn;
-    });
+    const micOn = !player.current.isMicOn;
+    try{
+      const tracks = audioRef.current.srcObject.getTracks();
+      tracks.forEach((track) => {
+        track.enabled = micOn;
+      });
+    } catch(error) {
+      console.log("마이크 정보가 없습니다.");
+    }
+    setPlayer([{key: 'isMicOn', value: micOn}]);
   };
 
   const handleCamToggle = () => {
-    const camOn = !isCamOn;
-    setIsCamOn(camOn);
-    const tracks = videoRef.current.srcObject.getTracks();
-    tracks.forEach((track) => {
-      track.enabled = camOn;
-    });
+    const camOn = !player.current.isCamOn;
+    try{
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach((track) => {
+        track.enabled = camOn;
+      });
+    } catch(error) {
+      console.log("카메라 정보가 없습니다.");
+    }
+    setPlayer([{key: 'isCamOn', value: camOn}]);
+
   };
+
+  const handleNickNameChange = (event) => {
+    setNickName(event.target.value);
+  };
+
+    //도움말
+    const [isHelpOn, setIsHelpOn] = useState(true);
+    const handleHelpButtonClick = () => {
+      setIsHelpOn((prevIsHelpOn) => !prevIsHelpOn);
+    };
+
 
   return (
     <Background>
+      {!isHelpOn && <Help top="43%" left="65%" />}
       <StyledStartPage>
         <StyledHeader>
           <Logo src={logoImage} alt="로고" />
         </StyledHeader>
 
         <StyledContent>
+
           <LeftSection>
-          <video ref={videoRef} autoPlay/>
-          <audio ref={audioRef} autoPlay/>
+          <div style={{ position: 'relative', width: '85%', height: '63%', borderRadius: '10%' }}>
+          <video
+              ref={videoRef}
+              autoPlay
+              style={{
+                marginTop: "25%",
+                width: '96%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '10%',
+                borderStyle : 'solid', borderRadius : '10%', borderWidth : '0.7em', borderColor : '#343434'
+
+              }}
+            />
+
+            <img
+              src={camcatImage}
+              alt="CamCat"
+              style={{
+                position: 'absolute',
+                top: '35%',
+                left: '50.5%',
+                transform: 'translate(-50%, -50%)', // Center the image
+                width: '102.5%', // Adjust the size of the image as needed
+                height: '32%',
+                zIndex: 1, // Ensure the image is above the video (z-index: 0 by default)
+              }}
+            />
+             <audio ref={audioRef} autoPlay />
+          </div>
           </LeftSection>
+
           <RightSection>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${usernicknameImage})` }}></LeftPart>
               <RightPart style={{ backgroundSize: '85%', backgroundImage: `url(${usernicknameinputImage})` }}>
-              </RightPart>
+            {/* Input field */}
+            <input
+              type="text"
+              value={nickName}
+              onChange={handleNickNameChange}
+              placeholder="닉네임 입력"
+              maxLength={6} // 최대 글자수 제한
+            />
+            </RightPart>
             </DivWrapper>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${camImage})` }}></LeftPart>
-              <RightPart onClick={handleCamToggle} style={{ backgroundImage: `url(${isCamOn ? onImage : offImage})` }}></RightPart>
+              {/* <RightPart onClick={handleCamToggle} style={{ backgroundImage: `url(${isCamOn ? onImage : offImage})` }}></RightPart> */}
+              <RightPart>
+                <span>OFF</span> <ToggleButton checked={true} onChange={handleCamToggle} /> <span>ON</span>
+              </RightPart>
             </DivWrapper>
             <DivWrapper>
               <LeftPart style={{ backgroundImage: `url(${micImage})` }}></LeftPart>
-              <RightPart onClick={handleMicToggle} style={{ backgroundImage: `url(${isMicOn ? onImage : offImage})` }}></RightPart>
+              {/* <RightPart onClick={handleMicToggle} style={{ backgroundImage: `url(${isMicOn ? onImage : offImage})` }}></RightPart> */}
+              <RightPart>
+                <span>OFF</span> <ToggleButton checked={true} onChange={handleMicToggle} /> <span>ON</span>
+              </RightPart>
             </DivWrapper>
             <DivWrapper>
-          {/* 이미지에 대한 버튼을 추가하려는 곳 */}
-          {/* 클릭 이벤트를 onClick prop으로 받은 함수로 설정 */}
-          <img
-            src={image}
-            alt="버튼 이미지"
-            style={{ width: '40%', height: '80%', margin: 'auto', cursor: 'pointer' }}
-            onClick={onClick}
-          />
-        </DivWrapper>
+              <LeftPart2>
+                <ButtonContainer>
+                  <HelpButton onClick={handleHelpButtonClick} isHelpOn={isHelpOn} />
+                </ButtonContainer>
+              </LeftPart2>
+              <RightPart2>
+                <ButtonContainer>
+                   {/* 조건부 렌더링을 사용하여 버튼 선택 */}
+                   <GoroomButton onClick={onClick} />
+                </ButtonContainer>
+              </RightPart2>
+              
+            </DivWrapper>
           </RightSection>
         </StyledContent>
       </StyledStartPage>
