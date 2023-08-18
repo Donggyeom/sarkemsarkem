@@ -554,7 +554,7 @@ const GameProvider = ({ children }) => {
 
 
   const selectAction = ((target) => {
-      if (selectedTarget !== target.playerId) {
+      if (target !== null && selectedTarget !== target.playerId) {
         setSelectedTarget(target.playerId);
       } else {
         setSelectedTarget(null);
