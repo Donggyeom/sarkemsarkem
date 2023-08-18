@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GameSession {
 	
-	private static GameManager gameManager;
+	private final GameManager gameManager;
 
 	public enum PhaseType {
 		READY, DAY, TWILIGHT, NIGHT

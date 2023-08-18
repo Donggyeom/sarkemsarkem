@@ -104,7 +104,7 @@ public class GameManager {
 	 */
 	public void createGameRoom(String roomId) {
 		// 게임방, 게임 세션 생성
-		GameRoom newGameRoom = new GameRoom(roomId); // 게임룸 생성
+		GameRoom newGameRoom = new GameRoom(this, roomId); // 게임룸 생성
 		gameRoomMap.put(roomId, newGameRoom);
 		log.debug("createGameRoom - GameRoom : " + newGameRoom);
 		

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.a702.sarkem.model.player.Player;
 import com.a702.sarkem.model.player.RolePlayer;
 import com.a702.sarkem.service.GameManager;
@@ -20,14 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GameRoom {
 	
-	private static GameManager gameManager;
+	private final GameManager gameManager;
 	
 	private String roomId;
 	private String gameId;
 	private List<Player> players = new ArrayList<>(10);
 	private String hostId;
 	
-	public GameRoom(String roomId) {
+	public GameRoom(GameManager gameManager, String roomId) {
+		this.gameManager = gameManager;
 		this.roomId = roomId;
 	}
 	
