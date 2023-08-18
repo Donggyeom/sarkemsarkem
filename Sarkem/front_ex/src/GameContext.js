@@ -109,7 +109,6 @@ const GameProvider = ({ children }) => {
 
   const initGameSession = () => {
     console.log("initGameSession");
-    if (pingSession.current !== undefined) clearInterval(pingSession.current);  // ping stop
     
     stopPredicting();
     player.current.stream.publishAudio(false);
