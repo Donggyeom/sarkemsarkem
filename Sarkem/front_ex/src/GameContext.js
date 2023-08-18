@@ -109,7 +109,7 @@ const GameProvider = ({ children }) => {
 
   const initGameSession = () => {
     console.log("initGameSession");
-    if (pingSession.current) clearInterval(pingSession.current);  // ping stop
+    if (pingSession.current !== undefined) clearInterval(pingSession.current);  // ping stop
     
     stopPredicting();
     player.current.stream.publishAudio(false);
@@ -157,7 +157,7 @@ const GameProvider = ({ children }) => {
   // WebSocket 연결
   const connectGameWS = async (event) => {
     
-    if (pingSession.current) clearInterval(pingSession.current);
+    if (pingSession.current !== undefined) clearInterval(pingSession.current);
 
     if (stompClient.current !== undefined && stompClient.current.connected) return;
     console.log("connectGameWS");
@@ -172,7 +172,7 @@ const GameProvider = ({ children }) => {
     });
     socket.onclose = () => {
       leaveSession();
-      if (pingSession.current) clearInterval(pingSession.current);
+      if (pingSession.current !== undefined) clearInterval(pingSession.current);
       alert("socket error");
       navigate("/");
     }
@@ -194,31 +194,34 @@ const GameProvider = ({ children }) => {
   }
 
   const sendPing = () => {
-    if (pingSession.current) clearInterval(pingSession.current);
+    if (pingSession.current !== undefined) clearInterval(pingSession.current);
     
     // 연결되어 있음을 알리는 메시지 전송
     pingSession.current = setInterval(() => {
       if (!stompClient.current.connected) {
         console.log('sendPing');
         console.log('stompClient.current null');
-        if (pingSession.current) clearInterval(pingSession.current);
+        if (pingSession.current !== undefined) clearInterval(pingSession.current);
+        return;
       }
 
       if (player.current.playerId === undefined) {
         console.log('sendPing');
         console.log('player.current.playerId null');
-        if (pingSession.current) clearInterval(pingSession.current);
+        if (pingSession.current !== undefined) clearInterval(pingSession.current);
+        return;
       }
       
       if (roomSession.current.gameId === undefined) {
         console.log('sendPing');
         console.log('roomSession.current.gameId null');
-        if (pingSession.current) clearInterval(pingSession.current);
+        if (pingSession.current !== undefined) clearInterval(pingSession.current);
+        return;
       }
 
       console.log('send ping');
       if (!stompClient.current.connected) {
-        if (pingSession.current) clearInterval(pingSession.current);
+        if (pingSession.current !== undefined) clearInterval(pingSession.current);
         return;
       }
       stompClient.current.send('/pub/game/action', {}, JSON.stringify({
@@ -227,7 +230,7 @@ const GameProvider = ({ children }) => {
         gameId: roomSession.current.gameId,
         playerId:player.current.playerId, 
       }));
-    }, 5000);
+    }, 3000);
   }
 
   // 게임룸 redis 구독
@@ -340,7 +343,6 @@ const GameProvider = ({ children }) => {
 
     case "GAME_START":   
         // 게임상태 초기화
-        sendPing();
         navigate(`/${roomSession.current.roomId}/day`);
         break;
 

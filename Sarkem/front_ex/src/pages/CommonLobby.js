@@ -179,6 +179,10 @@ const CommonLobby = ()=>{
       player.current.stream.publishAudio(player.current.isMicOn);
       player.current.stream.publishVideo(player.current.isCamOn);
     }
+
+    
+    // 접속 여부 확인
+    sendPing();
     
 
     // 윈도우 객체에 화면 종료 이벤트 추가
