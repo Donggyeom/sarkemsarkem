@@ -97,9 +97,9 @@ const NightPage = () => {
   
   const handleMicButtonClick = () => {
     const micOn = !player.current.isMicOn;
-    setPlayer([{key: 'isMicOn', value: micOn}]);
-    if (player.current.stream) {
+    if (player.current.stream !== undefined) {
       player.current.stream.publishAudio(micOn);
+      setPlayer([{key: 'isMicOn', value: micOn}]);
     }
   };
 

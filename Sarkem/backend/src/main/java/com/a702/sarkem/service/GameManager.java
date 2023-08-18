@@ -83,11 +83,18 @@ public class GameManager {
 	 * 플레이어 연결 여부 업데이트
 	 */
 	public void updatePlayerSession(String roomId, String playerId) {
+		GameRoom gameRoom = getGameRoom(roomId);
+		if (gameRoom == null) return;
+		Player player = gameRoom.getPlayer(playerId);
+		if (player == null) return;
+		LocalDateTime now = LocalDateTime.now();
+		player.setLastUpdateTime(now);
+		
 		GameSession gameSession = getGameSession(roomId);
 		if (gameSession == null) return;
-		Player player = gameSession.getPlayer(playerId);
+		player = gameSession.getPlayer(playerId);
 		if (player == null) return;
-		player.setLastUpdateTime(LocalDateTime.now());
+		player.setLastUpdateTime(now);
 	}
 
 	/**
@@ -97,7 +104,7 @@ public class GameManager {
 	 */
 	public void createGameRoom(String roomId) {
 		// 게임방, 게임 세션 생성
-		GameRoom newGameRoom = new GameRoom(roomId); // 게임룸 생성
+		GameRoom newGameRoom = new GameRoom(this, roomId); // 게임룸 생성
 		gameRoomMap.put(roomId, newGameRoom);
 		log.debug("createGameRoom - GameRoom : " + newGameRoom);
 		
@@ -244,6 +251,8 @@ public class GameManager {
 	 */
 	public void gameOptionChange(String roomId, String playerId, GameOptionDTO option) {
 
+		if (option == null) return;
+		
 		GameRoom room = gameRoomMap.get(roomId);
 		GameSession gameSession = getGameSession(roomId);
 		
